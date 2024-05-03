@@ -787,7 +787,8 @@ const KendoWindow = ({
   useEffect(() => {
     fetchInfor();
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchInfor = async () => {
     //if (!permissions?.view) return;
@@ -800,8 +801,8 @@ const KendoWindow = ({
       pageSize: 1,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_dtgb": "",
         "@p_frdt": "19990101",
         "@p_todt": "20991231",
@@ -864,8 +865,8 @@ const KendoWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "PRC",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_dtgb": "",
         "@p_frdt": "19990101",
         "@p_todt": "20991231",
@@ -939,8 +940,8 @@ const KendoWindow = ({
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": "MTR",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_dtgb": "",
         "@p_frdt": "19990101",
         "@p_todt": "20991231",
@@ -1603,8 +1604,8 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      orgdiv: "01",
-      location: "01",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
       planqty: Information.planqty,
       rowstatus_s: "",
       ordnum_s: Information.ordnum,

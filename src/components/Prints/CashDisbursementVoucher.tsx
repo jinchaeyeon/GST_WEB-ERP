@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { numberWithCommas } from "../../components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  numberWithCommas,
+} from "../../components/CommonFunction";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 
@@ -13,7 +16,7 @@ const CashDisbursementVoucher = (data: any) => {
       fetchMainData(data.data);
     }
   }, [data]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchMainData = async (para: any) => {
     let data: any;
@@ -24,7 +27,7 @@ const CashDisbursementVoucher = (data: any) => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "Z",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_key1": para.ref_key == undefined ? "" : para.ref_key.split("-")[0],
         "@p_key2": para.ref_key == undefined ? "" : para.ref_key.split("-")[1],
       },

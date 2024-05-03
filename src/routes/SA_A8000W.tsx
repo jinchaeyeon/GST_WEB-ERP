@@ -17,6 +17,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -64,9 +67,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -376,12 +376,13 @@ const SA_A8000W: React.FC = () => {
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     collectnum: "",
@@ -800,7 +801,7 @@ const SA_A8000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": filters.location,
       "@p_position": filters.position,
       "@p_indt": paraDataDeleted.indt,
@@ -1129,7 +1130,9 @@ const SA_A8000W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
+              <GridContainer
+                style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+              >
                 <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
                 </GridTitleContainer>

@@ -8,7 +8,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
@@ -17,7 +17,7 @@ import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer
+  GridContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -29,8 +29,9 @@ import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
-  getQueryFromBizComponent
+  getQueryFromBizComponent,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -181,11 +182,11 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     itemcd: "",

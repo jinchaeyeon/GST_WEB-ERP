@@ -27,7 +27,10 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
-import { UseBizComponent } from "../../CommonFunction";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
@@ -156,7 +159,7 @@ const DepartmentsWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -169,7 +172,7 @@ const DepartmentsWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_dptcd": filters.dptcd,
         "@p_dptnm": filters.dptnm,
         "@p_useyn": filters.useyn,

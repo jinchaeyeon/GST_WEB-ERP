@@ -121,13 +121,14 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
       setData("#fff2cc");
       code = "#fff2cc";
     }
+    const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
     const paraSaved = {
       procedureName: "P_CR_A0020W_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
         "@p_work_type": "COLOR",
-        "@p_orgdiv": "01", // 세션 회사구분
+        "@p_orgdiv": sessionOrgdiv, // 세션 회사구분
         "@p_custcd": custcd, // 반려견코드
         "@p_location": "",
         "@p_custnm": "",

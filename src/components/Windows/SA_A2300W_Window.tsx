@@ -43,6 +43,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -370,7 +371,8 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
@@ -393,13 +395,13 @@ const CopyWindow = ({
     itemcd: "",
     itemnm: "",
     itemno: "",
-    location: "01",
+    location: sessionLocation,
     lotnum: "",
     num: 0,
     recdtfind: "",
     ordnum: "",
     ordseq: 0,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     orglot: "",
     outdt: new Date(),
     outkind: "",
@@ -661,12 +663,12 @@ const CopyWindow = ({
           itemcd: item.itemcd,
           itemnm: item.itemnm,
           itemno: item.itemno,
-          location: "01",
+          location: sessionLocation,
           lotnum: item.lotnum,
           ordkey: item.ordkey,
           ordnum: item.ordnum,
           ordseq: item.ordseq,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           outdt: convertDateToStr(filters.outdt),
           outkind: filters.outkind,
           outlot: filters.outlot,
@@ -812,8 +814,8 @@ const CopyWindow = ({
             dvnm: filters.dvnm,
             dvnum: filters.dvnum,
             finaldes: filters.finaldes,
-            location: "01",
-            orgdiv: "01",
+            location: sessionLocation,
+            orgdiv: sessionOrgdiv,
             outdt:
               filters.outdt == null
                 ? ""
@@ -845,8 +847,7 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length == 0 && deletedMainRows.length == 0)
-            return false;
+          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
           let dataArr: TdataArr = {
             rowstatus: [],
             seq2: [],
@@ -1030,10 +1031,10 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     seq1: 0,
-    location: "01",
+    location: sessionLocation,
     doexdiv: "A",
     outtype: "",
     outdt: new Date(),
@@ -1096,7 +1097,7 @@ const CopyWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_recdt": ParaData.recdt,
       "@p_seq1": ParaData.seq1,
       "@p_location": ParaData.location,

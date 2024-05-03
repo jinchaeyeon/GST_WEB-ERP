@@ -162,7 +162,7 @@ const PR_A4100W: React.FC = () => {
       ...event.page,
     });
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
@@ -324,7 +324,7 @@ const PR_A4100W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dtgb: "",
     frdt: new Date(),
@@ -874,7 +874,7 @@ const PR_A4100W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "D",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_planno_s": dataArr.planno_s.join("|"),
         "@p_planseq_s": dataArr.planseq_s.join("|"),
         "@p_plandt_s": "",
@@ -948,7 +948,7 @@ const PR_A4100W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "FINYN",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_planno_s": dataArr.planno_s.join("|"),
         "@p_planseq_s": dataArr.planseq_s.join("|"),
         "@p_plandt_s": "",
@@ -1049,7 +1049,7 @@ const PR_A4100W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "U",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_planno_s": dataArr.planno_s.join("|"),
         "@p_planseq_s": dataArr.planseq_s.join("|"),
         "@p_plandt_s": dataArr.plandt_s.join("|"),

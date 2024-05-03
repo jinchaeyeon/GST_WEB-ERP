@@ -45,6 +45,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -356,7 +357,8 @@ const CopyWindow = ({
     isSearch: true,
     pgNum: 1,
   });
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -369,7 +371,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q1",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": "",
         "@p_todt": "",
         "@p_person": "",
@@ -652,8 +654,8 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     recno: "",
     recdt: "",
     person: "",
@@ -725,8 +727,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         recno: "",
         recdt: "",
         person: "",
@@ -829,7 +831,7 @@ const CopyWindow = ({
         pageSize: filters.pgSize,
         parameters: {
           "@p_work_type": "U",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_datnum": data?.recno == undefined ? filters.recno : data?.recno,
           "@p_person2": userId,
           "@p_chooses": "",

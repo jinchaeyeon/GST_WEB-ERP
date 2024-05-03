@@ -46,8 +46,8 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ProjectsWindow from "./CM_A5000W_Project_Window";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -233,7 +233,8 @@ const KendoWindow = ({
   );
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [projectWindowVisible, setProjectWindowVisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
 
   const onProjectWndClick = () => {
     setProjectWindowVisible(true);
@@ -274,12 +275,12 @@ const KendoWindow = ({
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   // 조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: location,
     custcd: "",
     custnm: "",

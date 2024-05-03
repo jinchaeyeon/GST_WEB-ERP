@@ -28,13 +28,8 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
-import {
-  UseBizComponent
-} from "../../CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../../CommonString";
+import { UseBizComponent, UseGetValueFromSessionItem } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import LaborerWindow from "./LaborerWindow";
@@ -193,7 +188,7 @@ const LaborerMultiWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -204,7 +199,7 @@ const LaborerMultiWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_prsnnum": filters.prsnnum,
         "@p_prsnnm": filters.prsnnm,
         "@p_rtryn": filters.rtryn,

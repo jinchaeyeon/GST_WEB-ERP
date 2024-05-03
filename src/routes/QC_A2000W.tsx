@@ -363,7 +363,8 @@ const QC_A2000: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -616,8 +617,8 @@ const QC_A2000: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     itemcd: "",
@@ -1265,7 +1266,7 @@ const QC_A2000: React.FC = () => {
       baddt: convertDateToStr(new Date()),
       badnum: "",
       badseq: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       qty: 1,
       rowstatus: "N",
     };
@@ -1478,8 +1479,8 @@ const QC_A2000: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "QC_U",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rowstatus_s: "",
     qcdt_s: "",
     person_s: "",
@@ -1647,8 +1648,8 @@ const QC_A2000: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "QC_U",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         rowstatus_s: "",
         qcdt_s: "",
         person_s: "",

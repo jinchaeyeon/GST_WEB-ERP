@@ -19,6 +19,7 @@ import {
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   numberWithCommas3,
   setDefaultDate,
@@ -69,10 +70,11 @@ const SA_B2228W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     isSearch: true,
   });

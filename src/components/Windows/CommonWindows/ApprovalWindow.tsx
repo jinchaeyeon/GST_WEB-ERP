@@ -45,14 +45,14 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
   convertDateToStrWithTime2,
-  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -337,7 +337,8 @@ const KendoWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -350,7 +351,7 @@ const KendoWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_pgmgb": filters.pgmgb,
         "@p_person": filters.person,
         "@p_ref_key": filters.ref_key,
@@ -363,10 +364,15 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data && data.tables && data.tables[0] && data.tables[0].TotalRowCount !== undefined) {
+    if (
+      data &&
+      data.tables &&
+      data.tables[0] &&
+      data.tables[0].TotalRowCount !== undefined
+    ) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      
+
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -393,7 +399,7 @@ const KendoWindow = ({
       }
     } else {
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setFilters((prev) => ({
       ...prev,
@@ -511,8 +517,8 @@ const KendoWindow = ({
 
     setParaData({
       work_type: "N",
-      orgdiv: "01",
-      location: "01",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
       person: filters.person,
       pgmgb: filters.pgmgb,
       appnm: information.appnm,
@@ -531,8 +537,8 @@ const KendoWindow = ({
 
   const [ParaData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     person: "",
     pgmgb: "",
     appnm: "",
@@ -1183,7 +1189,7 @@ const KendoWindow = ({
       appline: "",
       appseq: ++seq,
       arbitragb: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       pgmgb: pgmgb,
       postcd: "",
       recdt: convertDateToStr(new Date()),
@@ -1221,7 +1227,7 @@ const KendoWindow = ({
       appline: "",
       appseq: ++seq,
       arbitragb: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       pgmgb: pgmgb,
       postcd: "",
       recdt: convertDateToStr(new Date()),
@@ -1342,7 +1348,7 @@ const KendoWindow = ({
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files == null) return false;
-    setLoading(true)
+    setLoading(true);
 
     let newAttachmentNumber = "";
     const promises = [];
@@ -1375,7 +1381,7 @@ const KendoWindow = ({
         fetchAttdatnumGrid();
       }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const uploadFile = async (files: File, newAttachmentNumber?: string) => {

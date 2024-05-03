@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -65,9 +68,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -93,6 +93,7 @@ const SA_A2300: React.FC = () => {
   let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -154,9 +155,8 @@ const SA_A2300: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
           ?.valueCode,
         cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
@@ -320,7 +320,7 @@ const SA_A2300: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     custcd: "",
@@ -370,7 +370,7 @@ const SA_A2300: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_recdt": paraDataDeleted.recdt,
       "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",

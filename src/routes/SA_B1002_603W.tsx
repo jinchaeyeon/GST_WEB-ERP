@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -51,31 +52,34 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
+import { useLocation } from "react-router-dom";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1002_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { useHistory, useLocation } from "react-router-dom";
 
 const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
-const numberField = ["totamt" , "finalquowonamt",
-"quorev",
-"quounp",
-"margin",
-"discount",
-"itemcnt",
-"designcnt",
-"marginamt",
-"discountamt",];
+const numberField = [
+  "totamt",
+  "finalquowonamt",
+  "quorev",
+  "quounp",
+  "margin",
+  "discount",
+  "itemcnt",
+  "designcnt",
+  "marginamt",
+  "discountamt",
+];
 
 const SA_B1002_603W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-    UseCustomOption("SA_B1002_603W", setCustomOptionData);
+  UseCustomOption("SA_B1002_603W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B1002_603W", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -101,7 +105,6 @@ const SA_B1002_603W: React.FC = () => {
 
   const location = useLocation();
 
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -115,16 +118,14 @@ const SA_B1002_603W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         materialtype: defaultOption.find(
-        (item: any) => item.id == "materialtype"
+          (item: any) => item.id == "materialtype"
         )?.valueCode,
         quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
-        ?.valueCode,
-        contractyn: defaultOption.find(
-        (item: any) => item.id == "contractyn"
-        )?.valueCode,
-        designyn: defaultOption.find(
-          (item: any) => item.id == "designyn"
-          )?.valueCode,
+          ?.valueCode,
+        contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+          ?.valueCode,
+        designyn: defaultOption.find((item: any) => item.id == "designyn")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -139,7 +140,7 @@ const SA_B1002_603W: React.FC = () => {
     }
   };
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-//   물질분류, 영업담당자
+  //   물질분류, 영업담당자
   UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
@@ -190,10 +191,10 @@ const SA_B1002_603W: React.FC = () => {
     },
     []
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   // 조회조건
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     quokey: "",
@@ -205,14 +206,13 @@ const SA_B1002_603W: React.FC = () => {
     extra_field2: "",
     chkperson: "",
     chkpersonnm: "",
-    designyn :"",
-    quocalyn :"",
+    designyn: "",
+    quocalyn: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
 
-  
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -238,13 +238,13 @@ const SA_B1002_603W: React.FC = () => {
         [name]: value,
         chkperson: value == "" ? "" : prev.chkperson,
       }));
-    }else if (name == "custprsnnm") {
+    } else if (name == "custprsnnm") {
       setFilters((prev) => ({
         ...prev,
         [name]: value,
         custprsnnm: value == "" ? "" : prev.custprsnnm,
       }));
-    }  else {
+    } else {
       setFilters((prev) => ({
         ...prev,
         [name]: value,
@@ -270,7 +270,6 @@ const SA_B1002_603W: React.FC = () => {
     user_id: string;
     user_name: string;
   }
-
 
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
@@ -337,7 +336,7 @@ const SA_B1002_603W: React.FC = () => {
         "@p_chkpersonnm": filters.chkpersonnm,
         "@p_designyn": filters.designyn,
         "@p_quocalyn": filters.quocalyn,
-        "@p_contractyn" : filters.contractyn
+        "@p_contractyn": filters.contractyn,
       },
     };
     try {
@@ -346,13 +345,13 @@ const SA_B1002_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess == true) {
-      console.log("시작",data);
+      console.log("시작", data);
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
         };
-      });      
+      });
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -393,7 +392,6 @@ const SA_B1002_603W: React.FC = () => {
     }
   }, [filters]);
 
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -404,7 +402,6 @@ const SA_B1002_603W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-    
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
@@ -583,14 +580,14 @@ const SA_B1002_603W: React.FC = () => {
             <tr>
               <th>물질분야</th>
               <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="materialtype"
-                      value={filters.materialtype}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="materialtype"
+                    value={filters.materialtype}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th>물질상세분야</th>
               <td>
@@ -603,21 +600,21 @@ const SA_B1002_603W: React.FC = () => {
               </td>
               <th>영업담당자</th>
               <td>
-                    <Input
-                      name="chkpersonnm"
-                      type="text"
-                      value={filters.chkpersonnm}
-                      onChange={filterInputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type="button"
-                        icon="more-horizontal"
-                        fillMode="flat"
-                        onClick={onPrsnnumWndClick2}
-                      />
-                    </ButtonInInput>
-                  </td>
+                <Input
+                  name="chkpersonnm"
+                  type="text"
+                  value={filters.chkpersonnm}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    type="button"
+                    icon="more-horizontal"
+                    fillMode="flat"
+                    onClick={onPrsnnumWndClick2}
+                  />
+                </ButtonInInput>
+              </td>
               <th>디자인입력여부</th>
               <td>
                 {customOptionData !== null && (

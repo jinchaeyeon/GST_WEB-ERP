@@ -9,7 +9,10 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
-import { convertDateToStr } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+} from "../CommonFunction";
 
 type barcode = {
   fxmngnum: string;
@@ -82,9 +85,10 @@ const CopyWindow = ({
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [barcodeFilters, setBarCodeFilters] = useState({
     pgSize: total,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     fxmngnum: "",
@@ -108,7 +112,7 @@ const CopyWindow = ({
     pageSize: barcodeFilters.pgSize,
     parameters: {
       "@p_work_type": "BARCODE",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_fxmngnum": barcodeFilters.fxmngnum,
       "@p_frdt": convertDateToStr(barcodeFilters.frdt),
       "@p_todt": convertDateToStr(barcodeFilters.todt),

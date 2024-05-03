@@ -33,6 +33,7 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
+  UseGetValueFromSessionItem,
   getQueryFromBizComponent,
 } from "../../CommonFunction";
 import {
@@ -249,7 +250,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -260,7 +261,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_prsnnum": filters.prsnnum,
         "@p_prsnnm": filters.prsnnm,
         "@p_rtryn": filters.rtryn,

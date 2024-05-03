@@ -37,12 +37,13 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -193,10 +194,10 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     frdt: new Date(),

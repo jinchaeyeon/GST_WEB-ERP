@@ -9,7 +9,11 @@ import { useState } from "react";
 import { ButtonContainer } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { convertDateToStr, dateformat4 } from "../../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+  dateformat4,
+} from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -54,6 +58,7 @@ const KendoWindow = ({
       alert("변경 등원일을 선택해주세요.");
     }
   };
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [adjnumber, setAdjnumber] = useState<number>(0);
   const [date, setDate] = useState<Date | null>(null);
   const filterInputChange = async (event: CalendarChangeEvent) => {
@@ -69,7 +74,7 @@ const KendoWindow = ({
             pageSize: 100,
             parameters: {
               "@p_work_type": "CAPACITY",
-              "@p_orgdiv": "01",
+              "@p_orgdiv": sessionOrgdiv,
               "@p_custcd": data.custcd,
               "@p_adjdt": convertDateToStr(event.value),
             },

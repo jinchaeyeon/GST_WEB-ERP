@@ -41,6 +41,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -175,7 +176,8 @@ const CopyWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -188,7 +190,7 @@ const CopyWindow = ({
         cboLocation:
           defaultOption.find((item: any) => item.id == "cboLocation")
             ?.valueCode == ""
-            ? "01"
+            ? sessionLocation
             : defaultOption.find((item: any) => item.id == "cboLocation")
                 ?.valueCode,
         cboPerson:
@@ -377,10 +379,10 @@ const CopyWindow = ({
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: "",
     seq1: 0,
-    cboLocation: "01",
+    cboLocation: sessionLocation,
     outdt: new Date(),
     cboPerson: "admin",
     custcd: "",
@@ -1081,10 +1083,10 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: "",
     seq1: 0,
-    cboLocation: "01",
+    cboLocation: sessionLocation,
     outdt: null,
     cboPerson: "admin",
     custcd: "",
@@ -1245,10 +1247,10 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         recdt: "",
         seq1: 0,
-        cboLocation: "01",
+        cboLocation: sessionLocation,
         outdt: null,
         cboPerson: "admin",
         custcd: "",

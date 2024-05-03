@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
-import { dateformat3 } from "../CommonFunction";
+import { UseGetValueFromSessionItem, dateformat3 } from "../CommonFunction";
 
 const AbsenceRequest = (data: any) => {
   const processApi = useApi();
@@ -12,7 +12,7 @@ const AbsenceRequest = (data: any) => {
       fetchMainData(data.data);
     }
   }, [data]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchMainData = async (para: any) => {
     let data: any;
@@ -23,7 +23,7 @@ const AbsenceRequest = (data: any) => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "W",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_key1": para.ref_key == undefined ? "" : para.ref_key.split("-")[0],
         "@p_key2": para.ref_key == undefined ? "" : para.ref_key.split("-")[1],
       },

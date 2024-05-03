@@ -39,6 +39,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   chkScrollHandler,
   convertDateToStr,
@@ -367,13 +368,13 @@ const CopyWindow = ({
       itemnm: data.itemnm,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const processApi = useApi();
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dtgb: "",
     frdt: new Date(),
     todt: new Date(),
@@ -404,7 +405,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_dtgb": filters.dtgb,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),

@@ -210,10 +210,10 @@ const CopyWindow = ({
       }));
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     recdt: "",
     seq1: "",
@@ -333,7 +333,7 @@ const CopyWindow = ({
     importnum: "",
     itemnm: "",
     location: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     position: "",
     rate: 0,
     recdt: new Date(),
@@ -886,7 +886,7 @@ const CopyWindow = ({
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: "",
     seq1: 0,
     coddt: "",

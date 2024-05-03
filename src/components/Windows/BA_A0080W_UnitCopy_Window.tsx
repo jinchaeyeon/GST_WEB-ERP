@@ -289,6 +289,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   };
 
   let gridRef: any = useRef(null);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -301,7 +302,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_unpitem": filters.unpitem,
         "@p_unpitem2": filters.unpitem2,
         "@p_recdt": convertDateToStr(filters.recdt),
@@ -636,7 +637,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
 
   const [paraData, setParaData] = useState({
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     unpitem: "",
     itemcd_s: "",
     unp_s: "",
@@ -679,7 +680,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       resetAllGrid();
       setParaData({
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         unpitem: filters.unpitem2,
         itemcd_s: "",
         unp_s: "",

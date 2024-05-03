@@ -14,6 +14,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat2,
   getQueryFromBizComponent,
@@ -114,7 +115,7 @@ const PR_B1103W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001",
@@ -162,7 +163,7 @@ const PR_B1103W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     option: "I",

@@ -196,7 +196,7 @@ const SA_A1001_603W: React.FC = () => {
 
   const history = useHistory();
   const location = useLocation();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   useEffect(() => {
     if (customOptionData !== null) {
       const queryParams = new URLSearchParams(location.search);
@@ -392,7 +392,7 @@ const SA_A1001_603W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",
@@ -543,7 +543,7 @@ const SA_A1001_603W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_quonum": filters.quonum,
@@ -673,7 +673,7 @@ const SA_A1001_603W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_quonum": filters2.quonum,
@@ -1044,7 +1044,7 @@ const SA_A1001_603W: React.FC = () => {
 
     setParaData({
       workType: "CAL",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: information.quonum,
       quorev: information.quorev,
       quoseq_s: dataArr.quoseq_s.join("|"),
@@ -1136,7 +1136,7 @@ const SA_A1001_603W: React.FC = () => {
 
     setParaData({
       workType: "SALTRN",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: information.quonum,
       quorev: information.quorev,
       quoseq_s: dataArr.quoseq_s.join("|"),
@@ -1213,7 +1213,7 @@ const SA_A1001_603W: React.FC = () => {
 
     setParaData({
       workType: "U",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: information.quonum,
       quorev: information.quorev,
       quoseq_s: dataArr.quoseq_s.join("|"),
@@ -1229,7 +1229,7 @@ const SA_A1001_603W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     quonum: "",
     quorev: "",
     quoseq_s: "",
@@ -1297,7 +1297,7 @@ const SA_A1001_603W: React.FC = () => {
       }));
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         quonum: "",
         quorev: "",
         quoseq_s: "",

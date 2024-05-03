@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -166,10 +167,10 @@ const SA_B1101_603W: React.FC = () => {
     },
     []
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   // 조회조건
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     quokey: "",

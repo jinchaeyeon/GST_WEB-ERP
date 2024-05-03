@@ -37,6 +37,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseParaPc,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -249,11 +250,11 @@ const KendoWindow = ({
   const [selecteddetailState3, setSelectedDetailState3] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "COPY",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",
@@ -266,7 +267,7 @@ const KendoWindow = ({
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "PASTE",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",
@@ -279,7 +280,7 @@ const KendoWindow = ({
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     workType: "BOM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",

@@ -5,7 +5,11 @@ import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
-import { convertDateToStr, numberWithCommas } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+  numberWithCommas,
+} from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 
 const ReplaceTaxReport = (data?: any) => {
@@ -18,10 +22,10 @@ const ReplaceTaxReport = (data?: any) => {
   );
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     acntdt: new Date(),
     position: "",

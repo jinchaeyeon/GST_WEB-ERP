@@ -12,6 +12,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat2,
   getQueryFromBizComponent,
@@ -172,10 +173,10 @@ const PR_B1104W: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: 20,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     planno: "",

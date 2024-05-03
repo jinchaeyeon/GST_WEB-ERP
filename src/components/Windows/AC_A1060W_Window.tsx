@@ -405,11 +405,13 @@ const CopyWindow = ({
   const onClose = () => {
     setVisible(false);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+  const sessionPosition = UseGetValueFromSessionItem("position");
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    location: "01",
-    position: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
+    position: sessionPosition,
     outkey_s: "",
     wonchgrat: 0,
     isSearch: false,
@@ -553,7 +555,7 @@ const CopyWindow = ({
       pageSize: PAGE_SIZE,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_position": filters.position,
         "@p_outkey_s": filters.outkey_s,
@@ -676,7 +678,7 @@ const CopyWindow = ({
       location: "",
       mngitemcd1: "",
       notenum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       pubbank: "",
       pubdt: "99991231",
       pubperson: "",
@@ -1033,7 +1035,7 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     custcd: "",
@@ -1124,7 +1126,7 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         position: "",
         custcd: "",

@@ -24,7 +24,10 @@ import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { Iparameters } from "../../../store/types";
-import { UseBizComponent } from "../../CommonFunction";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 interface IMng {
   mngitemcd1: string;
@@ -167,7 +170,7 @@ const StandardWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -178,7 +181,7 @@ const StandardWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_mngitemcd": filters.mngitemcd,
         "@p_sub_code": filters.sub_code,
         "@p_code_name": filters.code_name,

@@ -194,12 +194,13 @@ const CopyWindow = ({
   const onClose = () => {
     setVisible(false);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     stopnum: "",
     stopcd: "",
     strtime: new Date(),
@@ -224,7 +225,7 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         workType: workType,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: data.location,
         stopnum: data.stopnum,
         strtime: toDate2(data.strtime),
@@ -243,7 +244,7 @@ const CopyWindow = ({
     setParaData((prev) => ({
       ...prev,
       workType: workType,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: filters.location,
       stopnum: filters.stopnum,
       strtime: filters.strtime,
@@ -258,7 +259,7 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     stopnum: "",
     strtime: new Date(),
@@ -275,7 +276,7 @@ const CopyWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_stopnum": ParaData.stopnum,
       "@p_stopcd": ParaData.stopcd,
@@ -307,7 +308,7 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         stopnum: "",
         strtime: new Date(),

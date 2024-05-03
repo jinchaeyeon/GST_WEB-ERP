@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -66,9 +69,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A5001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -399,11 +399,11 @@ const SA_A5001W: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     outdt: new Date(),
     outdt2: new Date(),
@@ -1510,7 +1510,9 @@ const SA_A5001W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
+              <GridContainer
+                style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+              >
                 <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
                 </GridTitleContainer>

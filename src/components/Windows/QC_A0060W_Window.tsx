@@ -43,6 +43,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -328,7 +329,8 @@ const CopyWindow = ({
     pgNum: 1,
     isSearch: true,
   });
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -340,7 +342,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_mngnum": filters.mngnum,
         "@p_itemcd": filters.itemcd,
@@ -736,8 +738,8 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     stdnum: "",
     stdrev: 0,
@@ -834,8 +836,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         stdnum: "",
         stdrev: 0,

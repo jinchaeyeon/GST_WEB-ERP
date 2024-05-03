@@ -645,10 +645,10 @@ const CopyWindow = ({
   const onDetailClick = () => {
     setDetailWindowVisible(true);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     indt: new Date(),
     location: "",
     position: "",

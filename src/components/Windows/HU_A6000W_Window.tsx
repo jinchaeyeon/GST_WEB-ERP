@@ -194,7 +194,8 @@ const CopyWindow = ({
       setListData(rows);
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [information, setInformation] = useState<{ [name: string]: any }>({
     abilcd: "",
     anlslry: 0,
@@ -215,7 +216,7 @@ const CopyWindow = ({
     hmzipcode: "",
     insuzon: "",
     koraddr: "",
-    location: "01",
+    location: sessionLocation,
     mailid: "",
     medamt: 0,
     medamtdiv: "",
@@ -223,7 +224,7 @@ const CopyWindow = ({
     medrat2: 0,
     monpay: 0,
     nationcd: "KR",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     overtimepay: 0,
     paycd: "",
     paygrad: "",
@@ -311,9 +312,8 @@ const CopyWindow = ({
             ?.valueCode,
           paycd: defaultOption.find((item: any) => item.id == "paycd")
             ?.valueCode,
-          payprovflg: defaultOption.find(
-            (item: any) => item.id == "payprovflg"
-          )?.valueCode,
+          payprovflg: defaultOption.find((item: any) => item.id == "payprovflg")
+            ?.valueCode,
           payprovyn: defaultOption.find((item: any) => item.id == "payprovyn")
             ?.valueCode,
           postcd: defaultOption.find((item: any) => item.id == "postcd")
@@ -336,7 +336,7 @@ const CopyWindow = ({
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     prsnnm: "",
     rtryn: "T",
@@ -449,7 +449,7 @@ const CopyWindow = ({
           hmzipcode: "",
           insuzon: "",
           koraddr: "",
-          location: "01",
+          location: sessionLocation,
           mailid: "",
           medamt: 0,
           medamtdiv: "",
@@ -457,7 +457,7 @@ const CopyWindow = ({
           medrat2: 0,
           monpay: 0,
           nationcd: "KR",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           overtimepay: 0,
           paycd: "",
           paygrad: "",
@@ -517,7 +517,7 @@ const CopyWindow = ({
     if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: data.prsnnum,
         prsnnm: "",
         rtryn: "T",
@@ -561,7 +561,7 @@ const CopyWindow = ({
         setParaData((prev) => ({
           ...prev,
           work_type: workType,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           prsnnum: information.prsnnum,
           location: information.location,
           prsnnm: information.prsnnm,
@@ -636,7 +636,7 @@ const CopyWindow = ({
 
   const [ParaData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     location: "",
     prsnnm: "",
@@ -759,7 +759,7 @@ const CopyWindow = ({
       }
       setParaData({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         location: "",
         prsnnm: "",

@@ -333,12 +333,12 @@ const CopyWindow = ({
       custnm: data.custnm,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: location,
     dtgb: "",
     frdt: new Date(),

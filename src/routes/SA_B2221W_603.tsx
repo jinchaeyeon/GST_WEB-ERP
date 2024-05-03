@@ -38,10 +38,9 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
-  GridTitleContainer,
   Title,
   TitleContainer,
-  WebErpcolorList,
+  WebErpcolorList
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -53,6 +52,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -186,7 +186,7 @@ const SA_B2221: React.FC = () => {
           ?.valueCode,
         rdoAmtgb: defaultOption.find((item: any) => item.id == "rdoAmtgb")
           ?.valueCode,
-          itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
           ?.valueCode,
       }));
     }
@@ -278,11 +278,12 @@ const SA_B2221: React.FC = () => {
 
   const initFrdt = new Date();
   initFrdt.setMonth(initFrdt.getMonth() - 2);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     yyyy: new Date(),
     mm: "",
     rdoAmtunit: "A",

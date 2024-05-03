@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -62,9 +65,6 @@ import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import "swiper/css";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -102,6 +102,7 @@ const SA_B2000: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   let deviceWidth = window.innerWidth;
@@ -173,9 +174,8 @@ const SA_B2000: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
         cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
           ?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
@@ -389,7 +389,7 @@ const SA_B2000: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     custcd: "",
@@ -1444,7 +1444,9 @@ const SA_B2000: React.FC = () => {
                     >
                       <GridColumn cell={CommandCell} width="50px" />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList"
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn

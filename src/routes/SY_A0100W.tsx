@@ -232,13 +232,14 @@ const App: React.FC = () => {
       [name]: value ? "Y" : "N",
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgNum: 1,
     work_type: "ENTRY",
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     yyyymm: new Date(),
     find_row_value: "",
     isSearch: true,

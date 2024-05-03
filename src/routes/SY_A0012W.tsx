@@ -730,12 +730,12 @@ const SY_A0120: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    cboOrgdiv: "01",
+    cboOrgdiv: sessionOrgdiv,
     cboLocation: "",
     dptcd: "",
     lang_id: "",
@@ -1049,7 +1049,7 @@ const SY_A0120: React.FC = () => {
       memo: "",
       mobile_no: "",
       opengb: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       password: "",
       password_confirm: "",
       position: "",
@@ -1306,7 +1306,7 @@ const SY_A0120: React.FC = () => {
             "@p_memo": memo,
             "@p_ip_check_yn":
               ip_check_yn == "Y" || ip_check_yn == true ? "Y" : "N",
-            "@p_orgdiv": "01",
+            "@p_orgdiv": sessionOrgdiv,
             "@p_location": location,
             "@p_dptcd": dptcd,
             "@p_postcd": postcd,

@@ -36,6 +36,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   dateformat2,
   getQueryFromBizComponent,
@@ -103,12 +104,14 @@ const SA_B1000W_603: React.FC = () => {
 
   const setLoading = useSetRecoilState(isLoading);
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     project: "",
     custcd: "",
     custnm: "",

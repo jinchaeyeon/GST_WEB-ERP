@@ -6,14 +6,12 @@ import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { useRecoilState } from "recoil";
-import {
-  BottomContainer,
-  ButtonContainer
-} from "../../CommonStyled";
+import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import { UseGetValueFromSessionItem } from "../CommonFunction";
 
 type barcode = {
   barcode: string;
@@ -75,13 +73,14 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     prntqty_s: "",
   });
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const BarCodeParameters: Iparameters = {
     procedureName: "P_PR_A5000W_Q",
     pageNumber: 1,
     pageSize: barcodeFilters.pgSize,
     parameters: {
       "@p_work_type": "BARCODE",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": "",
       "@p_person": "",
       "@p_frdt": "",

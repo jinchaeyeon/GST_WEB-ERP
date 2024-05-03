@@ -13,11 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Checkbox,
-  Input,
-  TextArea
-} from "@progress/kendo-react-inputs";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
@@ -1628,11 +1624,12 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     reckey: "",
     outdt: new Date(),
     shipdt: null,
@@ -1854,7 +1851,7 @@ const CopyWindow = ({
         ordkey: "",
         ordnum: "",
         ordseq: 0,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outrecdt: "",
         outreckey: "",
         outseq1: 0,
@@ -1930,10 +1927,10 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     seq1: 0,
-    location: "01",
+    location: sessionLocation,
     outdt: new Date(),
     shipdt: new Date(),
     doexdiv: "A",
@@ -2043,10 +2040,10 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         recdt: new Date(),
         seq1: 0,
-        location: "01",
+        location: sessionLocation,
         outdt: new Date(),
         shipdt: new Date(),
         doexdiv: "A",

@@ -23,194 +23,271 @@ import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContainerDDGD";
-import AC_A0000W from "./routes/AC_A0000W";
-import AC_A0020W from "./routes/AC_A0020W";
-import AC_A0030W from "./routes/AC_A0030W";
-import AC_A0070W from "./routes/AC_A0070W";
-import AC_A1000W from "./routes/AC_A1000W";
-import AC_B1100W from "./routes/AC_B1100W";
-import AC_B1280W from "./routes/AC_B1280W";
-import AC_B1300W from "./routes/AC_B1300W";
-import AC_B5000W from "./routes/AC_B5000W";
-import AC_B5080W from "./routes/AC_B5080W";
-import AC_B6060W from "./routes/AC_B6060W";
-import AC_B8030W from "./routes/AC_B8030W";
-import BA_A0020W from "./routes/BA_A0020W";
-import BA_A0020W_603 from "./routes/BA_A0020W_603";
-import BA_A0040W from "./routes/BA_A0040W";
-import BA_A0041W from "./routes/BA_A0041W";
-import BA_A0050W from "./routes/BA_A0050W";
-import BA_A0070W from "./routes/BA_A0070W";
-import BA_A0080W from "./routes/BA_A0080W";
-import BA_A0100W from "./routes/BA_A0100W";
-import BA_B0080W from "./routes/BA_B0080W";
-import CHAT_A0001W from "./routes/CHAT_A0001W";
-import CHAT_A0002W from "./routes/CHAT_A0002W";
-import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
-import CM_A0000W from "./routes/CM_A0000W";
-import CM_A1000W from "./routes/CM_A1000W";
-import CM_A1600W from "./routes/CM_A1600W";
-import CM_A1710W from "./routes/CM_A1710W";
-import CM_A2000W from "./routes/CM_A2000W";
-import CM_A3000W from "./routes/CM_A3000W";
-import CM_A4100W from "./routes/CM_A4100W";
-import CM_A8000W from "./routes/CM_A8000W";
-import CM_A8210W from "./routes/CM_A8210W";
-import CM_A8250W from "./routes/CM_A8250W";
-import CM_B1000W from "./routes/CM_B1000W";
-import CM_B1101W from "./routes/CM_B1101W";
-import CM_B8100W from "./routes/CM_B8100W";
-import CR_A0010W from "./routes/CR_A0010W";
-import CR_A0020W from "./routes/CR_A0020W";
-import CR_A0040W from "./routes/CR_A0040W";
-import CR_A1001W from "./routes/CR_A1001W";
-import CR_A1100W from "./routes/CR_A1100W";
-import CR_A1101W from "./routes/CR_A1101W";
-import CT_A0111W from "./routes/CT_A0111W";
-import EA_A1000W from "./routes/EA_A1000W";
-import EA_A2000W from "./routes/EA_A2000W";
-import GANTT from "./routes/GANTT";
-import HU_A1000W from "./routes/HU_A1000W";
-import HU_A2070W from "./routes/HU_A2070W";
-import HU_A2100W from "./routes/HU_A2100W";
-import HU_A2140W from "./routes/HU_A2140W";
-import HU_A3020W from "./routes/HU_A3020W";
-import HU_A4100W from "./routes/HU_A4100W";
-import HU_A5020W from "./routes/HU_A5020W";
-import HU_B1020W from "./routes/HU_B1020W";
-import HU_B2100W from "./routes/HU_B2100W";
-import HU_B3140W from "./routes/HU_B3140W";
-import HU_B3160W from "./routes/HU_B3160W";
-import HU_B4000W from "./routes/HU_B4000W";
-import HU_B4001W from "./routes/HU_B4001W";
-import MA_A0010W from "./routes/MA_A0010W";
-import MA_A1000W from "./routes/MA_A1000W";
-import MA_A2000W from "./routes/MA_A2000W";
-import MA_A2300W from "./routes/MA_A2300W";
-import MA_A2400W from "./routes/MA_A2400W";
-import MA_A2500W from "./routes/MA_A2500W";
-import MA_A2700W from "./routes/MA_A2700W";
-import MA_A3000W from "./routes/MA_A3000W";
-import MA_A3300W from "./routes/MA_A3300W";
-import MA_A3400W from "./routes/MA_A3400W";
-import MA_A3500W from "./routes/MA_A3500W";
-import MA_A7000W from "./routes/MA_A7000W";
-import MA_A9001W from "./routes/MA_A9001W";
-import MA_B1000W_603 from "./routes/MA_B1000W_603";
-import MA_B2000W from "./routes/MA_B2000W";
-import MA_B2100W from "./routes/MA_B2100W";
-import MA_B2500W from "./routes/MA_B2500W";
-import MA_B2700W from "./routes/MA_B2700W";
-import MA_B2800W from "./routes/MA_B2800W";
-import MA_B3000W from "./routes/MA_B3000W";
-import MA_B3100W from "./routes/MA_B3100W";
-import MA_B7000W from "./routes/MA_B7000W";
-import MA_B7200W from "./routes/MA_B7200W";
-import MA_B7201W from "./routes/MA_B7201W";
-import NotFound from "./routes/NotFound";
-import PR_A0030W from "./routes/PR_A0030W";
-import PR_A0040W from "./routes/PR_A0040W";
-import PR_A0060W from "./routes/PR_A0060W";
-import PR_A1100W from "./routes/PR_A1100W";
-import PR_A3000W from "./routes/PR_A3000W";
-import PR_A4000W from "./routes/PR_A4000W";
-import PR_A4100W from "./routes/PR_A4100W";
-import PR_A5000W from "./routes/PR_A5000W";
-import PR_A6000W from "./routes/PR_A6000W";
-import PR_A7000W from "./routes/PR_A7000W";
-import PR_A9000W from "./routes/PR_A9000W";
-import PR_A9100W from "./routes/PR_A9100W";
-import PR_B0020W from "./routes/PR_B0020W";
-import PR_B1103W from "./routes/PR_B1103W";
-import PR_B1104W from "./routes/PR_B1104W";
-import PR_B3000W from "./routes/PR_B3000W";
-import PS_A0060_301W from "./routes/PS_A0060_301W";
-import QC_A0060W from "./routes/QC_A0060W";
-import QC_A0120W from "./routes/QC_A0120W";
-import QC_A2000W from "./routes/QC_A2000W";
-import QC_A2500W from "./routes/QC_A2500W";
-import QC_A2500_603W from "./routes/QC_A2500_603W";
-import QC_A3000W from "./routes/QC_A3000W";
-import QC_A6000W from "./routes/QC_A6000W";
-import QC_B0040W from "./routes/QC_B0040W";
-import QC_B0100W from "./routes/QC_B0100W";
-import QC_B0200W from "./routes/QC_B0200W";
-import QC_B0300W from "./routes/QC_B0300W";
-import SA_A1100_603W from "./routes/SA_A1100_603W";
-import SA_A2000W from "./routes/SA_A2000W";
-import SA_A2010W from "./routes/SA_A2010W";
-import SA_A2300W from "./routes/SA_A2300W";
-import SA_A3000W from "./routes/SA_A3000W";
-import SA_A5000W from "./routes/SA_A5000W";
-import SA_A5001W from "./routes/SA_A5001W";
-import SA_A5010W from "./routes/SA_A5010W";
 
 import axios from "axios";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import AC_B1240W from "./routes/AC_B1240W";
-import AC_B1340W from "./routes/AC_B1340W";
-import AC_B2080W from "./routes/AC_B2080W";
-import AC_B3000W from "./routes/AC_B3000W";
-import AC_B6020W from "./routes/AC_B6020W";
-import AC_B6080W from "./routes/AC_B6080W";
-import AC_B8040W from "./routes/AC_B8040W";
-import AC_B8080W from "./routes/AC_B8080W";
-import AC_B8100W from "./routes/AC_B8100W";
-import CM_A5000W from "./routes/CM_A5000W";
-import CM_A7000W from "./routes/CM_A7000W";
-import CR_A0000W from "./routes/CR_A0000W";
-import HU_B1040W from "./routes/HU_B1040W";
-import HU_B2120W from "./routes/HU_B2120W";
-import HU_B2140W from "./routes/HU_B2140W";
-import HU_B3180W from "./routes/HU_B3180W";
-import HU_B3220W from "./routes/HU_B3220W";
-import HU_B4010W from "./routes/HU_B4010W";
-import LoginCRM from "./routes/LoginCRM";
-import MA_A2310_606W from "./routes/MA_A2310_606W";
-import MA_A2410W from "./routes/MA_A2410W";
-import MainAdminCRM from "./routes/MainAdminCRM";
-import PR_A2000W from "./routes/PR_A2000W";
-import QC_B0030W from "./routes/QC_B0030W";
-import SA_A1000_603W from "./routes/SA_A1000_603W";
-import SA_A1001_603W from "./routes/SA_A1001_603W";
-import SA_A2300W_PDA from "./routes/SA_A2300W_PDA";
-import SA_B1000W_603 from "./routes/SA_B1000W_603";
-import SA_B2200W from "./routes/SA_B2200W";
-import SA_B2211W from "./routes/SA_B2211W";
-import SA_B2216W from "./routes/SA_B2216W";
-import SA_B2221W from "./routes/SA_B2221W";
-import SA_B2226W from "./routes/SA_B2226W";
-import SA_B2410W from "./routes/SA_B2410W";
-import SA_B2410_290W from "./routes/SA_B2410_290W";
-import SA_B3000W from "./routes/SA_B3000W";
-import SA_B3100W from "./routes/SA_B3100W";
-import SA_B3101W from "./routes/SA_B3101W";
-import SA_B3600W from "./routes/SA_B3600W";
-import SY_A0010W from "./routes/SY_A0010W";
-import SY_A0010_301W from "./routes/SY_A0010_301W";
-import SY_A0011W from "./routes/SY_A0011W";
-import SY_A0012W from "./routes/SY_A0012W";
-import SY_A0013W from "./routes/SY_A0013W";
-import SY_A0025W from "./routes/SY_A0025W";
-import SY_A0100W from "./routes/SY_A0100W";
-import SY_A0110W from "./routes/SY_A0110W";
-import SY_A0120W from "./routes/SY_A0120W";
-import SY_A0125W from "./routes/SY_A0125W";
-import SY_A0500W from "./routes/SY_A0500W";
-import TO_B0011W from "./routes/TO_B0011W";
+import { UseGetValueFromSessionItem } from "./components/CommonFunction";
+import { useApi } from "./hooks/api";
 import {
+  OSState,
   colors,
   isMobileMenuOpendState,
   linkState,
   loginResultState,
+  sessionItemState,
 } from "./store/atoms";
+import { Iparameters } from "./store/types";
+
+const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
+const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
+const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
+const AC_A0070W = lazy(() => import("./routes/AC_A0070W"));
+const AC_A0090W = lazy(() => import("./routes/AC_A0090W"));
+const AC_A1000W = lazy(() => import("./routes/AC_A1000W"));
+const AC_A1020W = lazy(() => import("./routes/AC_A1020W"));
+const AC_A1040W = lazy(() => import("./routes/AC_A1040W"));
+const AC_A1060W = lazy(() => import("./routes/AC_A1060W"));
+const AC_A1070W = lazy(() => import("./routes/AC_A1070W"));
+const AC_A1080W = lazy(() => import("./routes/AC_A1080W"));
+const AC_A1100W = lazy(() => import("./routes/AC_A1100W"));
+const AC_A1120W = lazy(() => import("./routes/AC_A1120W"));
+const AC_A3000W = lazy(() => import("./routes/AC_A3000W"));
+const AC_A3001W = lazy(() => import("./routes/AC_A3001W"));
+const AC_A3100W = lazy(() => import("./routes/AC_A3100W"));
+const AC_A5020W = lazy(() => import("./routes/AC_A5020W"));
+const AC_A6000W = lazy(() => import("./routes/AC_A6000W"));
+const AC_B1100W = lazy(() => import("./routes/AC_B1100W"));
+const AC_B1240W = lazy(() => import("./routes/AC_B1240W"));
+const AC_B1260W = lazy(() => import("./routes/AC_B1260W"));
+const AC_B1280W = lazy(() => import("./routes/AC_B1280W"));
+const AC_B1300W = lazy(() => import("./routes/AC_B1300W"));
+const AC_B1340W = lazy(() => import("./routes/AC_B1340W"));
+const AC_B2000W = lazy(() => import("./routes/AC_B2000W"));
+const AC_B2080W = lazy(() => import("./routes/AC_B2080W"));
+const AC_B3000W = lazy(() => import("./routes/AC_B3000W"));
+const AC_B5000W = lazy(() => import("./routes/AC_B5000W"));
+const AC_B5040W = lazy(() => import("./routes/AC_B5040W"));
+const AC_B5060W = lazy(() => import("./routes/AC_B5060W"));
+const AC_B5080W = lazy(() => import("./routes/AC_B5080W"));
+const AC_B6020W = lazy(() => import("./routes/AC_B6020W"));
+const AC_B6040W = lazy(() => import("./routes/AC_B6040W"));
+const AC_B6060W = lazy(() => import("./routes/AC_B6060W"));
+const AC_B6080W = lazy(() => import("./routes/AC_B6080W"));
+const AC_B8000W = lazy(() => import("./routes/AC_B8000W"));
+const AC_B8030W = lazy(() => import("./routes/AC_B8030W"));
+const AC_B8040W = lazy(() => import("./routes/AC_B8040W"));
+const AC_B8080W = lazy(() => import("./routes/AC_B8080W"));
+const AC_B8100W = lazy(() => import("./routes/AC_B8100W"));
+const BA_A0020W = lazy(() => import("./routes/BA_A0020W"));
+const BA_A0020W_603 = lazy(() => import("./routes/BA_A0020W_603"));
+const BA_A0021W_603 = lazy(() => import("./routes/BA_A0021W_603"));
+const BA_A0040W = lazy(() => import("./routes/BA_A0040W"));
+const BA_A0041W = lazy(() => import("./routes/BA_A0041W"));
+const BA_A0050W = lazy(() => import("./routes/BA_A0050W"));
+const BA_A0070W = lazy(() => import("./routes/BA_A0070W"));
+const BA_A0080W = lazy(() => import("./routes/BA_A0080W"));
+const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
+const BA_B0080W = lazy(() => import("./routes/BA_B0080W"));
+const CHAT_A0001W = lazy(() => import("./routes/CHAT_A0001W"));
+const CHAT_A0002W = lazy(() => import("./routes/CHAT_A0002W"));
+const CHAT_TEST_TRAVEL_BOT = lazy(
+  () => import("./routes/CHAT_TEST_TRAVEL_BOT")
+);
+const CM_A0000W = lazy(() => import("./routes/CM_A0000W"));
+const CM_A1000W = lazy(() => import("./routes/CM_A1000W"));
+const CM_A1000W_617 = lazy(() => import("./routes/CM_A1000W_617"));
+const CM_A1600W = lazy(() => import("./routes/CM_A1600W"));
+const CM_A1600W_603 = lazy(() => import("./routes/CM_A1600W_603"));
+const CM_A1710W = lazy(() => import("./routes/CM_A1710W"));
+const CM_A2000W = lazy(() => import("./routes/CM_A2000W"));
+const CM_A3000W = lazy(() => import("./routes/CM_A3000W"));
+const CM_A3100W = lazy(() => import("./routes/CM_A3100W"));
+const CM_A4100W = lazy(() => import("./routes/CM_A4100W"));
+const CM_A5000W = lazy(() => import("./routes/CM_A5000W"));
+const CM_A7000W = lazy(() => import("./routes/CM_A7000W"));
+const CM_A7010W = lazy(() => import("./routes/CM_A7010W"));
+const CM_A8000W = lazy(() => import("./routes/CM_A8000W"));
+const CM_A8210W = lazy(() => import("./routes/CM_A8210W"));
+const CM_A8250W = lazy(() => import("./routes/CM_A8250W"));
+const CM_B1000W = lazy(() => import("./routes/CM_B1000W"));
+const CM_B1101W = lazy(() => import("./routes/CM_B1101W"));
+const CM_B8100W = lazy(() => import("./routes/CM_B8100W"));
+const CR_A0000W = lazy(() => import("./routes/CR_A0000W"));
+const CR_A0010W = lazy(() => import("./routes/CR_A0010W"));
+const CR_A0020W = lazy(() => import("./routes/CR_A0020W"));
+const CR_A0040W = lazy(() => import("./routes/CR_A0040W"));
+const CR_A1001W = lazy(() => import("./routes/CR_A1001W"));
+const CR_A1100W = lazy(() => import("./routes/CR_A1100W"));
+const CR_A1101W = lazy(() => import("./routes/CR_A1101W"));
+const CT_A0111W = lazy(() => import("./routes/CT_A0111W"));
+const EA_A1000W = lazy(() => import("./routes/EA_A1000W"));
+const EA_A2000W = lazy(() => import("./routes/EA_A2000W"));
+const EA_A3000W = lazy(() => import("./routes/EA_A3000W"));
+const GANTT = lazy(() => import("./routes/GANTT"));
+const HU_A1000W = lazy(() => import("./routes/HU_A1000W"));
+const HU_A1060W = lazy(() => import("./routes/HU_A1060W"));
+const HU_A2000W = lazy(() => import("./routes/HU_A2000W"));
+const HU_A2070W = lazy(() => import("./routes/HU_A2070W"));
+const HU_A2100W = lazy(() => import("./routes/HU_A2100W"));
+const HU_A2140W = lazy(() => import("./routes/HU_A2140W"));
+const HU_A3020W = lazy(() => import("./routes/HU_A3020W"));
+const HU_A3040W = lazy(() => import("./routes/HU_A3040W"));
+const HU_A3060W = lazy(() => import("./routes/HU_A3060W"));
+const HU_A3080W = lazy(() => import("./routes/HU_A3080W"));
+const HU_A3200W = lazy(() => import("./routes/HU_A3200W"));
+const HU_A4000W = lazy(() => import("./routes/HU_A4000W"));
+const HU_A4100W = lazy(() => import("./routes/HU_A4100W"));
+const HU_A4110W = lazy(() => import("./routes/HU_A4110W"));
+const HU_A5020W = lazy(() => import("./routes/HU_A5020W"));
+const HU_A6000W = lazy(() => import("./routes/HU_A6000W"));
+const HU_A6020W = lazy(() => import("./routes/HU_A6020W"));
+const HU_B1020W = lazy(() => import("./routes/HU_B1020W"));
+const HU_B1040W = lazy(() => import("./routes/HU_B1040W"));
+const HU_B2100W = lazy(() => import("./routes/HU_B2100W"));
+const HU_B2120W = lazy(() => import("./routes/HU_B2120W"));
+const HU_B2140W = lazy(() => import("./routes/HU_B2140W"));
+const HU_B3120W = lazy(() => import("./routes/HU_B3120W"));
+const HU_B3140W = lazy(() => import("./routes/HU_B3140W"));
+const HU_B3160W = lazy(() => import("./routes/HU_B3160W"));
+const HU_B3180W = lazy(() => import("./routes/HU_B3180W"));
+const HU_B3220W = lazy(() => import("./routes/HU_B3220W"));
+const HU_B4000W = lazy(() => import("./routes/HU_B4000W"));
+const HU_B4001W = lazy(() => import("./routes/HU_B4001W"));
+const HU_B4010W = lazy(() => import("./routes/HU_B4010W"));
+const MA_A0010W = lazy(() => import("./routes/MA_A0010W"));
+const MA_A1000W = lazy(() => import("./routes/MA_A1000W"));
+const MA_A2000W = lazy(() => import("./routes/MA_A2000W"));
+const MA_A2300W = lazy(() => import("./routes/MA_A2300W"));
+const MA_A2300_615_PDAW = lazy(() => import("./routes/MA_A2300_615_PDAW"));
+const MA_A2310_606W = lazy(() => import("./routes/MA_A2310_606W"));
+const MA_A2400W = lazy(() => import("./routes/MA_A2400W"));
+const MA_A2410W = lazy(() => import("./routes/MA_A2410W"));
+const MA_A2500W = lazy(() => import("./routes/MA_A2500W"));
+const MA_A2700W = lazy(() => import("./routes/MA_A2700W"));
+const MA_A3000W = lazy(() => import("./routes/MA_A3000W"));
+const MA_A3300W = lazy(() => import("./routes/MA_A3300W"));
+const MA_A3300W_dajeong = lazy(() => import("./routes/MA_A3300W_dajeong"));
+const MA_A3300W_mihyeon = lazy(() => import("./routes/MA_A3300W_mihyeon"));
+const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
+const MA_A3400_606W = lazy(() => import("./routes/MA_A3400_606W"));
+const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
+const MA_A3500W_615 = lazy(() => import("./routes/MA_A3500W_615"));
+const MA_A3600W = lazy(() => import("./routes/MA_A3600W"));
+const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
+const MA_A8000W = lazy(() => import("./routes/MA_A8000W"));
+const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
+const MA_B1000W_603 = lazy(() => import("./routes/MA_B1000W_603"));
+const MA_B2000W = lazy(() => import("./routes/MA_B2000W"));
+const MA_B2100W = lazy(() => import("./routes/MA_B2100W"));
+const MA_B2500W = lazy(() => import("./routes/MA_B2500W"));
+const MA_B2700W = lazy(() => import("./routes/MA_B2700W"));
+const MA_B2800W = lazy(() => import("./routes/MA_B2800W"));
+const MA_B3000W = lazy(() => import("./routes/MA_B3000W"));
+const MA_B3100W = lazy(() => import("./routes/MA_B3100W"));
+const MA_B7000W = lazy(() => import("./routes/MA_B7000W"));
+const MA_B7000W_dajeong = lazy(() => import("./routes/MA_B7000W_dajeong"));
+const MA_B7000W_mihyeon = lazy(() => import("./routes/MA_B7000W_mihyeon"));
+const MA_B7000_606W = lazy(() => import("./routes/MA_B7000_606W"));
+const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
+const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
+const NotFound = lazy(() => import("./routes/NotFound"));
+const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
+const PR_A0040W = lazy(() => import("./routes/PR_A0040W"));
+const PR_A0060W = lazy(() => import("./routes/PR_A0060W"));
+const PR_A1100W = lazy(() => import("./routes/PR_A1100W"));
+const PR_A2000W = lazy(() => import("./routes/PR_A2000W"));
+const PR_A2200W = lazy(() => import("./routes/PR_A2200W"));
+const PR_A3000W = lazy(() => import("./routes/PR_A3000W"));
+const PR_A4000W = lazy(() => import("./routes/PR_A4000W"));
+const PR_A4100W = lazy(() => import("./routes/PR_A4100W"));
+const PR_A5000W = lazy(() => import("./routes/PR_A5000W"));
+const PR_A6000W = lazy(() => import("./routes/PR_A6000W"));
+const PR_A7000W = lazy(() => import("./routes/PR_A7000W"));
+const PR_A9000W = lazy(() => import("./routes/PR_A9000W"));
+const PR_A9100W = lazy(() => import("./routes/PR_A9100W"));
+const PR_B0020W = lazy(() => import("./routes/PR_B0020W"));
+const PR_B1103W = lazy(() => import("./routes/PR_B1103W"));
+const PR_B1104W = lazy(() => import("./routes/PR_B1104W"));
+const PR_B3000W = lazy(() => import("./routes/PR_B3000W"));
+const PS_A0060_301W = lazy(() => import("./routes/PS_A0060_301W"));
+const QC_A0060W = lazy(() => import("./routes/QC_A0060W"));
+const QC_A0120W = lazy(() => import("./routes/QC_A0120W"));
+const QC_A2000W = lazy(() => import("./routes/QC_A2000W"));
+const QC_A2500W = lazy(() => import("./routes/QC_A2500W"));
+const QC_A2500_603W = lazy(() => import("./routes/QC_A2500_603W"));
+const QC_A3000W = lazy(() => import("./routes/QC_A3000W"));
+const QC_A6000W = lazy(() => import("./routes/QC_A6000W"));
+const QC_B0030W = lazy(() => import("./routes/QC_B0030W"));
+const QC_B0040W = lazy(() => import("./routes/QC_B0040W"));
+const QC_B0100W = lazy(() => import("./routes/QC_B0100W"));
+const QC_B0200W = lazy(() => import("./routes/QC_B0200W"));
+const QC_B0300W = lazy(() => import("./routes/QC_B0300W"));
+const QC_B9020_615W = lazy(() => import("./routes/QC_B9020_615W"));
+const SA_A1000_603W = lazy(() => import("./routes/SA_A1000_603W"));
+const SA_A1001_603W = lazy(() => import("./routes/SA_A1001_603W"));
+const SA_A1100_603W = lazy(() => import("./routes/SA_A1100_603W"));
+const SA_A1200_603W = lazy(() => import("./routes/SA_A1200_603W"));
+const SA_A2000W = lazy(() => import("./routes/SA_A2000W"));
+const SA_A2010W = lazy(() => import("./routes/SA_A2010W"));
+const SA_A2300W = lazy(() => import("./routes/SA_A2300W"));
+const SA_A2300W_PDA = lazy(() => import("./routes/SA_A2300W_PDA"));
+const SA_A3000W = lazy(() => import("./routes/SA_A3000W"));
+const SA_A5000W = lazy(() => import("./routes/SA_A5000W"));
+const SA_A5000W_615 = lazy(() => import("./routes/SA_A5000W_615"));
+const SA_A5001W = lazy(() => import("./routes/SA_A5001W"));
+const SA_A5010W = lazy(() => import("./routes/SA_A5010W"));
+const SA_A6000W = lazy(() => import("./routes/SA_A6000W"));
+const SA_A8000W = lazy(() => import("./routes/SA_A8000W"));
+const SA_B1000W_603 = lazy(() => import("./routes/SA_B1000W_603"));
+const SA_B1002_603W = lazy(() => import("./routes/SA_B1002_603W"));
+const SA_B1101_603W = lazy(() => import("./routes/SA_B1101_603W"));
+const SA_B2200W = lazy(() => import("./routes/SA_B2200W"));
+const SA_B2200W_603 = lazy(() => import("./routes/SA_B2200W_603"));
+const SA_B2201W_603 = lazy(() => import("./routes/SA_B2201W_603"));
+const SA_B2211W = lazy(() => import("./routes/SA_B2211W"));
+const SA_B2211_603W = lazy(() => import("./routes/SA_B2211_603W"));
+const SA_B2216W = lazy(() => import("./routes/SA_B2216W"));
+const SA_B2220W = lazy(() => import("./routes/SA_B2220W"));
+const SA_B2221W = lazy(() => import("./routes/SA_B2221W"));
+const SA_B2221W_603 = lazy(() => import("./routes/SA_B2221W_603"));
+const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
+const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
+const SA_B2228W = lazy(() => import("./routes/SA_B2228W"));
+const SA_B2229W = lazy(() => import("./routes/SA_B2229W"));
+const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
+const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
+const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
+const SA_B3100W = lazy(() => import("./routes/SA_B3100W"));
+const SA_B3101W = lazy(() => import("./routes/SA_B3101W"));
+const SA_B3600W = lazy(() => import("./routes/SA_B3600W"));
+const SY_A0009W = lazy(() => import("./routes/SY_A0009W"));
+const SY_A0010W = lazy(() => import("./routes/SY_A0010W"));
+const SY_A0010_301W = lazy(() => import("./routes/SY_A0010_301W"));
+const SY_A0011W = lazy(() => import("./routes/SY_A0011W"));
+const SY_A0012W = lazy(() => import("./routes/SY_A0012W"));
+const SY_A0013W = lazy(() => import("./routes/SY_A0013W"));
+const SY_A0025W = lazy(() => import("./routes/SY_A0025W"));
+const SY_A0060W = lazy(() => import("./routes/SY_A0060W"));
+const SY_A0100W = lazy(() => import("./routes/SY_A0100W"));
+const SY_A0110W = lazy(() => import("./routes/SY_A0110W"));
+const SY_A0120W = lazy(() => import("./routes/SY_A0120W"));
+const SY_A0125W = lazy(() => import("./routes/SY_A0125W"));
+const SY_A0500W = lazy(() => import("./routes/SY_A0500W"));
+const SY_B0060W = lazy(() => import("./routes/SY_B0060W"));
+const TO_B0011W = lazy(() => import("./routes/TO_B0011W"));
+const Login = lazy(() => import("./routes/Login"));
+const Main = lazy(() => import("./routes/Main"));
+const MainBIO = lazy(() => import("./routes/MainBIO"));
+const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
+const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
+const LoginCRM = lazy(() => import("./routes/LoginCRM"));
 
 load(
   likelySubtags,
@@ -326,6 +403,7 @@ const AppInner: React.FC = () => {
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
+  const [osstate, setOSState] = useRecoilState(OSState);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
     "#1976d2",
@@ -334,8 +412,73 @@ const AppInner: React.FC = () => {
   ]);
 
   useEffect(() => {
+    if (
+      /SmartTV/i.test(navigator.userAgent) ||
+      /SmartTV/i.test(navigator.platform)
+    ) {
+      setOSState(true);
+    } else {
+      setOSState(false);
+    }
+  }, [osstate]);
+
+  useEffect(() => {
     setThemeColor(color);
   }, [color]);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const token = localStorage.getItem("accessToken");
+  const userId = loginResult ? loginResult.userId : "";
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  useEffect(() => {
+    if (
+      token &&
+      userId != "" &&
+      (sessionUserId == "" || sessionUserId == null) &&
+      Link != "" &&
+      Link != undefined
+    )
+      fetchSessionItem();
+  }, [userId, sessionUserId, Link]);
+
+  let sessionOrgdiv = sessionItem.find(
+    (sessionItem) => sessionItem.code == "orgdiv"
+  )!.value;
+  let sessionLocation = sessionItem.find(
+    (sessionItem) => sessionItem.code == "location"
+  )!.value;
+
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
+  const processApi = useApi();
+  const fetchSessionItem = async () => {
+    let data;
+    try {
+      const para: Iparameters = {
+        procedureName: "sys_biz_configuration",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_user_id": userId,
+        },
+      };
+
+      data = await processApi<any>("procedure", para);
+
+      if (data.isSuccess == true) {
+        const rows = data.tables[0].Rows;
+        setSessionItem(
+          rows
+            .filter((item: any) => item.class == "Session")
+            .map((item: any) => ({
+              code: item.code,
+              value: item.value,
+            }))
+        );
+      }
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  };
 
   const theme = createTheme({
     palette: {

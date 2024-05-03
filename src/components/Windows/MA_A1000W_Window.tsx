@@ -59,6 +59,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -849,10 +850,11 @@ const CopyWindow = ({
     }));
   };
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     custcd: "",
@@ -1308,8 +1310,8 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     reqnum: "",
     reqrev: 0,
     custcd: "",
@@ -1355,7 +1357,7 @@ const CopyWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_reqnum": ParaData.reqnum,
       "@p_reqrev": ParaData.reqrev,
@@ -1424,8 +1426,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         reqnum: "",
         reqrev: 0,
         custcd: "",
@@ -1689,7 +1691,7 @@ const CopyWindow = ({
       itemnm: "",
       load_place: "",
       location: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       qty: 1,
       qtyunit: "",
       remark: "",

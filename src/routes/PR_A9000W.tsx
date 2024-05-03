@@ -58,7 +58,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -591,7 +591,8 @@ const PR_A9000W: React.FC = () => {
   const [editedField, setEditedField] = useState("");
   const [editIndex2, setEditIndex2] = useState<number | undefined>();
   const [editedField2, setEditedField2] = useState("");
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
@@ -1191,8 +1192,8 @@ const PR_A9000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     proccd: "",
@@ -1962,7 +1963,7 @@ const PR_A9000W: React.FC = () => {
       keycode: "",
       location: filters.location,
       lotnum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       orglot: "",
       pgmdiv: "",
       planno: "",
@@ -2015,7 +2016,7 @@ const PR_A9000W: React.FC = () => {
       len: 0,
       location: filters.location,
       lotnum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       orglot: "",
       pgmdiv: "",
       planno: "",
@@ -2240,7 +2241,7 @@ const PR_A9000W: React.FC = () => {
         parameters: {
           "@p_work_type": "ProdIn",
           "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_renum_s": dataArr.renum_s.join("|"),
           "@p_reseq_s": dataArr.reseq_s.join("|"),
           "@p_seq_s": dataArr.seq_s.join("|"),
@@ -2417,7 +2418,7 @@ const PR_A9000W: React.FC = () => {
         parameters: {
           "@p_work_type": "ProdOut",
           "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_renum_s": dataArr.renum_s.join("|"),
           "@p_reseq_s": dataArr.reseq_s.join("|"),
           "@p_seq_s": dataArr.seq_s.join("|"),
@@ -2497,7 +2498,7 @@ const PR_A9000W: React.FC = () => {
         len: 0,
         location: filters.location,
         lotnum: item.lotnum,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         orglot: item.orglot,
         pgmdiv: "",
         planno: item.planno,
@@ -2549,7 +2550,7 @@ const PR_A9000W: React.FC = () => {
         keycode: "",
         location: filters.location,
         lotnum: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         orglot: "",
         pgmdiv: "",
         planno: "",

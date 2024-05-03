@@ -24,6 +24,7 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import {
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -46,7 +47,7 @@ let targetRowIndex: null | number = null;
 
 const SY_A0110: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
 
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
@@ -77,12 +78,12 @@ const SY_A0110: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "list",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     type: "pgm",
     ref_code: "",
     frdt: new Date(),
@@ -359,10 +360,10 @@ const SY_A0110: React.FC = () => {
           fileName="사용자 이용 현황"
         >
           <GridTitleContainer>
-            {isMobile?null:<GridTitle>요약정보</GridTitle>}
+            {isMobile ? null : <GridTitle>요약정보</GridTitle>}
           </GridTitleContainer>
           <Grid
-            style={{  height: isMobile? `${deviceHeight * 0.76}px` :"81.6vh" }}
+            style={{ height: isMobile ? `${deviceHeight * 0.76}px` : "81.6vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

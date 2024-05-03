@@ -31,6 +31,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   setDefaultDate,
 } from "../CommonFunction";
@@ -169,7 +170,7 @@ const AC_A1000W_Note_Window = ({
     pgNum: 1,
     isSearch: true,
   });
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -179,7 +180,7 @@ const AC_A1000W_Note_Window = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_notenum": filters.notenum,
         "@p_notediv": filters.notediv,
         "@p_frdt": convertDateToStr(filters.frdt),

@@ -43,6 +43,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -340,7 +341,8 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
@@ -353,9 +355,9 @@ const CopyWindow = ({
     doexdiv: "",
     files: "",
     inexpdt: null,
-    location: "01",
+    location: sessionLocation,
     num: 0,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: "",
     purdt: new Date(),
     purnum: "",
@@ -657,8 +659,8 @@ const CopyWindow = ({
               doexdiv: filters.doexdiv,
               files: filters.files,
               inexpdt: filters.inexpdt,
-              location: "01",
-              orgdiv: "01",
+              location: sessionLocation,
+              orgdiv: sessionOrgdiv,
               person: filters.person,
               purdt: filters.purdt,
               pursts: filters.pursts,
@@ -792,8 +794,8 @@ const CopyWindow = ({
               doexdiv: filters.doexdiv,
               files: filters.files,
               inexpdt: filters.inexpdt,
-              location: "01",
-              orgdiv: "01",
+              location: sessionLocation,
+              orgdiv: sessionOrgdiv,
               person: filters.person,
               purdt: filters.purdt,
               pursts: filters.pursts,
@@ -837,8 +839,8 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     purnum: "",
     purdt: new Date(),
     pursts: "",
@@ -884,8 +886,8 @@ const CopyWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_purnum": ParaData.purnum,
       "@p_purdt": convertDateToStr(ParaData.purdt),
       "@p_pursts": ParaData.pursts,
@@ -954,8 +956,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         purnum: "",
         purdt: new Date(),
         pursts: "",

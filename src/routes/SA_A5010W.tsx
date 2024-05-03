@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -65,9 +68,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A5010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import "swiper/css";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -350,11 +350,11 @@ const SA_A5010W: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),

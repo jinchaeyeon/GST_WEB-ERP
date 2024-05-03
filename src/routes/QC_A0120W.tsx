@@ -44,6 +44,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -75,7 +76,8 @@ const QC_A0120: React.FC = () => {
   let gridRef: any = useRef(null);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -223,9 +225,9 @@ const QC_A0120: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: 200,
     work_type: "CHART",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     //div: "0",
-    location: "01",
+    location: sessionLocation,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
     cboProccd: "",
@@ -241,9 +243,9 @@ const QC_A0120: React.FC = () => {
   const [detailFilters1, setDetailFilters1] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DETAIL",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     div: "0",
-    location: "01",
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     proccd: "",

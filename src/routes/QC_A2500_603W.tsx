@@ -42,6 +42,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   UsePermissions,
@@ -51,7 +52,7 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -150,7 +151,7 @@ const BA_A0020_603: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         status: defaultOption.find((item: any) => item.id == "status")
           ?.valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -233,7 +234,8 @@ const BA_A0020_603: React.FC = () => {
     },
     []
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -418,8 +420,8 @@ const BA_A0020_603: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     ref_key: "",
     frdt: new Date(),
     todt: new Date(),
@@ -452,7 +454,7 @@ const BA_A0020_603: React.FC = () => {
 
   //조회조건 초기값
   const [Information, setInformation] = useState<{ [name: string]: any }>({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     ref_key: "",
     quotestnum: "",
     testnum: "",
@@ -912,7 +914,7 @@ const BA_A0020_603: React.FC = () => {
     );
 
     setInformation({
-      orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
+      orgdiv: data.orgdiv == undefined ? sessionOrgdiv : data.orgdiv,
       ref_key: data.quokey == undefined ? "" : data.quokey,
       quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
       testnum: data.testnum == undefined ? "" : data.testnum,
@@ -984,7 +986,7 @@ const BA_A0020_603: React.FC = () => {
 
     const newDataItem = {
       [COMMENT_DATA_ITEM_KEY]: ++temp,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       id: "",
       seq: 0,
       comment: "",
@@ -1014,7 +1016,7 @@ const BA_A0020_603: React.FC = () => {
 
     const newDataItem = {
       [COMMENT_DATA_ITEM_KEY2]: ++temp,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       id: "",
       seq: 0,
       comment: "",
@@ -1044,7 +1046,7 @@ const BA_A0020_603: React.FC = () => {
 
     const newDataItem = {
       [COMMENT_DATA_ITEM_KEY3]: ++temp,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       id: "",
       seq: 0,
       comment: "",
@@ -1267,8 +1269,8 @@ const BA_A0020_603: React.FC = () => {
 
       setParaData({
         workType: workType,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         datnum: Information.datnum,
         quokey: workType == "N" ? Information.ref_key : "",
         status: Information.status,
@@ -1305,8 +1307,8 @@ const BA_A0020_603: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     datnum: "",
     quokey: "",
     // ordnum: "",
@@ -1412,8 +1414,8 @@ const BA_A0020_603: React.FC = () => {
       }));
       setParaData({
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         datnum: "",
         quokey: "",
         status: "",
@@ -1635,8 +1637,8 @@ const BA_A0020_603: React.FC = () => {
 
       setParaData({
         workType: "D",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         datnum: selectRows.datnum,
         quokey: "",
         status: "",

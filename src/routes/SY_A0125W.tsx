@@ -19,9 +19,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   TreeList,
   TreeListColumnProps,
@@ -34,6 +31,9 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -129,7 +129,7 @@ const SY_A0125W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -329,10 +329,11 @@ const SY_A0125W: React.FC = () => {
     }));
   };
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [infomation, setInfomation] = useState({
     pgSize: PAGE_SIZE,
     workType: "U",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dptcd: "",
     dptnm: "",
     insert_form_id: "",
@@ -357,7 +358,7 @@ const SY_A0125W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dptcd: "",
     dptnm: "",
@@ -370,7 +371,7 @@ const SY_A0125W: React.FC = () => {
   const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "USERINFO",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dptcd: infomation.dptcd,
     dptnm: "",
     user_name: "",
@@ -454,7 +455,7 @@ const SY_A0125W: React.FC = () => {
             setInfomation({
               pgSize: PAGE_SIZE,
               workType: "U",
-              orgdiv: "01",
+              orgdiv: sessionOrgdiv,
               dptcd: selectedRow.dptcd,
               dptnm: selectedRow.dptnm,
               insert_form_id: selectedRow.insert_form_id,
@@ -490,7 +491,7 @@ const SY_A0125W: React.FC = () => {
             setInfomation({
               pgSize: PAGE_SIZE,
               workType: "U",
-              orgdiv: "01",
+              orgdiv: sessionOrgdiv,
               dptcd: rows[0].dptcd,
               dptnm: rows[0].dptnm,
               insert_form_id: rows[0].insert_form_id,
@@ -526,7 +527,7 @@ const SY_A0125W: React.FC = () => {
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "N",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           dptcd: "",
           dptnm: "",
           insert_form_id: "",
@@ -702,7 +703,7 @@ const SY_A0125W: React.FC = () => {
       setInfomation({
         pgSize: PAGE_SIZE,
         workType: "U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         dptcd: selectedRowData.dptcd,
         dptnm: selectedRowData.dptnm,
         insert_form_id: selectedRowData.insert_form_id,
@@ -799,7 +800,7 @@ const SY_A0125W: React.FC = () => {
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       dptcd: "",
       dptnm: "",
       insert_form_id: "",
@@ -1009,7 +1010,7 @@ const SY_A0125W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "UM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dptcd: infomation.dptcd,
     dptnm: infomation.dptnm,
     location: infomation.location,
@@ -1137,7 +1138,7 @@ const SY_A0125W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "UM",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       dptcd: infomation.dptcd,
       dptnm: infomation.dptnm,
       location: infomation.location,
@@ -1410,9 +1411,7 @@ const SY_A0125W: React.FC = () => {
                   이전
                 </Button>
               </div>
-              <GridContainer
-                style={{ width: `${deviceWidth - 30}px`}}
-              >
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
                 <GridTitleContainer>
                   <ButtonContainer>
                     <Button
@@ -1442,7 +1441,11 @@ const SY_A0125W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{ height: `${deviceHeight  * 0.75}px`, width: `${deviceWidth - 30}px`, overflow: "scroll", }}
+                  style={{
+                    height: `${deviceHeight * 0.75}px`,
+                    width: `${deviceWidth - 30}px`,
+                    overflow: "scroll",
+                  }}
                 >
                   <FormBox>
                     <tbody>

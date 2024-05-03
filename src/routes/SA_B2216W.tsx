@@ -10,6 +10,7 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   findMessage,
@@ -103,11 +104,11 @@ const SA_B2216W: React.FC = () => {
     }, []); // Empty array ensures that effect is only run on mount
     return windowSize;
   }
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     mm: new Date(),
     isSearch: true,
@@ -248,15 +249,15 @@ const SA_B2216W: React.FC = () => {
 
   useEffect(() => {
     if (filters.isSearch) {
-      if (filters.frdt != null) { 
-          setFilters((prev) => ({
-            ...prev,
-            isSearch: false,
-          }));
-          fetchMainGrid();
-        } else {
+      if (filters.frdt != null) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+        }));
+        fetchMainGrid();
+      } else {
         alert(findMessage(messagesData, "SA_B2216W_001"));
-      }       
+      }
       if (filters.mm != null) {
         setFilters((prev) => ({
           ...prev,
@@ -265,7 +266,7 @@ const SA_B2216W: React.FC = () => {
         fetchMainGrid();
       } else {
         alert(findMessage(messagesData, "SA_B2216W_002"));
-      }     
+      }
     }
   }, [filters]);
 

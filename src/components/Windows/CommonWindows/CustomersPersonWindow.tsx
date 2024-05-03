@@ -18,7 +18,7 @@ import {
   ButtonContainer,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -26,7 +26,8 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
-  getQueryFromBizComponent
+  UseGetValueFromSessionItem,
+  getQueryFromBizComponent,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -203,7 +204,7 @@ const KendoWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //요약정보 조회
   const fetchMainGrid = async (subfilters2: any) => {
     //if (!permissions?.view) return;
@@ -217,7 +218,7 @@ const KendoWindow = ({
       pageSize: subfilters2.pgSize,
       parameters: {
         "@p_work_type": subfilters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_useyn": subfilters2.useyn,
         "@p_custcd": subfilters2.custcd,
         "@p_custnm": subfilters2.custnm,

@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -240,11 +241,12 @@ const SA_B2410: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
     custcd: "",
@@ -261,7 +263,7 @@ const SA_B2410: React.FC = () => {
     itemlvl3: "",
     outuse: "",
     reckey: "",
-    cboLocation: "01",
+    cboLocation: sessionLocation,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,

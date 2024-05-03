@@ -46,6 +46,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   UsePermissions,
@@ -500,10 +501,11 @@ const SA_A6000W: React.FC = () => {
       };
     });
   };
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     user_id: "",
     user_name: "",
@@ -512,20 +514,20 @@ const SA_A6000W: React.FC = () => {
   });
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgNum: 1,
     isSearch: true,
   });
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgNum: 1,
     find_row_value: "",
     isSearch: true,
   });
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: "",
     pgNum: 1,
     isSearch: true,
@@ -1870,7 +1872,7 @@ const SA_A6000W: React.FC = () => {
 
   const [paraDataSaved, setParaDataSaved] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: "",
     rowstatus_s: "",
     targetnum_s: "",
@@ -1928,7 +1930,7 @@ const SA_A6000W: React.FC = () => {
       }
       setParaDataSaved({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         person: "",
         rowstatus_s: "",
         targetnum_s: "",
@@ -2021,7 +2023,7 @@ const SA_A6000W: React.FC = () => {
         amt: 0,
         conamt: 0,
         dptcd: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         person: "",
         rat: 0,
         user_name: "",

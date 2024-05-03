@@ -29,6 +29,7 @@ import { Iparameters } from "../../../store/types";
 import NumberCell from "../../Cells/NumberCell";
 import {
   UseBizComponent,
+  UseGetValueFromSessionItem,
   getQueryFromBizComponent,
 } from "../../CommonFunction";
 import {
@@ -162,12 +163,14 @@ const KendoWindow = ({
   const [selecteddetailState2, setSelectedDetailState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     pattern_id: "",
     pattern_name: "",
     proccd: "",
@@ -179,8 +182,8 @@ const KendoWindow = ({
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     pattern_id: "",
     pattern_name: "",
     proccd: "",
@@ -559,7 +562,7 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <GridContainerWrap >
+      <GridContainerWrap>
         <GridContainer width={`45%`}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>

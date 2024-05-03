@@ -9,7 +9,10 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
-import { convertDateToStr } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+} from "../CommonFunction";
 
 type barcode = {
   lotnum: string;
@@ -79,11 +82,13 @@ const CopyWindow = ({
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [barcodeFilters, setBarCodeFilters] = useState({
     pgSize: total,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyymm: new Date(),
-    location: "01",
+    location: sessionLocation,
     itemacnt: "",
     itemcd: "",
     itemnm: "",

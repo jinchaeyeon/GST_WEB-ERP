@@ -59,6 +59,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { Layout, Position } from "../components/DnD/Layout";
 import { LayoutSquare } from "../components/DnD/LayoutSquare";
 import { Piece } from "../components/DnD/Piece";
@@ -73,7 +74,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import FilterContainer from "../components/Containers/FilterContainer";
 
 export interface AppState {
   position: [number, number];
@@ -187,12 +187,12 @@ const SY_A0500W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "layout_list",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     pgNum: 1,
     find_row_value: "",
@@ -915,7 +915,7 @@ const SY_A0500W: React.FC = () => {
       layout_id: "",
       layout_key: "",
       layout_name: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       col_cnt: 5,
       row_cnt: 5,
     });
@@ -953,7 +953,7 @@ const SY_A0500W: React.FC = () => {
           last_update_time: null,
           layout_key: information.layout_id,
           menu_name: "",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           row_index: xy[0],
           seq: ++temp,
           update_pc: null,

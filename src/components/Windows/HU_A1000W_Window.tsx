@@ -67,6 +67,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
   dateformat,
@@ -2298,6 +2299,8 @@ const CopyWindow = ({
       editField={EDIT_FIELD}
     />
   );
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -2316,7 +2319,7 @@ const CopyWindow = ({
       form_id: "HU_A1000W",
       gradutype: "",
       job: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyn: false,
       perregnum: "",
       perregnum1: "",
@@ -2363,7 +2366,7 @@ const CopyWindow = ({
       form_id: "HU_A1000W",
       major: "",
       majorfield: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       remark: "",
       schdiv: "",
@@ -2402,7 +2405,7 @@ const CopyWindow = ({
       files: "",
       finyn: "",
       form_id: "HU_A1000W",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       qualgrad: "",
       qualkind: "",
@@ -2445,7 +2448,7 @@ const CopyWindow = ({
       frdt: "99991231",
       jobnm: "",
       ocptnm: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       postnm: "",
       prsnnum: "",
       remark: "",
@@ -2485,7 +2488,7 @@ const CopyWindow = ({
       enddt: "99991231",
       files: "",
       form_id: "HU_A1000W",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       remark: "",
       seq: 0,
@@ -2520,7 +2523,7 @@ const CopyWindow = ({
       contents: "",
       files: "",
       form_id: "HU_A1000W",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       reloffice: "",
       remark: "",
@@ -2564,7 +2567,7 @@ const CopyWindow = ({
       files: "",
       form_id: "HU_A1000",
       gubun: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       remark: "",
       seq: 0,
@@ -2601,7 +2604,7 @@ const CopyWindow = ({
       enddt: "99991231",
       files: "",
       form_id: "HU_A1000",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       score: "",
       seq: 0,
@@ -3643,10 +3646,10 @@ const CopyWindow = ({
   }, []);
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     prsnnum2: "",
-    location: "01",
+    location: sessionLocation,
     position: "",
     workplace: "",
     prsnnm: "",
@@ -3923,8 +3926,8 @@ const CopyWindow = ({
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU250T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -3938,8 +3941,8 @@ const CopyWindow = ({
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU251T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -3953,8 +3956,8 @@ const CopyWindow = ({
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU252T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -3968,8 +3971,8 @@ const CopyWindow = ({
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU254T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -3983,8 +3986,8 @@ const CopyWindow = ({
   const [filters5, setFilters5] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU253T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -3998,8 +4001,8 @@ const CopyWindow = ({
   const [filters6, setFilters6] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU255T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -4013,8 +4016,8 @@ const CopyWindow = ({
   const [filters7, setFilters7] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU256T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -4028,8 +4031,8 @@ const CopyWindow = ({
   const [filters8, setFilters8] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU257T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -4043,8 +4046,8 @@ const CopyWindow = ({
   const [filters9, setFilters9] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU258T",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -4259,7 +4262,7 @@ const CopyWindow = ({
           }
         }
         setInformation({
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           prsnnum: rows[0].prsnnum,
           prsnnum2: rows[0].prsnnum2,
           location: rows[0].location,
@@ -4396,10 +4399,10 @@ const CopyWindow = ({
         });
       } else {
         setInformation({
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           prsnnum: "",
           prsnnum2: "",
-          location: "01",
+          location: sessionLocation,
           position: "",
           workplace: "",
           prsnnm: "",
@@ -5114,8 +5117,8 @@ const CopyWindow = ({
     if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5125,8 +5128,8 @@ const CopyWindow = ({
       }));
       setFilters2((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5136,8 +5139,8 @@ const CopyWindow = ({
       }));
       setFilters3((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5147,8 +5150,8 @@ const CopyWindow = ({
       }));
       setFilters4((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5158,8 +5161,8 @@ const CopyWindow = ({
       }));
       setFilters5((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5169,8 +5172,8 @@ const CopyWindow = ({
       }));
       setFilters6((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5180,8 +5183,8 @@ const CopyWindow = ({
       }));
       setFilters7((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5191,8 +5194,8 @@ const CopyWindow = ({
       }));
       setFilters8((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5202,8 +5205,8 @@ const CopyWindow = ({
       }));
       setFilters9((prev) => ({
         ...prev,
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         prsnnum: data.prsnnum,
         prsnnm: "",
@@ -5233,7 +5236,7 @@ const CopyWindow = ({
           setParaData((prev) => ({
             ...prev,
             work_type: workType,
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             prsnnum: information.prsnnum,
             prsnnum2: information.prsnnum2,
             dptcd: information.dptcd,
@@ -5298,7 +5301,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         work_type: "DETAIL_U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         payyn:
           information.payyn == true
@@ -5436,7 +5439,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         work_type: "PERSON_U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         height: information.height,
         weight: information.weight,
@@ -5471,7 +5474,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         work_type: "ARMY_U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         armygb: information.armygb,
         armystartdt:
@@ -5666,7 +5669,7 @@ const CopyWindow = ({
 
       setParaData2({
         work_type: "HU251T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         hu251t_seq_s: dataArr.hu251t_seq_s.join("|"),
@@ -5775,7 +5778,7 @@ const CopyWindow = ({
 
       setParaData3({
         work_type: "HU252T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu252t_rowstatus_s: dataArr.hu252t_rowstatus_s.join("|"),
         hu252t_seq_s: dataArr.hu252t_seq_s.join("|"),
@@ -5862,7 +5865,7 @@ const CopyWindow = ({
 
       setParaData4({
         work_type: "HU254T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu254t_rowstatus_s: dataArr.hu254t_rowstatus_s.join("|"),
         hu254t_seq_s: dataArr.hu254t_seq_s.join("|"),
@@ -5963,7 +5966,7 @@ const CopyWindow = ({
 
       setParaData5({
         work_type: "HU253T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu253t_rowstatus_s: dataArr.hu253t_rowstatus_s.join("|"),
         hu253t_seq_s: dataArr.hu253t_seq_s.join("|"),
@@ -6076,7 +6079,7 @@ const CopyWindow = ({
 
       setParaData6({
         work_type: "HU255T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu255t_rowstatus_s: dataArr.hu255t_rowstatus_s.join("|"),
         hu255t_seq_s: dataArr.hu255t_seq_s.join("|"),
@@ -6158,7 +6161,7 @@ const CopyWindow = ({
 
       setParaData7({
         work_type: "HU256T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu256t_rowstatus_s: dataArr.hu256t_rowstatus_s.join("|"),
         hu256t_seq_s: dataArr.hu256t_seq_s.join("|"),
@@ -6253,7 +6256,7 @@ const CopyWindow = ({
 
       setParaData8({
         work_type: "HU257T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu257t_rowstatus_s: dataArr.hu257t_rowstatus_s.join("|"),
         hu257t_seq_s: dataArr.hu257t_seq_s.join("|"),
@@ -6360,7 +6363,7 @@ const CopyWindow = ({
 
       setParaData9({
         work_type: "HU258T",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: information.prsnnum,
         hu258t_rowstatus_s: dataArr.hu258t_rowstatus_s.join("|"),
         hu258t_seq_s: dataArr.hu258t_seq_s.join("|"),
@@ -6379,10 +6382,10 @@ const CopyWindow = ({
 
   const [ParaData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     prsnnum2: "",
-    location: "01",
+    location: sessionLocation,
     position: "",
     workplace: "",
     prsnnm: "",
@@ -6505,7 +6508,7 @@ const CopyWindow = ({
 
   const [ParaData2, setParaData2] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     rowstatus_s: "",
     hu251t_seq_s: "",
@@ -6530,7 +6533,7 @@ const CopyWindow = ({
 
   const [ParaData3, setParaData3] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu252t_rowstatus_s: "",
     hu252t_seq_s: "",
@@ -6545,7 +6548,7 @@ const CopyWindow = ({
 
   const [ParaData4, setParaData4] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu254t_rowstatus_s: "",
     hu254t_seq_s: "",
@@ -6561,7 +6564,7 @@ const CopyWindow = ({
 
   const [ParaData5, setParaData5] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu253t_rowstatus_s: "",
     hu253t_seq_s: "",
@@ -6577,7 +6580,7 @@ const CopyWindow = ({
 
   const [ParaData6, setParaData6] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu255t_rowstatus_s: "",
     hu255t_seq_s: "",
@@ -6593,7 +6596,7 @@ const CopyWindow = ({
 
   const [ParaData7, setParaData7] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu256t_rowstatus_s: "",
     hu256t_seq_s: "",
@@ -6607,7 +6610,7 @@ const CopyWindow = ({
 
   const [ParaData8, setParaData8] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu257t_rowstatus_s: "",
     hu257t_seq_s: "",
@@ -6624,7 +6627,7 @@ const CopyWindow = ({
 
   const [ParaData9, setParaData9] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     hu258t_rowstatus_s: "",
     hu258t_seq_s: "",
@@ -7078,10 +7081,10 @@ const CopyWindow = ({
       });
       setParaData({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         prsnnum2: "",
-        location: "01",
+        location: sessionLocation,
         position: "",
         workplace: "",
         prsnnm: "",
@@ -7317,7 +7320,7 @@ const CopyWindow = ({
       });
       setParaData2({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         rowstatus_s: "",
         hu251t_seq_s: "",
@@ -7455,7 +7458,7 @@ const CopyWindow = ({
       });
       setParaData3({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu252t_rowstatus_s: "",
         hu252t_seq_s: "",
@@ -7583,7 +7586,7 @@ const CopyWindow = ({
       });
       setParaData4({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu254t_rowstatus_s: "",
         hu254t_seq_s: "",
@@ -7712,7 +7715,7 @@ const CopyWindow = ({
       });
       setParaData5({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu253t_rowstatus_s: "",
         hu253t_seq_s: "",
@@ -7841,7 +7844,7 @@ const CopyWindow = ({
       });
       setParaData6({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu255t_rowstatus_s: "",
         hu255t_seq_s: "",
@@ -7970,7 +7973,7 @@ const CopyWindow = ({
       });
       setParaData7({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu256t_rowstatus_s: "",
         hu256t_seq_s: "",
@@ -8097,7 +8100,7 @@ const CopyWindow = ({
       });
       setParaData8({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu257t_rowstatus_s: "",
         hu257t_seq_s: "",
@@ -8227,7 +8230,7 @@ const CopyWindow = ({
       });
       setParaData9({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnum: "",
         hu258t_rowstatus_s: "",
         hu258t_seq_s: "",

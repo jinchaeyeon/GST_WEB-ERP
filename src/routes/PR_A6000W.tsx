@@ -109,6 +109,8 @@ const PR_A6000W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -355,8 +357,8 @@ const PR_A6000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     fxnum: "",
@@ -369,8 +371,8 @@ const PR_A6000W: React.FC = () => {
   });
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     fxnum: "",
@@ -402,7 +404,7 @@ const PR_A6000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": "",
       "@p_stopnum": paraDataDeleted.stopnum,
       "@p_stopcd": "",

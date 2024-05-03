@@ -15,6 +15,7 @@ import {
   GetPropertyValueByName,
   ThreeNumberceil,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   findMessage,
@@ -98,9 +99,9 @@ const SA_B2226W: React.FC = () => {
     return windowSize;
   }
 
-   //메시지 조회
-   const [messagesData, setMessagesData] = React.useState<any>(null);
-   UseMessages("SA_B2226W", setMessagesData);
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("SA_B2226W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -120,11 +121,11 @@ const SA_B2226W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     isSearch: true,
   });

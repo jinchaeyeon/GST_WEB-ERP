@@ -51,6 +51,7 @@ import {
   ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
   dateformat,
@@ -243,11 +244,12 @@ const KendoWindow = ({
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     expenseseq1: 0,
     expenseno: "",
-    location: "01",
+    location: sessionLocation,
     expensedt: new Date(),
     position: "",
     prsnnum: userId,
@@ -753,7 +755,7 @@ const KendoWindow = ({
         ma210t_seq1: 0,
         ma210t_seq2: 0,
         ordnum: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         printdiv: "",
         qty: 0,
         rcvcustcd: "",
@@ -792,7 +794,7 @@ const KendoWindow = ({
       pageSize: PAGE_SIZE,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_strdt": "",
         "@p_enddt": "",
         "@p_location": "",
@@ -941,7 +943,7 @@ const KendoWindow = ({
       ma210t_seq1: 0,
       ma210t_seq2: 0,
       ordnum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       printdiv: "",
       qty: 0,
       rcvcustcd: "",
@@ -1350,7 +1352,7 @@ const KendoWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_expensedt": ParaData.expensedt,
       "@p_expenseseq1": ParaData.expenseseq1,
       "@p_location": ParaData.location,

@@ -78,6 +78,7 @@ import {
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
   UseGetIp,
+  UseGetValueFromSessionItem,
   dateformat2,
   getBrowser,
   resetLocalStorage,
@@ -105,7 +106,7 @@ const PanelBarNavContainer = (props: any) => {
   const location = useLocation();
   const history = useHistory();
   const [Link, setLink] = useRecoilState(linkState);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
@@ -765,7 +766,7 @@ const PanelBarNavContainer = (props: any) => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_user_id": userId,
       },
     };

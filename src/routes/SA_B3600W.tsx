@@ -11,6 +11,7 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -116,12 +117,13 @@ const SA_B3600W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: 20,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     dtdiv: "W",

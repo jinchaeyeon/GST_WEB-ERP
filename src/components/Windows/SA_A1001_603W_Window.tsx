@@ -11,6 +11,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState, menuList } from "../../store/atoms";
+import { UseGetValueFromSessionItem } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 
 type IWindow = {
@@ -61,7 +62,7 @@ const SA_A1001_603W_Window = ({
   const processApi = useApi();
 
   const [url, setUrl] = useState("");
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchmanualGrid = async () => {
     //if (!permissions?.view) return;
@@ -70,7 +71,7 @@ const SA_A1001_603W_Window = ({
 
     const parameters = {
       para: "document-json?id=S2023744A53",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_quonum": quonum,
       "@p_quorev": quorev,
     };

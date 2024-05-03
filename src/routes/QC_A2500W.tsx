@@ -252,7 +252,8 @@ const QC_A2500W: React.FC = () => {
       </td>
     );
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -309,8 +310,8 @@ const QC_A2500W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     datnum: "",
     frdt: new Date(),
     todt: new Date(),
@@ -351,7 +352,7 @@ const QC_A2500W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": "",
       "@p_datnum": paraDataDeleted.datnum,
       "@p_recdt": "",

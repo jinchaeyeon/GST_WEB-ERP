@@ -244,7 +244,8 @@ const SA_A1100_603W: React.FC = () => {
     "L_sysUserMaster_001, L_SA001_603, L_BA037",
     setBizComponentData
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -304,8 +305,8 @@ const SA_A1100_603W: React.FC = () => {
 
   // 조회조건
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     quokey: "",
@@ -325,8 +326,8 @@ const SA_A1100_603W: React.FC = () => {
 
   const [subFilters, setSubFilters] = useState<{ [name: string]: any }>({
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     contractno: "",
     groupgb: "A",
     find_row_value: "",
@@ -337,8 +338,8 @@ const SA_A1100_603W: React.FC = () => {
 
   const [subFilters2, setSubFilters2] = useState<{ [name: string]: any }>({
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     contractno: "",
     find_row_value: "",
     pgNum: 1,
@@ -348,8 +349,8 @@ const SA_A1100_603W: React.FC = () => {
 
   const [subFilters6, setSubFilters6] = useState<{ [name: string]: any }>({
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     contractno: "",
     find_row_value: "",
     pgNum: 1,
@@ -1770,7 +1771,7 @@ const SA_A1100_603W: React.FC = () => {
 
     const newDataItem = {
       [DATA_ITEM_KEY6]: ++temp6,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payment: "",
       seq: 0,
       paydt: convertDateToStr(new Date()),
@@ -1847,11 +1848,11 @@ const SA_A1100_603W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_quonum": ParaData.quonum,
       "@p_quorev": ParaData.quorev,
       "@p_contractno": subFilters.contractno,
-      "@p_location": "01",
+      "@p_location": sessionLocation,
       "@p_project": Information.project,
       "@p_cotracdt": convertDateToStr(Information.cotracdt),
       "@p_strdt": convertDateToStr(Information.strdt),
@@ -2213,7 +2214,7 @@ const SA_A1100_603W: React.FC = () => {
       "@p_user_id": paraDataSaved.user_id,
       "@p_form_id": "SA_A1100_603W",
       "@p_table_id": "SA204T",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_ref_key": paraDataSaved.ref_key,
       "@p_exec_pc": pc,
     },

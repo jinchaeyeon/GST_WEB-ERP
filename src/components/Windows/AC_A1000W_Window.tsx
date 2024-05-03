@@ -1371,10 +1371,11 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     acntdt: new Date(),
     position: "",
@@ -1669,7 +1670,7 @@ const CopyWindow = ({
           mngitemcd5: "",
           mngitemcd6: "",
           mngsumcustyn: "",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           partacnt: "",
           position: filters.position,
           propertykind: "",
@@ -1795,8 +1796,8 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "W",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     actdt: new Date(),
     acseq1: 0,
     acntdt: new Date(),
@@ -2629,8 +2630,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "W",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         actdt: new Date(),
         acseq1: 0,
         acntdt: new Date(),
@@ -3298,7 +3299,7 @@ const CopyWindow = ({
         mngitemcd5: "",
         mngitemcd6: "",
         mngsumcustyn: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         partacnt: "",
         position: filters.position,
         propertykind: "",

@@ -186,7 +186,8 @@ const SA_A1200_603W: React.FC = () => {
   const onProejctWndClick = () => {
     setProjectWindowVisible(true);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
@@ -237,8 +238,8 @@ const SA_A1200_603W: React.FC = () => {
 
   // 조회조건
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     quokey: "",
     custnm: "",
     custcd: "",
@@ -280,7 +281,7 @@ const SA_A1200_603W: React.FC = () => {
     grade6: 0,
     grade7: 0,
     materialgb: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     relationgb: "",
     startschgb: "",
     totgrade1: 0,
@@ -670,7 +671,7 @@ const SA_A1200_603W: React.FC = () => {
         "@p_find_row_value": filters.find_row_value,
       },
     };
-  
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -845,7 +846,7 @@ const SA_A1200_603W: React.FC = () => {
           grade6: 0,
           grade7: 0,
           materialgb: "",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           relationgb: "",
           startschgb: "",
           totgrade1: 0,
@@ -1074,8 +1075,8 @@ const SA_A1200_603W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_quokey": ParaData.quokey,
       "@p_materialgb": ParaData.materialgb,
       "@p_assaygbe": ParaData.assaygbe,
@@ -1301,7 +1302,7 @@ const SA_A1200_603W: React.FC = () => {
       "@p_user_id": paraDataSaved.user_id,
       "@p_form_id": "SA_A1200_603W",
       "@p_table_id": "SA050T",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_ref_key": paraDataSaved.ref_key,
       "@p_exec_pc": pc,
     },

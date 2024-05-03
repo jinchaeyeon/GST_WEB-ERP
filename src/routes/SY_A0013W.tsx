@@ -29,6 +29,9 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -44,9 +47,6 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -249,9 +249,8 @@ const Page: React.FC = () => {
         ...prev,
         cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
           ?.valueCode,
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         user_category: defaultOption.find(
           (item: any) => item.id == "user_category"
@@ -339,13 +338,14 @@ const Page: React.FC = () => {
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    cboOrgdiv: "01",
-    cboLocation: "01",
+    cboOrgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     dptcd: "",
     lang_id: "KOR",
     user_category: "",
@@ -1245,7 +1245,7 @@ const Page: React.FC = () => {
   //계획 저장 파라미터 초기값
   const [paraDataSaved, setParaDataSaved] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     chk_yn_s: "",
     user_group_id_s: "",
     user_id_s: "",
@@ -1557,8 +1557,7 @@ const Page: React.FC = () => {
             (
               item: any // 그 외, change 된 데이터의 rowstatus 업데이트
             ) =>
-              item[USER_MENU_DATA_ITEM_KEY] ==
-              dataItem[USER_MENU_DATA_ITEM_KEY]
+              item[USER_MENU_DATA_ITEM_KEY] == dataItem[USER_MENU_DATA_ITEM_KEY]
                 ? { ...item, rowstatus: item["rowstatus"] == "N" ? "N" : "U" }
                 : { ...item }
           );
@@ -1603,7 +1602,7 @@ const Page: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     chk_yn_s: "",
     user_group_id_s: "",
     user_id_s: "",

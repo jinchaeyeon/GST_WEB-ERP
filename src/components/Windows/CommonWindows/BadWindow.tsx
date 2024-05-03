@@ -174,8 +174,11 @@ const Badwindow = ({
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
   );
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     frdt: "",
@@ -189,8 +192,8 @@ const Badwindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "BAD",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     badrenum: filters.renum,
     rowstatus_s: "",
     renum_s: "",

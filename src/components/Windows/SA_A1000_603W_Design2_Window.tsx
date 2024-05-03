@@ -18,9 +18,9 @@ import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
-  convertDateToStr,
+  UseGetValueFromSessionItem,
   getQueryFromBizComponent,
-  numberWithCommas3,
+  numberWithCommas3
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 
@@ -122,7 +122,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     //if (!permissions?.view) return;
@@ -137,7 +137,8 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
       parameters: {
         "@p_work_type": "POPUP",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": filters.location == undefined ? "01" : filters.location,
+        "@p_location":
+          filters.location == undefined ? sessionOrgdiv : filters.location,
         "@p_custcd":
           filters.custnm == "" || filters.custnm == undefined
             ? ""

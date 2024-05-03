@@ -37,6 +37,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   dateformat,
@@ -332,12 +333,14 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     itemcd: "",
@@ -452,7 +455,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -536,7 +539,7 @@ const CopyWindow = ({
       pageSize: detailFilters.pgSize,
       parameters: {
         "@p_work_type": "PRLIST",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -786,7 +789,7 @@ const CopyWindow = ({
         ordkey: selectRow.ordkey,
         ordnum: selectRow.ordnum,
         ordseq: selectRow.ordseq,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         plandt: selectRow.plandt,
         plankey: selectRow.plankey,
         planno: selectRow.planno,

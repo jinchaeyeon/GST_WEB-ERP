@@ -866,11 +866,12 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     reckey: "",
     outdt: new Date(),
     shipdt: null,
@@ -1793,11 +1794,11 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     seq1: 0,
     busadiv: "",
-    location: "01",
+    location: sessionLocation,
     doexdiv: "A",
     outkind: "",
     outtype: "",

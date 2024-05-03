@@ -14,7 +14,6 @@ import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -28,6 +27,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   dateformat7,
   handleKeyPressSearch,
@@ -88,18 +88,18 @@ const SY_A0060W: React.FC = () => {
       setWorkType("U");
     }
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     pgNum: 1,
     isSearch: true,
   });
 
   const [filters2, setFilters2] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     layout_key: "",
     layout_id: "",
@@ -240,7 +240,7 @@ const SY_A0060W: React.FC = () => {
   const onNewClick = () => {
     setFilters2((prev) => ({
       ...prev,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       layout_key: "",
       layout_id: "",
       layout_name: "",

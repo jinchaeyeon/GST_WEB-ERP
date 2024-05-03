@@ -28,6 +28,7 @@ import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   handleKeyPressSearch,
@@ -107,12 +108,12 @@ const CopyWindow = ({
       importnum: importnum,
     }));
   }, [importnum]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     importnum: "",
     pgNum: 1,
     isSearch: true,
@@ -139,7 +140,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_importnum": filters.importnum,
       },
     };
@@ -277,7 +278,7 @@ const CopyWindow = ({
         inrecdt: selectedData.recdt,
         inseq1: selectedData.seq1,
         location: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         poregnum: "",
         position: "",
         purnum: selectedData.purnum,
@@ -330,7 +331,7 @@ const CopyWindow = ({
       inrecdt: selectedData.recdt,
       inseq1: selectedData.seq1,
       location: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       poregnum: "",
       position: "",
       purnum: selectedData.purnum,

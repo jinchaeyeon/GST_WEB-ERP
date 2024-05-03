@@ -15,6 +15,7 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { TEditorHandle } from "../../../store/types";
+import { UseGetValueFromSessionItem } from "../../CommonFunction";
 import RichEditor from "../../RichEditor";
 
 type TKendoWindow = {
@@ -76,7 +77,7 @@ const KendoWindow = ({
     title: "",
   });
   const [files, setFiles] = useState<FileList | null>();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const onSend = async () => {
     let data: any;
     setLoading(true);
@@ -107,7 +108,7 @@ const KendoWindow = ({
         formData.append(
           "queryParamValues",
           `{
-          "@p_orgidv": "01",
+          "@p_orgidv": ${sessionOrgdiv},
           "@p_quonum": ${quonum},
           "@p_quorev": ${quorev},
         }`

@@ -101,12 +101,13 @@ const KendoWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     datnum: workType == "N" ? "" : datnum,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     category: "100",
-    location: "01",
+    location: sessionLocation,
     publish_start_date: new Date(),
     publish_end_date: new Date(),
     title: "",
@@ -196,8 +197,8 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     datnum: filters.datnum,
     category: "100",
     title: "",
@@ -273,8 +274,8 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      orgdiv: "01",
-      location: "01",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
       category: filters.category,
       title: filters.title,
       contents: filters.contents,

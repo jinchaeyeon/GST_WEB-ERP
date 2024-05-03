@@ -97,7 +97,8 @@ const PR_A5000W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
@@ -244,8 +245,8 @@ const PR_A5000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     person: "",
     frdt: new Date(),
     todt: new Date(),
@@ -861,8 +862,8 @@ const PR_A5000W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rekey_s: "",
     recdt_s: "",
     seq1_s: "",
@@ -908,7 +909,7 @@ const PR_A5000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_rekey_s": ParaData.rekey_s,
       "@p_recdt_s": ParaData.recdt_s,
@@ -993,8 +994,8 @@ const PR_A5000W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         rekey_s: "",
         recdt_s: "",
         seq1_s: "",

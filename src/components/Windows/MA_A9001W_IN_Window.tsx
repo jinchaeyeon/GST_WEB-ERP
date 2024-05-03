@@ -39,6 +39,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   findMessage,
@@ -277,13 +278,16 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+  const sessionposition = UseGetValueFromSessionItem("position");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
-    position: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
+    position: sessionposition,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",
@@ -389,7 +393,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_location": filters.location,
@@ -475,7 +479,7 @@ const CopyWindow = ({
       pageSize: detailfilters.pgSize,
       parameters: {
         "@p_work_type": detailfilters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_location": filters.location,
@@ -700,7 +704,7 @@ const CopyWindow = ({
       pageSize: 20,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_location": filters.location,

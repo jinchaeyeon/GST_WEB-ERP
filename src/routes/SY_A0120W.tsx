@@ -189,13 +189,13 @@ const SY_A0120: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "list",
     orgdiv: "",
-    location: "01",
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     user_id: "",

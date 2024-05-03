@@ -31,11 +31,12 @@ import YearCalendar from "../Calendars/YearCalendar";
 import MonthDateCell from "../Cells/MonthDateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
+  UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -151,7 +152,8 @@ const KendoWindow = ({
     pgNum: 1,
     isSearch: true,
   });
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     // if (!permissions?.view) return;
@@ -494,7 +496,7 @@ const KendoWindow = ({
           } = item;
 
           dataArr.rowstatus.push(rowstatus);
-          dataArr.location.push("01");
+          dataArr.location.push(sessionLocation);
           dataArr.prsnnum.push(prsnnum);
           dataArr.yyyymm.push(yyyymm.substring(0, 6));
           dataArr.overtime.push(overtime);
@@ -512,7 +514,7 @@ const KendoWindow = ({
           } = item;
 
           dataArr.rowstatus.push(rowstatus);
-          dataArr.location.push("01");
+          dataArr.location.push(sessionLocation);
           dataArr.prsnnum.push(prsnnum);
           dataArr.yyyymm.push(yyyymm.substring(0, 6));
           dataArr.overtime.push(overtime);
@@ -522,7 +524,7 @@ const KendoWindow = ({
         setParaData((prev) => ({
           ...prev,
           workType: "N",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           rowstatus: dataArr.rowstatus.join("|"),
           location: dataArr.location.join("|"),
           prsnnum: dataArr.prsnnum.join("|"),
@@ -537,7 +539,7 @@ const KendoWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus: "",
     location: "",
     prsnnum: "",
@@ -591,7 +593,7 @@ const KendoWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus: "",
         location: "",
         prsnnum: "",

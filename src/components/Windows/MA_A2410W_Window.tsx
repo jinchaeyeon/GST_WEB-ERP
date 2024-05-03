@@ -465,6 +465,8 @@ const DetailWindow = ({
     });
   };
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     amt: 0,
@@ -477,9 +479,9 @@ const DetailWindow = ({
     doexdiv: "A",
     files: "",
     inexpdt: new Date(),
-    location: "01",
+    location: sessionLocation,
     num: 0,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: "",
     purdt: new Date(),
     purnum: "",

@@ -283,11 +283,12 @@ const KendoWindow = ({
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     expenseseq1: 0,
     expenseno: "",
-    location: "01",
+    location: sessionLocation,
     expensedt: new Date(),
     position: "",
     prsnnum: "",
@@ -794,7 +795,7 @@ const KendoWindow = ({
       pageSize: PAGE_SIZE,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_strdt": "",
         "@p_enddt": "",
         "@p_location": "",
@@ -931,7 +932,7 @@ const KendoWindow = ({
       indt: convertDateToStr(new Date()),
       itemcd: "",
       itemnm: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark: "",
       taxamt: 0,
       taxdiv: "2",
@@ -1204,7 +1205,7 @@ const KendoWindow = ({
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_expensedt": ParaData.expensedt,
       "@p_expenseseq1": ParaData.expenseseq1,
       "@p_location": ParaData.location,
@@ -1332,7 +1333,9 @@ const KendoWindow = ({
         <FormBox>
           <tbody>
             <tr>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>결의서 No</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                결의서 No
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="expenseno"
@@ -1341,7 +1344,9 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>신청일자</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                신청일자
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <DatePicker
                   name="expensedt"
@@ -1395,7 +1400,9 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>요청자 성명</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                요청자 성명
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="prsnnm"
@@ -1404,7 +1411,9 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>요청자 부서</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                요청자 부서
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="dptnm"
@@ -1592,7 +1601,9 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>고객사명</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                고객사명
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="custnm"
@@ -1768,7 +1779,9 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>계정과목코드</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                계정과목코드
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntcd"
@@ -1788,7 +1801,9 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>계정과목명</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                계정과목명
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntnm"
@@ -1834,7 +1849,9 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th className={worktype == "N" ? "hide-on-mobile" : ""}>카드관련</th>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>
+                카드관련
+              </th>
               <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 {bizComponentData !== null && (
                   <BizComponentComboBox

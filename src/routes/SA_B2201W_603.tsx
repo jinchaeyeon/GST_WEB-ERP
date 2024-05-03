@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -228,10 +229,10 @@ const SA_B2201W_603: React.FC = () => {
     },
     []
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   // 조회조건
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     quonum: "", //프로젝트번호

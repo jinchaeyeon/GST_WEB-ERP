@@ -102,8 +102,10 @@ const FlowChart = (props) => {
   const { setViewport, getNodes } = useReactFlow();
   const [Type, setType] = useState("B"); //c : 커스텀노드, G: 그룹노드, I: 이미지노드, E: edge
   const [workType, setWorkType] = useState(props.workType);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [Information, setInformation] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     layout_key: "",
     layout_id: "",
@@ -657,8 +659,8 @@ const FlowChart = (props) => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     layout_key: "",
     layout_id: "",
     layout_name: "",
@@ -707,8 +709,8 @@ const FlowChart = (props) => {
       props.setData(false);
       setParaData({
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         layout_key: "",
         layout_id: "",
         layout_name: "",

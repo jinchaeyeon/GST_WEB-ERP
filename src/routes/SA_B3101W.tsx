@@ -1,16 +1,16 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import {
   Chart,
   ChartCategoryAxis,
   ChartCategoryAxisItem,
-  ChartCategoryAxisTitle,
   ChartLegend,
   ChartSeries,
   ChartSeriesItem,
   ChartTitle,
   ChartValueAxis,
   ChartValueAxisItem,
-  ChartValueAxisTitle,
+  ChartValueAxisTitle
 } from "@progress/kendo-react-charts";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -26,14 +26,16 @@ import {
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
   GridContainer,
   GridTitle,
-  GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -41,6 +43,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   chkScrollHandler,
@@ -58,10 +61,6 @@ import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Button } from "@progress/kendo-react-buttons";
 
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
@@ -161,11 +160,11 @@ const SA_B3101W: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     radAmtdiv: "A",
     find_row_value: "",
@@ -452,7 +451,8 @@ const SA_B3101W: React.FC = () => {
                   style={{
                     height: `${deviceHeight * 0.65}px`,
                     width: "100%",
-                  }}>
+                  }}
+                >
                   <ChartLegend position="top" orientation="horizontal" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -498,25 +498,25 @@ const SA_B3101W: React.FC = () => {
                 <GridContainer style={{ width: "100%", height: "100%" }}>
                   <GridTitle>상세정보</GridTitle>
                   <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      width: "100%",
                     }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
                   >
-                    이전
-                  </Button>
-                </div>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </div>
                   <Grid
                     style={{
                       height: `${deviceHeight * 0.8 - 50}px`,

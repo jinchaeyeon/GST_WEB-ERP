@@ -33,6 +33,7 @@ import YearCalendar from "../Calendars/YearCalendar";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   getQueryFromBizComponent,
 } from "../CommonFunction";
@@ -130,11 +131,11 @@ const CopyWindow = ({
       setListData(rows);
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "ITEMLIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: itemcd,
     itemnm: itemnm,
     itemlvl2: itemcd,

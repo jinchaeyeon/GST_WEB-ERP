@@ -18,7 +18,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -69,7 +69,7 @@ import PlanWindow from "../components/Windows/PR_A4000W_Plan_Window";
 import DetailWindow from "../components/Windows/PR_A4000W_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -122,11 +122,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "fxfull"
       : undefined;
   const fieldValue =
-    field == "prodemp"
-      ? "user_id"
-      : field == "prodmac"
-      ? "fxcode"
-      : undefined;
+    field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
@@ -156,7 +152,6 @@ const PR_A4000W: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
-  const [sessionItem] = useRecoilState(sessionItemState);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 

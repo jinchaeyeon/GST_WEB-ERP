@@ -422,11 +422,12 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     reckey: "",
     outdt: new Date(),
     shipdt: null,
@@ -658,7 +659,7 @@ const CopyWindow = ({
         ordkey: item.ordkey,
         ordnum: item.ordnum,
         ordseq: item.ordseq,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outrecdt: "",
         outreckey: "",
         outseq1: 0,
@@ -740,7 +741,7 @@ const CopyWindow = ({
         ordkey: item.ordnum + item.ordseq,
         ordnum: item.ordnum,
         ordseq: item.ordseq,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outrecdt: item.outdt,
         outreckey: item.outreckey,
         outseq1: 0,
@@ -921,8 +922,7 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length == 0 && deletedMainRows.length == 0)
-            return false;
+          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
           let dataArr: TdataArr = {
             rowstatus_s: [],
             seq2_s: [],
@@ -1096,10 +1096,10 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     seq1: 0,
-    location: "01",
+    location: sessionLocation,
     position: "",
     outdt: new Date(),
     shipdt: "",

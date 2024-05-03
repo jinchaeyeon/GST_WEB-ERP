@@ -44,7 +44,7 @@ import {
   dateformat,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  setDefaultDate2
+  setDefaultDate2,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -170,12 +170,13 @@ const KendoWindow = ({
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     datnum: workType == "N" ? "" : datnum,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     category: categories == undefined ? "" : categories,
-    location: "01",
+    location: sessionLocation,
     publish_start_date: new Date(),
     publish_end_date: new Date(),
     title: "",
@@ -316,7 +317,7 @@ const KendoWindow = ({
       pageSize: 10000,
       parameters: {
         "@p_work_type": "LOAD",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_datnum": datnum,
         "@p_dtgb": "",
         "@p_frdt": "",
@@ -335,7 +336,7 @@ const KendoWindow = ({
       pageSize: 10000,
       parameters: {
         "@p_work_type": "LOAD",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_datnum": datnum,
         "@p_dtgb": "",
         "@p_frdt": "",
@@ -400,8 +401,8 @@ const KendoWindow = ({
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     datnum: filters.datnum,
     category: "100",
     title: "",
@@ -500,8 +501,8 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      orgdiv: "01",
-      location: "01",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
       category: filters.category,
       title: filters.title,
       contents: filters.contents,

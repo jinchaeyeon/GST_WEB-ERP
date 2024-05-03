@@ -13,7 +13,16 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { GetPropertyValueByName, UseCustomOption, UseMessages, UsePermissions, convertDateToStr, findMessage, setDefaultDate } from "../components/CommonFunction";
+import {
+  GetPropertyValueByName,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  setDefaultDate,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
@@ -32,7 +41,7 @@ const SA_B2211_603W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const search = () => {};
-  
+
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B2211_603W", setMessagesData);
@@ -44,7 +53,7 @@ const SA_B2211_603W: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-  
+
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -65,10 +74,11 @@ const SA_B2211_603W: React.FC = () => {
   });
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     isSearch: true,
   });

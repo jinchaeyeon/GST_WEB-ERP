@@ -37,6 +37,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -261,12 +262,13 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     div: "",
     lotnum: "",
     itemcd: "",

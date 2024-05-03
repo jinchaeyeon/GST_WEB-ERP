@@ -41,6 +41,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
@@ -289,10 +290,11 @@ const CopyWindow = ({
   }
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     notenum: "",
     notediv: "1",
     frdt: new Date(),
@@ -436,7 +438,7 @@ const CopyWindow = ({
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "W",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dptcd: "",
     actdt: "",
@@ -558,8 +560,8 @@ const CopyWindow = ({
         setParaData((prev) => ({
           ...prev,
           workType: "N",
-          orgdiv: "01",
-          location: "01",
+          orgdiv: sessionOrgdiv,
+          location: sessionLocation,
           dptcd: newData[0].dptcd,
           actdt: convertDateToStr(filters.date),
           notests: filters.notests,
@@ -593,8 +595,8 @@ const CopyWindow = ({
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "W",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         dptcd: "",
         actdt: "",
         notests: "",

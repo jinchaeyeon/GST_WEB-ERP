@@ -166,11 +166,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : undefined;
 
   const filedValue =
-    field == "prodemp"
-      ? "user_id"
-      : field == "prodmac"
-      ? "fxcode"
-      : undefined;
+    field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
@@ -207,6 +203,8 @@ const PR_A7000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
@@ -515,7 +513,7 @@ const PR_A7000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "PLAN",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),
@@ -1613,8 +1611,8 @@ const PR_A7000W: React.FC = () => {
         pageSize: 0,
         parameters: {
           "@p_work_type": "N",
-          "@p_orgdiv": "01",
-          "@p_location": "01",
+          "@p_orgdiv": sessionOrgdiv,
+          "@p_location": sessionLocation,
           "@p_planno_s": dataArr.planno_s.join("|"),
           "@p_chkyn_s": dataArr.chkyn_s.join("|"),
           "@p_plankey_s": dataArr.plankey_s.join("|"),
@@ -1690,8 +1688,8 @@ const PR_A7000W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "D",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_planno_s": "",
         "@p_chkyn_s": "",
         "@p_plankey_s": "",
@@ -1770,8 +1768,8 @@ const PR_A7000W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "U",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_planno_s": "",
         "@p_chkyn_s": "",
         "@p_plankey_s": "",
@@ -1870,7 +1868,7 @@ const PR_A7000W: React.FC = () => {
         pageSize: 0,
         parameters: {
           "@p_work_type": "FINYN",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
           "@p_gonum_s": dataArr.gonum_s.join("|"),
           "@p_goseq_s": dataArr.goseq_s.join("|"),

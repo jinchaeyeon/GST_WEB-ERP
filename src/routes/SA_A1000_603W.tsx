@@ -1134,7 +1134,8 @@ const SA_A1000_603W: React.FC = () => {
       }
     }
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
       let data: any;
@@ -1614,8 +1615,8 @@ const SA_A1000_603W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     custcd: "",
     custnm: "",
     finyn: "",
@@ -1784,7 +1785,7 @@ const SA_A1000_603W: React.FC = () => {
     grade6: 0,
     grade7: 0,
     materialgb: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     relationgb: "",
     startschgb: "",
     totgrade1: 0,
@@ -2305,7 +2306,7 @@ const SA_A1000_603W: React.FC = () => {
           grade6: 0,
           grade7: 0,
           materialgb: "",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           relationgb: "",
           startschgb: "",
           totgrade1: 0,
@@ -3675,8 +3676,8 @@ const SA_A1000_603W: React.FC = () => {
         if (dataItem.length == 0 && deletedMainRows2.length == 0) {
           setParaData({
             workType: worktype,
-            orgdiv: "01",
-            location: "01",
+            orgdiv: sessionOrgdiv,
+            location: sessionLocation,
             quonum: Information.quonum,
             quorev: Information.quorev,
             quoseq: Information.quorev,
@@ -3801,8 +3802,8 @@ const SA_A1000_603W: React.FC = () => {
           });
           setParaData({
             workType: worktype,
-            orgdiv: "01",
-            location: "01",
+            orgdiv: sessionOrgdiv,
+            location: sessionLocation,
             quonum: Information.quonum,
             quorev: Information.quorev,
             quoseq: Information.quorev,
@@ -4001,8 +4002,8 @@ const SA_A1000_603W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_quonum": paraDataDeleted.quonum,
       "@p_quorev": paraDataDeleted.quorev,
       "@p_quotype": "",
@@ -4284,7 +4285,7 @@ const SA_A1000_603W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "REV",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: Information.quonum,
       quorev: Information.quorev,
     }));
@@ -4294,7 +4295,7 @@ const SA_A1000_603W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "DesTran",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: Information.quonum,
       quorev: Information.quorev,
     }));
@@ -4304,7 +4305,7 @@ const SA_A1000_603W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "DesTran_d",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       quonum: Information.quonum,
       quorev: Information.quorev,
     }));

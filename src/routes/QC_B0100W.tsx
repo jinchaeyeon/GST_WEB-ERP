@@ -13,6 +13,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   convertDateToStr,
   getQueryFromBizComponent,
   setDefaultDate,
@@ -158,10 +159,10 @@ const QC_B0100W: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: 20,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frym: new Date(),
     toym: new Date(),
     proccd: "W",

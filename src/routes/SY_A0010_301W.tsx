@@ -970,7 +970,7 @@ const Page: React.FC = () => {
       alert("선택된 행이 없습니다.");
     }
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const fetchToDelete = async () => {
     let data: any;
 
@@ -992,7 +992,7 @@ const Page: React.FC = () => {
           "@p_work_type": "Q",
           "@p_form_id": "SY_A0010_301W",
           "@p_table_id": "comCodeMaster",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_ref_key": mainDataResult.data.filter(
             (row: any) =>
               row.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -1052,7 +1052,7 @@ const Page: React.FC = () => {
             "@p_user_id": dataArr.user_id.join("|"),
             "@p_form_id": "SY_A0010_301W",
             "@p_table_id": "comCodeMaster",
-            "@p_orgdiv": "01",
+            "@p_orgdiv": sessionOrgdiv,
             "@p_ref_key": mainDataResult.data.filter(
               (row: any) =>
                 row.num == Object.getOwnPropertyNames(selectedState)[0]

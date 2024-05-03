@@ -31,6 +31,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -52,6 +55,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -69,9 +73,6 @@ import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 var index = 0;
 const MAX_CHARACTERS = 6;
@@ -308,11 +309,12 @@ const SA_B3100W: React.FC = () => {
 
   const initFrdt = new Date();
   initFrdt.setMonth(initFrdt.getMonth() - 2);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     yyyy: new Date(),
     custcd: "",
     custnm: "",

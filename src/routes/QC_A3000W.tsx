@@ -297,7 +297,8 @@ const QC_A3000: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -390,8 +391,8 @@ const QC_A3000: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     proccd: "",
@@ -466,7 +467,7 @@ const QC_A3000: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_orgdiv": filters.orgdiv,
-      "@p_location": "01",
+      "@p_location": sessionLocation,
       "@p_renum": detailFilters.renum,
       "@p_reseq": detailFilters.reseq,
       "@p_qcnum": detailFilters2.qcnum,
@@ -1501,8 +1502,8 @@ const QC_A3000: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     renum: "",
     reseq: 0,
     qcnum: "",
@@ -1590,8 +1591,8 @@ const QC_A3000: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         renum: "",
         reseq: 0,
         qcnum: "",

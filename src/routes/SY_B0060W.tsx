@@ -7,10 +7,13 @@ import {
   GridEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ApprovalBox,
   ApprovalInner,
@@ -24,9 +27,6 @@ import {
   TextContainer,
 } from "../CommonStyled";
 import CenterCell from "../components/Cells/CenterCell";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -61,20 +61,6 @@ const SY_B0060W: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
-
-  useEffect(() => {
-    fetchSessionItem();
-  }, [sessionUserId]);
-
-  let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code == "orgdiv"
-  )!.value;
-  let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code == "location"
-  )!.value;
-
-  if (sessionOrgdiv == "") sessionOrgdiv = "01";
-  if (sessionLocation == "") sessionLocation = "01";
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -127,7 +113,8 @@ const SY_B0060W: React.FC = () => {
   );
   const [noticePgNum, setNoticePgNum] = useState(1);
   const [workOrderPgNum, setWorkOrderPgNum] = useState(1);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Layout",
@@ -135,7 +122,7 @@ const SY_B0060W: React.FC = () => {
     pgNum: 1,
   });
   const [filters2, setFilters2] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     layout_key: "",
     layout_id: "",
@@ -531,36 +518,6 @@ const SY_B0060W: React.FC = () => {
     setWorkOrderDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
-
   return (
     <>
       {isMobile ? (
@@ -618,7 +575,12 @@ const SY_B0060W: React.FC = () => {
                       퇴근
                     </Button>
                   </MainWorkStartEndContainer>
-                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` , fontSize:"0.8em"}}>
+                  <ApprovalBox
+                    style={{
+                      width: `${deviceWidth - 30}px`,
+                      fontSize: "0.8em",
+                    }}
+                  >
                     <ApprovalInner>
                       <div>미결</div>
                       <div>{approvalValueState.app}</div>

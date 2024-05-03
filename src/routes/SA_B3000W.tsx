@@ -31,6 +31,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -38,10 +41,9 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
-  GridTitle,
   Title,
   TitleContainer,
-  WebErpcolorList,
+  WebErpcolorList
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -53,6 +55,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -70,9 +73,6 @@ import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import "swiper/css";
 
 var index = 0;
 
@@ -302,10 +302,10 @@ const SA_B3000W: React.FC = () => {
 
   const initFrdt = new Date();
   initFrdt.setMonth(initFrdt.getMonth() - 2);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboLocation: "",
     yyyy: new Date(),
     custcd: "",
@@ -1908,7 +1908,7 @@ const SA_B3000W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: `${deviceHeight * 0.63}px`, }}>
+                        <Chart style={{ height: `${deviceHeight * 0.63}px` }}>
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem

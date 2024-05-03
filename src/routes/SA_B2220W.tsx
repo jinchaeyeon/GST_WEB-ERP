@@ -7,7 +7,10 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { convertDateToStr } from "../components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
@@ -74,11 +77,11 @@ const SA_B2220W: React.FC = () => {
     }, []); // Empty array ensures that effect is only run on mount
     return windowSize;
   }
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     mm: new Date(),
     isSearch: true,
@@ -716,8 +719,15 @@ const SA_B2220W: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={5}
-              style={{ paddingBottom: "15px" }}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+              xl={5}
+              style={{ paddingBottom: "15px" }}
+            >
               <PaginatorTable
                 value={ProjectList}
                 column={{

@@ -10,6 +10,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import { UseGetValueFromSessionItem } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
@@ -38,10 +39,10 @@ const SA_B2227W: React.FC = () => {
   });
 
   useEffect(() => {}, [color]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     isSearch: true,
   });
 

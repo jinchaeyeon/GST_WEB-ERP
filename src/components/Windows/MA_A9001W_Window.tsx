@@ -45,13 +45,14 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
-  getQueryFromBizComponent
+  getQueryFromBizComponent,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -494,10 +495,10 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     reqdt_s: "",
@@ -528,7 +529,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_position": filters.position,
         "@p_reqdt_s": filters.reqdt_s,

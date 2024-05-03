@@ -36,6 +36,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -313,11 +314,11 @@ const SA_B2410: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
     custcd: "",
@@ -1381,10 +1382,7 @@ const SA_B2410: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer style={{ width: "100%", height: "100%" }}>
-                <TabStrip
-                  selected={tabSelected}
-                  onSelect={handleSelectTab}
-                >
+                <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
                   <TabStripTab title="업체별">
                     <GridContainer>
                       <ExcelExport
@@ -1700,7 +1698,7 @@ const SA_B2410: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1} className="leading_PDA_custom">
               <GridContainer
-                style={{                
+                style={{
                   paddingBottom: "20px",
                   width: "100%",
                 }}
@@ -1723,18 +1721,18 @@ const SA_B2410: React.FC = () => {
                     }}
                   >
                     <ButtonContainer>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                    >
-                      이전
-                    </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
                     </ButtonContainer>
                   </div>
                   <Grid

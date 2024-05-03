@@ -28,6 +28,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -42,9 +45,6 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -53,8 +53,7 @@ import {
   UseParaPc,
   UsePermissions,
   getQueryFromBizComponent,
-  handleKeyPressSearch,
-  useBetterScroll,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -105,7 +104,7 @@ const Page: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -918,7 +917,6 @@ const Page: React.FC = () => {
     }
   };
 
- 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1000,7 +998,7 @@ const Page: React.FC = () => {
       alert("선택된 행이 없습니다.");
     }
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const fetchToDelete = async () => {
     let data: any;
 
@@ -1022,7 +1020,7 @@ const Page: React.FC = () => {
           "@p_work_type": "Q",
           "@p_form_id": "SY_A0010W",
           "@p_table_id": "comCodeMaster",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_ref_key": mainDataResult.data.filter(
             (row: any) =>
               row.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -1082,7 +1080,7 @@ const Page: React.FC = () => {
             "@p_user_id": dataArr.user_id.join("|"),
             "@p_form_id": "SY_A0010W",
             "@p_table_id": "comCodeMaster",
-            "@p_orgdiv": "01",
+            "@p_orgdiv": sessionOrgdiv,
             "@p_ref_key": mainDataResult.data.filter(
               (row: any) =>
                 row.num == Object.getOwnPropertyNames(selectedState)[0]
@@ -1206,103 +1204,100 @@ const Page: React.FC = () => {
     }
   };
 
-  
   return (
     <>
       {isMobile ? (
         <>
-            <TitleContainer>
-              <Title>공통코드정보</Title>
+          <TitleContainer>
+            <Title>공통코드정보</Title>
 
-              <ButtonContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>유형분류</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="group_category"
-                              value={filters.group_category}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>유형분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="group_category"
+                            value={filters.group_category}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
 
-                        <th>그룹코드</th>
-                        <td>
-                          <Input
-                            name="group_code"
-                            type="text"
-                            value={filters.group_code}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>그룹코드명</th>
-                        <td>
-                          <Input
-                            name="group_name"
-                            type="text"
-                            value={filters.group_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>필드 캡션</th>
-                        <td>
-                          <Input
-                            name="field_caption"
-                            type="text"
-                            value={filters.field_caption}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>세부코드</th>
-                        <td>
-                          <Input
-                            name="sub_code"
-                            type="text"
-                            value={filters.sub_code}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>세부코드명</th>
-                        <td>
-                          <Input
-                            name="subcode_name"
-                            type="text"
-                            value={filters.subcode_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>메모</th>
-                        <td colSpan={3}>
-                          <Input
-                            name="memo"
-                            type="text"
-                            value={filters.memo}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
-                {permissions !== null && (
-                  <TopButtons
-                    search={search}
-                    exportExcel={exportExcel}
-                    permissions={permissions}
-                    pathname="SY_A0010W"
-                  />
-                )}
-              </ButtonContainer>
-            </TitleContainer>
+                      <th>그룹코드</th>
+                      <td>
+                        <Input
+                          name="group_code"
+                          type="text"
+                          value={filters.group_code}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>그룹코드명</th>
+                      <td>
+                        <Input
+                          name="group_name"
+                          type="text"
+                          value={filters.group_name}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>필드 캡션</th>
+                      <td>
+                        <Input
+                          name="field_caption"
+                          type="text"
+                          value={filters.field_caption}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>세부코드</th>
+                      <td>
+                        <Input
+                          name="sub_code"
+                          type="text"
+                          value={filters.sub_code}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>세부코드명</th>
+                      <td>
+                        <Input
+                          name="subcode_name"
+                          type="text"
+                          value={filters.subcode_name}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>메모</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="memo"
+                          type="text"
+                          value={filters.memo}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions !== null && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SY_A0010W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
             className="leading_80_Swiper"
             onSwiper={(swiper) => {
@@ -1314,9 +1309,12 @@ const Page: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto", height:"100%" }}
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "auto",
+                  height: "100%",
+                }}
               >
-
                 <GridTitleContainer>
                   {permissions !== null && (
                     <ButtonContainer>
@@ -1352,7 +1350,7 @@ const Page: React.FC = () => {
                     ref={gridRef}
                     style={{
                       height: `${deviceHeight * 0.8}px`,
-                     overflow: "auto",
+                      overflow: "auto",
                     }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
@@ -1443,7 +1441,7 @@ const Page: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
+                  overflow: "auto",
                 }}
               >
                 <ExcelExport
@@ -1453,8 +1451,8 @@ const Page: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight  * 0.8}px`,
-                     overflow: "auto",
+                      height: `${deviceHeight * 0.8}px`,
+                      overflow: "auto",
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({

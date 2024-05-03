@@ -36,7 +36,7 @@ function App(props) {
       pageSize: 100,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_custcd": data.custcd == undefined ? "" : data.custcd,
         "@p_adjdt": "",
       },
@@ -64,11 +64,12 @@ function App(props) {
   const [mainDataResult, setMainDataResult] = useState(
     process([], mainDataState)
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [filters, setFilters] = useState({
     work_type: "holiday",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     resource_type: "",
     yyyymm: "",
   });

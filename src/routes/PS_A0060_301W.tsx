@@ -103,7 +103,8 @@ const PS_A0060_301W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("PS_A0060_301W", setCustomOptionData);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -184,8 +185,8 @@ const PS_A0060_301W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "holiday",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     resource_type: "holiday",
     yyyymm: new Date(),
     find_row_value: "",
@@ -460,9 +461,9 @@ const PS_A0060_301W: React.FC = () => {
     workType: "save",
     resource_type: "holiday",
     row_status: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     datnum: "",
-    location: "01",
+    location: sessionLocation,
     code: "",
     type: "",
     date: "",

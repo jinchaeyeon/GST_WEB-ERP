@@ -230,10 +230,10 @@ const CopyWindow = ({
     }
     setTabSelected(e.selected);
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxnm: "",
     fxdiv: "",
@@ -251,7 +251,7 @@ const CopyWindow = ({
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxnm: "",
     fxdiv: "",
@@ -269,7 +269,7 @@ const CopyWindow = ({
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxnm: "",
     fxdiv: "",
@@ -554,7 +554,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         workType: workType,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         fxcode: Information.fxcode,
         fxnm: Information.fxnm,
         fxsize: Information.fxsize,
@@ -674,7 +674,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         workType: "PROPERTY",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         fxcode: Information.fxcode,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         fxcode_s: dataArr.fxcode_s.join("|"),
@@ -766,7 +766,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         workType: "MON",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         fxcode: Information.fxcode,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         fxcode_s: dataArr.fxcode_s.join("|"),
@@ -856,7 +856,7 @@ const CopyWindow = ({
       setParaData((prev) => ({
         ...prev,
         workType: "YEAR",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         fxcode: Information.fxcode,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         fxcode_s: dataArr.fxcode_s.join("|"),
@@ -874,7 +874,7 @@ const CopyWindow = ({
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxnm: "",
     fxsize: "",
@@ -1062,7 +1062,7 @@ const CopyWindow = ({
       }
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         fxcode: "",
         fxnm: "",
         fxsize: "",
@@ -1325,7 +1325,7 @@ const CopyWindow = ({
       fxcode: Information.fxcode,
       fxdt: convertDateToStr(new Date()),
       gubun: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       qty: 0,
       remark: "",
       seq: 0,
@@ -1360,7 +1360,7 @@ const CopyWindow = ({
       fxyrmm: convertDateToStr(new Date()),
       growamt: 0,
       growdamt: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       predamt: 0,
       rowstatus: "N",
     };
@@ -1394,7 +1394,7 @@ const CopyWindow = ({
       fxyrmm: convertDateToStr(new Date()),
       growamt: 0,
       growdamt: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       predamt: 0,
       rowstatus: "N",
     };

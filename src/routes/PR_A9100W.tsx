@@ -404,6 +404,8 @@ const PR_A9100W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("PR_A9100W", setMessagesData);
@@ -423,9 +425,8 @@ const PR_A9100W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         ymdYyymm: setDefaultDate(customOptionData, "ymdYyymm"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -577,9 +578,9 @@ const PR_A9100W: React.FC = () => {
         itemlvl3: item.itemlvl3,
         itemnm: item.itemnm,
         last_update_time: "",
-        location: "01",
+        location: sessionLocation,
         lotnum: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         pgmdiv: "",
         proccd: "",
         qty: 0,
@@ -1205,9 +1206,9 @@ const PR_A9100W: React.FC = () => {
       itemlvl3: "",
       itemnm: "",
       last_update_time: "",
-      location: "01",
+      location: sessionLocation,
       lotnum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       pgmdiv: "",
       proccd: "",
       qty: 0,

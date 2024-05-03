@@ -34,8 +34,9 @@ const FlowChartReadOnly = (props) => {
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const { setViewport } = useReactFlow();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [Information, setInformation] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     layout_key: "",
     layout_id: "",

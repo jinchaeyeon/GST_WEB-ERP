@@ -60,6 +60,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -436,12 +437,12 @@ const CopyWindow = ({
   };
 
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "ITEM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",
@@ -474,7 +475,7 @@ const CopyWindow = ({
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
@@ -542,7 +543,7 @@ const CopyWindow = ({
       pageSize: detailFilters.pgSize,
       parameters: {
         "@p_work_type": "BOM",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_itemcd": detailFilters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,

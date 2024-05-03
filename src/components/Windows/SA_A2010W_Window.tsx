@@ -769,7 +769,8 @@ const KendoWindow = ({
       });
     }
   }, [customOptionData]);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //요약정보 조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_SA_A2000W_Q",
@@ -777,7 +778,7 @@ const KendoWindow = ({
     pageSize: 1,
     parameters: {
       "@p_work_type": "HEADER",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": "",
       "@p_dtgb": "",
       "@p_frdt": "19990101",
@@ -884,8 +885,8 @@ const KendoWindow = ({
   const [paraData, setParaData] = useState({
     work_type: "",
     service_id: "20190218001",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     ordnum: "",
     poregnum: "",
     project: "",
@@ -2601,12 +2602,12 @@ const KendoWindow = ({
         len: 0,
         length: 0,
         lenunit: "",
-        location: "01",
+        location: sessionLocation,
         model: item.model,
         orddt: filters.orddt,
         ordkey: "",
         ordnum: ordnum,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         out_qty: 0,
         pac: "",
         poregseq: 0,
@@ -2678,12 +2679,12 @@ const KendoWindow = ({
       len: 0,
       length: 0,
       lenunit: "",
-      location: "01",
+      location: sessionLocation,
       model: "",
       orddt: filters.orddt,
       ordkey: "",
       ordnum: ordnum,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       out_qty: 0,
       pac: "",
       poregseq: 0,

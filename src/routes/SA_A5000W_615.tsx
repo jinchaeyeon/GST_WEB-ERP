@@ -193,6 +193,7 @@ const SA_A5000W_615: React.FC = () => {
   // 볼륨 설정
   audio.volume = 1;
   audio2.volume = 1;
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -206,7 +207,7 @@ const SA_A5000W_615: React.FC = () => {
         pageSize: filters.pgSize,
         parameters: {
           "@p_work_type": "ORDER",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_ordbarcode": filters.ordbarcode,
           "@p_itembarcode": "",
           "@p_ordseq": 0,
@@ -287,7 +288,7 @@ const SA_A5000W_615: React.FC = () => {
         pageSize: filters.pgSize,
         parameters: {
           "@p_work_type": "Q",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": sessionOrgdiv,
           "@p_ordbarcode": Information.ordnum,
           "@p_itembarcode": filters.itembarcode,
           "@p_ordseq": Information.ordseq,
@@ -404,7 +405,7 @@ const SA_A5000W_615: React.FC = () => {
         setParaData((prev) => ({
           ...prev,
           workType: "N",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           custcd: Information.custcd,
           ordnum_s: dataArr.ordnum_s.join("|"),
           ordseq_s: dataArr.ordseq_s.join("|"),
@@ -422,7 +423,7 @@ const SA_A5000W_615: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     custcd: "",
     ordnum_s: "",
     ordseq_s: "",
@@ -460,7 +461,7 @@ const SA_A5000W_615: React.FC = () => {
       resetAll();
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         custcd: "",
         ordnum_s: "",
         ordseq_s: "",

@@ -20,7 +20,7 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  TitleContainer
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
@@ -114,10 +114,14 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
-        quosts: defaultOption.find((item: any) => item.id == "quosts")?.valueCode,
-        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
-        smperson: defaultOption.find((item: any) => item.id == "smperson")?.valueCode,
-        custcd: defaultOption.find((item: any) => item.id == "custcd")?.valueCode,
+        quosts: defaultOption.find((item: any) => item.id == "quosts")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        smperson: defaultOption.find((item: any) => item.id == "smperson")
+          ?.valueCode,
+        custcd: defaultOption.find((item: any) => item.id == "custcd")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -244,12 +248,12 @@ const CopyWindow = ({
       custnm: data.custnm,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: location,
     dtgb: "",
     frdt: new Date(),

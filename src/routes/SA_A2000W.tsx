@@ -189,6 +189,7 @@ const SA_B2000: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_001,L_dptcd_001,L_BA061,L_BA015,L_finyn",
@@ -386,7 +387,7 @@ const SA_B2000: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     custcd: "",

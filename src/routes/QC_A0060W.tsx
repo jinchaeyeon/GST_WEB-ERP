@@ -314,10 +314,13 @@ const QC_A0060W: React.FC = () => {
     }));
   };
 
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     mngnum: "",
     itemcd: "",
@@ -355,8 +358,8 @@ const QC_A0060W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_dptcd": "",
       "@p_stdnum": paraDataDeleted.stdnum,
       "@p_stdrev": paraDataDeleted.stdrev,
