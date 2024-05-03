@@ -33,6 +33,7 @@ import AuthRoute from "./components/AuthRoute";
 import { UseGetValueFromSessionItem } from "./components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import { default as PanelBarNavContainerWEBERP } from "./components/Containers/PanelBarNavContainerWEBERP";
+import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
 import {
   OSState,
@@ -43,7 +44,6 @@ import {
   sessionItemState,
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
-import Loader from "./components/Loader";
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
 const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
 const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
@@ -1107,18 +1107,18 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <Suspense fallback={<Loader />}>
-            <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
-            <Router>
-              <Switch>
-                <Route sensitive={false} path="/" component={Login} exact />
-                <Route
-                  sensitive={false}
-                  path="/Error"
-                  component={NotFound}
-                  exact
-                />
-                <PanelBarNavContainerWEBERP>
+          <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
+          <Router>
+            <Switch>
+              <Route sensitive={false} path="/" component={Login} exact />
+              <Route
+                sensitive={false}
+                path="/Error"
+                component={NotFound}
+                exact
+              />
+              <PanelBarNavContainerWEBERP>
+                <Suspense fallback={<Loader />}>
                   {/* 메인 홈 */}
                   {loginResult ? (
                     <AuthRoute
@@ -1531,10 +1531,10 @@ const AppInner: React.FC = () => {
                     component={SA_A2300W_PDA}
                     exact
                   />
-                </PanelBarNavContainerWEBERP>
-              </Switch>
-            </Router>
-          </Suspense>
+                </Suspense>
+              </PanelBarNavContainerWEBERP>
+            </Switch>
+          </Router>
         </IntlProvider>
       </LocalizationProvider>
     </>
