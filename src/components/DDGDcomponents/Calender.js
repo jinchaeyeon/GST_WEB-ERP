@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import { useApi } from "../../hooks/api";
-import { convertDateToStr } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+} from "../CommonFunction";
 
 function App(props) {
   let deviceWidth = window.innerWidth;
@@ -125,7 +128,7 @@ function App(props) {
         <>
           <div style={{ display: "block", width: "100%" }}>
             <img
-              src={`${process.env.PUBLIC_URL}/Born.png`}
+              src={`/Born.png`}
               alt=""
               width={"20px"}
               height={"20px"}
@@ -200,7 +203,7 @@ function App(props) {
       ) : (
         <div style={{ display: "inline-block", width: "100%" }}>
           <img
-            src={`${process.env.PUBLIC_URL}/Born.png`}
+            src={`/Born.png`}
             alt=""
             width={"20px"}
             height={"20px"}

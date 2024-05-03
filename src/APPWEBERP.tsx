@@ -35,6 +35,7 @@ import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import { default as PanelBarNavContainerWEBERP } from "./components/Containers/PanelBarNavContainerWEBERP";
 import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
+import NotFound from "./routes/NotFound";
 import {
   OSState,
   colors,
@@ -196,7 +197,6 @@ const MA_B7000W_mihyeon = lazy(() => import("./routes/MA_B7000W_mihyeon"));
 const MA_B7000_606W = lazy(() => import("./routes/MA_B7000_606W"));
 const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
 const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
-const NotFound = lazy(() => import("./routes/NotFound"));
 const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
 const PR_A0040W = lazy(() => import("./routes/PR_A0040W"));
 const PR_A0060W = lazy(() => import("./routes/PR_A0060W"));

@@ -479,7 +479,7 @@ const CR_A0000W: React.FC = () => {
                   <GridTitle>
                     우리집 강아지
                     <img
-                      src={`${process.env.PUBLIC_URL}/PuppyFoot.png`}
+                      src={`/PuppyFoot.png`}
                       alt=""
                       width={"30px"}
                       height={"30px"}
@@ -514,7 +514,7 @@ const CR_A0000W: React.FC = () => {
                   <GridTitle>
                     등원 스케줄 관리
                     <img
-                      src={`${process.env.PUBLIC_URL}/PuppyFoot.png`}
+                      src={`/PuppyFoot.png`}
                       alt=""
                       width={"30px"}
                       height={"30px"}
@@ -551,7 +551,7 @@ const CR_A0000W: React.FC = () => {
                     <Title>
                       우리집 강아지
                       <img
-                        src={`${process.env.PUBLIC_URL}/PuppyFoot.png`}
+                        src={`/PuppyFoot.png`}
                         alt=""
                         width={"30px"}
                         height={"30px"}
@@ -619,7 +619,7 @@ const CR_A0000W: React.FC = () => {
                           )[0].custnm}
                       의 스케줄 관리
                       <img
-                        src={`${process.env.PUBLIC_URL}/PuppyFoot.png`}
+                        src={`/PuppyFoot.png`}
                         alt=""
                         width={"30px"}
                         height={"30px"}
@@ -677,7 +677,7 @@ const CR_A0000W: React.FC = () => {
                         }
                         의 등원 변경신청
                         <img
-                          src={`${process.env.PUBLIC_URL}/PuppyFoot.png`}
+                          src={`/PuppyFoot.png`}
                           alt=""
                           width={"30px"}
                           height={"30px"}
@@ -709,7 +709,7 @@ const CR_A0000W: React.FC = () => {
                                   }}
                                 >
                                   <img
-                                    src={`${process.env.PUBLIC_URL}/Born.png`}
+                                    src={`/Born.png`}
                                     alt=""
                                     width={"20px"}
                                     height={"20px"}
@@ -773,7 +773,7 @@ const CR_A0000W: React.FC = () => {
                                   }}
                                 >
                                   <img
-                                    src={`${process.env.PUBLIC_URL}/Born.png`}
+                                    src={`/Born.png`}
                                     alt=""
                                     width={"20px"}
                                     height={"20px"}
@@ -826,7 +826,7 @@ const CR_A0000W: React.FC = () => {
                                   }}
                                 >
                                   <img
-                                    src={`${process.env.PUBLIC_URL}/Born.png`}
+                                    src={`/Born.png`}
                                     alt=""
                                     width={"20px"}
                                     height={"20px"}
@@ -891,7 +891,7 @@ const CR_A0000W: React.FC = () => {
                                   }}
                                 >
                                   <img
-                                    src={`${process.env.PUBLIC_URL}/Born.png`}
+                                    src={`/Born.png`}
                                     alt=""
                                     width={"20px"}
                                     height={"20px"}

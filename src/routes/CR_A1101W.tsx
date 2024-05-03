@@ -402,7 +402,7 @@ const CR_A1101W: React.FC = () => {
               }}
             >
               <img
-                src={`${process.env.PUBLIC_URL}/logo_ddgd.png`}
+                src={`/logo_ddgd.png`}
                 alt=""
                 width={isMobile ? "200px" : "400px"}
                 height={isMobile ? "200px" : "400px"}

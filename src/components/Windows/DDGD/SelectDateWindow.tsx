@@ -160,7 +160,7 @@ const KendoWindow = ({
                     }}
                   >
                     <img
-                      src={`${process.env.PUBLIC_URL}/Born.png`}
+                      src={`/Born.png`}
                       alt=""
                       width={"20px"}
                       height={"20px"}
@@ -213,7 +213,7 @@ const KendoWindow = ({
                     }}
                   >
                     <img
-                      src={`${process.env.PUBLIC_URL}/Born.png`}
+                      src={`/Born.png`}
                       alt=""
                       width={"20px"}
                       height={"20px"}
@@ -266,7 +266,7 @@ const KendoWindow = ({
                     }}
                   >
                     <img
-                      src={`${process.env.PUBLIC_URL}/Born.png`}
+                      src={`/Born.png`}
                       alt=""
                       width={"20px"}
                       height={"20px"}
@@ -319,7 +319,7 @@ const KendoWindow = ({
                     }}
                   >
                     <img
-                      src={`${process.env.PUBLIC_URL}/Born.png`}
+                      src={`/Born.png`}
                       alt=""
                       width={"20px"}
                       height={"20px"}
