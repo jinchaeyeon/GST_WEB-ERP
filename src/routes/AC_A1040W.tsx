@@ -20,7 +20,7 @@ import {
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -68,7 +68,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import StandardWindow from "../components/Windows/CommonWindows/StandardWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -219,6 +219,8 @@ const AC_A1040W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1040W", setCustomOptionData);
@@ -363,7 +365,7 @@ const AC_A1040W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     frdt: new Date(),
@@ -1197,7 +1199,7 @@ const AC_A1040W: React.FC = () => {
             setParaData((prev) => ({
               ...prev,
               workType: "N",
-              orgdiv: "01",
+              orgdiv: sessionOrgdiv,
               location: filters.location,
               actdt: convertDateToStr(information.actdt),
               acntcd_s: dataArr.acntcd_s.join("|"),
@@ -1234,7 +1236,7 @@ const AC_A1040W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     actdt: "",
     acntcd_s: "",
@@ -1308,7 +1310,7 @@ const AC_A1040W: React.FC = () => {
       setPage(initialPageState);
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         actdt: "",
         acntcd_s: "",
@@ -1404,7 +1406,7 @@ const AC_A1040W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "DROP",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             actdt: convertDateToStr(information.actdt),
             acntcd_s: "",

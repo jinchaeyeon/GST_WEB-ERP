@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -29,6 +29,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -40,7 +41,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -54,6 +55,9 @@ const AC_B6060W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -176,7 +180,7 @@ const AC_B6060W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     yyyymmdd: new Date(),
@@ -332,7 +336,7 @@ const AC_B6060W: React.FC = () => {
       parameters: {
         "@p_work_type": "PERIOD",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": "01",
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_yyyymmdd": "",
@@ -389,7 +393,7 @@ const AC_B6060W: React.FC = () => {
       parameters: {
         "@p_work_type": "QUARTER",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": "01",
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_yyyymmdd": "",
@@ -444,7 +448,7 @@ const AC_B6060W: React.FC = () => {
       parameters: {
         "@p_work_type": "HALF",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": "01",
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_yyyymmdd": "",
@@ -498,7 +502,7 @@ const AC_B6060W: React.FC = () => {
       parameters: {
         "@p_work_type": "YEAR",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": "01",
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_yyyymmdd": "",

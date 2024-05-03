@@ -619,8 +619,19 @@ const SA_B2221: React.FC = () => {
                 : "수주집계(품목)"}
             </Title>
 
-            <ButtonContainer>
-            <FilterContainer>
+            <ButtonContainer>            
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_B2221W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+       
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -698,23 +709,13 @@ const SA_B2221: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterContainer>
-              {permissions && (
-                <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="SA_B2221W"
-                />
-              )}
-            </ButtonContainer>
-          </TitleContainer>
-       
+          </FilterContainer>    
+
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{
-              height: `${deviceHeight * 0.87}px`,
+              height: `${deviceHeight * 0.847}px`,
               width: "100%",
               paddingBottom: "15px",
             }}
@@ -751,7 +752,7 @@ const SA_B2221: React.FC = () => {
                             : WebErpcolorList
                         }
                         style={{
-                          height: `${deviceHeight * 0.65}px`,
+                          height: `${deviceHeight * 0.63}px`,
                           width: "100%",
                         }}
                       >
@@ -809,7 +810,7 @@ const SA_B2221: React.FC = () => {
                         fileName="수주집계(품목)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -912,7 +913,7 @@ const SA_B2221: React.FC = () => {
                         fileName="수주집계(품목)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1013,7 +1014,7 @@ const SA_B2221: React.FC = () => {
                         </ButtonContainer>
                         <Chart
                           style={{
-                            height: `${deviceHeight * 0.65}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                         >
@@ -1135,7 +1136,7 @@ const SA_B2221: React.FC = () => {
                     fileName="수주집계(품목)"
                   >
                     <Grid
-                      style={{ height: `${deviceHeight * 0.65}px` }}
+                      style={{ height: `${deviceHeight * 0.63}px` }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1290,7 +1291,7 @@ const SA_B2221: React.FC = () => {
 
                     <Chart
                       style={{
-                        height: `${deviceHeight * 0.65}px`,
+                        height: `${deviceHeight * 0.63}px`,
                         width: "100%",
                       }}>
                       <ChartValueAxis>

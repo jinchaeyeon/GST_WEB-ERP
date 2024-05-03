@@ -61,6 +61,7 @@ import {
   deletedAttadatnumsState,
   isLoading,
   loginResultState,
+  sessionItemState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -91,6 +92,8 @@ const AC_A1020W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -274,7 +277,7 @@ const AC_A1020W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     strdt: new Date(),
@@ -526,7 +529,7 @@ const AC_A1020W: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
 
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
 
       "@p_expensedt": paraDataDeleted.expensedt,
       "@p_expenseseq1": paraDataDeleted.expenseseq1,

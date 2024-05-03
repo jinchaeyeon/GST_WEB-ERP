@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -69,7 +69,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1189,6 +1189,11 @@ const AC_A0020W: React.FC = () => {
   const [editedField2, setEditedField2] = useState("");
   const [editIndex3, setEditIndex3] = useState<number | undefined>();
   const [editedField3, setEditedField3] = useState("");
+
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -1244,7 +1249,7 @@ const AC_A0020W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     mngitemcd: "",
     mngitemnm: "",
     find_row_value: "",
@@ -1254,7 +1259,7 @@ const AC_A0020W: React.FC = () => {
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     acntses: "",
     reportgb: "",
     acntgrpcd: "",
@@ -1265,7 +1270,7 @@ const AC_A0020W: React.FC = () => {
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     stdrmkcd: "",
     stdrmknm1: "",
     find_row_value: "",
@@ -1275,7 +1280,7 @@ const AC_A0020W: React.FC = () => {
 
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     inoutdiv: "1",
     find_row_value: "",
     pgNum: 1,
@@ -1311,7 +1316,7 @@ const AC_A0020W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": filters.orgdiv,
         "@p_mngitemcd": filters.mngitemcd,
         "@p_mngitemnm": filters.mngitemnm,
         "@p_find_row_value": filters.find_row_value,
@@ -2925,7 +2930,7 @@ const AC_A0020W: React.FC = () => {
       extra_field3: "",
       mngitemcd: "",
       mngitemnm: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark: "",
       system_yn: "N",
       table_id: "",
@@ -3784,7 +3789,7 @@ const AC_A0020W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "MNGITEM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     mngitemcd_s: "",
     mngitemnm_s: "",
@@ -3800,7 +3805,7 @@ const AC_A0020W: React.FC = () => {
   const [ParaData2, setParaData2] = useState({
     pgSize: PAGE_SIZE,
     workType: "FIN1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     acntses_s: "",
     reportgb_s: "",
@@ -3828,7 +3833,7 @@ const AC_A0020W: React.FC = () => {
   const [ParaData3, setParaData3] = useState({
     pgSize: PAGE_SIZE,
     workType: "STCD",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     stdrmkcd_s: "",
     stdrmknm1_s: "",
@@ -3840,8 +3845,8 @@ const AC_A0020W: React.FC = () => {
   const [ParaData4, setParaData4] = useState({
     pgSize: PAGE_SIZE,
     workType: "AUTO",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     position: "",
     rowstatus_s: "",
     itemacnt_s: "",
@@ -4024,7 +4029,7 @@ const AC_A0020W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "MNGITEM",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         mngitemcd_s: "",
         mngitemnm_s: "",
@@ -4120,7 +4125,7 @@ const AC_A0020W: React.FC = () => {
       setParaData2({
         pgSize: PAGE_SIZE,
         workType: "FIN1",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         acntses_s: "",
         reportgb_s: "",
@@ -4195,7 +4200,7 @@ const AC_A0020W: React.FC = () => {
       setParaData3({
         pgSize: PAGE_SIZE,
         workType: "STCD",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         stdrmkcd_s: "",
         stdrmknm1_s: "",
@@ -4253,8 +4258,8 @@ const AC_A0020W: React.FC = () => {
       setParaData4({
         pgSize: PAGE_SIZE,
         workType: "AUTO",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         position: "",
         rowstatus_s: "",
         itemacnt_s: "",
@@ -4282,7 +4287,7 @@ const AC_A0020W: React.FC = () => {
     setParaData2((prev) => ({
       pgSize: PAGE_SIZE,
       workType: "COPY",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       rowstatus_s: "",
       acntses_s: filters2.acntses,
       reportgb_s: "",

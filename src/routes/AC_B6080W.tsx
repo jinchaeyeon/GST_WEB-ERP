@@ -46,6 +46,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -60,7 +61,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B6080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -77,6 +78,9 @@ const AC_B6080W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   //커스텀 옵션 조회
@@ -321,7 +325,7 @@ const AC_B6080W: React.FC = () => {
     worktype: "SALETOTAL",
     worktype2: "A",
     worktype3: "1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyymm: new Date(),
     custcd: "",
     custnm: "",
@@ -365,7 +369,7 @@ const AC_B6080W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_Type": filters.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 6),
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
@@ -462,7 +466,7 @@ const AC_B6080W: React.FC = () => {
       pageSize: detailFilters.pgSize,
       parameters: {
         "@p_work_Type": detailFilters.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 6),
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
@@ -553,7 +557,7 @@ const AC_B6080W: React.FC = () => {
       pageSize: detailFilters2.pgSize,
       parameters: {
         "@p_work_Type": detailFilters2.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 6),
         "@p_custcd": detailFilters2.custcd,
         "@p_custnm": filters.custnm,

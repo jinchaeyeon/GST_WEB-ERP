@@ -15,7 +15,7 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -58,7 +58,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -108,6 +108,9 @@ const AC_B5040W: React.FC = () => {
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B5040W", setMessagesData);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -267,7 +270,7 @@ const AC_B5040W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LIST1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     daygb: "",
     frdt: new Date(),
     todt: new Date(),
@@ -455,7 +458,7 @@ const AC_B5040W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         worktype: "LIST1",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         daygb: "",
         inoutdiv: "",
         taxdiv: "",
@@ -474,7 +477,7 @@ const AC_B5040W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         worktype: "LIST3",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         daygb: "",
         inoutdiv: "2",
         taxdiv: "",
@@ -493,7 +496,7 @@ const AC_B5040W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         worktype: "LIST2",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         daygb: "",
         inoutdiv: "1",
         taxdiv: "",
@@ -904,7 +907,7 @@ const AC_B5040W: React.FC = () => {
 
     setParaData({
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       inoutdiv: information.inoutdiv,
       listyn: information.listyn,
       rowstatus_s: detailArr.rowstatus_s.join("|"),

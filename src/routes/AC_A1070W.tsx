@@ -17,7 +17,7 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -61,7 +61,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -113,6 +113,9 @@ const AC_A1070W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1070W", setCustomOptionData);
@@ -228,7 +231,7 @@ const AC_A1070W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     frdt: new Date(),
@@ -1070,7 +1073,7 @@ const AC_A1070W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "INSERT",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));
@@ -1085,7 +1088,7 @@ const AC_A1070W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     ref_key_s: "",
   });
@@ -1153,7 +1156,7 @@ const AC_A1070W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         ref_key_s: "",
       });
@@ -1192,7 +1195,7 @@ const AC_A1070W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "DELETE",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));

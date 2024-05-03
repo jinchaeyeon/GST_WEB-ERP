@@ -24,7 +24,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -40,6 +40,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -53,7 +54,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -84,6 +85,9 @@ const AC_B2080W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_B2080W", setCustomOptionData);
@@ -180,7 +184,7 @@ const AC_B2080W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "5CHART",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     startdt: new Date(),
     enddt: new Date(),
     acntnm: "",
@@ -249,7 +253,7 @@ const AC_B2080W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_Type": filters.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_startdt": convertDateToStr(filters.startdt),
         "@p_enddt": convertDateToStr(filters.enddt),
         "@p_acntnm": filters.acntnm,
@@ -318,7 +322,7 @@ const AC_B2080W: React.FC = () => {
       pageSize: detailFilters.pgSize,
       parameters: {
         "@p_work_Type": detailFilters.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_startdt": convertDateToStr(filters.startdt),
         "@p_enddt": convertDateToStr(filters.enddt),
         "@p_acntnm": filters.acntnm,
@@ -441,7 +445,7 @@ const AC_B2080W: React.FC = () => {
       pageSize: detailFilters2.pgSize,
       parameters: {
         "@p_work_Type": detailFilters2.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_startdt": convertDateToStr(filters.startdt),
         "@p_enddt": convertDateToStr(filters.enddt),
         "@p_acntnm": detailFilters2.acntnm,
