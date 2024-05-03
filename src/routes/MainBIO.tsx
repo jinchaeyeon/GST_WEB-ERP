@@ -2,8 +2,6 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import React, { useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Grid as GridMui } from "@mui/material";
-import { Button } from "@progress/kendo-react-buttons";
-import { Badge, BadgeContainer } from "@progress/kendo-react-indicators";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
@@ -14,13 +12,8 @@ import {
   WeekView,
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
-import { Card as CardPrime } from "primereact/card";
 import { useRecoilState } from "recoil";
-import {
-  AnswerIcon,
-  GridContainer,
-  GridContainerWrap
-} from "../CommonStyled";
+import { AnswerIcon, GridContainer, GridContainerWrap } from "../CommonStyled";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -32,7 +25,6 @@ import {
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
-import MessengerWindow from "../components/Windows/CommonWindows/MessengerWindow";
 import { useApi } from "../hooks/api";
 import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
@@ -63,6 +55,8 @@ const Main: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [tabSelected, setTabSelected] = React.useState(0);
   const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -128,21 +122,6 @@ const Main: React.FC = () => {
       setListData(rows);
     }
   }, []);
-
-  useEffect(() => {
-    if (sessionUserId == "") fetchSessionItem();
-    // if (token && sessionUserId == "") fetchSessionItem();
-  }, [sessionUserId]);
-
-  let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code == "orgdiv"
-  )!.value;
-  let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code == "location"
-  )!.value;
-
-  if (sessionOrgdiv == "") sessionOrgdiv = "01";
-  if (sessionLocation == "") sessionLocation = "01";
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -309,40 +288,10 @@ const Main: React.FC = () => {
     }));
   };
 
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
-
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     dtdiv: "W",
@@ -352,14 +301,14 @@ const Main: React.FC = () => {
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userId: userId,
     isSearch: true,
   });
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userId: userId,
     isSearch: true,
   });
@@ -530,7 +479,7 @@ const Main: React.FC = () => {
                     status: "상태",
                     consts: "계약여부",
                     custnm: "업체명",
-                    chkperson: "영업담당자"
+                    chkperson: "영업담당자",
                   }}
                   title={"프로젝트 관리"}
                   width={[150, 120, 100, 120, 120]}

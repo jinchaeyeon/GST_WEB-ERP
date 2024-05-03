@@ -68,25 +68,11 @@ const Main: React.FC = () => {
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const [visible, setVisible] = useState(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = loginResult ? loginResult.userId : "";
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
   const [osstate, setOSState] = useRecoilState(OSState);
-
-  useEffect(() => {
-    fetchSessionItem();
-    // if (token && sessionUserId == "") fetchSessionItem();
-  }, [sessionUserId]);
-
-  let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code == "orgdiv"
-  )!.value;
-  let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code == "location"
-  )!.value;
-
-  if (sessionOrgdiv == "") sessionOrgdiv = "01";
-  if (sessionLocation == "") sessionLocation = "01";
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -588,36 +574,6 @@ const Main: React.FC = () => {
       [name]: value,
     }));
   };
-
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

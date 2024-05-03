@@ -246,7 +246,8 @@ const PR_A1100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const planIdGetter = getter(PLAN_DATA_ITEM_KEY);
   const materialIdGetter = getter(MATERIAL_DATA_ITEM_KEY);
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
   //메시지 조회
@@ -401,8 +402,8 @@ const PR_A1100W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dtgb: "A",
     frdt: initFrdt,
     todt: new Date(),
@@ -430,7 +431,7 @@ const PR_A1100W: React.FC = () => {
 
   const [materialFilters, setMaterialFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     plankey: "",
     find_row_value: "",
     pgNum: 1,
@@ -440,7 +441,7 @@ const PR_A1100W: React.FC = () => {
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     ordnum: "",
   });
 
@@ -524,9 +525,9 @@ const PR_A1100W: React.FC = () => {
   //계획 저장 파라미터 초기값
   const [paraDataPlanSaved, setParaDataPlanSaved] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     //ordnum: "",
-    location: "01",
+    location: sessionLocation,
     planqty: 0,
     rowstatus_s: "",
     ordnum_s: "",
@@ -1485,7 +1486,7 @@ const PR_A1100W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.ordnum = "";
-    paraDataDeleted.orgdiv = "01";
+    paraDataDeleted.orgdiv = sessionOrgdiv;
   };
 
   const onSavePlanClick = () => {
@@ -1862,7 +1863,7 @@ const PR_A1100W: React.FC = () => {
 
     paraDataDeleted.work_type = ""; //초기화
     paraDataDeleted.ordnum = "";
-    paraDataDeleted.orgdiv = "01";
+    paraDataDeleted.orgdiv = sessionOrgdiv;
   };
 
   interface ICustData {

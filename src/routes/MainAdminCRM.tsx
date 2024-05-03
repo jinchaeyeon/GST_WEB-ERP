@@ -58,6 +58,8 @@ const Main: React.FC = () => {
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userName = loginResult ? loginResult.userName : "";
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -157,55 +159,7 @@ const Main: React.FC = () => {
     });
     setMainnoticeSelectedState(newSelectedState);
   };
-  useEffect(() => {
-    if (sessionUserId == "") fetchSessionItem();
-    // if (token && sessionUserId == "") fetchSessionItem();
-  }, [sessionUserId]);
 
-  let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code == "orgdiv"
-  )!.value;
-  let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code == "location"
-  )!.value;
-
-  if (sessionOrgdiv == "") sessionOrgdiv = "01";
-  if (sessionLocation == "") sessionLocation = "01";
-
-  useEffect(() => {
-    if (sessionItem) {
-    }
-  }, []);
-
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
   const [filters, setFilters] = useState<any>({
     pgSize: 100,
     workType: "Q",
@@ -217,7 +171,7 @@ const Main: React.FC = () => {
   const [mainNoticefilters, setMainNoticeFilters] = useState({
     cbocategory: "",
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboPerson: "",
     publishdate: new Date(),
     title: "",
@@ -236,7 +190,7 @@ const Main: React.FC = () => {
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    location: "01",
+    location: sessionLocation,
     datnum: "",
     category: "",
     pgNum: 1,
@@ -249,7 +203,7 @@ const Main: React.FC = () => {
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "Q",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": detailFilters.datnum,
       "@p_dtgb": mainNoticefilters.cbodtgb,
       "@p_frdt": convertDateToStr(mainNoticefilters.publish_start_date),
@@ -292,8 +246,8 @@ const Main: React.FC = () => {
       pageSize: 100,
       parameters: {
         "@p_work_type": "MANAGER",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_user_id": userId,
         "@p_frdt": "",
         "@p_todt": "",
@@ -372,7 +326,7 @@ const Main: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_datnum": filters.datnum,
         "@p_dtgb": filters.cbodtgb,
         "@p_frdt": convertDateToStr(filters.publish_start_date),
