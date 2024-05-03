@@ -613,6 +613,7 @@ const CopyWindow = ({
         setDetailDataResult2(process([], detailDataState2));
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setFilters((prev) => ({
@@ -680,6 +681,7 @@ const CopyWindow = ({
         setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY2]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setDetailFilters((prev) => ({
@@ -749,6 +751,7 @@ const CopyWindow = ({
         setDetailSelectedState2({ [selectedRow[DATA_ITEM_KEY3]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setDetailFilters2((prev) => ({

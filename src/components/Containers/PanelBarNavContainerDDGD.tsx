@@ -190,8 +190,6 @@ const PanelBarNavContainer = (props: any) => {
   }, [deletedName]);
 
   useEffect(() => {
-    // console.log("caches" in window);
-    // console.log(window.caches);
     checkPwExpInfo();
   }, []);
 

@@ -454,6 +454,7 @@ const CopyWindow = ({
         setSubDataResult(process([], subDataState));
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setFilters((prev) => ({
@@ -518,6 +519,7 @@ const CopyWindow = ({
         setSubSelectedState({ [selectedRow[DATA_ITEM_KEY2]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setDetailFilters((prev) => ({

@@ -160,6 +160,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
         });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setLoading(false);

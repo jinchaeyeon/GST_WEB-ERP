@@ -1322,8 +1322,6 @@ const CR_A0010W: React.FC = () => {
           }
 
           // if (data.isSuccess !== true) {
-          //   console.log("[오류 발생]");
-          //   console.log(data);
           //   throw data.resultMessage;
           // } else {
           //   setFilters((prev) => ({

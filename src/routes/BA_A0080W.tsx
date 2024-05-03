@@ -1485,7 +1485,6 @@ const BA_A0080: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    console.log("dataItem", dataItem);
 
     try {
       dataItem.map((item: any) => {
@@ -1543,7 +1542,6 @@ const BA_A0080: React.FC = () => {
       dataArr.recdt.push(recdt);
       dataArr.amtunit.push(amtunit);
     });
-    console.log("dataArr", dataArr);
 
     deletedMainRows.forEach((item: any, idx: number) => {
       const {

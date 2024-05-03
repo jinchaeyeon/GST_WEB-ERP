@@ -130,6 +130,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
         };
       });
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setLoading(false);

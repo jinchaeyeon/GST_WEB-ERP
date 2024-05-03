@@ -441,7 +441,6 @@ const SA_B2220W: React.FC = () => {
     ).map((item: { date: any }) => {
       return item.date;
     });
-    console.log(array4);
     setStackChartLabel2(array4);
     setStackChartAllLabel2(array3);
 

@@ -73,7 +73,6 @@ export const getDayOfWeeks = (value: number) => {
   }
 
   return dayofweek.join("/");
-  //console.log(dayofweek.join("/"));
 };
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {

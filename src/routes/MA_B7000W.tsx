@@ -895,21 +895,46 @@ const MA_B7000: React.FC = () => {
     }
   };
 
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
+  const handleSlideChange = (swiper: {
+    activeIndex: React.SetStateAction<number>;
+  }) => {
+    setActiveSlideIndex(swiper.activeIndex);
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>재고조회</Title>
 
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="MA_B7000W"
-            />
-          )}
-        </ButtonContainer>
+        <div style={{ display: "flex", justifyContent: activeSlideIndex === 0 ? "flex-end" : "space-between" }}>
+          <Button
+            onClick={() => {
+              if (swiper) {
+                swiper.slideTo(0);
+              }
+            }}
+            icon="arrow-left"
+            themeColor={"primary"}
+            fillMode={"outline"}
+            style={{
+              display: activeSlideIndex === 0 ? "none" : "flex",
+            }}
+          >
+            이전
+          </Button>
+          <ButtonContainer>
+            {permissions && (
+              <TopButtons
+                search={search}
+                exportExcel={exportExcel}
+                permissions={permissions}
+                pathname="MA_B7000W"
+              />
+            )}
+          </ButtonContainer>
+        </div>
       </TitleContainer>
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
@@ -1079,13 +1104,14 @@ const MA_B7000: React.FC = () => {
         <>
           <GridContainerWrap>
             <Swiper
-              className="leading_80_Swiper"
+              className="leading_78_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}
               onActiveIndexChange={(swiper) => {
                 index = swiper.activeIndex;
               }}
+              onSlideChange={handleSlideChange}
             >
               <SwiperSlide key={0} className="leading_PDA">
                 <GridContainer>
@@ -1097,7 +1123,7 @@ const MA_B7000: React.FC = () => {
                     fileName="재고조회"
                   >
                     <Grid
-                      style={{ height: "75vh", width: `${deviceWidth - 30}px` }}
+                      style={{ height: "74vh", width: `${deviceWidth - 30}px` }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1176,27 +1202,8 @@ const MA_B7000: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </SwiperSlide>
-              <SwiperSlide
-                key={1}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  overflow: "scroll",
-                }}
-              >
+              <SwiperSlide key={1} className="leading_PDA">
                 <GridContainer>
-                  <Button
-                    style={{ marginRight: "85%", marginTop: "8vh" }}
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
-                    }}
-                    icon="arrow-left"
-                  >
-                    이전
-                  </Button>
-
                   <GridTitleContainer>
                     <GridTitle>계정별LOT</GridTitle>
                   </GridTitleContainer>
@@ -1209,7 +1216,7 @@ const MA_B7000: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: "37.5vh",
+                        height: "31.5vh",
                         width: `${deviceWidth - 30}px`,
                       }}
                       data={process(
@@ -1293,7 +1300,7 @@ const MA_B7000: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: "37.5vh",
+                        height: "31.5vh",
                         width: `${deviceWidth - 30}px`,
                       }}
                       data={process(
@@ -1381,7 +1388,7 @@ const MA_B7000: React.FC = () => {
               fileName="재고조회"
             >
               <Grid
-                style={{ height: "36.5vh" }}
+                style={{ height: "36vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

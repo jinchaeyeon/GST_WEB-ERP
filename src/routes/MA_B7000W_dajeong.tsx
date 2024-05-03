@@ -175,7 +175,6 @@ const MA_B7000W_dajeong: React.FC = () => {
     };
     try {
       data = await processApi<any>("query", query);
-      console.log(data);
     } catch (error) {
       data = null;
     }

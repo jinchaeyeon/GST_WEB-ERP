@@ -1135,7 +1135,6 @@ const PR_A6000W: React.FC = () => {
   const onExpandChange = React.useCallback(
     (event: GridExpandChangeEvent) => {
       const item = event.dataItem;
-      console.log(collapsedState);
       if (item.groupId) {
         const collapsedIds = !event.value
           ? [...collapsedState, item.groupId]
@@ -1149,7 +1148,6 @@ const PR_A6000W: React.FC = () => {
   const onExpandChange2 = React.useCallback(
     (event: GridExpandChangeEvent) => {
       const item = event.dataItem;
-      console.log(collapsedState2);
       if (item.groupId) {
         const collapsedIds = !event.value
           ? [...collapsedState2, item.groupId]

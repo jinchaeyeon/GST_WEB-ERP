@@ -521,7 +521,6 @@ const MA_A3300W_mihyeon: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
-      console.log("data", data);
     } catch (error) {
       data = null;
     }

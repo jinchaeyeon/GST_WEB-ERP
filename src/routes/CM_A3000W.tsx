@@ -1210,7 +1210,6 @@ const CM_A3000W: React.FC = () => {
 
         // 다운로드 파일 이름을 추출하는 함수
         const extractDownloadFilename = (response: any) => {
-          console.log(response);
           if (response.headers) {
             const disposition = response.headers["content-disposition"];
             let filename = "";

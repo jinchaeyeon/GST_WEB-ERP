@@ -997,7 +997,6 @@ const BA_A0040: React.FC = () => {
     setLoading(true);
     try {
       data = await processApi<any>("procedure", subparameters);
-      console.log(data);
     } catch (error) {
       data = null;
     }

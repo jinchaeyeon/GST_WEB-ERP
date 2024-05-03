@@ -178,6 +178,7 @@ const KendoWindow = ({
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     // 필터 isSearch false처리, pgNum 세팅

@@ -121,7 +121,6 @@ function App(props) {
     fetchMainGrid();
     onChange(null);
   }, [props]);
-  console.log(schedulerData);
   return (
     <CalendarContainer backgroundColor={data.color} isMobile={isMobile}>
       {isMobile ? (
