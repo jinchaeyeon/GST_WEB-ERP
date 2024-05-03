@@ -1563,7 +1563,7 @@ const SA_B2211W: React.FC = () => {
           >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
-                <GridContainer height="36.5vh">
+                <GridContainer height="34.5vh">
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
@@ -1615,7 +1615,7 @@ const SA_B2211W: React.FC = () => {
                     fileName="수주집계(업체)"
                   >
                     <Grid
-                      style={{ height: "34vh" }}
+                      style={{ height: "34.5vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1698,7 +1698,7 @@ const SA_B2211W: React.FC = () => {
                     fileName="수주집계(업체)"
                   >
                     <Grid
-                      style={{ height: "33.5vh" }}
+                      style={{ height: "34.5vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1850,7 +1850,7 @@ const SA_B2211W: React.FC = () => {
                     fileName="수주집계(업체)"
                   >
                     <Grid
-                      style={{ height: "33.5vh" }}
+                      style={{ height: "34.5vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,

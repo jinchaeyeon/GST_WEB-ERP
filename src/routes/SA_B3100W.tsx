@@ -2186,7 +2186,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "35.5vh" }}
+                      style={{ height: "32.5vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2269,7 +2269,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "33.5vh" }}
+                      style={{ height: "32vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2437,7 +2437,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "33.5vh" }}
+                      style={{ height: "32vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2735,7 +2735,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "33.5vh" }}
+                      style={{ height: "32vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
