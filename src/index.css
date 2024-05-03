@@ -728,9 +728,9 @@ input.readonly {
 }
 
 /* 모바일 결재문서 숨김 처리 */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .visible-mobile-only {
-    display: block!important;
+    display: block !important;
   }
 
   .preview-grid-container {
