@@ -376,6 +376,7 @@ const BA_A0080: React.FC = () => {
   const [editedField, setEditedField] = useState("");
 
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   const [loginResult] = useRecoilState(loginResultState);
@@ -592,7 +593,7 @@ const BA_A0080: React.FC = () => {
   const [subfilters, setSubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     unpitem: "SYS01",
     itemcd: "",
     itemnm: "",
@@ -1428,7 +1429,7 @@ const BA_A0080: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     user_id: userId,
     form_id: "BA_A0080W",
     pc: pc,
@@ -1570,7 +1571,7 @@ const BA_A0080: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       user_id: userId,
       form_id: "BA_A0080W",
       pc: pc,
@@ -1731,7 +1732,7 @@ const BA_A0080: React.FC = () => {
         setParaData((prev) => ({
           ...prev,
           workType: "N",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           user_id: userId,
           form_id: "BA_A0080W",
           pc: pc,

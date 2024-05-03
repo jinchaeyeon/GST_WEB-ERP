@@ -228,6 +228,7 @@ const HU_A4100W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -373,7 +374,7 @@ const HU_A4100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     Semiannualgb: "",
     prsnnum: "",
@@ -837,7 +838,7 @@ const HU_A4100W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     yyyy_s: "",
     prsnnum_s: "",
@@ -877,7 +878,7 @@ const HU_A4100W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         yyyy_s: "",
         prsnnum_s: "",
@@ -959,7 +960,7 @@ const HU_A4100W: React.FC = () => {
       [DATA_ITEM_KEY]: ++temp,
       Semiannualgb: "1",
       amt: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnm: "",
       prsnnum: "",
       remark: "",
@@ -1000,7 +1001,7 @@ const HU_A4100W: React.FC = () => {
         [DATA_ITEM_KEY]: ++temp2,
         Semiannualgb: filters.Semiannualgb,
         amt: data,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prsnnm: item.prsnnm,
         prsnnum: item.prsnnum,
         remark: "",

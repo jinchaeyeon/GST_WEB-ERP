@@ -90,6 +90,7 @@ const centerField = [
 const CM_B1101W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY);
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY);
@@ -229,7 +230,7 @@ const CM_B1101W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DATE",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",

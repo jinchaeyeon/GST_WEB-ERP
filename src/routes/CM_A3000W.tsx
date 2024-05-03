@@ -130,6 +130,8 @@ const CM_A3000W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   const dptcd = UseGetValueFromSessionItem("dptcd");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -311,7 +313,7 @@ const CM_A3000W: React.FC = () => {
   const [infomation, setInfomation] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     contents: "",
     datnum: "",
     dptcd: "",
@@ -328,8 +330,8 @@ const CM_A3000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "TREE",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     recdt_s: new Date(),
     recdt_e: new Date(),
     dptcd: "",
@@ -600,7 +602,7 @@ const CM_A3000W: React.FC = () => {
         setInfomation({
           pgSize: PAGE_SIZE,
           workType: "N",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           contents: "",
           datnum: "",
           dptcd: "",
@@ -943,7 +945,7 @@ const CM_A3000W: React.FC = () => {
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       contents: "",
       datnum: "",
       dptcd: dptcd,

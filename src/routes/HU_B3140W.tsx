@@ -49,6 +49,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -107,6 +108,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 const HU_B3140W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -344,7 +346,7 @@ const HU_B3140W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     payyyyy: new Date(),
     fryyyymm: new Date(),

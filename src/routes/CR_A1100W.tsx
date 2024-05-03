@@ -114,6 +114,7 @@ const CR_A1100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
@@ -204,7 +205,7 @@ const CR_A1100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: location,
     frdt: new Date(),
     todt: new Date(),
@@ -544,7 +545,7 @@ const CR_A1100W: React.FC = () => {
     setParaDataSaved((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: location,
       rowstatus: dataArr.rowstatus.join("|"),
       membership_id: dataArr.membership_id.join("|"),

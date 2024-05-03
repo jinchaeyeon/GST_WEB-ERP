@@ -36,6 +36,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -95,6 +96,7 @@ const MA_B7000_606W: React.FC = () => {
   // 권한
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -264,7 +266,7 @@ const MA_B7000_606W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboLocation: "",
     itemcd: "",
     itemnm: "",

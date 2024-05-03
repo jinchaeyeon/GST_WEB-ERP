@@ -39,6 +39,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -102,6 +103,8 @@ const MA_B7000: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+
   // 권한
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -308,7 +311,7 @@ const MA_B7000: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboLocation: "",
     itemcd: "",
     itemnm: "",

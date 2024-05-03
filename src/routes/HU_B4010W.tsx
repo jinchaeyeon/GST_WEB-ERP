@@ -45,6 +45,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -86,6 +87,8 @@ const HU_B4010W: React.FC = () => {
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_B4010W", setMessagesData);
@@ -353,7 +356,7 @@ const HU_B4010W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: "",
     yyyymm: new Date(),
     find_row_value: "",

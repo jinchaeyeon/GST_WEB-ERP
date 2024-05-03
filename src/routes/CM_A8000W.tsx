@@ -151,6 +151,7 @@ const CM_A8000W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
@@ -334,7 +335,7 @@ const CM_A8000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     valueboxcd: "",
     valueboxnm: "",
     remark2: "",
@@ -478,7 +479,7 @@ const CM_A8000W: React.FC = () => {
       pageSize: filters1.pgSize,
       parameters: {
         "@p_work_type": filters1.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_valueboxcd": filters.valueboxcd,
         "@p_valueboxnm": filters.valueboxnm,
         "@p_remark2": filters.remark2,
@@ -541,7 +542,7 @@ const CM_A8000W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_valueboxcd": filters.valueboxcd,
         "@p_valueboxnm": filters.valueboxnm,
         "@p_remark2": filters.remark2,
@@ -605,7 +606,7 @@ const CM_A8000W: React.FC = () => {
       pageSize: filters3.pgSize,
       parameters: {
         "@p_work_type": filters3.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_valueboxcd": filters.valueboxcd,
         "@p_valueboxnm": filters.valueboxnm,
         "@p_remark2": filters.remark2,
@@ -1066,7 +1067,7 @@ const CM_A8000W: React.FC = () => {
       itemlvl2: "",
       itemlvl3: "",
       level: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark2: "",
       useyn: "N",
       valBasecode: "",
@@ -1110,7 +1111,7 @@ const CM_A8000W: React.FC = () => {
       itemlvl2: data.itemlvl2,
       itemlvl3: data.itemlvl3,
       level: data.level,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark2: data.remark2,
       useyn: data.useyn,
       valBasecode: data.valBasecode,
@@ -1135,7 +1136,7 @@ const CM_A8000W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     valueboxcd_s: "",
     valueboxnm_s: "",
@@ -1159,7 +1160,7 @@ const CM_A8000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_rowstatus_s": paraData.rowstatus_s,
       "@p_valueboxcd_s": paraData.valueboxcd_s,
       "@p_valueboxnm_s": paraData.valueboxnm_s,
@@ -1375,7 +1376,7 @@ const CM_A8000W: React.FC = () => {
       }
       setParaData({
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         valueboxcd_s: "",
         valueboxnm_s: "",

@@ -69,6 +69,7 @@ const CM_A1000W_617: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -201,7 +202,7 @@ const CM_A1000W_617: React.FC = () => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     title: "",
     find_row_value: "",
@@ -438,7 +439,7 @@ const CM_A1000W_617: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         recdt: convertDateToStr(information.recdt),
         datnum: information.datnum,
         custcd: information.custcd,
@@ -450,7 +451,7 @@ const CM_A1000W_617: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: "",
     datnum: "",
     custcd: "",
@@ -464,7 +465,7 @@ const CM_A1000W_617: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": paraData.datnum,
       "@p_recdt": paraData.recdt,
       "@p_custcd": paraData.custcd,
@@ -495,7 +496,7 @@ const CM_A1000W_617: React.FC = () => {
       }));
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         recdt: "",
         datnum: "",
         custcd: "",

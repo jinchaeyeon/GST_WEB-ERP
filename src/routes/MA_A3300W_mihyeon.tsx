@@ -96,6 +96,8 @@ const MA_A3300W_mihyeon: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -361,8 +363,8 @@ const MA_A3300W_mihyeon: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     position: "",
     frdt: new Date(),
     todt: new Date(),
@@ -409,7 +411,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_recdt": paraDataDeleted.recdt,
       "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",

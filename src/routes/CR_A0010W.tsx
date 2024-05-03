@@ -438,6 +438,7 @@ const CR_A0010W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -594,7 +595,7 @@ const CR_A0010W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    cboOrgdiv: "01",
+    cboOrgdiv: sessionOrgdiv,
     cboLocation: "",
     dptcd: "",
     lang_id: "",
@@ -917,7 +918,7 @@ const CR_A0010W: React.FC = () => {
       memo: "",
       mobile_no: "",
       opengb: "",
-      orgdiv: filters.cboOrgdiv ? filters.cboOrgdiv : "01",
+      orgdiv: filters.cboOrgdiv ? filters.cboOrgdiv : sessionOrgdiv,
       password: "",
       password_confirm: "",
       position: "",
@@ -1173,7 +1174,7 @@ const CR_A0010W: React.FC = () => {
             "@p_memo": memo,
             "@p_ip_check_yn":
               ip_check_yn == "Y" || ip_check_yn == true ? "Y" : "N",
-            "@p_orgdiv": "01",
+            "@p_orgdiv": sessionOrgdiv,
             "@p_location": location,
             "@p_dptcd": dptcd,
             "@p_postcd": postcd,
@@ -1283,7 +1284,7 @@ const CR_A0010W: React.FC = () => {
               "@p_hold_check_yn": "N",
               "@p_memo": "",
               "@p_ip_check_yn": "N",
-              "@p_orgdiv": filters.cboOrgdiv ? filters.cboOrgdiv : "01",
+              "@p_orgdiv": filters.cboOrgdiv ? filters.cboOrgdiv : sessionOrgdiv,
               "@p_location": filters.cboLocation,
               "@p_dptcd": "",
               "@p_postcd": "",

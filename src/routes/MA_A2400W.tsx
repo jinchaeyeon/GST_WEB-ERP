@@ -96,6 +96,8 @@ const MA_A2400W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -359,7 +361,7 @@ const MA_A2400W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     custcd: "",
@@ -407,8 +409,8 @@ const MA_A2400W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_purnum": paraDataDeleted.purnum,
       "@p_purdt": "",
       "@p_pursts": 0,

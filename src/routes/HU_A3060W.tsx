@@ -170,6 +170,7 @@ type TdataArr4 = {
 const HU_A3060W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -294,7 +295,7 @@ const HU_A3060W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     stdyr: new Date(),
     find_row_value: "",
     pgNum: 1,
@@ -304,7 +305,7 @@ const HU_A3060W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     work_type: "RifList",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -313,7 +314,7 @@ const HU_A3060W: React.FC = () => {
   const [filters2_1, setFilters2_1] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: "",
     find_row_value: "",
     pgNum: 1,
@@ -323,7 +324,7 @@ const HU_A3060W: React.FC = () => {
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -332,7 +333,7 @@ const HU_A3060W: React.FC = () => {
   const [filters3_1, setFilters3_1] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DETAIL",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: "",
     find_row_value: "",
     pgNum: 1,
@@ -342,7 +343,7 @@ const HU_A3060W: React.FC = () => {
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     paycd: "",
     payitemcd: "",
     find_row_value: "",
@@ -1837,7 +1838,7 @@ const HU_A3060W: React.FC = () => {
     setParaData3((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyrmm: convertDateToStr(new Date()),
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       sectiondiv_s: dataArr.sectiondiv_s.join("|"),
@@ -1982,7 +1983,7 @@ const HU_A3060W: React.FC = () => {
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
       gradualdeduct: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       seq: 0,
       stdyr: convertDateToStr(filters.stdyr).substring(0, 4),
       taxrate: 0,
@@ -2047,7 +2048,7 @@ const HU_A3060W: React.FC = () => {
       dutycd: "",
       dutymngdiv: "",
       findkey: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       paycd: "",
       payitemcd: "",
       payitemtype: "",
@@ -2119,7 +2120,7 @@ const HU_A3060W: React.FC = () => {
       setParaData3((prev) => ({
         ...prev,
         workType: "D",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: datas.payyrmm,
       }));
     }
@@ -2215,7 +2216,7 @@ const HU_A3060W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       year: convertDateToStr(filters.stdyr).substring(0, 4),
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
@@ -2229,7 +2230,7 @@ const HU_A3060W: React.FC = () => {
   const onSaveClick2 = () => {
     setParaData2({
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyrmm: Information.payyrmm,
       medprvrat: Information.medprvrat,
       medcomprat: Information.medcomprat,
@@ -2325,7 +2326,7 @@ const HU_A3060W: React.FC = () => {
     setParaData3((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyrmm: datas.payyrmm,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       sectiondiv_s: dataArr.sectiondiv_s.join("|"),
@@ -2424,7 +2425,7 @@ const HU_A3060W: React.FC = () => {
     setParaData4((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       payitemtype_s: dataArr.payitemtype_s.join("|"),
       paycd_s: dataArr.paycd_s.join("|"),
@@ -2441,7 +2442,7 @@ const HU_A3060W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     year: "",
     rowstatus_s: "",
     seq_s: "",
@@ -2453,7 +2454,7 @@ const HU_A3060W: React.FC = () => {
 
   const [paraData2, setParaData2] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: "",
     medprvrat: 0,
     medcomprat: 0,
@@ -2480,7 +2481,7 @@ const HU_A3060W: React.FC = () => {
 
   const [paraData3, setParaData3] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: "",
     rowstatus_s: "",
     sectiondiv_s: "",
@@ -2501,7 +2502,7 @@ const HU_A3060W: React.FC = () => {
 
   const [paraData4, setParaData4] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     payitemtype_s: "",
     paycd_s: "",
@@ -2691,7 +2692,7 @@ const HU_A3060W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         year: "",
         rowstatus_s: "",
         seq_s: "",
@@ -2702,7 +2703,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData2({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         medprvrat: 0,
         medcomprat: 0,
@@ -2728,7 +2729,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData3({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         rowstatus_s: "",
         sectiondiv_s: "",
@@ -2748,7 +2749,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData4({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         payitemtype_s: "",
         paycd_s: "",
@@ -2809,7 +2810,7 @@ const HU_A3060W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         year: "",
         rowstatus_s: "",
         seq_s: "",
@@ -2820,7 +2821,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData2({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         medprvrat: 0,
         medcomprat: 0,
@@ -2846,7 +2847,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData3({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         rowstatus_s: "",
         sectiondiv_s: "",
@@ -2866,7 +2867,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData4({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         payitemtype_s: "",
         paycd_s: "",
@@ -2927,7 +2928,7 @@ const HU_A3060W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         year: "",
         rowstatus_s: "",
         seq_s: "",
@@ -2938,7 +2939,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData2({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         medprvrat: 0,
         medcomprat: 0,
@@ -2964,7 +2965,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData3({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         rowstatus_s: "",
         sectiondiv_s: "",
@@ -2984,7 +2985,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData4({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         payitemtype_s: "",
         paycd_s: "",
@@ -3045,7 +3046,7 @@ const HU_A3060W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         year: "",
         rowstatus_s: "",
         seq_s: "",
@@ -3056,7 +3057,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData2({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         medprvrat: 0,
         medcomprat: 0,
@@ -3082,7 +3083,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData3({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: "",
         rowstatus_s: "",
         sectiondiv_s: "",
@@ -3102,7 +3103,7 @@ const HU_A3060W: React.FC = () => {
       });
       setParaData4({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         payitemtype_s: "",
         paycd_s: "",

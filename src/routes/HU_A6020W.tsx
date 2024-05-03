@@ -375,6 +375,8 @@ const HU_A6020W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
       setFilters((prev) => ({
@@ -678,8 +680,8 @@ const HU_A6020W: React.FC = () => {
   };
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     prsnnum: "",
@@ -694,7 +696,7 @@ const HU_A6020W: React.FC = () => {
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyymm: new Date(),
     paydt: new Date(),
     gubun: "",
@@ -704,9 +706,9 @@ const HU_A6020W: React.FC = () => {
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
-    location: "01",
+    location: sessionLocation,
     prsnnum: "",
     prsnnm: "",
     pgNum: 1,
@@ -715,7 +717,7 @@ const HU_A6020W: React.FC = () => {
 
   const [filters3_1, setFilters3_1] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     pgNum: 1,
     isSearch: false,
@@ -1828,7 +1830,7 @@ FROM HU072T WHERE paycd = '4'`;
           monpay: 0,
           notaxpay1: 0,
           notaxpay2: 0,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           overtimepay: 0,
           overtimepay_1: 0,
           paycd: "",
@@ -1905,7 +1907,7 @@ FROM HU072T WHERE paycd = '4'`;
           monpay: 0,
           notaxpay1: 0,
           notaxpay2: 0,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           overtimepay: 0,
           overtimepay_1: 0,
           paycd: "",
@@ -2045,7 +2047,7 @@ FROM HU072T WHERE paycd = '4'`;
                 : 0,
             notaxpay1: 0,
             notaxpay2: 0,
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             overtimepay: 0,
             overtimepay_1: itemData.overtimepay,
             paycd: itemData.paycd,
@@ -2161,7 +2163,7 @@ FROM HU072T WHERE paycd = '4'`;
                 : 0,
             notaxpay1: 0,
             notaxpay2: 0,
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             overtimepay: 0,
             overtimepay_1: itemData.overtimepay,
             paycd: itemData.paycd,
@@ -2523,7 +2525,7 @@ FROM HU072T WHERE paycd = '4'`;
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     inyrmm: "",
     payyrmm: "",
     reyrmm: "",
@@ -2643,7 +2645,7 @@ FROM HU072T WHERE paycd = '4'`;
       }));
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         inyrmm: "",
         payyrmm: "",
         reyrmm: "",

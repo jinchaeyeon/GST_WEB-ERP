@@ -106,6 +106,7 @@ const CM_A7000W: React.FC = () => {
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
   const userName = UseGetValueFromSessionItem("user_name");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -571,7 +572,7 @@ const CM_A7000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",
@@ -592,14 +593,14 @@ const CM_A7000W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "CR083T",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     pgNum: 1,
     isSearch: false,
   });
 
   const [information, setInformation] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     usegb: "",
     person: userId,
@@ -825,7 +826,7 @@ const CM_A7000W: React.FC = () => {
       (item) => item[DATA_ITEM_KEY] == mainDataId
     );
 
-    const id = "01" + "_" + selectedRowData["meetingnum"];
+    const id = sessionOrgdiv + "_" + selectedRowData["meetingnum"];
 
     const para = {
       folder: "CM_A7000W",
@@ -1031,7 +1032,7 @@ const CM_A7000W: React.FC = () => {
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     meetingseq: 0,
     recdt: "",
@@ -1103,7 +1104,7 @@ const CM_A7000W: React.FC = () => {
     });
     setParaDataSaved({
       workType: workType,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       meetingnum: information.meetingnum,
       meetingseq: 0,
       recdt: convertDateToStr(information.recdt),
@@ -1214,7 +1215,7 @@ const CM_A7000W: React.FC = () => {
       })
       setParaDataSaved({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         meetingnum: "",
         meetingseq: 0,
         recdt: "",
@@ -1264,7 +1265,7 @@ const CM_A7000W: React.FC = () => {
       "new"
     );
     setInformation({
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       meetingnum: "",
       usegb: defaultOption.find((item: any) => item.id == "usegb")?.valueCode,
       person: userId,

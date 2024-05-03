@@ -237,6 +237,7 @@ const HU_A1060W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
@@ -314,7 +315,7 @@ const HU_A1060W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     prsnnum: "",
@@ -701,7 +702,7 @@ const HU_A1060W: React.FC = () => {
       datnum: "",
       dptcd: "",
       kind: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       perregnum: "",
       postcd: "",
       prsnnm: "",
@@ -954,7 +955,7 @@ const HU_A1060W: React.FC = () => {
   const [paraSaved, setParaSaved] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     datnum_s: "",
     pubdt_s: "",
@@ -1013,7 +1014,7 @@ const HU_A1060W: React.FC = () => {
       setParaSaved({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         datnum_s: "",
         pubdt_s: "",

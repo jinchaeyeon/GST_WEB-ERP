@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -68,6 +69,8 @@ const MA_B2100W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_B2100W", setMessagesData);
   //커스텀 옵션 조회
@@ -234,8 +237,8 @@ const MA_B2100W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
     custcd: "",

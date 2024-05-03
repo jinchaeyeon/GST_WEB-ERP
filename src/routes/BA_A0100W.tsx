@@ -117,6 +117,7 @@ const BA_A0100W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
@@ -281,7 +282,7 @@ const BA_A0100W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_roomdiv": filters.roomdiv,
         "@p_roomcd": "",
         "@p_roomnum": filters.roomnum,
@@ -375,7 +376,7 @@ const BA_A0100W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_roomdiv": filters.roomdiv,
         "@p_roomcd": filters2.roomcd,
         "@p_roomnum": filters.roomnum,
@@ -950,7 +951,7 @@ const BA_A0100W: React.FC = () => {
     user_id: userId,
     form_id: "BA_A0100W",
     pc: pc,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     roomcd: "",
     rowstatus_s: "",
     roomcd_s: "",
@@ -1299,7 +1300,7 @@ const BA_A0100W: React.FC = () => {
         user_id: userId,
         form_id: "AC_A0100W",
         pc: pc,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         roomcd: "",
         rowstatus_s: "",
         roomcd_s: "",

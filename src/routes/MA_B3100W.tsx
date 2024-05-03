@@ -52,6 +52,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -99,6 +100,8 @@ const MA_B3100: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -206,8 +209,8 @@ const MA_B3100: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     yyyy: new Date(),
     mm: "",
     rdoAmtdiv: "A",

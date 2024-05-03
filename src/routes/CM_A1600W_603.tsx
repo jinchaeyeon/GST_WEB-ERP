@@ -164,6 +164,8 @@ const CM_A1600W_603: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [tabSelected, setTabSelected] = useState<number>(0);
@@ -379,8 +381,8 @@ const CM_A1600W_603: React.FC = () => {
   const [todoFilter, setTodoFilter] = useState({
     pgSize: PAGE_SIZE,
     work_type: "TODOLIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rdofinyn: "N",
     frdt: new Date(),
     todt: new Date(),
@@ -418,8 +420,8 @@ const CM_A1600W_603: React.FC = () => {
     work_type: "MYGRID",
     person: userId,
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rdoplandiv: "Y",
     dptcd: "",
     frdt: new Date(),
@@ -617,7 +619,7 @@ const CM_A1600W_603: React.FC = () => {
       pageSize: 100000,
       parameters: {
         "@p_work_type": schedulerFilter.work_type,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_recdt": "",
         "@p_recdt1": "",
         "@p_dptcd": "",
@@ -679,7 +681,7 @@ const CM_A1600W_603: React.FC = () => {
       pageSize: 100000,
       parameters: {
         "@p_work_type": schedulerFilter2.work_type,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_recdt": "",
         "@p_recdt1": "",
         "@p_dptcd": schedulerFilter2.dptcd,
@@ -988,8 +990,8 @@ const CM_A1600W_603: React.FC = () => {
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rowstatus_s: "",
     datnum_s: "",
     docunum_s: "",
@@ -1464,7 +1466,7 @@ const CM_A1600W_603: React.FC = () => {
       endhh: "00",
       endmm: "00",
       kind1: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       person: userId,
       title: "",
       rowstatus: "N",
@@ -1692,8 +1694,8 @@ const CM_A1600W_603: React.FC = () => {
   //계획 저장 파라미터 초기값
   const [todoParaDataSaved, setTodoParaDataSaved] = useState({
     work_type: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rowstatus_s: "",
     datnum_s: "",
     docunum_s: "",

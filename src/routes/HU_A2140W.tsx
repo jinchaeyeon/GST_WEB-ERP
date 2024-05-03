@@ -230,6 +230,8 @@ const HU_A2140W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const postcd = UseGetValueFromSessionItem("postcd");
   const dptcd = UseGetValueFromSessionItem("dptcd");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = loginResult ? loginResult.userId : "";
   const userName = loginResult ? loginResult.userName : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -408,7 +410,7 @@ const HU_A2140W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dtgb: "",
     frdt: new Date(),
@@ -826,7 +828,7 @@ const HU_A2140W: React.FC = () => {
       emm: "00",
       enddate: convertDateToStr(new Date()),
       files: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       postcd: postcd,
       prsnnm: userName,
       prsnnum: userId,
@@ -950,8 +952,8 @@ const HU_A2140W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rowstatus_s: "",
     recdt_s: "",
     seq_s: "",
@@ -1059,8 +1061,8 @@ const HU_A2140W: React.FC = () => {
       }
       setParaData({
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         rowstatus_s: "",
         recdt_s: "",
         seq_s: "",
@@ -1267,8 +1269,8 @@ const HU_A2140W: React.FC = () => {
 
       setParaData({
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         recdt_s: dataArr.recdt_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),

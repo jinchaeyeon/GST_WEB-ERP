@@ -128,6 +128,8 @@ const MA_A3500W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -591,7 +593,7 @@ const MA_A3500W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),
@@ -1867,8 +1869,8 @@ const MA_A3500W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     outdt: new Date(),
     dptcd: "",
     person: "admin",
@@ -1969,7 +1971,7 @@ const MA_A3500W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_outdt": convertDateToStr(ParaData.outdt),
       "@p_dptcd": ParaData.dptcd,
@@ -2001,7 +2003,7 @@ const MA_A3500W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_outdt": convertDateToStr(ParaData.outdt),
       "@p_dptcd": ParaData.dptcd,

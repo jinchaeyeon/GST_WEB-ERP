@@ -60,6 +60,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -557,7 +558,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         custcd: custcd,
         group_code: group_code,
         heatno_s: dataArr.heatno_s.join("|"),
@@ -571,7 +572,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     custcd: "",
     group_code: "",
     heatno_s: "",
@@ -609,7 +610,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
       resetAll();
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         custcd: "",
         group_code: "",
         heatno_s: "",

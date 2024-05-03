@@ -69,6 +69,7 @@ const HU_A6000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -207,7 +208,7 @@ const HU_A6000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prsnnum: "",
     prsnnm: "",
     rtryn: "",
@@ -441,7 +442,7 @@ const HU_A6000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_prsnnum": paraDataDeleted.prsnnum,
       "@p_location": "",
       "@p_prsnnm": "",

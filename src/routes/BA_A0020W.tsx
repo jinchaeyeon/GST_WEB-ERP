@@ -338,6 +338,8 @@ const BA_A0020: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -610,7 +612,7 @@ const BA_A0020: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     custcd: "",
     custnm: "",
     custdiv: "",
@@ -970,7 +972,7 @@ const BA_A0020: React.FC = () => {
       pageSize: subfilters.pgSize,
       parameters: {
         "@p_work_type": subfilters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_useyn": subfilters.useyn,
         "@p_custcd": subfilters.custcd,
         "@p_custnm": subfilters.custnm,
@@ -1073,7 +1075,7 @@ const BA_A0020: React.FC = () => {
       pageSize: subfilters2.pgSize,
       parameters: {
         "@p_work_type": subfilters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_useyn": subfilters2.useyn,
         "@p_custcd": subfilters2.custcd,
         "@p_custnm": subfilters2.custnm,
@@ -2077,7 +2079,7 @@ const BA_A0020: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "CustPerson",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     custcd: "",
     custnm: "",
     custdiv: "",
@@ -2156,8 +2158,8 @@ const BA_A0020: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_auto": paraData.auto,
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
@@ -2250,8 +2252,8 @@ const BA_A0020: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_auto": infomation.auto,
       "@p_custcd": paraDataDeleted.custcd,
       "@p_custnm": infomation.custnm,
@@ -2332,8 +2334,8 @@ const BA_A0020: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": infomation.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_auto": infomation.auto,
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
@@ -2979,7 +2981,7 @@ const BA_A0020: React.FC = () => {
       }
       setParaData({
         workType: "CustPerson",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         custcd: "",
         custnm: "",
         custdiv: "",

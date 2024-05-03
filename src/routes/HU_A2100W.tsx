@@ -112,6 +112,8 @@ const HU_A2100W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -192,7 +194,7 @@ const HU_A2100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     workgb: "",
     workcls: "",
     stddiv: "",
@@ -687,8 +689,8 @@ const HU_A2100W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     rowstatus_s: "",
     workgb_s: "",
     workcls_s: "",
@@ -751,8 +753,8 @@ const HU_A2100W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         rowstatus_s: "",
         workgb_s: "",
         workcls_s: "",

@@ -41,6 +41,7 @@ const MA_A3500W_615: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -288,7 +289,7 @@ const MA_A3500W_615: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         out: Information.out,
         barcode_s: dataArr.barcode_s.join("|"),
       }));
@@ -300,7 +301,7 @@ const MA_A3500W_615: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     out: "",
     barcode_s: "",
   });
@@ -335,7 +336,7 @@ const MA_A3500W_615: React.FC = () => {
       resetAll();
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         out: "",
         barcode_s: "",
       });

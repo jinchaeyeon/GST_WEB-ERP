@@ -191,6 +191,7 @@ const CM_A7010W: React.FC = () => {
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
   const userName = UseGetValueFromSessionItem("user_name");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -501,7 +502,7 @@ const CM_A7010W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     frdt: new Date(),
     todt: new Date(),
@@ -516,7 +517,7 @@ const CM_A7010W: React.FC = () => {
   });
 
   const [information, setInformation] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     usegb: "",
     person: userId,
@@ -658,7 +659,7 @@ const CM_A7010W: React.FC = () => {
       (item) => item[DATA_ITEM_KEY] == mainDataId
     );
 
-    const id = "01" + "_" + selectedRowData["meetingnum"];
+    const id = sessionOrgdiv + "_" + selectedRowData["meetingnum"];
 
     const para = {
       folder: "CM_A7010W",
@@ -815,7 +816,7 @@ const CM_A7010W: React.FC = () => {
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     meetingnum: "",
     meetingseq: 0,
     recdt: "",
@@ -857,7 +858,7 @@ const CM_A7010W: React.FC = () => {
 
     setParaDataSaved({
       workType: workType,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       meetingnum: information.meetingnum,
       meetingseq: 0,
       recdt: convertDateToStr(information.recdt),
@@ -955,7 +956,7 @@ const CM_A7010W: React.FC = () => {
 
       setParaDataSaved({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         meetingnum: "",
         meetingseq: 0,
         recdt: "",
@@ -996,7 +997,7 @@ const CM_A7010W: React.FC = () => {
     setTabSelected(1);
     setDetailDataResult(process([], detailDataState));
     setInformation({
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       meetingnum: "",
       usegb: "",
       person: userId,

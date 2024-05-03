@@ -228,6 +228,7 @@ const HU_A3200W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //FormContext로 받아온 데이터 set
   useEffect(() => {
@@ -348,7 +349,7 @@ const HU_A3200W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: new Date(),
     prsnnum: "",
     prsnnm: "",
@@ -681,7 +682,7 @@ const HU_A3200W: React.FC = () => {
       hiramt: 0,
       location: "",
       medamt: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyrmm: convertDateToStr(filters.payyrmm),
       postcd: "",
       prsnnm: "",
@@ -832,7 +833,7 @@ const HU_A3200W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       payyrmm_s: dataArr.payyrmm_s.join("|"),
       prsnnum_s: dataArr.prsnnum_s.join("|"),
@@ -848,7 +849,7 @@ const HU_A3200W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     payyrmm_s: "",
     prsnnum_s: "",
@@ -915,7 +916,7 @@ const HU_A3200W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         payyrmm_s: "",
         prsnnum_s: "",

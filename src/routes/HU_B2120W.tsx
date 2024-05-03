@@ -40,6 +40,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -80,6 +81,7 @@ const HU_B2120W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -240,7 +242,7 @@ const HU_B2120W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dutydt: new Date(),
     prsnnum: "",
@@ -255,7 +257,7 @@ const HU_B2120W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dutydt: new Date(),
     prsnnum: "",

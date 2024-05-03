@@ -43,6 +43,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -298,6 +299,7 @@ const numberField2 = ["qty"];
 const MA_A3600W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -776,7 +778,7 @@ const MA_A3600W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),
@@ -799,7 +801,7 @@ const MA_A3600W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),

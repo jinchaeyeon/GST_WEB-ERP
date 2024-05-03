@@ -30,6 +30,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   chkScrollHandler,
   getQueryFromBizComponent,
@@ -62,6 +63,7 @@ const BA_B0080W: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -215,7 +217,7 @@ const BA_B0080W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE * 10,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     itemacnt: "",

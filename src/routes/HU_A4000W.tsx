@@ -419,6 +419,7 @@ type TdataArr = {
 const HU_A4000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -660,7 +661,7 @@ const HU_A4000W: React.FC = () => {
     const monthAgo = new Date(today);
     monthAgo.setMonth(today.getMonth() - 1);
     setInformation({
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       monthlyhrreview: "",
       interviewdt: new Date(),
       interviewer: userId,
@@ -744,7 +745,7 @@ const HU_A4000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     Interviewer: "",
@@ -760,7 +761,7 @@ const HU_A4000W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DETAIL1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     hrreviewnum: "",
     find_row_value: "",
     pgNum: 1,
@@ -770,7 +771,7 @@ const HU_A4000W: React.FC = () => {
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST2",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     Interviewer: "",
@@ -786,7 +787,7 @@ const HU_A4000W: React.FC = () => {
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     work_type: "WORK",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -798,7 +799,7 @@ const HU_A4000W: React.FC = () => {
   const [filters5, setFilters5] = useState({
     pgSize: PAGE_SIZE,
     work_type: "BAD",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -810,7 +811,7 @@ const HU_A4000W: React.FC = () => {
   const [filters6, setFilters6] = useState({
     pgSize: PAGE_SIZE,
     work_type: "EDU",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -822,7 +823,7 @@ const HU_A4000W: React.FC = () => {
   const [filters7, setFilters7] = useState({
     pgSize: PAGE_SIZE,
     work_type: "BNS",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -834,7 +835,7 @@ const HU_A4000W: React.FC = () => {
   const [filters8, setFilters8] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DETAIL2",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -846,7 +847,7 @@ const HU_A4000W: React.FC = () => {
   const [filters9, setFilters9] = useState({
     pgSize: PAGE_SIZE,
     work_type: "DETAIL3",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     userid: "",
     yyyymm: "",
     ref_key: "",
@@ -856,7 +857,7 @@ const HU_A4000W: React.FC = () => {
   });
 
   const [information, setInformation] = useState<any>({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     monthlyhrreview: "",
     interviewdt: new Date(),
     interviewer: userId,
@@ -1486,7 +1487,7 @@ const HU_A4000W: React.FC = () => {
         }
       } else {
         setInformation({
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           monthlyhrreview: "",
           interviewdt: new Date(),
           interviewer: userId,
@@ -3203,7 +3204,7 @@ const HU_A4000W: React.FC = () => {
       commyn: false,
       contents: "",
       hrreviewnum: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       reviewlvl1: "",
       title: "",
       rowstatus: "N",
@@ -3245,7 +3246,7 @@ const HU_A4000W: React.FC = () => {
       dptcd: "",
       hrreview_stnum: "",
       hrreviewnum: datas.hrreviewnum,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark1: "",
       rowstatus: "N",
     };
@@ -3277,7 +3278,7 @@ const HU_A4000W: React.FC = () => {
       baddt: convertDateToStr(new Date()),
       badnum: "",
       badseq: 0,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark: "",
       rowstatus: "N",
     };
@@ -3310,7 +3311,7 @@ const HU_A4000W: React.FC = () => {
       datnum: "",
       edunum: "",
       files: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       person: "",
       recdt: convertDateToStr(new Date()),
       remark: "",
@@ -3344,7 +3345,7 @@ const HU_A4000W: React.FC = () => {
       attdatnum: "",
       contents: "",
       files: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsnnum: "",
       reloffice: "",
       remark: "",
@@ -3388,7 +3389,7 @@ const HU_A4000W: React.FC = () => {
       hrreviewnum: "",
       monthlyhrreview: datas.monthlyhrreview,
       monthlyhrreviewseq: datas.monthlyhrreviewseq,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       qualitative_evalution: "",
       quantitative_evalution: 0,
       reviewlvl1: "",
@@ -3470,7 +3471,7 @@ const HU_A4000W: React.FC = () => {
             hrreviewnum: item.hrreviewnum,
             monthlyhrreview: datas.monthlyhrreview,
             monthlyhrreviewseq: datas.monthlyhrreviewseq,
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             qualitative_evalution: item.qualitative_evalution,
             quantitative_evalution: item.quantitative_evalution,
             reviewlvl1: item.reviewlvl1,
@@ -3555,7 +3556,7 @@ const HU_A4000W: React.FC = () => {
             hrreviewnum: item.hrreviewnum,
             monthlyhrreview: datas.monthlyhrreview,
             monthlyhrreviewseq: datas.monthlyhrreviewseq,
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             qualitative_evalution: item.qualitative_evalution,
             quantitative_evalution: item.quantitative_evalution,
             reviewlvl1: item.reviewlvl1,
@@ -3883,7 +3884,7 @@ const HU_A4000W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "HU270T",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: location,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       hrreviewnum_s: dataArr.hrreviewnum_s.join("|"),
@@ -3963,7 +3964,7 @@ const HU_A4000W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "HU275T",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: location,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       hrreviewnum_s: dataArr.hrreviewnum_s.join("|"),
@@ -4106,7 +4107,7 @@ const HU_A4000W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: location,
 
         hrreviewnum_s: dataArr.hrreviewnum_s.join("|"),
@@ -4204,7 +4205,7 @@ const HU_A4000W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "BAD",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: location,
       interviewee: information.interviewee,
       monthlyhrreview: information.monthlyhrreview,
@@ -4299,7 +4300,7 @@ const HU_A4000W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "REWARD",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       location: location,
       interviewee: information.interviewee,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
@@ -4315,7 +4316,7 @@ const HU_A4000W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     rowstatus_s: "",
     hrreviewnum_s: "",
@@ -4510,7 +4511,7 @@ const HU_A4000W: React.FC = () => {
       }
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         rowstatus_s: "",
         hrreviewnum_s: "",
@@ -4609,7 +4610,7 @@ const HU_A4000W: React.FC = () => {
     }
     setWorkType("N");
     setInformation({
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       monthlyhrreview: "",
       interviewdt: new Date(),
       interviewer: userId,

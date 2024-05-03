@@ -101,6 +101,8 @@ const CM_A8250W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -276,8 +278,8 @@ const CM_A8250W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_find_row_value": filters.find_row_value,
@@ -375,8 +377,8 @@ const CM_A8250W: React.FC = () => {
       pageSize: mainfilters.pgSize,
       parameters: {
         "@p_work_type": mainfilters.workType,
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_frdt": convertDateToStr(mainfilters.recdt),
         "@p_todt": convertDateToStr(mainfilters.recdt),
         "@p_find_row_value": "",
@@ -723,8 +725,8 @@ const CM_A8250W: React.FC = () => {
       pageSize: 0,
       parameters: {
         "@p_work_type": "NEW",
-        "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_frdt": "",
         "@p_todt": "",
         "@p_find_row_value": "",
@@ -780,8 +782,8 @@ const CM_A8250W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
-      "@p_location": "01",
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
       "@p_recdt": paraData.recdt,
       "@p_rowstatus_s": paraData.rowstatus_s,
       "@p_recdt_s": paraData.recdt_s,
