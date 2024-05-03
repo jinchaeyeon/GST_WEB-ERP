@@ -75,7 +75,6 @@ const AC_A3000W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 

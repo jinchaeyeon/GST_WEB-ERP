@@ -77,7 +77,6 @@ const AC_A1100W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //customOptionData 조회 후 디폴트 값 세팅

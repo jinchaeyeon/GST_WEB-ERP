@@ -106,7 +106,6 @@ const AC_A5020W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [bizComponentData, setBizComponentData] = useState<any>(null);

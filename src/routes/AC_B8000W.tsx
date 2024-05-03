@@ -83,7 +83,7 @@ const numberField = [
 const dateField = ["shipdt"];
 
 const AC_B8000W: React.FC = () => {
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);

@@ -92,7 +92,6 @@ const AC_A1020W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   UseParaPc(setPc);
   //customOptionData 조회 후 디폴트 값 세팅

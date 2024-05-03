@@ -219,7 +219,7 @@ const AC_A1040W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

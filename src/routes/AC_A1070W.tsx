@@ -113,7 +113,6 @@ const AC_A1070W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //커스텀 옵션 조회

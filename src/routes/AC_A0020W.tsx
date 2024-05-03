@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -69,7 +69,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1190,7 +1190,6 @@ const AC_A0020W: React.FC = () => {
   const [editIndex3, setEditIndex3] = useState<number | undefined>();
   const [editedField3, setEditedField3] = useState("");
 
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 

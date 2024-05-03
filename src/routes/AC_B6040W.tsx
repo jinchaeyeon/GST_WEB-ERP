@@ -34,6 +34,7 @@ const AC_B6040W: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
+  const sessionPosition = UseGetValueFromSessionItem("position");
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -89,7 +90,7 @@ const AC_B6040W: React.FC = () => {
     location: sessionLocation,
     actdt: new Date(),
   });
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
@@ -114,7 +115,7 @@ const AC_B6040W: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_actdt": convertDateToStr(filters.actdt),
-        "@p_position": sessionItem[4].value,
+        "@p_position": sessionPosition,
       };
       try {
         data2 = await processApi<any>("excel-view", parameters2);
