@@ -1063,6 +1063,7 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("passwordExpirationInfo");
   localStorage.removeItem("loginResult");
   localStorage.removeItem("sessionItem");
+  localStorage.removeItem("recoil-persist");
 };
 
 // Grouped된 DataResult 데이터를 selectedState를 포함해서 일반적인 Array 형태로 변환하여 반환
