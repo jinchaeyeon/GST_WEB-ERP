@@ -84,7 +84,6 @@ const MA_A2310_606W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -219,10 +218,8 @@ const MA_A2310_606W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
-  let sessionLocation = sessionItem.find(
-    (sessionItem: { code: string }) => sessionItem.code == "location"
-  )!.value;
-  if (sessionLocation == "") sessionLocation = "01";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
