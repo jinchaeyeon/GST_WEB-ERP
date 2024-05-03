@@ -6,9 +6,11 @@ import {
   ProseMirror,
 } from "@progress/kendo-react-editor";
 import React, { useEffect } from "react";
+import { useRecoilState } from "recoil";
 import { insertImagePlugin } from "../components/UploadImgFunction/insertImagePlugin";
 import { InsertImage } from "../components/UploadImgFunction/insertImageTool";
 import { insertImageFiles } from "../components/UploadImgFunction/utils";
+import { OSState } from "../store/atoms";
 import { TInsertImageFiles } from "../store/types";
 
 const {
@@ -65,6 +67,7 @@ const { EditorState, EditorView, Plugin, PluginKey } = ProseMirror;
 
 const RichEditor = React.forwardRef(
   ({ id, hideTools, className = "", change, border }: TRichEditor, ref) => {
+    const [osstate, setOSState] = useRecoilState(OSState);
     const editor = React.createRef<Editor>();
     const [styles, setStyles] = React.useState<null | string>(null);
     const editableRef = React.useRef<boolean>(true);
@@ -280,7 +283,8 @@ const RichEditor = React.forwardRef(
             /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/g;
           const updatedElementStyle = elementStyle.replace(
             rgbaRegex,
-            (_:any, r:any, g:any, b:any, a:any) => rgbaToHex(`rgba(${r}, ${g}, ${b}, ${a || "1"})`)
+            (_: any, r: any, g: any, b: any, a: any) =>
+              rgbaToHex(`rgba(${r}, ${g}, ${b}, ${a || "1"})`)
           );
 
           element.setAttribute("style", updatedElementStyle);
@@ -323,7 +327,7 @@ const RichEditor = React.forwardRef(
           style={{ height: "100%" }}
           contentStyle={{ height: "100%" }}
           tools={
-            hideTools
+            hideTools || osstate
               ? []
               : [
                   [Bold, Italic, Underline, Strikethrough],

@@ -75,16 +75,17 @@ const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const [visible, setVisible] = useState(false);
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const userId = loginResult ? loginResult.userId : "";
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const geoLocation = useGeoLocation();
   const [isLoaded, setIsLoaded] = useState(false);
   const [osstate, setOSState] = useRecoilState(OSState);
@@ -95,21 +96,6 @@ const Main: React.FC = () => {
     }, 1000);
     return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머를 제거
   }, []);
-
-  useEffect(() => {
-    fetchSessionItem();
-    // if (token && sessionUserId == "") fetchSessionItem();
-  }, [sessionUserId]);
-
-  let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code == "orgdiv"
-  )!.value;
-  let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code == "location"
-  )!.value;
-
-  if (sessionOrgdiv == "") sessionOrgdiv = "01";
-  if (sessionLocation == "") sessionLocation = "01";
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -216,6 +202,8 @@ const Main: React.FC = () => {
   const [layoutFilter, setLayoutFilter] = useState({
     pgSize: PAGE_SIZE,
     worktype: "process_layout",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     isSearch: true,
   });
 
@@ -225,8 +213,8 @@ const Main: React.FC = () => {
     pageSize: layoutFilter.pgSize,
     parameters: {
       "@p_work_type": layoutFilter.worktype,
-      "@p_orgdiv": sessionOrgdiv,
-      "@p_location": sessionLocation,
+      "@p_orgdiv": layoutFilter.orgdiv,
+      "@p_location": layoutFilter.location,
       "@p_user_id": userId,
       "@p_frdt": "",
       "@p_todt": "",
@@ -612,36 +600,6 @@ const Main: React.FC = () => {
     }));
   };
 
-  const fetchSessionItem = useCallback(async () => {
-    let data;
-    try {
-      const para: Iparameters = {
-        procedureName: "sys_biz_configuration",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_user_id": userId,
-        },
-      };
-
-      data = await processApi<any>("procedure", para);
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
-      }
-    } catch (e: any) {
-      console.log("menus error", e);
-    }
-  }, []);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -863,7 +821,9 @@ const Main: React.FC = () => {
                   </Button>
                 </MainWorkStartEndContainer>
               </MainTopContainer>
-              <ApprovalBox style={{ width: `${deviceWidth - 30}px`, fontSize:"0.8em"}}>
+              <ApprovalBox
+                style={{ width: `${deviceWidth - 30}px`, fontSize: "0.8em" }}
+              >
                 <ApprovalInner>
                   <div>미결</div>
                   <div>{approvalValueState.app}</div>
@@ -898,7 +858,7 @@ const Main: React.FC = () => {
                   <TabStripTab title="업무 달력">
                     <GridContainer
                       style={{
-                       overflow: "auto",
+                        overflow: "auto",
                         height: `${deviceHeight * 0.6}px`,
                       }}
                     >
@@ -949,7 +909,10 @@ const Main: React.FC = () => {
                     disabled={mainDataResult.total == 0 ? true : false}
                   >
                     <TabStrip
-                      style={{ width: "100%", height: `${deviceHeight * 0.6}px`}}
+                      style={{
+                        width: "100%",
+                        height: `${deviceHeight * 0.6}px`,
+                      }}
                       selected={tabSelected2}
                       onSelect={handleSelectTab2}
                     >
