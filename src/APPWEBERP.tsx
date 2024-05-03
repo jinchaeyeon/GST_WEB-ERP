@@ -43,6 +43,7 @@ import {
   sessionItemState,
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
+import Loader from "./components/Loader";
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
 const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
 const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
@@ -1106,7 +1107,7 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <Suspense fallback={<div></div>}>
+          <Suspense fallback={<Loader />}>
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>

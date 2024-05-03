@@ -133,6 +133,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: "bundle.js", // main.js가 기본값
+    filename: '[name].[chunkhash:8].js',
+    clean: true
   },
 };

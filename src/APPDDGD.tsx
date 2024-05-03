@@ -34,6 +34,7 @@ import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContain
 import axios from "axios";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { UseGetValueFromSessionItem } from "./components/CommonFunction";
+import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
 import {
   OSState,
@@ -964,7 +965,7 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <Suspense fallback={<div></div>}>
+          <Suspense fallback={<Loader />}>
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
