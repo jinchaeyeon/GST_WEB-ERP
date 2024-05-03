@@ -115,7 +115,6 @@ const CopyWindow = ({
     const { value, name } = e.target;
 
     if (name == "strtime") {
-      console.log(value);
       var timeDiff = filters.endtime.getTime() - value.getTime();
 
       timeDiff = Math.floor(timeDiff / 1000 / 60);

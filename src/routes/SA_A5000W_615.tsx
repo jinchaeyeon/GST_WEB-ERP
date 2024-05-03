@@ -278,7 +278,6 @@ const SA_A5000W_615: React.FC = () => {
         setOpen(true);
         setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
         barcode = "";
-        console.log(data);
       }
     } else {
       //조회조건 파라미터
@@ -373,7 +372,6 @@ const SA_A5000W_615: React.FC = () => {
         setOpen(true);
         setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
         barcode = "";
-        console.log(data);
       }
     }
     events();

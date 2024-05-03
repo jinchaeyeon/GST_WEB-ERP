@@ -380,7 +380,6 @@ const ORG: React.FC = () => {
   useEffect(() => {
     fetchData3(picFilters);
   }, [picFilters]);
-  console.log(profileImg);
 
   return (
     <>

@@ -1680,8 +1680,6 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const ArrowsCell = (props: GridCellProps) => {
     const onClick = (item: any) => {
-      console.log("item");
-      console.log(item);
       const { dataIndex, dataItem } = item;
 
       const newData = detailColumnDataResult.data.map((item) => ({

@@ -398,6 +398,7 @@ const KendoWindow = ({
         setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
     }
@@ -1312,7 +1313,6 @@ const KendoWindow = ({
 
         // 다운로드 파일 이름을 추출하는 함수
         const extractDownloadFilename = (response: any) => {
-          console.log(response);
           if (response.headers) {
             const disposition = response.headers["content-disposition"];
             let filename = "";

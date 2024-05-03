@@ -55,13 +55,9 @@ export const CellRender = (props: any) => {
 
   const clonedProps = { ...props.td.props, ...additionalProps };
 
-  // console.log("clonedProps");
-  // console.log(clonedProps);
   return React.cloneElement(props.td, clonedProps, props.td.props.children);
 };
 // export const RowRender = (props: any) => {
-//   // console.log("render props");
-//   // console.log(props);
 //   if (props.originalProps.rowType !== "data") {
 //     return props.tr;
 //   }

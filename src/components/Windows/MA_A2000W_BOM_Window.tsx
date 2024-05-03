@@ -519,6 +519,7 @@ const CopyWindow = ({
         setDetailDataResult(process([], detailDataState));
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setFilters((prev) => ({

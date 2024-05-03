@@ -825,7 +825,6 @@ const BA_A0020W_603: React.FC = () => {
         ...item,
         listringyn: item.listringyn == "Y" ? true : false,
       }));
-      console.log(rows);
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {

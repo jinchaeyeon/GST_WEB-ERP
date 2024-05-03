@@ -187,6 +187,7 @@ const KendoWindow = ({
 
       setColumnData(bizComponentItems.filter((x: any) => x.columnWidth > 0));
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
 
@@ -292,6 +293,7 @@ const KendoWindow = ({
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setFilters((prev) => ({

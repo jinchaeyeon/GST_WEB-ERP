@@ -424,8 +424,6 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   const scan = (scannedBarcode: string) => {
-    console.log("SCAN: %s", scannedBarcode);
-
     const gubun = scannedBarcode.substring(0, 1);
 
     if (gubun == "L") {
@@ -448,7 +446,6 @@ const SA_A2300_PDA: React.FC = () => {
     let a = e.timeStamp - lastInputTime;
     elapsed.push(a);
 
-    console.log("%s, %f", e.key, a);
 
     if (a > 25) {
       // 25: 스캐너 문자 사이 이벤트 발생 간격
@@ -458,17 +455,11 @@ const SA_A2300_PDA: React.FC = () => {
       elapsed = [];
     } else {
       if (e.key == "Enter" && !!barcodeString) {
-        console.log(barcodeString);
         scan(barcodeString);
         barcodeString = "";
 
         if (elapsed.length > 1) {
-          elapsed[0] = 0;
-          console.log(
-            "%f, %f",
-            Math.max(...elapsed.filter((a) => a != 0)),
-            elapsed.reduce((x, y) => x + y) / elapsed.length
-          );
+          elapsed[0] = 0;          
         }
         lastInputTime = 0;
         return;
@@ -481,7 +472,6 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("mount");
     // 초기화
     barcodeString = "";
     elapsed = [];
@@ -489,7 +479,6 @@ const SA_A2300_PDA: React.FC = () => {
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      console.log("unmount");
       window.removeEventListener("keydown", onKeyDown);
     };
   }, []);

@@ -345,7 +345,6 @@ const SA_B1002_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess == true) {
-      console.log("시작", data);
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {

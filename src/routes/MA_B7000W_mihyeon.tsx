@@ -155,7 +155,6 @@ const MA_B7000_mihyeon: React.FC = () => {
       fetchQuery(itemgradeQueryStr, setItemgradeListData);
       fetchQuery(itemplaceQueryStr, setItemplaceQueryStr);
     }
-    console.log("bizComponentData", bizComponentData);
   }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
@@ -400,7 +399,6 @@ const MA_B7000_mihyeon: React.FC = () => {
     try {
       // parameters 담아서 api 호출
       data = await processApi<any>("procedure", parameters);
-      console.log("data : ", data);
     } catch (error) {
       // 호출 실패
       data = null;
@@ -552,7 +550,6 @@ const MA_B7000_mihyeon: React.FC = () => {
 
     try {
       data = await processApi<any>("procedure", detailParameters);
-      console.log("data3", data);
     } catch (error) {
       data = null;
     }

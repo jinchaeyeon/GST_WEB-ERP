@@ -702,7 +702,6 @@ const AC_B5040W: React.FC = () => {
       alert("데이터가 없습니다.");
       return;
     }
-    console.log(jsonArr); //
     const columns: string[] = [
       "공급가액",
       "공급받는자사업자번호",

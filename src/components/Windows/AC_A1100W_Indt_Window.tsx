@@ -165,6 +165,7 @@ const CopyWindow = ({
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
+      console.log("[오류 발생]");
       console.log(data);
     }
     setFilters((prev) => ({
