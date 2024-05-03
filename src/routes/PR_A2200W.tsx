@@ -41,6 +41,7 @@ const PR_A2200W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [step, setStep] = useState(0);
   const [pictureindex, SetPicureindex] = useState(0);
@@ -82,7 +83,7 @@ const PR_A2200W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     custnm: "",
     pgNum: 1,
     isSearch: true,
@@ -90,7 +91,7 @@ const PR_A2200W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     devmngnum: "",
     setup_hw_name: "",
     setup_location: "",
@@ -689,7 +690,7 @@ const PR_A2200W: React.FC = () => {
       });
       setParaData({
         workType: "SAVE",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "U",
         setup_hw_num_s: information.setup_hw_num,
         setup_hw_name_s: information.setup_hw_name,
@@ -1245,7 +1246,7 @@ const PR_A2200W: React.FC = () => {
                   // height: "80vh",
                   // overflowY: "auto",
                   width: "100%",
-                  marginBottom: "30px" //높이제한이 없을시 필요
+                  marginBottom: "30px", //높이제한이 없을시 필요
                 }}
               >
                 <Grid container spacing={2}>
@@ -1363,7 +1364,7 @@ const PR_A2200W: React.FC = () => {
                   // height: "80vh",
                   // overflowY: "auto",
                   width: "100%",
-                  marginBottom: "30px"  //높이제한이 없을시 필요
+                  marginBottom: "30px", //높이제한이 없을시 필요
                 }}
               >
                 <Grid container spacing={2}>
