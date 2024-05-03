@@ -227,6 +227,7 @@ const PR_A0040W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A0040W", setCustomOptionData);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -370,7 +371,7 @@ const PR_A0040W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "ITEM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prntitemcd: "",
     itemcd: "",
     itemnm: "",
@@ -781,7 +782,7 @@ const PR_A0040W: React.FC = () => {
         chlditemnm: "",
         custcd: "",
         custnm: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outgb: "",
         outprocyn: "N",
         itemcd: datas.itemcd,
@@ -1165,7 +1166,7 @@ const PR_A0040W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "COPY",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prntitemcd: datas.itemcd,
         chk_itemcd_org: chk_org.itemcd,
         chk_itemcd_tar: chk_tar_s.join("|"),
@@ -1208,7 +1209,7 @@ const PR_A0040W: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_rowstatus_s": "",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_prntitemcd": paraDataDeleted.prntitemcd,
       "@p_seq_s": "",
       "@p_itemcd_s": "",
@@ -1322,7 +1323,7 @@ const PR_A0040W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "",
     rowstatus_s: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prntitemcd: "",
     seq_s: "",
     itemcd_s: "",
@@ -1459,7 +1460,7 @@ const PR_A0040W: React.FC = () => {
       ...prev,
       workType: "U",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prntitemcd: datas.itemcd,
       seq_s: dataArr.seq_s.join("|"),
       itemcd_s: dataArr.itemcd_s.join("|"),
@@ -1499,7 +1500,7 @@ const PR_A0040W: React.FC = () => {
         pgSize: PAGE_SIZE,
         workType: "",
         rowstatus_s: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         prntitemcd: "",
         seq_s: "",
         itemcd_s: "",

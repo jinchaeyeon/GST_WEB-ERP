@@ -305,6 +305,8 @@ const PR_A0060: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -567,7 +569,7 @@ const PR_A0060: React.FC = () => {
   const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxdiv: "",
     location: "",
@@ -621,7 +623,7 @@ const PR_A0060: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: "",
     fxnum: "",
     fxnm: "",
@@ -636,7 +638,7 @@ const PR_A0060: React.FC = () => {
     classnm3: "",
     custdiv: "",
     position: "",
-    location: "01",
+    location: sessionLocation,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -645,7 +647,7 @@ const PR_A0060: React.FC = () => {
   const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "HISTORY",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: infomation.fxcode,
     fxnum: "",
     fxnm: "",
@@ -659,7 +661,7 @@ const PR_A0060: React.FC = () => {
     classnm2: "",
     classnm3: "",
     position: "",
-    location: "01",
+    location: sessionLocation,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -892,7 +894,7 @@ const PR_A0060: React.FC = () => {
           custnm: "",
           itemcd_s: "",
           spec: "",
-          location: "01",
+          location: sessionLocation,
           remark: "",
           bnatur: "",
           itemlvl1: "",
@@ -1290,7 +1292,7 @@ const PR_A0060: React.FC = () => {
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       fxcode: "",
       fxdiv: "",
       location: "",
@@ -1730,7 +1732,7 @@ const PR_A0060: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "HISTORY",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fxcode: infomation.fxcode,
     fxdiv: infomation.fxdiv,
     location: infomation.location,
@@ -1787,7 +1789,7 @@ const PR_A0060: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": paraData.location,
       "@p_fxcode": paraData.fxcode,
       "@p_recdt": convertDateToStr(paraData.recdt),
@@ -1859,7 +1861,7 @@ const PR_A0060: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": infomation.location,
       "@p_fxcode": paraDataDeleted.fxcode,
       "@p_recdt": isValidDate(infomation.recdt)
@@ -1931,7 +1933,7 @@ const PR_A0060: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": infomation.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": infomation.location,
       "@p_fxcode": infomation.fxcode,
       "@p_recdt": isValidDate(infomation.recdt)

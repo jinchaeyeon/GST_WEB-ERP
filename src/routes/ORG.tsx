@@ -3,18 +3,19 @@ import {
   TabStripSelectEventArguments,
   TabStripTab,
 } from "@progress/kendo-react-layout";
-import { Title, TitleContainer } from "../CommonStyled";
-import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
+import { bytesToBase64 } from "byte-base64";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../store/atoms";
+import { Title, TitleContainer } from "../CommonStyled";
 import {
   UseBizComponent,
+  UseGetValueFromSessionItem,
   getQueryFromBizComponent,
 } from "../components/CommonFunction";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useState, useEffect, CSSProperties } from "react";
+import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { Iparameters } from "../store/types";
 
 interface OrgProps {
   user_name: string;
@@ -67,7 +68,13 @@ const stringToHashCode = (str: string): number => {
 //   return color;
 // };
 
-const departmentColors = ['#FF5733', '#33FF57', '#5733FF', '#FFFF33', '#33FFFF'];
+const departmentColors = [
+  "#FF5733",
+  "#33FF57",
+  "#5733FF",
+  "#FFFF33",
+  "#33FFFF",
+];
 let selectedColors: string[] = [];
 
 const getDepartmentColor = (dptnm: string): string => {
@@ -78,7 +85,6 @@ const getDepartmentColor = (dptnm: string): string => {
   selectedColors.push(departmentColors[randomIndex]);
   return departmentColors[randomIndex];
 };
-
 
 // 직급별 정렬
 const getPositionOrder = (postcd: string): number => {
@@ -151,6 +157,8 @@ const ORG: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [selected, setSelected] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const handleSelect = (e: TabStripSelectEventArguments) => {
     setSelected(e.selected);
@@ -219,7 +227,7 @@ const ORG: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dptcd: "",
     dptnm: "",
@@ -231,7 +239,7 @@ const ORG: React.FC = () => {
   const [subFilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "USERINFO",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dptcd: "",
     dptnm: "",
     user_name: "",
@@ -245,8 +253,8 @@ const ORG: React.FC = () => {
   const [picFilters, setpicFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    cboOrgdiv: "01",
-    cboLocation: "",
+    cboOrgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     dptcd: "",
     lang_id: "",
     user_category: "",
@@ -412,7 +420,10 @@ const ORG: React.FC = () => {
                               {personIndex == 0 && (
                                 <div
                                   className="connector"
-                                  style={{...styles.connector, marginLeft: "50%"}}
+                                  style={{
+                                    ...styles.connector,
+                                    marginLeft: "50%",
+                                  }}
                                 />
                               )}
                               <App
@@ -434,14 +445,25 @@ const ORG: React.FC = () => {
                     </div>
                   )}
                   <div style={styles.subdepartmentContainer}>
-                      {index !== information.length - 1 && <div className="horizontal-connector" style={styles.horizontalConnector} />}
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                    </div>
+                    {index !== information.length - 1 && (
+                      <div
+                        className="horizontal-connector"
+                        style={styles.horizontalConnector}
+                      />
+                    )}
+                    <div
+                      style={{ display: "flex", justifyContent: "center" }}
+                    ></div>
                     {information
                       .filter((subInfo) => subInfo.prntdptcd == info.dptcd)
                       .map((subInfo, subIndex, array) => (
                         <div key={subIndex} style={styles.departmentContainer}>
-                          {(subIndex !== 0 || array.length > 1) && <div className="vertical-connector" style={styles.connector} />}
+                          {(subIndex !== 0 || array.length > 1) && (
+                            <div
+                              className="vertical-connector"
+                              style={styles.connector}
+                            />
+                          )}
                           <p
                             className="departmentText"
                             style={{
@@ -464,7 +486,10 @@ const ORG: React.FC = () => {
                                   {personIndex == 0 && (
                                     <div
                                       className="connector"
-                                      style={{...styles.connector, marginLeft: "50%",}}
+                                      style={{
+                                        ...styles.connector,
+                                        marginLeft: "50%",
+                                      }}
                                     />
                                   )}
                                   <div
@@ -700,12 +725,12 @@ const containerStyles: {
     // marginLeft: "50%",
   },
   horizontalConnector: {
-    width: '100%',
-    borderBottom: '2px solid black',
-    position: 'relative',
-    top: '50%',
+    width: "100%",
+    borderBottom: "2px solid black",
+    position: "relative",
+    top: "50%",
     // right: '100%',
-    marginLeft: '100px',
+    marginLeft: "100px",
     // transform: 'translate(-50%, -50%)',
   },
 };

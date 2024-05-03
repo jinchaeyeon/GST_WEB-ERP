@@ -184,7 +184,8 @@ const PR_A0030W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [workType, setWorkType] = useState<"U" | "N">("N");
@@ -308,8 +309,8 @@ const PR_A0030W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     pattern_id: "",
     pattern_name: "",
     proccd: "",
@@ -758,7 +759,7 @@ const PR_A0030W: React.FC = () => {
         chlditemnm: "",
         custcd: "",
         custnm: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outgb: "",
         outprocyn: "N",
         prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
@@ -960,7 +961,7 @@ const PR_A0030W: React.FC = () => {
     setInfomation({
       pattern_id: "",
       pattern_name: "",
-      location: "01",
+      location: sessionLocation,
       remark: "",
     });
     setSubData2Result(process([], subData2State));
@@ -1004,7 +1005,7 @@ const PR_A0030W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionLocation,
       "@p_location": paraDataDeleted.location,
       "@p_pattern_id": paraDataDeleted.pattern_id,
       "@p_pattern_name": paraDataDeleted.pattern_name,
@@ -1119,7 +1120,7 @@ const PR_A0030W: React.FC = () => {
   const [paraData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     pattern_id: "",
     pattern_name: "",
@@ -1141,7 +1142,7 @@ const PR_A0030W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": paraData.location,
       "@p_pattern_id": paraData.pattern_id,
       "@p_pattern_name": paraData.pattern_name,
@@ -1289,7 +1290,7 @@ const PR_A0030W: React.FC = () => {
       setParaData({
         workType: "",
         pgSize: PAGE_SIZE,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         pattern_id: "",
         pattern_name: "",
