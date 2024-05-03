@@ -47,6 +47,7 @@ export const loginResultState = atom<TLoginResult>({
 export const menusState = atom<Array<TMenu>>({
   key: "menusState",
   default: null as any,
+  effects_UNSTABLE: [persistAtom]
 });
 
 export const clickedState = atom<string>({
@@ -135,6 +136,7 @@ export const unsavedNameState = atom<string[]>({
 export const menuList = atom<any[]>({
   key: "menuList",
   default: [],
+  effects_UNSTABLE: [persistAtom]
 });
 export const colors = atom<string[]>({
   key: "colors",
