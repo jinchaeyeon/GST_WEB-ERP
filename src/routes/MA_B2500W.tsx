@@ -70,6 +70,8 @@ const MA_B2500W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_B2500W", setMessagesData);
 
@@ -253,8 +255,8 @@ const MA_B2500W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",

@@ -35,6 +35,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -80,6 +81,7 @@ const HU_B2100W: React.FC = () => {
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
 
   const processApi = useApi();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -237,7 +239,7 @@ const HU_B2100W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dutydt: new Date(),
     prsnnum: "",
     dptcd: "",

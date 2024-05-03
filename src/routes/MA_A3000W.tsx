@@ -179,6 +179,8 @@ const MA_A3000W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -358,7 +360,7 @@ const MA_A3000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     fxmngnum: "",
@@ -400,7 +402,7 @@ const MA_A3000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_rowstatus_s": "",
       "@p_fxmngnum_s": paraDataDeleted.fxmngnum_s,
       "@p_itemcd_s": "",
@@ -416,7 +418,7 @@ const MA_A3000W: React.FC = () => {
       "@p_unp_s": "",
       "@p_wonamt_s": "",
       "@p_taxamt_s": "",
-      "@p_location": "01",
+      "@p_location": sessionLocation,
       "@p_lotnum": "",
       "@p_recdt_s": "",
       "@p_indt_s": "",
@@ -1102,7 +1104,7 @@ const MA_A3000W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "SAVE",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     fxmngnum_s: "",
     itemcd_s: "",
@@ -1118,7 +1120,7 @@ const MA_A3000W: React.FC = () => {
     unp_s: "",
     wonamt_s: "",
     taxamt_s: "",
-    location: "01",
+    location: sessionLocation,
     lotnum: "",
     recdt_s: "",
     indt_s: "",
@@ -1403,7 +1405,7 @@ const MA_A3000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_fxmngnum_s": ParaData.fxmngnum_s,
       "@p_itemcd_s": ParaData.itemcd_s,
@@ -1463,7 +1465,7 @@ const MA_A3000W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "SAVE",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         fxmngnum_s: "",
         itemcd_s: "",
@@ -1479,7 +1481,7 @@ const MA_A3000W: React.FC = () => {
         unp_s: "",
         wonamt_s: "",
         taxamt_s: "",
-        location: "01",
+        location: sessionLocation,
         lotnum: "",
         recdt_s: "",
         indt_s: "",

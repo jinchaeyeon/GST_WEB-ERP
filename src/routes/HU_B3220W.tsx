@@ -31,6 +31,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -53,6 +54,7 @@ const HU_B3220W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -190,7 +192,7 @@ const HU_B3220W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     baseyt: new Date(),
     find_row_value: "",
     pgNum: 1,
@@ -200,7 +202,7 @@ const HU_B3220W: React.FC = () => {
   const [detailfilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Detail",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     baseyt: "",
     find_row_value: "",
     pgNum: 1,

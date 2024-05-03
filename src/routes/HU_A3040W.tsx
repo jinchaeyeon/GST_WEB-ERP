@@ -42,6 +42,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
@@ -393,6 +394,7 @@ const HU_A3040W: React.FC = () => {
   UseParaPc(setPc);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -1013,7 +1015,7 @@ const HU_A3040W: React.FC = () => {
     pgSize: PAGE_SIZE,
     worktype: "Q",
     insudt: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1025,7 +1027,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "AnuList",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1037,7 +1039,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "ANU",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -1049,7 +1051,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "MedList",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1061,7 +1063,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "MED",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -1073,7 +1075,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "HirList",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1085,7 +1087,7 @@ const HU_A3040W: React.FC = () => {
     worktype: "HIR",
     insudt: "",
     rtrchk: "%",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -2409,7 +2411,7 @@ const HU_A3040W: React.FC = () => {
       insudt: date,
       insurat: Information.pnsrat,
       insutype: "1",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prsnnm: "",
       prsnnum: "",
@@ -2459,7 +2461,7 @@ const HU_A3040W: React.FC = () => {
       insudt: date,
       insurat: Information.medrat,
       insutype: "2",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prscareamt: 0,
       prsnnm: "",
@@ -2510,7 +2512,7 @@ const HU_A3040W: React.FC = () => {
       insuamt: 0,
       insudt: date,
       insutype: "3",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prsnnm: "",
       prsnnum: "",
@@ -2877,7 +2879,7 @@ const HU_A3040W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     insudt: "",
     rowstatus_s: "",
     insutype_s: "",
@@ -3059,7 +3061,7 @@ const HU_A3040W: React.FC = () => {
       }
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         insudt: "",
         rowstatus_s: "",
         insutype_s: "",
@@ -3096,7 +3098,7 @@ const HU_A3040W: React.FC = () => {
       insudt: convertDateToStr(new Date()),
       insurat: Information.pnsrat,
       insutype: "1",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prsnnm: "",
       prsnnum: "",
@@ -3129,7 +3131,7 @@ const HU_A3040W: React.FC = () => {
       insudt: convertDateToStr(new Date()),
       insurat: Information.pnsrat,
       insutype: "2",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prscareamt: 0,
       prsnnm: "",
@@ -3163,7 +3165,7 @@ const HU_A3040W: React.FC = () => {
       insuamt: 0,
       insudt: convertDateToStr(new Date()),
       insutype: "3",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       prsamt: 0,
       prsnnm: "",
       prsnnum: "",
@@ -3589,7 +3591,7 @@ const HU_A3040W: React.FC = () => {
 
       setParaData2({
         workType: "U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         insudt: date,
         medrat: Information.medrat,
         pnsrat: Information.pnsrat,
@@ -3612,7 +3614,7 @@ const HU_A3040W: React.FC = () => {
 
       setParaData2({
         workType: "U",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         insudt: date,
         medrat: Information.medrat,
         pnsrat: Information.pnsrat,
@@ -3625,7 +3627,7 @@ const HU_A3040W: React.FC = () => {
 
   const [ParaData2, setParaData2] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     insudt: "",
     medrat: 0,
     pnsrat: 0,
@@ -3685,7 +3687,7 @@ const HU_A3040W: React.FC = () => {
 
       setParaData2({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         insudt: "",
         medrat: 0,
         pnsrat: 0,

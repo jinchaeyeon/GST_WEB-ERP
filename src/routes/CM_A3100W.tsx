@@ -39,6 +39,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import {
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   UsePermissions,
@@ -72,6 +73,7 @@ const CM_A3100W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [pc, setPc] = useState("");
@@ -239,7 +241,7 @@ const CM_A3100W: React.FC = () => {
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     datnum_s: "",
     seq_s: "",
@@ -299,7 +301,7 @@ const CM_A3100W: React.FC = () => {
       }));
       setParaData({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         datnum_s: "",
         seq_s: "",
@@ -348,7 +350,7 @@ const CM_A3100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "resource",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     todt: new Date(),
     resource: "%",
     group: "%",
@@ -359,7 +361,7 @@ const CM_A3100W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "schedule",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     resource: "%",
     group: "%",
     find_row_value: "",
@@ -370,7 +372,7 @@ const CM_A3100W: React.FC = () => {
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     workType: "list",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     todt: new Date(),
     resource: "%",
     group: "%",

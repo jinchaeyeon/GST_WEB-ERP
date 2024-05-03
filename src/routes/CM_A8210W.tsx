@@ -129,6 +129,8 @@ const CM_A8210W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -338,7 +340,7 @@ const CM_A8210W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "USERLIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     frdt: new Date(),
     todt: new Date(),
@@ -352,7 +354,7 @@ const CM_A8210W: React.FC = () => {
   const [subfilters, setSubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "USERDETAIL",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     recdt: new Date(),
     frdt: "",
     todt: "",
@@ -959,7 +961,7 @@ const CM_A8210W: React.FC = () => {
         extra_field1: "",
         fx_depre_price: 0,
         keycode: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         part: "",
         prodemp: "",
         prodmac: "",
@@ -990,8 +992,8 @@ const CM_A8210W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "N",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     recdt: "",
     rowstatus_s: "",
     type_s: "",
@@ -1298,8 +1300,8 @@ const CM_A8210W: React.FC = () => {
       }));
       setParaData({
         workType: "N",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         recdt: "",
         rowstatus_s: "",
         type_s: "",

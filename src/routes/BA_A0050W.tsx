@@ -429,6 +429,7 @@ const BA_A0050: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -824,7 +825,7 @@ const BA_A0050: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "ITEM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",
@@ -839,7 +840,7 @@ const BA_A0050: React.FC = () => {
   const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "PROCCD",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
     insiz: "",
@@ -854,7 +855,7 @@ const BA_A0050: React.FC = () => {
   const [subfilters2, setsubFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "BOM",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "###1234",
     itemnm: "",
     insiz: "",
@@ -1365,7 +1366,7 @@ const BA_A0050: React.FC = () => {
       chlditemnm: "",
       custcd: "",
       custnm: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       outgb: "A",
       outprocyn: "",
       prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
@@ -1740,7 +1741,7 @@ const BA_A0050: React.FC = () => {
   const [paraData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prntitemcd: "",
     rowstatus_s: "",
     seq_s: "",
@@ -1769,7 +1770,7 @@ const BA_A0050: React.FC = () => {
   const [paraData2, setParaData2] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     prntitemcd: "",
     itemcd_s: "",
     userid: userId,
@@ -2080,7 +2081,7 @@ const BA_A0050: React.FC = () => {
         chlditemnm: "",
         custcd: "",
         custnm: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         outgb: "A",
         outprocyn: data[i].outprocyn,
         prntitemcd: Object.getOwnPropertyNames(selectedState)[0],

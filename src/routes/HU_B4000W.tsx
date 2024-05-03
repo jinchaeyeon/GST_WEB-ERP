@@ -471,7 +471,7 @@ const HU_B4000W: React.FC = () => {
   // 조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: orgdiv,
     ymdFrdt: new Date(),
     cboPrsnnum: "",
     radRtryn: "%",
@@ -511,7 +511,7 @@ const HU_B4000W: React.FC = () => {
   const [adjfilters, setAdjFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "ADJ",
-    orgdiv: "01",
+    orgdiv: orgdiv,
     cboPrsnnum: "",
     yyyy: new Date(),
     adjnm: "",

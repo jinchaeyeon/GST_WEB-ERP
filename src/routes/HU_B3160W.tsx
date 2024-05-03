@@ -32,6 +32,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -57,6 +58,7 @@ const HU_B3160W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -135,7 +137,7 @@ const HU_B3160W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     payyrmm: new Date(),
     prsnnum: "",
     prsnnm: "",

@@ -75,6 +75,8 @@ const CM_A0000W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -324,7 +326,7 @@ const CM_A0000W: React.FC = () => {
   const [filters, setFilters] = useState({
     cbocategory: "",
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboPerson: "",
     publishdate: new Date(),
     title: "",
@@ -343,7 +345,7 @@ const CM_A0000W: React.FC = () => {
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
-    location: "01",
+    location: sessionLocation,
     datnum: "",
     category: "",
     pgNum: 1,
@@ -357,7 +359,7 @@ const CM_A0000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": "",
       "@p_datnum": paraDataDeleted.datnum,
       "@p_category": "",
@@ -384,7 +386,7 @@ const CM_A0000W: React.FC = () => {
     pageSize: detailFilters.pgSize,
     parameters: {
       "@p_work_type": "Q",
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": detailFilters.datnum,
       "@p_dtgb": filters.cbodtgb,
       "@p_frdt": convertDateToStr(filters.publish_start_date),
@@ -409,7 +411,7 @@ const CM_A0000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_datnum": filters.datnum,
         "@p_dtgb": filters.cbodtgb,
         "@p_frdt": convertDateToStr(filters.publish_start_date),

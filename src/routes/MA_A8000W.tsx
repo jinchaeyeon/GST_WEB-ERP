@@ -106,6 +106,8 @@ const MA_A8000W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -367,8 +369,8 @@ const MA_A8000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     paymentnum: "",
@@ -782,7 +784,7 @@ const MA_A8000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": filters.location,
       "@p_position": filters.position,
       "@p_indt": "",

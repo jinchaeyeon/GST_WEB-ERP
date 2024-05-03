@@ -27,6 +27,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
+  UseGetValueFromSessionItem,
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
@@ -51,6 +52,7 @@ const CT_A0111W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
 
   //그리드 데이터 스테이트
@@ -104,7 +106,7 @@ const CT_A0111W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     itemcd: "",
     itemnm: "",
   });

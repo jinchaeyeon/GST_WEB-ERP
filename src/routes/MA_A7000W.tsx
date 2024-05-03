@@ -409,6 +409,8 @@ const MA_A7000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
@@ -779,9 +781,9 @@ const MA_A7000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyymm: new Date(),
-    location: "01",
+    location: sessionLocation,
     itemacnt: "",
     itemcd: "",
     itemnm: "",
@@ -1085,7 +1087,7 @@ const MA_A7000W: React.FC = () => {
       location: "",
       lotnum: "",
       manudiv: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       pgmdiv: "",
       position: "",
       qty: 1,
@@ -1257,7 +1259,7 @@ const MA_A7000W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     yyyymm: "",
@@ -1360,7 +1362,7 @@ const MA_A7000W: React.FC = () => {
       }
       setParaData({
         pgSize: PAGE_SIZE,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         position: "",
         yyyymm: "",
@@ -1624,7 +1626,7 @@ const MA_A7000W: React.FC = () => {
           location: item.location,
           lotnum: "",
           manudiv: "",
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           pgmdiv: "",
           position: item.position,
           qty: item.qty,

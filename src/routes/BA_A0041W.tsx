@@ -155,6 +155,8 @@ const BA_A0041W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -341,7 +343,7 @@ const BA_A0041W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     itemcd: "",
     itemnm: "",
@@ -1177,7 +1179,7 @@ const BA_A0041W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "N",
-      location: "01",
+      location: sessionLocation,
       position: "",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       itemcd_s: dataArr.itemcd_s.join("|"),
@@ -1344,7 +1346,7 @@ const BA_A0041W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "D",
-      location: "01",
+      location: sessionLocation,
       position: "",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       itemcd_s: dataArr.itemcd_s.join("|"),
@@ -1693,7 +1695,7 @@ const BA_A0041W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "N",
-            location: "01",
+            location: sessionLocation,
             position: "",
             rowstatus_s: dataArr.rowstatus_s.join("|"),
             itemcd_s: dataArr.itemcd_s.join("|"),

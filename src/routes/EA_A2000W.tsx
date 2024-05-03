@@ -82,6 +82,7 @@ const EA_A2000W: React.FC = () => {
   let gridRef3: any = useRef(null);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -425,7 +426,7 @@ const EA_A2000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_appnum": filters.appnum,
@@ -516,7 +517,7 @@ const EA_A2000W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_appnum": filters2.appnum,
@@ -580,7 +581,7 @@ const EA_A2000W: React.FC = () => {
       pageSize: filters3.pgSize,
       parameters: {
         "@p_work_type": filters3.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_appnum": filters2.appnum,
@@ -909,7 +910,7 @@ const EA_A2000W: React.FC = () => {
   //계획 저장 파라미터 초기값
   const [detailParaDataSaved, setDetailParaDataSaved] = useState({
     work_type: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     appnum: "",
     attdatnum: "",
     rtcomment: "",
@@ -999,7 +1000,7 @@ const EA_A2000W: React.FC = () => {
       }));
       setDetailParaDataSaved({
         work_type: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         appnum: "",
         attdatnum: "",
         rtcomment: "",

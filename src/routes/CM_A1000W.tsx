@@ -87,6 +87,7 @@ const CM_A1000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [pc, setPc] = useState("");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -382,7 +383,7 @@ const CM_A1000W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     datnum: "",
@@ -909,7 +910,7 @@ const CM_A1000W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     datnum: "",
     strdt: "",
     strhh: "",
@@ -963,7 +964,7 @@ const CM_A1000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": memoparaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": null,
       "@p_strdt": null,
       "@p_strhh": null,
@@ -1003,7 +1004,7 @@ const CM_A1000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": paraData.datnum,
       "@p_strdt": paraData.strdt,
       "@p_strhh": paraData.strhh,
@@ -1095,7 +1096,7 @@ const CM_A1000W: React.FC = () => {
       setUnsavedName([]);
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         datnum: "",
         strdt: "",
         strhh: "",
@@ -1221,7 +1222,7 @@ const CM_A1000W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         datnum: infomation.datnum,
         strdt: convertDateToStr(infomation.strdt),
         strhh: infomation.strhh.toString(),
@@ -1266,7 +1267,7 @@ const CM_A1000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_datnum": paraDataDeleted.datnum,
       "@p_strdt": "",
       "@p_strhh": "",

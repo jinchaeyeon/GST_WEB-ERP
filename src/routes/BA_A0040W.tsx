@@ -148,6 +148,8 @@ const BA_A0040: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -363,7 +365,7 @@ const BA_A0040: React.FC = () => {
     custnm: "",
     itemcd_s: "",
     spec: "",
-    location: "01",
+    location: sessionLocation,
     remark: "",
     bnatur: "",
     itemlvl1: "",
@@ -421,7 +423,7 @@ const BA_A0040: React.FC = () => {
     custnm: "",
     itemcd_s: "",
     spec: "",
-    location: "01",
+    location: sessionLocation,
     remark: "",
     bnatur: "",
     itemlvl1: "",
@@ -613,7 +615,7 @@ const BA_A0040: React.FC = () => {
             custnm: selectedRow.custnm,
             itemcd_s: selectedRow.itemcd_s,
             spec: selectedRow.spec,
-            location: "01",
+            location: sessionLocation,
             remark: selectedRow.remark,
             bnatur: selectedRow.bnatur,
             itemlvl1: selectedRow.itemlvl1,
@@ -726,7 +728,7 @@ const BA_A0040: React.FC = () => {
             custnm: rows[0].custnm,
             itemcd_s: rows[0].itemcd_s,
             spec: rows[0].spec,
-            location: "01",
+            location: sessionLocation,
             remark: rows[0].remark,
             bnatur: rows[0].bnatur,
             itemlvl1: rows[0].itemlvl1,
@@ -790,7 +792,7 @@ const BA_A0040: React.FC = () => {
           custnm: "",
           itemcd_s: "",
           spec: "",
-          location: "01",
+          location: sessionLocation,
           remark: "",
           bnatur: "",
           itemlvl1: "",
@@ -1236,7 +1238,7 @@ const BA_A0040: React.FC = () => {
       custnm: selectedRowData.custnm,
       itemcd_s: selectedRowData.itemcd_s,
       spec: selectedRowData.spec,
-      location: "01",
+      location: sessionLocation,
       remark: selectedRowData.remark,
       bnatur: selectedRowData.bnatur,
       itemlvl1: selectedRowData.itemlvl1,
@@ -1405,7 +1407,7 @@ const BA_A0040: React.FC = () => {
       custnm: "",
       itemcd_s: "",
       spec: "",
-      location: "01",
+      location: sessionLocation,
       remark: "",
       bnatur: "",
       itemlvl1: "",
@@ -1806,7 +1808,7 @@ const BA_A0040: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     user_id: userId,
     form_id: "BA_A0040W",
     pc: pc,
@@ -1876,7 +1878,7 @@ const BA_A0040: React.FC = () => {
       "@p_attdatnum_img2": infomation.attdatnum_img2,
       "@p_remark": infomation.remark,
       "@p_safeqty": infomation.safeqty,
-      "@p_location": "01",
+      "@p_location": sessionLocation,
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
@@ -1950,7 +1952,7 @@ const BA_A0040: React.FC = () => {
       "@p_attdatnum_img2": infomation.attdatnum_img2,
       "@p_remark": infomation.remark,
       "@p_safeqty": infomation.safeqty,
-      "@p_location": "01",
+      "@p_location": sessionLocation,
       "@p_custcd": infomation.custcd,
       "@p_custnm": infomation.custnm,
       "@p_snp": infomation.snp,
@@ -2058,7 +2060,7 @@ const BA_A0040: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       user_id: userId,
       form_id: "BA_A0040W",
       pc: pc,
@@ -2198,7 +2200,7 @@ const BA_A0040: React.FC = () => {
       }));
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         user_id: userId,
         form_id: "BA_A0040W",
         pc: pc,

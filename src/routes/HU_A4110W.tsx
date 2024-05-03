@@ -40,6 +40,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
@@ -80,6 +81,7 @@ let targetRowIndex: null | number = null;
 const HU_A4110W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A4110W", setCustomOptionData);
@@ -260,7 +262,7 @@ const HU_A4110W: React.FC = () => {
   const [subfilters, setSubFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     work_type: "POINT",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     semiannualgb: "",
     find_row_value: "",
@@ -272,7 +274,7 @@ const HU_A4110W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     strdt: new Date(),
     enddt: new Date(),
     location: "",
@@ -760,7 +762,7 @@ const HU_A4110W: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
 
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
 
       "@p_expensedt": paraDataDeleted.expensedt,
       "@p_expenseseq1": paraDataDeleted.expenseseq1,

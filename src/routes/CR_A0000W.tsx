@@ -70,6 +70,8 @@ const CR_A0000W: React.FC = () => {
   const [slice, setSlice] = useState(false);
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [changeDate, setChangeDate] = useState<string>("");
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -156,7 +158,7 @@ const CR_A0000W: React.FC = () => {
             pageSize: 100,
             parameters: {
               "@p_work_type": "CAPACITY",
-              "@p_orgdiv": "01",
+              "@p_orgdiv": sessionOrgdiv,
               "@p_custcd": selectedState,
               "@p_adjdt": convertDateToStr(event.value),
             },
@@ -203,7 +205,7 @@ const CR_A0000W: React.FC = () => {
       pageSize: 100,
       parameters: {
         "@p_work_type": "ATTENDANCE",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": "",
         "@p_frdt": "",
         "@p_todt": "",
@@ -272,7 +274,7 @@ const CR_A0000W: React.FC = () => {
       pageSize: 100,
       parameters: {
         "@p_work_type": "Q",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_custcd": selectedState,
         "@p_adjdt": "",
       },
@@ -305,8 +307,8 @@ const CR_A0000W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: 100,
     workType: "",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     custcd: "",
     membership_key: "",
     adjdt: "",
@@ -360,8 +362,8 @@ const CR_A0000W: React.FC = () => {
       setParaData({
         pgSize: 100,
         workType: "",
-        orgdiv: "01",
-        location: "01",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
         custcd: "",
         membership_key: "",
         adjdt: "",
@@ -404,7 +406,7 @@ const CR_A0000W: React.FC = () => {
               pageSize: 100,
               parameters: {
                 "@p_work_type": "ADJQTY",
-                "@p_orgdiv": "01",
+                "@p_orgdiv": sessionOrgdiv,
                 "@p_custcd": selectedState,
                 "@p_adjdt": currentday,
               },

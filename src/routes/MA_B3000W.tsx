@@ -52,6 +52,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -99,6 +100,8 @@ const MA_B3000W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
 
   //커스텀 옵션 조회
@@ -201,8 +204,8 @@ const MA_B3000W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     yyyy: new Date(),
     custcd: "",
     custnm: "",

@@ -159,7 +159,7 @@ const MA_B1000W_603: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.work_type,
-        "@p_orgdiv": filters.orgdiv ? filters.orgdiv : "01", // 2134
+        "@p_orgdiv": filters.orgdiv ? filters.orgdiv : orgdiv, // 2134
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_testnum": filters.testnum,

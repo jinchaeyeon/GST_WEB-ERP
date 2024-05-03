@@ -38,6 +38,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UseParaPc,
   UsePermissions,
@@ -87,6 +88,7 @@ const MA_A3400_606W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -254,7 +256,7 @@ const MA_A3400_606W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
@@ -293,7 +295,7 @@ const MA_A3400_606W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.worktype,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -356,7 +358,7 @@ const MA_A3400_606W: React.FC = () => {
       pageSize: 1,
       parameters: {
         "@p_work_type": "LOTNUM",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -750,7 +752,7 @@ const MA_A3400_606W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: filters.location,
         outdt: convertDateToStr(Information2.outdt),
         custcd: Information2.custcd,
@@ -878,7 +880,7 @@ const MA_A3400_606W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     outdt: "",
     custcd: "",
@@ -907,7 +909,7 @@ const MA_A3400_606W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
       "@p_outdt": ParaData.outdt,
       "@p_custcd": ParaData.custcd,
@@ -956,7 +958,7 @@ const MA_A3400_606W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         outdt: "",
         custcd: "",

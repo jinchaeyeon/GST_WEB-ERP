@@ -229,6 +229,7 @@ const CM_A4100W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -448,7 +449,7 @@ const CM_A4100W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     datnum: "",
     frdt: new Date(),
     todt: new Date(),
@@ -1237,7 +1238,7 @@ const CM_A4100W: React.FC = () => {
       datnum: "",
       datnum1: "",
       files: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       person: "",
       remark: "",
       seq: 0,
@@ -1278,7 +1279,7 @@ const CM_A4100W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: 1,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       datnum: "",
       title: "",
       person: "",
@@ -1554,7 +1555,7 @@ const CM_A4100W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_edunum": paraDataDeleted.edunum,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_person": personListData.find(
@@ -1584,7 +1585,7 @@ const CM_A4100W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": infomation.workType,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_edunum": infomation.edunum,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_person": personListData.find(

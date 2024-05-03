@@ -39,6 +39,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -86,6 +87,7 @@ const dateField = ["payyrmm"];
 const HU_B3120W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -285,7 +287,7 @@ const HU_B3120W: React.FC = () => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     prsnnum: "",
@@ -362,7 +364,7 @@ const HU_B3120W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "PERSON",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
         "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
         "@p_prsnnum": filters.prsnnum,
@@ -434,7 +436,7 @@ const HU_B3120W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": "MONTH",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters2.frdt).substring(0, 6),
         "@p_todt": convertDateToStr(filters2.todt).substring(0, 6),
         "@p_prsnnum": filters2.prsnnum,
@@ -482,7 +484,7 @@ const HU_B3120W: React.FC = () => {
       pageSize: filters3.pgSize,
       parameters: {
         "@p_work_type": "BNS",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
         "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
         "@p_prsnnum": filters3.prsnnum,

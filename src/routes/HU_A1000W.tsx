@@ -202,6 +202,8 @@ const HU_A1000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
 
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -391,8 +393,8 @@ const HU_A1000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "UserList",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     dptcd: "",
     prsnnum: "",
     prsnnm: "",
@@ -611,7 +613,7 @@ const HU_A1000W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_prsnnum": paraDataDeleted.prsnnum,
       "@p_prsnnum2": "",
       "@p_location": "",
@@ -1121,7 +1123,7 @@ const HU_A1000W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     dptcd: "",
     dptnm: "",
@@ -1133,7 +1135,7 @@ const HU_A1000W: React.FC = () => {
   const [subFilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "USERINFO",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dptcd: "",
     dptnm: "",
     user_name: "",
@@ -1147,7 +1149,7 @@ const HU_A1000W: React.FC = () => {
   const [picFilters, setpicFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    cboOrgdiv: "01",
+    cboOrgdiv: sessionOrgdiv,
     cboLocation: "",
     dptcd: "",
     lang_id: "",

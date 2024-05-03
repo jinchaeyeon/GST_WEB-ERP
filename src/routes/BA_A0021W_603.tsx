@@ -38,6 +38,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -101,6 +102,7 @@ const BA_A0021W_603: React.FC = () => {
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("BA_A0021W_603", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -369,7 +371,7 @@ const BA_A0021W_603: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     custcd: "",
     custnm: "",

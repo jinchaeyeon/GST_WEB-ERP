@@ -34,6 +34,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -139,7 +140,7 @@ const CustomColorCell2 = (props: GridCellProps) => {
 
 const HU_B3180W: React.FC = () => {
   const processApi = useApi();
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -272,7 +273,7 @@ const HU_B3180W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     yyyymm: new Date(),
     user_id: "",

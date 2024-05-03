@@ -31,6 +31,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -56,6 +57,7 @@ const HU_B1020W: React.FC = () => {
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -154,7 +156,7 @@ const HU_B1020W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState<TFilters>({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     cboLocation: "",
     cboDptcd: "",
     cboPaycd: "",

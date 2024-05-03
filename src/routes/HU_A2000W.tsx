@@ -179,6 +179,8 @@ const HU_A2000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("HU_A2000W", setCustomOptionData);
@@ -345,8 +347,8 @@ const HU_A2000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     stddt: new Date(),
     workgb: "",
     workcls: "",
@@ -387,7 +389,7 @@ const HU_A2000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_stddt": convertDateToStr(filters.stddt).substring(0, 6),
         "@p_location": filters.location,
         "@p_workgb": filters.workgb,
@@ -620,7 +622,7 @@ const HU_A2000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_stddt": convertDateToStr(filters.stddt).substring(0, 6),
         "@p_location": filters.location,
         "@p_workgb": filters.workgb,

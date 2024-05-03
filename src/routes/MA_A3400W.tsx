@@ -87,6 +87,8 @@ const MA_A3400W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -296,8 +298,8 @@ const MA_A3400W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    cboLocation: "01",
+    orgdiv: sessionOrgdiv,
+    cboLocation: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     cboPerson: "",
@@ -335,7 +337,7 @@ const MA_A3400W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_recdt": paraDataDeleted.recdt,
       "@p_seq1": paraDataDeleted.seq1,
       "@p_location": "",

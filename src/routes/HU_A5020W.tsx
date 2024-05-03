@@ -301,6 +301,7 @@ const HU_A5020W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -434,7 +435,7 @@ const HU_A5020W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     payyrmm: new Date(),
     prsnnum: "",
@@ -869,7 +870,7 @@ const HU_A5020W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: filters.location,
     rowstatus_s: "",
     payyrmm_s: "",
@@ -924,7 +925,7 @@ const HU_A5020W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: filters.location,
         rowstatus_s: "",
         payyrmm_s: "",
@@ -1003,7 +1004,7 @@ const HU_A5020W: React.FC = () => {
       dptcd: "",
       files: "",
       location: "",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payyrmm: convertDateToStr(new Date()),
       prsnnm: "",
       prsnnum: "",
@@ -1055,7 +1056,7 @@ const HU_A5020W: React.FC = () => {
         dptcd: item.dptcd,
         files: "",
         location: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         payyrmm: convertDateToStr(new Date()),
         prsnnm: item.prsnnm,
         prsnnum: item.prsnnum,

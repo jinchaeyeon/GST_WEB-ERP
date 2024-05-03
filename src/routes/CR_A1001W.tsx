@@ -29,6 +29,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -56,6 +57,7 @@ const Page: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -106,7 +108,7 @@ const Page: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_class": filters.group,
         "@p_yyyymmdd": convertDateToStr(filters.frdt),
       },

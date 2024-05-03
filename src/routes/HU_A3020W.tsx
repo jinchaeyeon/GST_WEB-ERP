@@ -135,6 +135,7 @@ const HU_A3020W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -228,7 +229,7 @@ const HU_A3020W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "PAY",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -238,7 +239,7 @@ const HU_A3020W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     worktype: "DEDUCT",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -804,7 +805,7 @@ const HU_A3020W: React.FC = () => {
       monthlypayyn: "N",
       notaxlmt: 0,
       ordwageyn: "N",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       paydeductdiv: "1",
       payitemcd: "",
       payitemgroup: "",
@@ -1225,7 +1226,7 @@ const HU_A3020W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     paydeductdiv: "1",
     rowstatus_s: "",
     payitemcd_s: "",
@@ -1288,7 +1289,7 @@ const HU_A3020W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         paydeductdiv: "1",
         rowstatus_s: "",
         payitemcd_s: "",
@@ -1347,7 +1348,7 @@ const HU_A3020W: React.FC = () => {
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp2,
       fraction: "0",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       payitemcd: "",
       payitemgroup: "",
       payitemnm: "",

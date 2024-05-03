@@ -116,6 +116,7 @@ let targetRowIndex4: null | number = null;
 
 const EA_A1000: React.FC = () => {
   const user_id = UseGetValueFromSessionItem("user_id");
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -369,7 +370,7 @@ const EA_A1000: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LOAD",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgmgb: "A",
     resno: "admin",
     find_row_value: "",
@@ -381,7 +382,7 @@ const EA_A1000: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LINE_S",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgmgb: "A",
     resno: "admin",
     find_row_value: "",
@@ -393,7 +394,7 @@ const EA_A1000: React.FC = () => {
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LINE_J",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgmgb: "A",
     resno: "admin",
     find_row_value: "",
@@ -405,7 +406,7 @@ const EA_A1000: React.FC = () => {
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LINE_T",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     pgmgb: "A",
     resno: "admin",
     find_row_value: "",
@@ -1270,7 +1271,7 @@ const EA_A1000: React.FC = () => {
           insert_userid: item.user_id,
           userid: user_id,
           num: ++temp2,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
@@ -1343,7 +1344,7 @@ const EA_A1000: React.FC = () => {
           insert_userid: item.user_id,
           userid: user_id,
           num: ++temp3,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
@@ -1415,7 +1416,7 @@ const EA_A1000: React.FC = () => {
           insert_userid: item.user_id,
           userid: user_id,
           num: ++temp2,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
@@ -1488,7 +1489,7 @@ const EA_A1000: React.FC = () => {
           insert_userid: item.user_id,
           userid: user_id,
           num: ++temp4,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           person: filters.resno,
           pgmgb: "A",
           postcd: item.postcd,
@@ -1518,7 +1519,7 @@ const EA_A1000: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     person: filters.resno,
     pgmgb: filters.pgmgb,
     postcd: "",
