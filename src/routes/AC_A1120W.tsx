@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -29,6 +29,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -43,7 +44,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -57,6 +58,9 @@ const AC_A1120W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1120W", setCustomOptionData);
@@ -104,7 +108,7 @@ const AC_A1120W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     custcd: "",
     custnm: "",

@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -30,6 +30,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -44,7 +45,7 @@ import CodeReport from "../components/Prints/CodeReport";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -59,6 +60,9 @@ const AC_B1280W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B1280W", setMessagesData);
@@ -125,7 +129,7 @@ const AC_B1280W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     acntcd: "",

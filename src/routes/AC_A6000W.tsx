@@ -79,7 +79,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading } from "../store/atoms";
+import { OSState, isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { useRecoilState } from "recoil";
@@ -389,6 +389,9 @@ const AC_A6000W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -550,7 +553,7 @@ const AC_A6000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     location: "",
@@ -563,7 +566,7 @@ const AC_A6000W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q2",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     location: "",
@@ -576,7 +579,7 @@ const AC_A6000W: React.FC = () => {
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     workType: "Calendar",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     location: "",
@@ -664,7 +667,7 @@ const AC_A6000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_location": filters.location,
@@ -725,7 +728,7 @@ const AC_A6000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters2.frdt),
         "@p_todt": convertDateToStr(filters2.todt),
         "@p_location": filters2.location,
@@ -786,7 +789,7 @@ const AC_A6000W: React.FC = () => {
       pageSize: filters3.pgSize,
       parameters: {
         "@p_work_type": filters3.workType,
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters3.frdt),
         "@p_todt": convertDateToStr(filters3.todt),
         "@p_location": filters3.location,
@@ -1291,7 +1294,7 @@ const AC_A6000W: React.FC = () => {
       inputpath: "",
       itemcd: "101",
       location: filters.location,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       position: filters.position,
       remark1: "",
       seq: 0,
@@ -1341,7 +1344,7 @@ const AC_A6000W: React.FC = () => {
       inputpath: "",
       itemcd: "201",
       location: filters.location,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       position: filters.position,
       remark1: "",
       seq: 0,
@@ -1679,7 +1682,7 @@ const AC_A6000W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     location_s: "",
     position_s: "",
@@ -1765,7 +1768,7 @@ const AC_A6000W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         location_s: "",
         position_s: "",
@@ -1808,7 +1811,7 @@ const AC_A6000W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "BF",
-        "@p_orgdiv": "01",
+        "@p_orgdiv": sessionOrgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_location": filters.location,
@@ -1855,7 +1858,7 @@ const AC_A6000W: React.FC = () => {
           inputpath: "",
           itemcd: item.itemcd,
           location: filters.location,
-          orgdiv: "01",
+          orgdiv: sessionOrgdiv,
           position: filters.position,
           remark1: item.remark1,
           seq: 0,

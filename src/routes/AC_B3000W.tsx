@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -31,6 +31,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   chkScrollHandler,
@@ -44,7 +45,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -56,6 +57,9 @@ const AC_B3000W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -134,7 +138,7 @@ const AC_B3000W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     yyyy: new Date(),
     fxdiv: "",
     fxdepsts: "",

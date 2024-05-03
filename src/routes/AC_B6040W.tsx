@@ -13,6 +13,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -31,6 +32,8 @@ const AC_B6040W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -82,8 +85,8 @@ const AC_B6040W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     actdt: new Date(),
   });
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);

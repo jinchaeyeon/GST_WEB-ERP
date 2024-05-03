@@ -15,7 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -57,7 +57,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0090W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -186,6 +186,9 @@ const AC_A0090W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -264,8 +267,8 @@ const AC_A0090W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
-    location: "01",
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -675,7 +678,7 @@ const AC_A0090W: React.FC = () => {
       gisu: "",
       inputdt: convertDateToStr(new Date()),
       location: filters.location,
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       remark: "",
       taxdt1: convertDateToStr(new Date()),
       taxdt2: convertDateToStr(new Date()),
@@ -1167,7 +1170,7 @@ const AC_A0090W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     pgSize: PAGE_SIZE,
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: filters.location,
     taxyy: convertDateToStr(filters.taxyy).substring(0, 4),
     row_status_s: "",
@@ -1290,7 +1293,7 @@ const AC_A0090W: React.FC = () => {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: filters.location,
         taxyy: convertDateToStr(filters.taxyy).substring(0, 4),
         row_status_s: "",

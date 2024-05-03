@@ -17,7 +17,7 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -63,7 +63,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -158,6 +158,8 @@ const AC_A1060W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -259,7 +261,7 @@ const AC_A1060W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     dtgubun: "",
     location: "",
     position: "",
@@ -1309,7 +1311,7 @@ const AC_A1060W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "DELETE",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));
@@ -1349,7 +1351,7 @@ const AC_A1060W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "COLDROP",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));
@@ -1397,7 +1399,7 @@ const AC_A1060W: React.FC = () => {
           setParaData((prev) => ({
             ...prev,
             workType: "INSERT",
-            orgdiv: "01",
+            orgdiv: sessionOrgdiv,
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));
@@ -1445,7 +1447,7 @@ const AC_A1060W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     ref_key_s: "",
   });
@@ -1514,7 +1516,7 @@ const AC_A1060W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         location: "",
         ref_key_s: "",
       });

@@ -14,7 +14,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -34,6 +34,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -45,7 +46,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -59,6 +60,9 @@ const centerField = ["acntdate"];
 const AC_B2000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B2000W", setMessagesData);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -209,7 +213,7 @@ const AC_B2000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "TAB1_1",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",

@@ -15,7 +15,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -58,7 +58,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A5020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -106,6 +106,9 @@ const AC_A5020W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_AC902, L_AC906, L_BA002, L_BA027, L_AC013",
@@ -176,7 +179,7 @@ const AC_A5020W: React.FC = () => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     frdt: new Date(),
     todt: new Date(),
@@ -618,7 +621,7 @@ const AC_A5020W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "confirm_all",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       inoutdiv: filters.inoutdiv,
       fdate: convertDateToStr(filters.frdt),
       tdate: convertDateToStr(filters.todt),
@@ -658,7 +661,7 @@ const AC_A5020W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "save",
-      orgdiv: "01",
+      orgdiv: sessionOrgdiv,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       reqdt_s: dataArr.reqdt_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
@@ -668,7 +671,7 @@ const AC_A5020W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     inoutdiv: "",
     fdate: "",
     tdate: "",
@@ -694,7 +697,7 @@ const AC_A5020W: React.FC = () => {
       "@p_inoutdiv": paraData.inoutdiv,
       "@p_fdate": paraData.fdate,
       "@p_tdate": paraData.tdate,
-      "@p_location": paraData.location == "" ? "01" : paraData.location,
+      "@p_location": paraData.location == "" ? sessionLocation : paraData.location,
       "@p_taxtype": paraData.taxtype,
       "@p_custcd": paraData.custcd,
       "@p_etax": paraData.etax,
@@ -735,7 +738,7 @@ const AC_A5020W: React.FC = () => {
 
       setParaData({
         workType: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         inoutdiv: "",
         fdate: "",
         tdate: "",

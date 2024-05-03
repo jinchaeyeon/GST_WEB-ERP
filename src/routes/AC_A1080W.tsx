@@ -68,7 +68,7 @@ import { CellRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -151,6 +151,8 @@ const AC_A1080W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -266,7 +268,7 @@ const AC_A1080W: React.FC = () => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     location: "",
     position: "",
     frdt: new Date(),
@@ -630,7 +632,7 @@ const AC_A1080W: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     worktype: "",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     rowstatus_s: "",
     actdt_s: "",
     acseq1_s: "",
@@ -646,7 +648,7 @@ const AC_A1080W: React.FC = () => {
     pageSize: 0,
     parameters: {
       "@p_work_type": paraData.worktype,
-      "@p_orgdiv": "01",
+      "@p_orgdiv": sessionOrgdiv,
       "@p_rowstatus_s": paraData.rowstatus_s,
       "@p_actdt_s": paraData.actdt_s,
       "@p_acseq1_s": paraData.acseq1_s,
@@ -675,7 +677,7 @@ const AC_A1080W: React.FC = () => {
       }));
       setParaData({
         worktype: "",
-        orgdiv: "01",
+        orgdiv: sessionOrgdiv,
         rowstatus_s: "",
         actdt_s: "",
         acseq1_s: "",

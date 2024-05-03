@@ -13,7 +13,7 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -33,6 +33,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -48,7 +49,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -82,6 +83,9 @@ const numberField = [
 const dateField = ["shipdt"];
 
 const AC_B8000W: React.FC = () => {
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -304,10 +308,10 @@ const AC_B8000W: React.FC = () => {
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -320,10 +324,10 @@ const AC_B8000W: React.FC = () => {
   const [filters2, setFilters2] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX2",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -336,10 +340,10 @@ const AC_B8000W: React.FC = () => {
   const [filters3, setFilters3] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX3",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -351,10 +355,10 @@ const AC_B8000W: React.FC = () => {
   const [filters4, setFilters4] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX4",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -366,10 +370,10 @@ const AC_B8000W: React.FC = () => {
   const [filters5, setFilters5] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX5",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
@@ -381,10 +385,10 @@ const AC_B8000W: React.FC = () => {
   const [filters6, setFilters6] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     worktype: "ETAX6",
-    orgdiv: "01",
+    orgdiv: sessionOrgdiv,
     fdate: new Date(),
     tdate: new Date(),
-    location: "01",
+    location: sessionLocation,
     taxyy: new Date(),
     gisu: "",
     chasu: "",
