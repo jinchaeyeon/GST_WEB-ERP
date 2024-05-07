@@ -94,7 +94,9 @@ let targetRowIndex3: null | number = null;
 const MA_B7000: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
+  var index = 0;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -682,6 +684,9 @@ const MA_B7000: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+		}
   };
 
   const onDetailSelectionChange3 = (event: GridSelectionChangeEvent) => {
@@ -893,14 +898,9 @@ const MA_B7000: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-  };
-
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-
-  const handleSlideChange = (swiper: {
-    activeIndex: React.SetStateAction<number>;
-  }) => {
-    setActiveSlideIndex(swiper.activeIndex);
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   return (
@@ -908,33 +908,16 @@ const MA_B7000: React.FC = () => {
       <TitleContainer>
         <Title>재고조회</Title>
 
-        <div style={{ display: "flex", justifyContent: activeSlideIndex === 0 ? "flex-end" : "space-between" }}>
-          <Button
-            onClick={() => {
-              if (swiper) {
-                swiper.slideTo(0);
-              }
-            }}
-            icon="arrow-left"
-            themeColor={"primary"}
-            fillMode={"outline"}
-            style={{
-              display: activeSlideIndex === 0 ? "none" : "flex",
-            }}
-          >
-            이전
-          </Button>
-          <ButtonContainer>
-            {permissions && (
-              <TopButtons
-                search={search}
-                exportExcel={exportExcel}
-                permissions={permissions}
-                pathname="MA_B7000W"
-              />
-            )}
-          </ButtonContainer>
-        </div>
+        <ButtonContainer>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+              pathname="MA_B7000W"
+            />
+          )}
+        </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
@@ -1111,10 +1094,9 @@ const MA_B7000: React.FC = () => {
               onActiveIndexChange={(swiper) => {
                 index = swiper.activeIndex;
               }}
-              onSlideChange={handleSlideChange}
             >
-              <SwiperSlide key={0} className="leading_PDA">
-                <GridContainer>
+              <SwiperSlide key={0} className="leading_PDA_custom">
+                <GridContainer style={{ height: "100%" }}>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1123,7 +1105,10 @@ const MA_B7000: React.FC = () => {
                     fileName="재고조회"
                   >
                     <Grid
-                      style={{ height: "74vh", width: `${deviceWidth - 30}px` }}
+                      style={{
+                        height: `${deviceHeight * 0.8 + 10}px`,
+                        width: "90vw",
+                      }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1202,11 +1187,31 @@ const MA_B7000: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </SwiperSlide>
-              <SwiperSlide key={1} className="leading_PDA">
-                <GridContainer>
+              <SwiperSlide key={1} className="leading_PDA_custom">
+                <GridContainer style={{ height: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>계정별LOT</GridTitle>
                   </GridTitleContainer>
+                  <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                </div>
                   <ExcelExport
                     data={detail1DataResult.data}
                     ref={(exporter) => {
@@ -1216,8 +1221,8 @@ const MA_B7000: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: "31.5vh",
-                        width: `${deviceWidth - 30}px`,
+                        height: `${deviceHeight * 0.8 - 50}px`,
+                        width: "90vw",
                       }}
                       data={process(
                         detail1DataResult.data.map((row) => ({
@@ -1287,10 +1292,32 @@ const MA_B7000: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
-                <GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={2} className="leading_PDA_custom">
+                <GridContainer style={{ width: "100%", height: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>LOT별 상세이력</GridTitle>
                   </GridTitleContainer>
+                  <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                </div>
                   <ExcelExport
                     data={detail2DataResult.data}
                     ref={(exporter) => {
@@ -1300,8 +1327,8 @@ const MA_B7000: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: "31.5vh",
-                        width: `${deviceWidth - 30}px`,
+                        height: `${deviceHeight * 0.8 - 50}px`,
+                        width: "90vw",
                       }}
                       data={process(
                         detail2DataResult.data.map((row) => ({
