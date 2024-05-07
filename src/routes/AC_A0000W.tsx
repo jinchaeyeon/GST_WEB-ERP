@@ -68,7 +68,7 @@ let targetRowIndex: null | number = null;
 
 const AC_A0000W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -85,8 +85,8 @@ const AC_A0000W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const sessionLocation = UseGetValueFromSessionItem("location");  
-  
+  const sessionLocation = UseGetValueFromSessionItem("location");
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A0000W", setMessagesData);
@@ -938,27 +938,6 @@ const AC_A0000W: React.FC = () => {
             <Title>법인기본</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>사업장</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="location"
-                            value={filters.location}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th></th>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -968,9 +947,30 @@ const AC_A0000W: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th></th>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1017,7 +1017,7 @@ const AC_A0000W: React.FC = () => {
                   fileName="법인기본"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1112,15 +1112,14 @@ const AC_A0000W: React.FC = () => {
                   저장
                 </Button>
               </div>
-              <GridContainer
-                style={{ width: `${deviceWidth - 30}px`}}
-              >
-                <FormBoxWrap border={true}
-                style={{
-                  height: `${deviceHeight * 0.8}px`,
-                  width: "100%",
-                  overflow: "scroll",
-                }}
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    height: `${deviceHeight * 0.75}px`,
+                    width: "100%",
+                    overflow: "scroll",
+                  }}
                 >
                   <FormBox>
                     <tbody>

@@ -104,7 +104,7 @@ const BA_A0100W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1413,68 +1413,68 @@ const BA_A0100W: React.FC = () => {
             <Title>동물실관리</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>룸번호</th>
-                      <td>
-                        <Input
-                          name="roomnum"
-                          type="text"
-                          value={filters.roomnum}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="roomdiv"
-                            value={filters.roomdiv}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>동물종</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="animalkind"
-                            value={filters.animalkind}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>시험파트</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="testpart"
-                            value={filters.testpart}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="BA_A0100W"
+                search={search}
+                exportExcel={exportExcel}
+                permissions={permissions}
+                pathname="BA_A0100W"
                 />
               )}
             </ButtonContainer>
+                <FilterContainer>
+                  <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                    <tbody>
+                      <tr>
+                        <th>룸번호</th>
+                        <td>
+                          <Input
+                            name="roomnum"
+                            type="text"
+                            value={filters.roomnum}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>구분</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="roomdiv"
+                              value={filters.roomdiv}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+                        <th>동물종</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="animalkind"
+                              value={filters.animalkind}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+                        <th>시험파트</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="testpart"
+                              value={filters.testpart}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1518,7 +1518,7 @@ const BA_A0100W: React.FC = () => {
                   fileName="동물실관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.78}px` }}
+                    style={{ height: `${deviceHeight * 0.73}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1674,7 +1674,7 @@ const BA_A0100W: React.FC = () => {
                   fileName="동물실관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.73}px` }}
+                    style={{ height: `${deviceHeight * 0.7}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,

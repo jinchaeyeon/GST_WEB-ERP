@@ -120,7 +120,7 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -1283,8 +1283,7 @@ const Page: React.FC = () => {
             (
               item: any // 그 외, change 된 데이터의 rowstatus 업데이트
             ) =>
-              item[USER_MENU_DATA_ITEM_KEY] ==
-              dataItem[USER_MENU_DATA_ITEM_KEY]
+              item[USER_MENU_DATA_ITEM_KEY] == dataItem[USER_MENU_DATA_ITEM_KEY]
                 ? { ...item, rowstatus: item["rowstatus"] == "N" ? "N" : "U" }
                 : { ...item }
           );
@@ -1382,45 +1381,6 @@ const Page: React.FC = () => {
           <TitleContainer>
             <Title>사용자 그룹</Title>
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>사용자그룹ID</th>
-                      <td>
-                        <Input
-                          name="user_group_id"
-                          type="text"
-                          value={filters.user_group_id}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사용자그룹명</th>
-                      <td>
-                        <Input
-                          name="user_group_name"
-                          type="text"
-                          value={filters.user_group_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사용유무</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="use_yn"
-                            value={filters.use_yn}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="name"
-                            valueField="code"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -1430,10 +1390,49 @@ const Page: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>사용자그룹ID</th>
+                    <td>
+                      <Input
+                        name="user_group_id"
+                        type="text"
+                        value={filters.user_group_id}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사용자그룹명</th>
+                    <td>
+                      <Input
+                        name="user_group_name"
+                        type="text"
+                        value={filters.user_group_name}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사용유무</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="use_yn"
+                          value={filters.use_yn}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          textField="name"
+                          valueField="code"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
 
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1478,7 +1477,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8}px` }}
+                    style={{ height: `${deviceHeight * 0.76}px` }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -1594,7 +1593,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.32}px`,
+                      height: `${deviceHeight * 0.3}px`,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1648,7 +1647,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.28}px`,
+                      height: `${deviceHeight * 0.26}px`,
                       overflowY: "scroll",
                     }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>

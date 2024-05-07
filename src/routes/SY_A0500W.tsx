@@ -93,7 +93,9 @@ const boardStyle: CSSProperties = {
 const containerStyle: CSSProperties = {
   width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
   height:
-    window.innerWidth <= 1200 ? `${(window.innerHeight - 50) * 0.6}px` : "80vh",
+    window.innerWidth <= 1200
+      ? `${(window.innerHeight - 100) * 0.6}px`
+      : "80vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */
@@ -108,7 +110,7 @@ const SY_A0500W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
@@ -1263,7 +1265,7 @@ const SY_A0500W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.77}px`,
+                      height: `${deviceHeight * 0.8}px`,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1352,7 +1354,7 @@ const SY_A0500W: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  height: `${deviceHeight * 0.72}px`,
+                  height: `${deviceHeight * 0.75}px`,
                   overflow: "auto",
                 }}
               >

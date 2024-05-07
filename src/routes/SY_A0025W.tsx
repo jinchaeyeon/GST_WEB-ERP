@@ -87,7 +87,7 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
 
@@ -1149,32 +1149,6 @@ const SY_A0025W: React.FC = () => {
             <Title>관리번호 채번정보</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>관리번호ID</th>
-                      <td>
-                        <Input
-                          name="numbering_id"
-                          type="text"
-                          value={filters.numbering_id}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>관리번호명</th>
-                      <td>
-                        <Input
-                          name="numbering_name"
-                          type="text"
-                          value={filters.numbering_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -1184,9 +1158,35 @@ const SY_A0025W: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>관리번호ID</th>
+                    <td>
+                      <Input
+                        name="numbering_id"
+                        type="text"
+                        value={filters.numbering_id}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>관리번호명</th>
+                    <td>
+                      <Input
+                        name="numbering_name"
+                        type="text"
+                        value={filters.numbering_name}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1209,7 +1209,7 @@ const SY_A0025W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.85}px`,
+                      height: `${deviceHeight * 0.82}px`,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1288,7 +1288,7 @@ const SY_A0025W: React.FC = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   width: "100%",
-                  marginBottom:"5px"
+                  marginBottom: "5px",
                 }}
               >
                 <Button
@@ -1317,28 +1317,33 @@ const SY_A0025W: React.FC = () => {
                   width: `${deviceWidth - 30}px`,
                 }}
               >
-                <GridTitleContainer>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onNewClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      신규
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      삭제
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
+                <ButtonContainer
+                  style={{
+                    paddingTop: "5px",
+                  }}
+                >
+                  <Button
+                    onClick={onNewClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{ width: `${deviceWidth - 30}px`, height: `${deviceHeight * 0.73}px`}}
+                  style={{
+                    width: `${deviceWidth - 30}px`,
+                    height: `${deviceHeight * 0.7}px`,
+                  }}
                 >
                   <FormBox>
                     <tbody>
@@ -1460,7 +1465,7 @@ const SY_A0025W: React.FC = () => {
                   border={true}
                   style={{
                     width: `${deviceWidth - 30}px`,
-                    height: `${deviceHeight * 0.75}px`,
+                    height: `${deviceHeight * 0.71}px`,
                     overflow: "scroll",
                   }}
                 >

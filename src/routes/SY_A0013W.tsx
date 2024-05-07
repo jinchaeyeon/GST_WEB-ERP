@@ -222,7 +222,7 @@ const Page: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50 - 50;
+  let deviceHeight = window.innerHeight - 70 - 50;
   let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -2026,80 +2026,6 @@ const Page: React.FC = () => {
           <TitleContainer>
             <Title>사용자 권한</Title>
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>회사구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="cboOrgdiv"
-                            value={filters.cboOrgdiv}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>사업장</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="cboLocation"
-                            value={filters.cboLocation}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>부서코드</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="dptcd"
-                            value={filters.dptcd}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="dptnm"
-                            valueField="dptcd"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>사용자명ID</th>
-                      <td>
-                        <Input
-                          name="user_id"
-                          type="text"
-                          value={filters.user_id}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사용자명</th>
-                      <td>
-                        <Input
-                          name="user_name"
-                          type="text"
-                          value={filters.user_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사용자구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="user_category"
-                            value={filters.user_category}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -2109,9 +2035,83 @@ const Page: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>회사구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="cboOrgdiv"
+                          value={filters.cboOrgdiv}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="cboLocation"
+                          value={filters.cboLocation}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>부서코드</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="dptcd"
+                          value={filters.dptcd}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          textField="dptnm"
+                          valueField="dptcd"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>사용자명ID</th>
+                    <td>
+                      <Input
+                        name="user_id"
+                        type="text"
+                        value={filters.user_id}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사용자명</th>
+                    <td>
+                      <Input
+                        name="user_name"
+                        type="text"
+                        value={filters.user_name}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사용자구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="user_category"
+                          value={filters.user_category}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2292,7 +2292,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.75}px` }}
+                    style={{ height: `${deviceHeight * 0.72}px` }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,

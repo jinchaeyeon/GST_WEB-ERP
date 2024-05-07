@@ -129,7 +129,7 @@ const SY_A0125W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1282,52 +1282,6 @@ const SY_A0125W: React.FC = () => {
             <Title>부서관리</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>부서코드</th>
-                      <td>
-                        <Input
-                          name="dptcd"
-                          type="text"
-                          value={filters.dptcd}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>부서명</th>
-                      <td>
-                        <Input
-                          name="dptnm"
-                          type="text"
-                          value={filters.dptnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사용자명</th>
-                      <td>
-                        <Input
-                          name="user_name"
-                          type="text"
-                          value={filters.user_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사업장</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="location"
-                            value={filters.location}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -1337,9 +1291,55 @@ const SY_A0125W: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>부서코드</th>
+                    <td>
+                      <Input
+                        name="dptcd"
+                        type="text"
+                        value={filters.dptcd}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>부서명</th>
+                    <td>
+                      <Input
+                        name="dptnm"
+                        type="text"
+                        value={filters.dptnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사용자명</th>
+                    <td>
+                      <Input
+                        name="user_name"
+                        type="text"
+                        value={filters.user_name}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1356,7 +1356,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.85}px`,
+                      height: `${deviceHeight * 0.8}px`,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1396,7 +1396,7 @@ const SY_A0125W: React.FC = () => {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "left",
+                  justifyContent: "space-between",
                   width: "100%",
                 }}
               >
@@ -1410,10 +1410,20 @@ const SY_A0125W: React.FC = () => {
                 >
                   이전
                 </Button>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(2);
+                    }
+                  }}
+                  icon="arrow-right"
+                >
+                  부서인원 정보
+                </Button>
               </div>
               <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
                 <GridTitleContainer>
-                  <ButtonContainer>
+                  <ButtonContainer style={{ paddingTop: "5px" }}>
                     <Button
                       onClick={onAddClick2}
                       themeColor={"primary"}
@@ -1442,7 +1452,7 @@ const SY_A0125W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: `${deviceHeight * 0.75}px`,
+                    height: `${deviceHeight * 0.7}px`,
                     width: `${deviceWidth - 30}px`,
                     overflow: "scroll",
                   }}
@@ -1533,96 +1543,119 @@ const SY_A0125W: React.FC = () => {
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
-                <GridTitleContainer>
-                  <GridTitle>부서인원정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <ExcelExport
-                  ref={(exporter) => (_export2 = exporter)}
-                  data={subDataResult.data}
-                  fileName="부서관리"
-                >
-                  <Grid
-                    style={{ height: "40vh" }}
-                    data={process(
-                      subDataResult.data.map((row) => ({
-                        ...row,
-                        postcd: postcdListData.find(
-                          (item: any) => item.sub_code == row.postcd
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                      })),
-                      subDataState
-                    )}
-                    {...subDataState}
-                    onDataStateChange={onSubDataStateChange}
-                    //선택 기능
-                    dataItemKey={SUB_DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSubDataSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={subDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onSubDataSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onSubItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn
-                      field="rowstatus"
-                      title=" "
-                      width="50px"
-                      editable={false}
-                    />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdAllList"
-                      ]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? subTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
               </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={2}
+              className="leading_PDA_custom"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <GridTitleContainer>
+                <GridTitle>부서인원정보</GridTitle>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="arrow-left"
+                  >
+                    이전
+                  </Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </div>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                data={subDataResult.data}
+                fileName="부서관리"
+              >
+                <Grid
+                  style={{
+                    height: `${deviceHeight * 0.72}px`,
+                    width: `${deviceWidth - 30}px`,
+                  }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onSubItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="50px"
+                    editable={false}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            footerCell={
+                              item.sortOrder == 0
+                                ? subTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </SwiperSlide>
           </Swiper>
         </>

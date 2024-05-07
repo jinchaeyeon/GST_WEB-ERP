@@ -384,7 +384,7 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
   UsePermissions(setPermissions);
 
@@ -1757,71 +1757,6 @@ const BA_A0080: React.FC = () => {
             <Title>단가관리</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>단가항목</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="unpitem"
-                            value={subfilters.unpitem}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            className="required"
-                          />
-                        )}
-                      </td>
-                      <th>화폐단위</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="amtunit"
-                            value={subfilters.amtunit}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>규격</th>
-                      <td>
-                        <Input
-                          name="insiz"
-                          type="text"
-                          value={subfilters.insiz}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>품목코드</th>
-                      <td>
-                        <Input
-                          name="itemcd"
-                          type="text"
-                          value={subfilters.itemcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onItemWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>품목명</th>
-                      <td>
-                        <Input
-                          name="itemnm"
-                          type="text"
-                          value={subfilters.itemnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -1831,6 +1766,71 @@ const BA_A0080: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>단가항목</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="unpitem"
+                          value={subfilters.unpitem}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          className="required"
+                        />
+                      )}
+                    </td>
+                    <th>화폐단위</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="amtunit"
+                          value={subfilters.amtunit}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>규격</th>
+                    <td>
+                      <Input
+                        name="insiz"
+                        type="text"
+                        value={subfilters.insiz}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>품목코드</th>
+                    <td>
+                      <Input
+                        name="itemcd"
+                        type="text"
+                        value={subfilters.itemcd}
+                        onChange={filterInputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onItemWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>품목명</th>
+                    <td>
+                      <Input
+                        name="itemnm"
+                        type="text"
+                        value={subfilters.itemnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
             className="leading_80_Swiper"
@@ -1863,7 +1863,7 @@ const BA_A0080: React.FC = () => {
                   fileName="단가관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.75}px` }}
+                    style={{ height: `${deviceHeight * 0.7}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -2016,7 +2016,7 @@ const BA_A0080: React.FC = () => {
                     fileName="단가관리"
                   >
                     <Grid
-                      style={{ height: `${deviceHeight * 0.7}px` }}
+                      style={{ height: `${deviceHeight * 0.65}px` }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2082,7 +2082,9 @@ const BA_A0080: React.FC = () => {
                         editable={false}
                       />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList"
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
