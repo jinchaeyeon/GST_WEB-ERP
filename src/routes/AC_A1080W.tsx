@@ -177,7 +177,7 @@ const AC_A1080W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001, L_AC006", setBizComponentData);
 
   const [inputpathListData, setInputPathListData] = useState([
@@ -187,7 +187,7 @@ const AC_A1080W: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

@@ -116,7 +116,7 @@ const SA_B1101_603W: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
@@ -126,7 +126,7 @@ const SA_B1101_603W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

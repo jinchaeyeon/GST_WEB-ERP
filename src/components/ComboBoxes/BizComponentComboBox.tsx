@@ -88,6 +88,7 @@ const CommonComboBox = ({
       newColumns = newColumns.filter((column: any) => column.width !== 0);
     }
   }
+  
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value == null ? "" : e.target.value[valueField];
     let values = e.value;

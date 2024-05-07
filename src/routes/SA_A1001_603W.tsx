@@ -239,7 +239,7 @@ const SA_A1001_603W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001, L_SA001_603, L_Requestgb",
     setBizComponentData
@@ -254,7 +254,7 @@ const SA_A1001_603W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

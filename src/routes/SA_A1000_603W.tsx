@@ -667,7 +667,7 @@ const SA_A1000_603W: React.FC = () => {
   }, [customOptionData]);
 
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
@@ -725,7 +725,7 @@ const SA_A1000_603W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const materialgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_SA012_603"
@@ -2529,7 +2529,7 @@ const SA_A1000_603W: React.FC = () => {
         margin: Math.ceil(item.margin),
         marginamt: Math.ceil(item.marginamt),
         quounp: Math.ceil(item.quounp),
-      }))
+      }));
 
       setMainDataResult6((prev) => {
         return {
@@ -2602,8 +2602,8 @@ const SA_A1000_603W: React.FC = () => {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        rate: Math.ceil(item.rate)
-      }))
+        rate: Math.ceil(item.rate),
+      }));
 
       setMainDataResult7((prev) => {
         return {
@@ -3001,7 +3001,9 @@ const SA_A1000_603W: React.FC = () => {
   const gridSumQtyFooterCell6 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult6.data.forEach((item) =>
-      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -3022,7 +3024,9 @@ const SA_A1000_603W: React.FC = () => {
   const gridSumQtyFooterCell7 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult7.data.forEach((item) =>
-      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -6712,6 +6716,21 @@ const SA_A1000_603W: React.FC = () => {
                     Object.getOwnPropertyNames(selectedState2)[0]
                 )[0]
               : ""
+          }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
           }
           modal={true}
         />

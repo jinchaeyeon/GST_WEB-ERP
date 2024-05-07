@@ -28,10 +28,11 @@ type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
   item: any;
+  save?: boolean;
   modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
+const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -56,7 +57,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     setVisible(false);
   };
 
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171, L_BA173, L_BA174, L_BA008_603",
     setBizComponentData

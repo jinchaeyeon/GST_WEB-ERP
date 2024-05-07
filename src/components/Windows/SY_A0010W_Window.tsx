@@ -150,7 +150,7 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
 
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
 
   const [userListData, setUserListData] = useState([
@@ -164,7 +164,7 @@ const KendoWindow = ({
 
   // 그룹 카테고리 조회
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

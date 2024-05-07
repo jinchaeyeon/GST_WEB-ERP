@@ -168,7 +168,7 @@ const SA_B2201W_603: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   //   물질분류, 영업담당자
   UseBizComponent(
     "L_SA001_603, L_sysUserMaster_001, L_SA002",
@@ -185,7 +185,7 @@ const SA_B2201W_603: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

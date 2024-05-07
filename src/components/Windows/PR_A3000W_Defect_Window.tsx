@@ -399,7 +399,7 @@ const KendoWindow = ({
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA000", setBizComponentData);
 
   const [position, setPosition] = useState<IWindowPosition>({
