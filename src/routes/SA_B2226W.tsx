@@ -198,7 +198,10 @@ const SA_B2226W: React.FC = () => {
     }
 
     if (data2.isSuccess == true) {
-      const rows2 = data2.tables[0].Rows;
+      const rows2 = data2.tables[0].Rows.map((item: any)=> ({
+        ...item,
+        value: Math.ceil(item.value),
+      }))
 
       setChartList(rows2);
       let array = rows2
@@ -233,7 +236,12 @@ const SA_B2226W: React.FC = () => {
     }
 
     if (data3.isSuccess == true) {
-      const rows3 = data3.tables[0].Rows;
+      const rows3 = data3.tables[0].Rows.map((item: any) => ({
+        ...item,
+        past_year: Math.ceil(item.past_year),
+        current_year: Math.ceil(item.current_year),
+        cnt: Math.ceil(item.cnt),
+      }))
 
       setItemList(rows3);
       let array3 = rows3.map(
@@ -254,8 +262,8 @@ const SA_B2226W: React.FC = () => {
     if (data4.isSuccess == true) {
       const rows3 = data4.tables[0].Rows;
 
-      const target = ThreeNumberceil(rows3[0].target);
-      const performance = ThreeNumberceil(rows3[0].performance);
+      const target = ThreeNumberceil(Math.ceil(rows3[0].target));
+      const performance = ThreeNumberceil(Math.ceil(rows3[0].performance));
       const percent = parseFloat(
         (Math.ceil((performance / target) * 100 * 1000) / 1000).toFixed(0)
       );
@@ -334,26 +342,26 @@ const SA_B2226W: React.FC = () => {
   const cardOption = [
     {
       title: convertDateToStr(new Date()).substring(4, 6) + "월 계약금액",
-      data: AllPanel.month_amt != null ? AllPanel.month_amt : 0,
+      data: AllPanel.month_amt != null ? Math.ceil(AllPanel.month_amt) : 0,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
-      data: AllPanel.year_amt != null ? AllPanel.year_amt : 0,
+      data: AllPanel.year_amt != null ? Math.ceil(AllPanel.year_amt) : 0,
     },
     {
       title:
         (
           parseInt(convertDateToStr(filters.frdt).substring(0, 4)) - 1
         ).toString() + "년 변경계약금액",
-      data: AllPanel.change_amt_past != null ? AllPanel.change_amt_past : 0,
+      data: AllPanel.change_amt_past != null ? Math.ceil(AllPanel.change_amt_past) : 0,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약금액",
-      data: AllPanel.change_amt != null ? AllPanel.change_amt : 0,
+      data: AllPanel.change_amt != null ?Math.ceil(AllPanel.change_amt) : 0,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 최종계약금액",
-      data: AllPanel.total_amt != null ? AllPanel.total_amt : 0,
+      data: AllPanel.total_amt != null ? Math.ceil(AllPanel.total_amt) : 0,
     },
   ];
 
@@ -484,7 +492,7 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"목표 금액"}
                           titlefontsize={"1rem"}
-                          data={doughnut.target + "억"}
+                          data={Math.ceil(doughnut.target) + "억"}
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.5rem"}
                           form={"SA_B2226W"}
@@ -495,7 +503,7 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"실적 금액"}
                           titlefontsize={"1rem"}
-                          data={doughnut.performance + "억"}
+                          data={Math.ceil(doughnut.performance) + "억"}
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.5rem"}
                           form={"SA_B2226W"}
@@ -516,7 +524,7 @@ const SA_B2226W: React.FC = () => {
                             doughnut.percent > 100 ? 100 : doughnut.percent
                           }
                           size={deviceWidth < 1200 ? 250 : 160}
-                          valueTemplate={`${doughnut.percent}%`}
+                          valueTemplate={`${Math.ceil(doughnut.percent)}%`}
                           valueColor={theme.palette.primary.dark}
                           rangeColor={theme.palette.secondary.main}
                           readOnly

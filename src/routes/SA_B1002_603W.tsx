@@ -346,9 +346,15 @@ const SA_B1002_603W: React.FC = () => {
     }
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
+      const rows = data.tables[0].Rows.map((item: any) => {
         return {
-          ...row,
+          ...item,
+          discount: Math.ceil(item.discount),
+          discountamt: Math.ceil(item.discountamt),
+          finalquowonamt: Math.ceil(item.finalquowonamt),
+          margin: Math.ceil(item.margin),
+          marginamt: Math.ceil(item.marginamt),
+          quounp: Math.ceil(item.quounp),
         };
       });
       setMainDataResult((prev) => {
@@ -470,12 +476,12 @@ const SA_B1002_603W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
+    let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
     );
 
-    var parts = parseFloat(sum).toString().split(".");
+    var parts = sum.toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +

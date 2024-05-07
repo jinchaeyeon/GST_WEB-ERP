@@ -163,7 +163,10 @@ const SA_B2216W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil((item.value))
+      }))
 
       setChartList(rows);
 
@@ -200,7 +203,10 @@ const SA_B2216W: React.FC = () => {
     }
 
     if (data2.isSuccess == true) {
-      const rows2 = data2.tables[0].Rows;
+      const rows2 = data2.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil((item.value))
+      }))
 
       setBarData(rows2);
       let array = rows2

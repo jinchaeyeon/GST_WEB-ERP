@@ -41,7 +41,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
-import NumberCommaCell from "../components/Cells/NumberCommaCell";
+import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -56,7 +56,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -564,6 +563,9 @@ const SA_A6000W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        amt: Math.ceil(item.amt),
+        conamt: Math.ceil(item.conamt),
+        rat: Math.ceil(item.rat),
       }));
 
       setMainDataResult((prev) => {
@@ -617,6 +619,10 @@ const SA_A6000W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        amt: Math.ceil(item.amt),
+        conamt: Math.ceil(item.conamt),
+        rat: Math.ceil(item.rat),
+        dif: Math.ceil(item.dif),
       }));
 
       setMainDataResult2((prev) => {
@@ -627,7 +633,7 @@ const SA_A6000W: React.FC = () => {
       });
 
       setInformation({
-        amt: data.returnString == "" ? 0 : data.returnString,
+        amt: data.returnString == "" ? 0 : Math.ceil(data.returnString),
       });
       if (totalRowCnt > 0) {
         setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
@@ -672,7 +678,12 @@ const SA_A6000W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        amt: Math.ceil(item.amt),
+        conamt: Math.ceil(item.conamt),
+        rat: Math.ceil(item.rat),
+      }));
 
       if (filters3.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -779,6 +790,10 @@ const SA_A6000W: React.FC = () => {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        amt: Math.ceil(item.amt),
+        conamt: Math.ceil(item.conamt),
+        rat: Math.ceil(item.rat),
+        dif: Math.ceil(item.dif),
       }));
 
       setMainDataResult4((prev) => {
@@ -1039,10 +1054,12 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
@@ -1053,7 +1070,7 @@ const SA_A6000W: React.FC = () => {
       </td>
     ) : (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas3(sum / mainDataResult.data.length)}%
+        {numberWithCommas(Math.ceil(sum / mainDataResult.data.length))}%
       </td>
     );
   };
@@ -1062,10 +1079,12 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
@@ -1076,7 +1095,7 @@ const SA_A6000W: React.FC = () => {
       </td>
     ) : (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas3(sum / mainDataResult2.data.length)}%
+        {numberWithCommas(Math.ceil(sum / mainDataResult2.data.length))}%
       </td>
     );
   };
@@ -1085,10 +1104,12 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult3.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
@@ -1099,7 +1120,7 @@ const SA_A6000W: React.FC = () => {
       </td>
     ) : (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas3(sum / mainDataResult3.data.length)}%
+        {numberWithCommas(Math.ceil(sum / mainDataResult3.data.length))}%
       </td>
     );
   };
@@ -1108,10 +1129,12 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult4.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
@@ -1122,7 +1145,7 @@ const SA_A6000W: React.FC = () => {
       </td>
     ) : (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas3(sum / mainDataResult4.data.length)}%
+        {numberWithCommas(Math.ceil(sum / mainDataResult4.data.length))}%
       </td>
     );
   };
@@ -1131,17 +1154,19 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(sum)}
+        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
@@ -1150,17 +1175,19 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(sum)}
+        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
@@ -1169,17 +1196,19 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult3.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(sum)}
+        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
@@ -1188,17 +1217,19 @@ const SA_A6000W: React.FC = () => {
     let sum = 0;
     mainDataResult4.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(sum)}
+        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
@@ -1418,7 +1449,7 @@ const SA_A6000W: React.FC = () => {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               rat:
-                item.amt == 0 ? 0 : Math.round((item.conamt / item.amt) * 100),
+                item.amt == 0 ? 0 : Math.ceil((item.conamt / item.amt) * 100),
               dif: item.amt - item.conamt,
               [EDIT_FIELD]: undefined,
             }
@@ -1477,7 +1508,7 @@ const SA_A6000W: React.FC = () => {
                 ...item,
                 amt: amt,
                 conamt: conamt,
-                rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+                rat: amt == 0 ? 0 : Math.ceil((conamt / amt) * 100),
               }
             : {
                 ...item,
@@ -1508,7 +1539,7 @@ const SA_A6000W: React.FC = () => {
                 ...item,
                 amt: amt,
                 conamt: conamt,
-                rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+                rat: amt == 0 ? 0 : Math.ceil((conamt / amt) * 100),
               }
             : {
                 ...item,
@@ -1539,7 +1570,7 @@ const SA_A6000W: React.FC = () => {
                 ...item,
                 amt: amt,
                 conamt: conamt,
-                rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+                rat: amt == 0 ? 0 : Math.ceil((conamt / amt) * 100),
               }
             : {
                 ...item,
@@ -1570,7 +1601,7 @@ const SA_A6000W: React.FC = () => {
                 ...item,
                 amt: amt,
                 conamt: conamt,
-                rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+                rat: amt == 0 ? 0 : Math.ceil((conamt / amt) * 100),
               }
             : {
                 ...item,
@@ -1664,7 +1695,7 @@ const SA_A6000W: React.FC = () => {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               rat:
-                item.amt == 0 ? 0 : Math.round((item.conamt / item.amt) * 100),
+                item.amt == 0 ? 0 : Math.ceil((item.conamt / item.amt) * 100),
               dif: item.amt - item.conamt,
               [EDIT_FIELD]: undefined,
             }
@@ -1701,7 +1732,7 @@ const SA_A6000W: React.FC = () => {
               ...item,
               amt: amt,
               conamt: conamt,
-              rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+              rat: amt == 0 ? 0 : Math.ceil((conamt / amt) * 100),
               rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
@@ -2308,7 +2339,7 @@ const SA_A6000W: React.FC = () => {
                             width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
-                                ? NumberCommaCell
+                                ? NumberCell
                                 : percentField.includes(item.fieldName)
                                 ? CustomPercentCell
                                 : undefined
@@ -2414,7 +2445,7 @@ const SA_A6000W: React.FC = () => {
                             width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
-                                ? NumberCommaCell
+                                ? NumberCell
                                 : percentField.includes(item.fieldName)
                                 ? CustomPercentCell
                                 : undefined
@@ -2527,7 +2558,7 @@ const SA_A6000W: React.FC = () => {
                               width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
-                                  ? NumberCommaCell
+                                  ? NumberCell
                                   : percentField.includes(item.fieldName)
                                   ? CustomPercentCell
                                   : contextField.includes(item.fieldName)
@@ -2631,7 +2662,7 @@ const SA_A6000W: React.FC = () => {
                             width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
-                                ? NumberCommaCell
+                                ? NumberCell
                                 : percentField.includes(item.fieldName)
                                 ? CustomPercentCell
                                 : undefined

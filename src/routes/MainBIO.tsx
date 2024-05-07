@@ -339,7 +339,7 @@ const Main: React.FC = () => {
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
-      data: AllPanel.total > 0 ? AllPanel.data[0].year_amt + "억" : 0 + "원",
+      data: AllPanel.total > 0 ? Math.ceil(AllPanel.data[0].year_amt) + "억" : 0 + "원",
       backgroundColor: "#bbdefb",
     },
   ];

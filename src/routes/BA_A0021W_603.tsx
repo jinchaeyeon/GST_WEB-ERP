@@ -509,6 +509,10 @@ const BA_A0021W_603: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        amt: Math.ceil(item.amt),
+        cont_amt: Math.ceil(item.cont_amt),
+        misu_amt: Math.ceil(item.misu_amt),
+        no_amt: Math.ceil(item.no_amt),
       }));
 
       setMainDataResult({
@@ -639,6 +643,12 @@ const BA_A0021W_603: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        discount: Math.ceil(item.discount),
+        discountamt: Math.ceil(item.discountamt),
+        finalquowonamt: Math.ceil(item.finalquowonamt),
+        margin: Math.ceil(item.margin),
+        marginamt: Math.ceil(item.marginamt),
+        quounp: Math.ceil(item.quounp),
       }));
 
       setMainDataResult3({
@@ -695,6 +705,11 @@ const BA_A0021W_603: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        amt: Math.ceil(item.amt),
+        change_contraamt: Math.ceil(item.change_contraamt),
+        contraamt: Math.ceil(item.contraamt),
+        fin_contraamt: Math.ceil(item.fin_contraamt),
+        taxamt: Math.ceil(item.taxamt),
       }));
 
       setMainDataResult4({
@@ -958,7 +973,9 @@ const BA_A0021W_603: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -979,7 +996,9 @@ const BA_A0021W_603: React.FC = () => {
   const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult3.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -1000,7 +1019,9 @@ const BA_A0021W_603: React.FC = () => {
   const gridSumQtyFooterCell4 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult4.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");

@@ -372,9 +372,12 @@ const SA_B2201W_603: React.FC = () => {
     }
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
+      const rows = data.tables[0].Rows.map((item: any) => {
         return {
-          ...row,
+          ...item,
+          conamt: Math.ceil(item.conamt),
+          stramt: Math.ceil(item.stramt),
+          janamt: Math.ceil(item.janamt),
         };
       });
 
@@ -446,7 +449,12 @@ const SA_B2201W_603: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        amt: Math.ceil(item.amt),
+        stramt: Math.ceil(item.stramt),
+        janamt: Math.ceil(item.janamt),
+      }));
       setDetailDataResult((prev) => {
         return {
           data: rows,
@@ -564,7 +572,9 @@ const SA_B2201W_603: React.FC = () => {
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     detailDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -633,7 +643,9 @@ const SA_B2201W_603: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -908,7 +920,7 @@ const SA_B2201W_603: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.fieldName == "itemcd"
+                          item.sortOrder == 0
                             ? detailTotalFooterCell
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell2
