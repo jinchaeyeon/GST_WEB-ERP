@@ -86,7 +86,7 @@ const monthField = [
 
 const CM_B8100W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
 
   let isMobile = deviceWidth <= 1200;
 
@@ -438,78 +438,86 @@ const CM_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="사용자별 근무현황"
-        >
-          <Grid
-            style={{ height: isMobile? `${deviceHeight * 0.75}px` : "81.6vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                user_id: userListData.find(
-                  (item: any) => item.user_id == row.user_id
-                )?.user_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        monthField.includes(item.fieldName)
-                          ? cellWithBackGround
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
+            <GridTitleContainer>
+              <GridTitle>기본정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="사용자별 근무현황"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? `${deviceHeight * 0.75}px` : "81.6vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    user_id: userListData.find(
+                      (item: any) => item.user_id == row.user_id
+                    )?.user_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            monthField.includes(item.fieldName)
+                              ? cellWithBackGround
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </div>
+      </div>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
