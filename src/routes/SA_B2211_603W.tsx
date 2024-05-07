@@ -246,7 +246,11 @@ const SA_B2211_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
+
       setChartList(rows);
       let array = rows
         .filter(
@@ -311,7 +315,11 @@ const SA_B2211_603W: React.FC = () => {
       data2 = null;
     }
     if (data2.isSuccess == true) {
-      const rows2 = data2.tables[0].Rows;
+      const rows2 = data2.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
+
       setChartList2(rows2);
       let array3 = rows2
         .filter(
@@ -375,7 +383,11 @@ const SA_B2211_603W: React.FC = () => {
       data3 = null;
     }
     if (data3.isSuccess == true) {
-      const rows3 = data3.tables[0].Rows;
+      const rows3 = data3.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
+
       setChartList3(rows3);
       let array5 = rows3
         .filter(
@@ -440,7 +452,10 @@ const SA_B2211_603W: React.FC = () => {
     }
 
     if (data4.isSuccess == true) {
-      const rows4 = data4.tables[0].Rows;
+      const rows4 = data4.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
 
       setItemList(rows4);
       let array3 = rows4.map((item: any) => item.argument);
@@ -455,7 +470,10 @@ const SA_B2211_603W: React.FC = () => {
     }
 
     if (data5.isSuccess == true) {
-      const rows5 = data5.tables[0].Rows;
+      const rows5 = data5.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
 
       setItemList2(rows5);
       let array3 = rows5.map((item: any) => item.argument);
@@ -470,7 +488,10 @@ const SA_B2211_603W: React.FC = () => {
     }
 
     if (data6.isSuccess == true) {
-      const rows6 = data6.tables[0].Rows;
+      const rows6 = data6.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+      }));
 
       setItemList3(rows6);
       let array3 = rows6.map((item: any) => item.argument);

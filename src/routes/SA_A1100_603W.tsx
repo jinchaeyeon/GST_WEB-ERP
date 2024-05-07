@@ -773,7 +773,14 @@ const SA_A1100_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        amt: Math.ceil(item.amt),
+        taxamt: Math.ceil(item.taxamt),
+        contraamt: Math.ceil(item.contraamt),
+        change_contraamt: Math.ceil(item.change_contraamt),
+        fin_contraamt: Math.ceil(item.fin_contraamt),
+      }));
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -868,14 +875,20 @@ const SA_A1100_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
-      const rows = data.tables[1].Rows;
+      const rows = data.tables[1].Rows.map((item: any) => ({
+        ...item,
+        amt: Math.ceil(item.amt),
+        wonamt: Math.ceil(item.wonamt),
+        taxamt: Math.ceil(item.taxamt),
+        totamt: Math.ceil(item.totamt),
+      }));
 
       if (data.tables[0].RowCount > 0) {
         setInformation((prev) => ({
           ...prev,
           amtunit: data.tables[0].Rows[0].amtunit,
-          change_contraamt: data.tables[0].Rows[0].change_contraamt,
-          contraamt: data.tables[0].Rows[0].contraamt,
+          change_contraamt: Math.ceil(data.tables[0].Rows[0].change_contraamt),
+          contraamt: Math.ceil(data.tables[0].Rows[0].contraamt),
           contractno: data.tables[0].Rows[0].contractno,
           custcd: data.tables[0].Rows[0].custcd,
           custnm: data.tables[0].Rows[0].custnm,
@@ -884,13 +897,13 @@ const SA_A1100_603W: React.FC = () => {
             data.tables[0].Rows[0].enddt == ""
               ? new Date()
               : toDate(data.tables[0].Rows[0].enddt),
-          fin_contraamt: data.tables[0].Rows[0].fin_contraamt,
+          fin_contraamt: Math.ceil(data.tables[0].Rows[0].fin_contraamt),
           project: data.tables[0].Rows[0].project,
           strdt:
             data.tables[0].Rows[0].strdt == ""
               ? new Date()
               : toDate(data.tables[0].Rows[0].strdt),
-          wonchgrat: data.tables[0].Rows[0].wonchgrat,
+          wonchgrat: Math.ceil(data.tables[0].Rows[0].wonchgrat),
           insert_time: data.tables[0].Rows[0].insert_time.substring(0, 10),
           materialtype: data.tables[0].Rows[0].materialtype,
           extra_field2: data.tables[0].Rows[0].extra_field2,
@@ -1049,7 +1062,10 @@ const SA_A1100_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        amt: Math.ceil(item.amt),
+      }));
 
       setMainDataResult6({
         data: rows,
@@ -1328,12 +1344,14 @@ const SA_A1100_603W: React.FC = () => {
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
+    let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
 
-    var parts = parseFloat(sum).toString().split(".");
+    var parts = sum.toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -1529,26 +1547,26 @@ const SA_A1100_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
-              wonamt: ThreeNumberceil(
+              wonamt: Math.ceil(
                 Information.amtunit == "KRW"
                   ? item.amt
                   : item.amt * Information.wonchgrat
               ),
-              taxamt: ThreeNumberceil(
-                ThreeNumberceil(
+              taxamt: Math.ceil(
+                Math.ceil(
                   Information.amtunit == "KRW"
                     ? item.amt
                     : item.amt * Information.wonchgrat
                 ) * 0.1
               ),
               totamt:
-                ThreeNumberceil(
+                Math.ceil(
                   Information.amtunit == "KRW"
                     ? item.amt
                     : item.amt * Information.wonchgrat
                 ) +
-                ThreeNumberceil(
-                  ThreeNumberceil(
+                Math.ceil(
+                  Math.ceil(
                     Information.amtunit == "KRW"
                       ? item.amt
                       : item.amt * Information.wonchgrat
@@ -2892,7 +2910,7 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th> 환율 </th>
+                      <th>환율 </th>
                       <td>
                         {subFilters.groupgb == "B" ? (
                           <Input
@@ -2908,7 +2926,7 @@ const SA_A1100_603W: React.FC = () => {
                           <NumericTextBox
                             name="wonchgrat"
                             value={Information.wonchgrat}
-                            format="n2"
+                            format="n0"
                             onChange={InfoInputChange2}
                           />
                         )}

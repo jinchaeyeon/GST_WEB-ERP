@@ -36,7 +36,6 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import NumberCommaCell from "../components/Cells/NumberCommaCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -573,7 +572,15 @@ const SA_A1001_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        discount: Math.ceil(item.discount),
+        discountamt: Math.ceil(item.discountamt),
+        finalquowonamt: Math.ceil(item.finalquowonamt),
+        margin: Math.ceil(item.margin),
+        marginamt: Math.ceil(item.marginamt),
+        quounp: Math.ceil(item.quounp),
+      }));
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -620,7 +627,7 @@ const SA_A1001_603W: React.FC = () => {
             contractyn: selectedRow.contractyn,
             quorev: selectedRow.quorev,
             pubdt: selectedRow.pubdt,
-            finalquowonamt: selectedRow.finalquowonamt,
+            finalquowonamt: Math.ceil(selectedRow.finalquowonamt),
             quocalyn: selectedRow.quocalyn,
           }));
 
@@ -637,7 +644,7 @@ const SA_A1001_603W: React.FC = () => {
             contractyn: rows[0].contractyn,
             quorev: rows[0].quorev,
             pubdt: rows[0].pubdt,
-            finalquowonamt: rows[0].finalquowonamt,
+            finalquowonamt: Math.ceil(rows[0].finalquowonamt),
             quocalyn: rows[0].quocalyn,
           }));
 
@@ -703,7 +710,17 @@ const SA_A1001_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        discount: Math.ceil(item.discount),
+        discountamt: Math.ceil(item.discountamt),
+        finalquowonamt: Math.ceil(item.finalquowonamt),
+        margin: Math.ceil(item.margin),
+        marginamt: Math.ceil(item.marginamt),
+        quounp: Math.ceil(item.quounp),
+        totqty: Math.ceil(item.totqty),
+        unp: Math.ceil(item.unp),
+      }));
 
       setMainDataResult2((prev) => {
         return {
@@ -842,28 +859,32 @@ const SA_A1001_603W: React.FC = () => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(
-            item[props.field] == "" || item[props.field] == undefined
-              ? 0
-              : item[props.field]
+        ? (sum += Math.ceil(
+            parseFloat(
+              item[props.field] == "" || item[props.field] == undefined
+                ? 0
+                : item[props.field]
+            )
           ))
         : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(sum)}
+        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
+    let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
 
-    var parts = parseFloat(sum).toString().split(".");
+    var parts = sum.toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -1421,25 +1442,27 @@ const SA_A1001_603W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               marginamt:
                 editedField == "margin"
-                  ? item.quounp * (item.margin / 100)
+                  ? Math.ceil(item.quounp * (item.margin / 100))
                   : item.marginamt == 0
                   ? 0
                   : item.marginamt,
               discountamt:
                 editedField == "discount"
-                  ? item.quounp * (item.discount / 100)
+                  ? Math.ceil(item.quounp * (item.discount / 100))
                   : item.discountamt == 0
                   ? 0
                   : item.discountamt,
               finalquowonamt:
-                item.quounp +
-                (editedField == "margin"
-                  ? item.quounp * (item.margin / 100)
-                  : item.marginamt == 0
-                  ? 0
-                  : item.marginamt) -
+                Math.ceil(
+                  item.quounp +
+                    (editedField == "margin"
+                      ? Math.ceil(item.quounp * (item.margin / 100))
+                      : item.marginamt == 0
+                      ? 0
+                      : item.marginamt)
+                ) -
                 (editedField == "discount"
-                  ? item.quounp * (item.discount / 100)
+                  ? Math.ceil(item.quounp * (item.discount / 100))
                   : item.discountamt == 0
                   ? 0
                   : item.discountamt),
@@ -1987,9 +2010,7 @@ const SA_A1001_603W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField2.includes(item.fieldName)
-                              ? NumberCommaCell
-                              : numberField.includes(item.fieldName)
+                            numberField.includes(item.fieldName)
                               ? NumberCell
                               : iconField.includes(item.fieldName)
                               ? iconCell
@@ -1998,7 +2019,7 @@ const SA_A1001_603W: React.FC = () => {
                           footerCell={
                             item.sortOrder == 0
                               ? mainTotalFooterCell2
-                              : numberField2.includes(item.fieldName)
+                              : numberField.includes(item.fieldName)
                               ? editNumberFooterCell
                               : undefined
                           }

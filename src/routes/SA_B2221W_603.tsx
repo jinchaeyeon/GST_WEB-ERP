@@ -40,7 +40,7 @@ import {
   GridContainerWrap,
   Title,
   TitleContainer,
-  WebErpcolorList
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -330,7 +330,33 @@ const SA_B2221: React.FC = () => {
     }
 
     if (data.isSuccess == true && data.tables.length > 0) {
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        value: Math.ceil(item.value),
+        amt: Math.ceil(item.amt),
+        dm1: Math.ceil(item.dm1),
+        dm2: Math.ceil(item.dm2),
+        dm3: Math.ceil(item.dm3),
+        dm4: Math.ceil(item.dm4),
+        dtotal: Math.ceil(item.dtotal),
+        jm1: Math.ceil(item.jm1),
+        jm2: Math.ceil(item.jm2),
+        jm3: Math.ceil(item.jm3),
+        jm4: Math.ceil(item.jm4),
+        jtotal: Math.ceil(item.jtotal),
+        amt01: Math.ceil(item.amt01),
+        amt02: Math.ceil(item.amt02),
+        amt03: Math.ceil(item.amt03),
+        amt04: Math.ceil(item.amt04),
+        amt05: Math.ceil(item.amt05),
+        amt06: Math.ceil(item.amt06),
+        amt07: Math.ceil(item.amt07),
+        amt08: Math.ceil(item.amt08),
+        amt09: Math.ceil(item.amt09),
+        amt10: Math.ceil(item.amt10),
+        amt11: Math.ceil(item.amt11),
+        amt12: Math.ceil(item.amt12),
+      }));
       if (gridRef.current) {
         targetRowIndex = 0;
       }
@@ -516,7 +542,9 @@ const SA_B2221: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     gridDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -555,7 +583,7 @@ const SA_B2221: React.FC = () => {
   const labelContent = (props: any) => {
     let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
       style: "percent",
-      minimumFractionDigits: 3, //소수점
+      minimumFractionDigits: 0, //소수점
     });
     return `${props.dataItem.mm} : ${formatedNumber}`;
   };
@@ -565,7 +593,7 @@ const SA_B2221: React.FC = () => {
 
     return (
       <div>
-        {category} ({series.name}): {numberWithCommas(value)}
+        {category} ({series.name}): {numberWithCommas(Math.ceil(value))}
       </div>
     );
   };
@@ -575,7 +603,7 @@ const SA_B2221: React.FC = () => {
 
     return (
       <div>
-        {dataItem.mm}: {percentage}
+        {dataItem.mm}: {Math.ceil(percentage)}
       </div>
     );
   };

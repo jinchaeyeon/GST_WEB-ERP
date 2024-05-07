@@ -289,9 +289,10 @@ const SA_B1101_603W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
+      const rows = data.tables[0].Rows.map((item: any) => {
         return {
-          ...row,
+          ...item,
+          totamt: Math.ceil(item.totamt)
         };
       });
       setMainDataResult((prev) => {
@@ -405,7 +406,7 @@ const SA_B1101_603W: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
