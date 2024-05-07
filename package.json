@@ -119,6 +119,7 @@
     "react-doc-viewer": "^0.1.5",
     "react-dom": "^18.1.0",
     "react-draggable": "^4.4.5",
+    "react-error-boundary": "^4.0.13",
     "react-file-previewer": "^0.6.3",
     "react-file-viewer": "^1.2.1",
     "react-fs": "^0.0.0",
