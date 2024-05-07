@@ -571,14 +571,18 @@ const SA_A1100_603W: React.FC = () => {
     if (value != "KRW") {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
-        wonamt: ThreeNumberceil(item.amt * Information.wonchgrat),
+        wonamt: ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)),
         taxamt: ThreeNumberceil(
-          ThreeNumberceil(item.amt * Information.wonchgrat) * 0.1
+          Math.ceil(
+            ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)) * 0.1
+          )
         ),
         totamt:
-          ThreeNumberceil(item.amt * Information.wonchgrat) +
+          ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)) +
           ThreeNumberceil(
-            ThreeNumberceil(item.amt * Information.wonchgrat) * 0.1
+            Math.ceil(
+              ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)) * 0.1
+            )
           ),
         rowstatus: item.rowstatus == "N" ? "N" : "U",
       }));
@@ -598,11 +602,11 @@ const SA_A1100_603W: React.FC = () => {
     } else {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
-        wonamt: ThreeNumberceil(item.amt),
-        taxamt: ThreeNumberceil(ThreeNumberceil(item.amt) * 0.1),
+        wonamt: ThreeNumberceil(Math.ceil(item.amt)),
+        taxamt: ThreeNumberceil(Math.ceil(ThreeNumberceil(Math.ceil(item.amt)) * 0.1)),
         totamt:
-          ThreeNumberceil(item.amt) +
-          ThreeNumberceil(ThreeNumberceil(item.amt) * 0.1),
+          ThreeNumberceil(Math.ceil(item.amt)) +
+          ThreeNumberceil(Math.ceil(ThreeNumberceil(Math.ceil(item.amt)) * 0.1)),
         rowstatus: item.rowstatus == "N" ? "N" : "U",
       }));
 
