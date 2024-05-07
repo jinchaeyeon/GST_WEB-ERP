@@ -144,8 +144,9 @@ export const useApi = () => {
       let p = null;
       url = generateUrl(info.url, params);
 
-      if (Link == "" || Link == undefined) {
-        axios.get(`/${fileName}`).then((res: any) => {
+      axios
+        .get(`/${fileName}`)
+        .then((res: any) => {
           setLink(res.data[0].url);
           url = `${res.data[0].url}${url}`;
 
@@ -234,236 +235,109 @@ export const useApi = () => {
                   ? resolve(response)
                   : resolve(response.data);
               })
-              .catch((err: any) => {
-                const res = err.response;
-                setLoading(false);
-                if (info.url.includes("auth/login")) {
-                  reject(
-                    new Error(
-                      "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
-                    )
-                  );
-                } 
-                // else if(!token) {
-                //   if(window.location.href != "/") {
-                //     reject(
-                //       new Error(
-                //         "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
-                //       )
-                //     );
-                //     window.location.href = "/"
-                //   }
-                // }
-                 else {
-                  reject(res.data);
-                }
-              })
           );
-        });
-      } else {
-        url = `${Link}${url}`;
-
-        let headers: any = {};
-
-        if (
-          name == "file-upload" ||
-          name == "file-download" ||
-          name == "excel-view2" ||
-          name == "send-email"
-        )
-          headers = {
-            "Content-Type": "multipart/form-data",
-            responseType: "stream",
-            accept: "*/*",
-          };
-
-        if (name == "manual-list" || name == "excel-view")
-          headers = {
-            ...headers,
-            responseType: "application/pdf",
-          };
-
-        if (name == "file-list" || name == "manual-upload")
-          headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
-
-        if (name == "platform-procedure" || name == "platform-query")
-          headers = { ...headers, DBAlias: "Platform" };
-
-        if (loginResult) {
-          headers = { ...headers, CultureName: loginResult.langCode };
-        }
-
-        if (
-          token &&
-          !headers.hasOwnProperty("Authorization") &&
-          !info.url.includes("auth/login")
-        ) {
-          headers = { ...headers, Authorization: `Bearer ${token}` };
-        }
-
-        if (info.action != "get") {
-          initCache();
-        }
-        const getHeader: any = {
-          params: params,
-          headers: headers,
-        };
-
-        if (name == "file-download") {
-          getHeader.responseType = "blob";
-          // 캐싱 방지용 타임스탬프
-          url +=
-            (url.includes("?") ? "&" : "?") +
-            "timestamp=" +
-            new Date().getTime();
-        }
-
-        switch (info.action) {
-          case "get":
-            p = cachedHttp.get(url, getHeader);
-            break;
-          case "post":
-            p = axiosInstance.post(url, params, { headers: headers });
-            break;
-          case "delete":
-            p = axiosInstance.delete(url, {
-              params: params,
-              headers: headers,
-            });
-            break;
-          case "put":
-            p = axiosInstance.put(url, params, { headers: headers });
-            break;
-          default:
-            const message =
-              "Please check the axios request type(get, post, put, delete)";
-            console.error(message);
-            throw message;
-        }
-        return (
-          p
-            //.then((response: any) => resolve(response.data))
-            .then((response: any) => {
-              return name == "file-download"
-                ? resolve(response)
-                : resolve(response.data);
-            })
-            .catch((err: any) => {
-              const res = err.response;
-              if (info.url.includes("auth/login")) {
-                reject(
-                  new Error(
-                    "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
-                  )
-                );
-              } 
-              // else if(!token) {
-              //   if(window.location.href != "/") {
-              //     reject(
-              //       new Error(
-              //         "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
-              //       )
-              //     );
-              //     window.location.href = "/"
-              //   }
-              // } 
-              else {
-                reject(res.data);
+        })
+        .catch((err: any) => {
+          const res = err.response;
+          if (info.url.includes("auth/login")) {
+            reject(
+              new Error(
+                "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
+              )
+            );
+          } else {
+            axiosInstance.interceptors.response.use(
+              (response: any) => {
+                return response;
+              },
+              async (error: {
+                config: any;
+                request: { responseURL: string };
+                response: { status: any };
+                message: string;
+              }) => {
+  
+                let errResponseStatus = null;
+                let errResponseURL = "";
+                const originalRequest = error.config;
+            
+                try {
+                  errResponseStatus = error.response.status;
+                  errResponseURL = error.request.responseURL;
+                } catch (e) {}
+            
+                // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
+                if (errResponseURL.includes("auth/login")) {
+                  return reject(error);
+                }
+            
+                if (errResponseStatus == 401 && !errResponseURL.includes("auth/login")) {
+                  if (!isTokenRefreshing) {
+                    let token = localStorage.getItem("accessToken");
+                    let refreshToken = localStorage.getItem("refreshToken");
+                    // const [token, setAccessToken] = useRecoilState(accessTokenState);
+                    // let refreshToken = cookie.load("refreshToken");
+            
+                    isTokenRefreshing = true;
+            
+                    const url = `${Link}api/auth/refresh`;
+                    let p;
+            
+                    // refresh token을 이용하여 access token 재발행 받기
+                    p = axios.post(url, {
+                      accessToken: token,
+                      // accessToken: token ?? refreshToken,
+                      refreshToken: refreshToken,
+                    });
+            
+                    p.then((res: any) => {
+                      const { token, refreshToken } = res.data;
+            
+                      localStorage.setItem("accessToken", token);
+                      localStorage.setItem("refreshToken", refreshToken);
+                      // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
+                      /*setAccessToken(token);
+                      const expires = new Date();
+                      expires.setMinutes(expires.getMinutes() + 60);
+                      cookie.save("refreshToken", refreshToken, {
+                        path: "/",
+                        expires,
+                        // secure: true,
+                        // httpOnly: true,
+                      });*/
+            
+                      isTokenRefreshing = false;
+                      originalRequest.headers.Authorization = `Bearer ${token}`;
+            
+                      // 새로운 토큰으로 재요청 진행
+                      onTokenRefreshed(token);
+                    }).catch((err: any) => {
+                      // access token을 받아오지 못하는 오류 발생시 logout 처리
+                      resetLocalStorage();
+                      window.location.href = "/";
+            
+                      return false;
+                    });
+                  }
+            
+                  // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
+                  const retryOriginalRequest = new Promise((resolve) => {
+                    addRefreshSubscriber((accessToken: any) => {
+                      originalRequest.headers.Authorization = "Bearer " + accessToken;
+                      // axios(originalRequest);
+                      resolve(axios(originalRequest));
+                    });
+                  });
+                  return retryOriginalRequest;
+                }
+                // 오류 발생 시 오류 내용 출력 후 요청 거절
+                return reject(error);
               }
-            })
-        );
-      }
+            );
+          }
+        });
     });
   };
 
   return processApi;
 };
-axiosInstance.interceptors.response.use(
-  (response: any) => {
-    return response;
-  },
-  async (error: {
-    config: any;
-    request: { responseURL: string };
-    response: { status: any };
-    message: string;
-  }) => {
-    const [Link, setLink] = useRecoilState(linkState);
-
-    let errResponseStatus = null;
-    let errResponseURL = "";
-    const originalRequest = error.config;
-
-    try {
-      errResponseStatus = error.response.status;
-      errResponseURL = error.request.responseURL;
-    } catch (e) {}
-
-    // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
-    if (errResponseURL.includes("auth/login")) {
-      return Promise.reject(error);
-    }
-
-    if (errResponseStatus == 401 && !errResponseURL.includes("auth/login")) {
-      if (!isTokenRefreshing) {
-        let token = localStorage.getItem("accessToken");
-        let refreshToken = localStorage.getItem("refreshToken");
-        // const [token, setAccessToken] = useRecoilState(accessTokenState);
-        // let refreshToken = cookie.load("refreshToken");
-
-        isTokenRefreshing = true;
-
-        const url = `${Link}api/auth/refresh`;
-        let p;
-
-        // refresh token을 이용하여 access token 재발행 받기
-        p = axios.post(url, {
-          accessToken: token,
-          // accessToken: token ?? refreshToken,
-          refreshToken: refreshToken,
-        });
-
-        p.then((res: any) => {
-          const { token, refreshToken } = res.data;
-
-          localStorage.setItem("accessToken", token);
-          localStorage.setItem("refreshToken", refreshToken);
-          // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
-          /*setAccessToken(token);
-          const expires = new Date();
-          expires.setMinutes(expires.getMinutes() + 60);
-          cookie.save("refreshToken", refreshToken, {
-            path: "/",
-            expires,
-            // secure: true,
-            // httpOnly: true,
-          });*/
-
-          isTokenRefreshing = false;
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-
-          // 새로운 토큰으로 재요청 진행
-          onTokenRefreshed(token);
-        }).catch((err: any) => {
-          // access token을 받아오지 못하는 오류 발생시 logout 처리
-          resetLocalStorage();
-          window.location.href = "/";
-
-          return false;
-        });
-      }
-
-      // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
-      const retryOriginalRequest = new Promise((resolve) => {
-        addRefreshSubscriber((accessToken: any) => {
-          originalRequest.headers.Authorization = "Bearer " + accessToken;
-          // axios(originalRequest);
-          resolve(axios(originalRequest));
-        });
-      });
-      return retryOriginalRequest;
-    }
-    // 오류 발생 시 오류 내용 출력 후 요청 거절
-    return Promise.reject(error);
-  }
-);
