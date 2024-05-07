@@ -1518,7 +1518,7 @@ const BA_A0100W: React.FC = () => {
                   fileName="동물실관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.73}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1631,7 +1631,8 @@ const BA_A0100W: React.FC = () => {
               </div>
 
               <GridTitleContainer>
-                <ButtonContainer>
+                <ButtonContainer
+                style={{paddingTop: "5px"}}>
                   <Button
                     onClick={onAddClick3}
                     themeColor={"primary"}

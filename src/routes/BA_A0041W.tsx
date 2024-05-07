@@ -1751,155 +1751,155 @@ const BA_A0041W: React.FC = () => {
             <Title>품목관리(멀티)</Title>
 
             <ButtonContainer>
-            <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>품목코드</th>
-                  <td>
-                    <Input
-                      name="itemcd"
-                      type="text"
-                      value={filters.itemcd}
-                      onChange={filterInputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onItemWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                  <th>품목명</th>
-                  <td>
-                    <Input
-                      name="itemnm"
-                      type="text"
-                      value={filters.itemnm}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>품목계정</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="itemacnt"
-                        value={filters.itemacnt}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>대분류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="itemlvl1"
-                        value={filters.itemlvl1}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>중분류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="itemlvl2"
-                        value={filters.itemlvl2}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>소분류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="itemlvl3"
-                        value={filters.itemlvl3}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>규격</th>
-                  <td>
-                    <Input
-                      name="insiz"
-                      type="text"
-                      value={filters.insiz}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>사양</th>
-                  <td>
-                    <Input
-                      name="spec"
-                      type="text"
-                      value={filters.spec}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>재질</th>
-                  <td>
-                    <Input
-                      name="bnatur"
-                      type="text"
-                      value={filters.bnatur}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>사업장</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="location"
-                        value={filters.location}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>도면번호</th>
-                  <td>
-                    <Input
-                      name="dwgno"
-                      type="text"
-                      value={filters.dwgno}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="raduseyn"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
               {permissions && (
                 <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="BA_A0041W"
+                search={search}
+                exportExcel={exportExcel}
+                permissions={permissions}
+                pathname="BA_A0041W"
                 />
               )}
             </ButtonContainer>
+                <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={filters.itemcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={filters.itemnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>품목계정</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemacnt"
+                            value={filters.itemacnt}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>대분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl1"
+                            value={filters.itemlvl1}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>중분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl2"
+                            value={filters.itemlvl2}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>소분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl3"
+                            value={filters.itemlvl3}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>규격</th>
+                      <td>
+                        <Input
+                          name="insiz"
+                          type="text"
+                          value={filters.insiz}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사양</th>
+                      <td>
+                        <Input
+                          name="spec"
+                          type="text"
+                          value={filters.spec}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>재질</th>
+                      <td>
+                        <Input
+                          name="bnatur"
+                          type="text"
+                          value={filters.bnatur}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>도면번호</th>
+                      <td>
+                        <Input
+                          name="dwgno"
+                          type="text"
+                          value={filters.dwgno}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용여부</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionRadioGroup
+                            name="raduseyn"
+                            customOptionData={customOptionData}
+                            changeData={filterRadioChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
           </TitleContainer>
           
           <GridContainer width={`100%`}>
@@ -1959,7 +1959,7 @@ const BA_A0041W: React.FC = () => {
               fileName="품목관리(멀티)"
             >
               <Grid
-                style={{ height: `${deviceHeight * 0.73}px` }}
+                style={{ height: `${deviceHeight * 0.68}px` }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
