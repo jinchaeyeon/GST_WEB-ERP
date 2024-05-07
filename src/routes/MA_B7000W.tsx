@@ -1096,7 +1096,7 @@ const MA_B7000: React.FC = () => {
               }}
             >
               <SwiperSlide key={0} className="leading_PDA_custom">
-                <GridContainer style={{ height: "100%" }}>
+                <GridContainer style={{ height: "100%", width: "100%" }}>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1107,7 +1107,6 @@ const MA_B7000: React.FC = () => {
                     <Grid
                       style={{
                         height: `${deviceHeight * 0.8 + 10}px`,
-                        width: "90vw",
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -1188,7 +1187,7 @@ const MA_B7000: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1} className="leading_PDA_custom">
-                <GridContainer style={{ height: "100%" }}>
+                <GridContainer style={{ height: "100%", width: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>계정별LOT</GridTitle>
                   </GridTitleContainer>
@@ -1199,6 +1198,7 @@ const MA_B7000: React.FC = () => {
                     width: "100%",
                   }}
                 >
+                  <ButtonContainer>
                   <Button
                     onClick={() => {
                       if (swiper) {
@@ -1211,6 +1211,7 @@ const MA_B7000: React.FC = () => {
                   >
                     이전
                   </Button>
+                  </ButtonContainer>
                 </div>
                   <ExcelExport
                     data={detail1DataResult.data}
@@ -1222,7 +1223,6 @@ const MA_B7000: React.FC = () => {
                     <Grid
                       style={{
                         height: `${deviceHeight * 0.8 - 50}px`,
-                        width: "90vw",
                       }}
                       data={process(
                         detail1DataResult.data.map((row) => ({

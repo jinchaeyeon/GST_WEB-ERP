@@ -1267,6 +1267,7 @@ const MA_A2500W: React.FC = () => {
                     width: "100%",
                   }}
                 >
+                  <ButtonContainer>
                   <Button
                     onClick={() => {
                       if (swiper) {
@@ -1279,6 +1280,7 @@ const MA_A2500W: React.FC = () => {
                   >
                     이전
                   </Button>
+                  </ButtonContainer>
                 </div>
                 <ExcelExport
                   data={detailDataResult.data}
