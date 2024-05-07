@@ -101,7 +101,7 @@ let targetRowIndex2: null | number = null;
 const BA_A0070W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1272,7 +1272,7 @@ const BA_A0070W: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1282,7 +1282,7 @@ const BA_A0070W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
                 <GridTitleContainer>
                   <ButtonContainer>
@@ -1304,7 +1304,7 @@ const BA_A0070W: React.FC = () => {
                   fileName="환율관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.75}px` }}
+                    style={{ height: `${deviceHeight * 0.72}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -1388,7 +1388,7 @@ const BA_A0070W: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
+                  overflow: "auto",
                 }}
               >
                 <GridTitleContainer>
@@ -1423,7 +1423,7 @@ const BA_A0070W: React.FC = () => {
                   fileName="환율관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.7}px` }}
+                    style={{ height: `${deviceHeight * 0.68}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1592,9 +1592,7 @@ const BA_A0070W: React.FC = () => {
                           width={item.width}
                           cell={DateCell}
                           footerCell={
-                            item.sortOrder == 0
-                              ? SubTotalFooterCell
-                              : undefined
+                            item.sortOrder == 0 ? SubTotalFooterCell : undefined
                           }
                         />
                       )

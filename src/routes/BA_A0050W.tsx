@@ -418,7 +418,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const BA_A0050: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1254,21 +1254,19 @@ const BA_A0050: React.FC = () => {
     }
   };
 
-  
-
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
       selectedState: selectedsubDataState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
-    setSelectedsubDataState(newSelectedState);    
+    setSelectedsubDataState(newSelectedState);
   };
 
   // 모바일 더블클릭
   const [lastTap, setLastTap] = useState({ time: 0, target: null });
 
-  const handleTouchEnd = (event:any) => {
+  const handleTouchEnd = (event: any) => {
     const currentTime = new Date().getTime();
     const tapLength = currentTime - lastTap.time;
     const newSelectedState = getSelectedState({
@@ -1276,16 +1274,14 @@ const BA_A0050: React.FC = () => {
       selectedState: selectedsubDataState,
       dataItemKey: SUB_DATA_ITEM_KEY,
     });
-    setSelectedsubDataState(newSelectedState);    
+    setSelectedsubDataState(newSelectedState);
     if (tapLength < 300 && event.target === lastTap.target) {
       // 더블 탭 로직 수행
       onRowDoubleCliCK(event); // 이벤트 처리 함수를 호출
     }
-  
+
     setLastTap({ time: currentTime, target: event.target });
   };
-
-
 
   const onSubDataSelection2Change = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -1296,8 +1292,6 @@ const BA_A0050: React.FC = () => {
 
     setSelectedsubData2State(newSelectedState);
   };
-
-
 
   const onRowDoubleCliCK = async (props: any) => {
     let procseq = 1;
@@ -1394,7 +1388,7 @@ const BA_A0050: React.FC = () => {
     });
     if (swiper && isMobile) {
       swiper.slideTo(2);
-    }    
+    }
   };
 
   //엑셀 내보내기
@@ -2121,71 +2115,6 @@ const BA_A0050: React.FC = () => {
             <Title>BOM관리</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>품목코드</th>
-                      <td>
-                        <Input
-                          name="itemcd"
-                          type="text"
-                          value={filters.itemcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onItemWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>품목명</th>
-                      <td>
-                        <Input
-                          name="itemnm"
-                          type="text"
-                          value={filters.itemnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>품목계정</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="itemacnt"
-                            value={filters.itemacnt}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>규격</th>
-                      <td>
-                        <Input
-                          name="insiz"
-                          type="text"
-                          value={filters.insiz}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>BOM 유무</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="raduseyn"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -2195,9 +2124,74 @@ const BA_A0050: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>품목코드</th>
+                    <td>
+                      <Input
+                        name="itemcd"
+                        type="text"
+                        value={filters.itemcd}
+                        onChange={filterInputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onItemWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>품목명</th>
+                    <td>
+                      <Input
+                        name="itemnm"
+                        type="text"
+                        value={filters.itemnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>품목계정</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="itemacnt"
+                          value={filters.itemacnt}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>규격</th>
+                    <td>
+                      <Input
+                        name="insiz"
+                        type="text"
+                        value={filters.insiz}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>BOM 유무</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionRadioGroup
+                          name="raduseyn"
+                          customOptionData={customOptionData}
+                          changeData={filterRadioChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2215,7 +2209,7 @@ const BA_A0050: React.FC = () => {
                   fileName="BOM관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.85}px` }}
+                    style={{ height: `${deviceHeight * 0.8}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2318,25 +2312,26 @@ const BA_A0050: React.FC = () => {
                   <GridTitle>공정리스트</GridTitle>
                 </GridTitleContainer>
                 <FormBoxWrap border={true}>
-                  <FormBox>
-                    <tbody>
-                      <tr style={{ display: "flex", flexDirection: "row" }}>
-                        <th>공정</th>
-                        <td>
-                          <Input
-                            name="proccd"
-                            type="text"
-                            value={subfilters.proccd}
-                            onChange={InputChange}
-                            style={{ minWidth: "200px" }}
-                          />
-                        </td>
-                        <th>
-                          <Button onClick={search2} themeColor={"primary"}>
-                            조회
-                          </Button>
-                        </th>
-                      </tr>
+                  <FormBox style={{ width: `${deviceWidth - 30}px` }}>
+                    <tbody style={{ display: "flex", flexDirection: "row" }}>
+                      <td>
+                        <Input
+                          name="proccd"
+                          type="text"
+                          value={subfilters.proccd}
+                          onChange={InputChange}
+                          style={{ width: `${deviceWidth * 0.6}px` }}
+                        />
+                      </td>
+                      <th>
+                        <Button
+                          onClick={search2}
+                          themeColor={"primary"}
+                          style={{ marginLeft: "10px" }}
+                        >
+                          조회
+                        </Button>
+                      </th>
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
@@ -2346,7 +2341,7 @@ const BA_A0050: React.FC = () => {
                   fileName="BOM관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.63}px` }}
+                    style={{ height: `${deviceHeight * 0.6}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -2430,7 +2425,7 @@ const BA_A0050: React.FC = () => {
                   이전
                 </Button>
               </div>
-              
+
               <FormContext.Provider
                 value={{
                   itemInfo,
@@ -2440,12 +2435,11 @@ const BA_A0050: React.FC = () => {
                 <GridContainer
                   style={{
                     width: `${deviceWidth - 30}px`,
-                    overflow: "auto"
+                    overflow: "auto",
                   }}
                 >
                   <GridTitleContainer>
-                    <GridTitle>BOM 상세</GridTitle>
-                    <ButtonContainer>
+                    <ButtonContainer style={{ paddingTop: "5px" }}>
                       <Button
                         onClick={onCopyEditClick2}
                         themeColor={"primary"}
@@ -2483,7 +2477,7 @@ const BA_A0050: React.FC = () => {
                     fileName="BOM관리"
                   >
                     <Grid
-                      style={{ height: `${deviceHeight * 0.7}px` }}
+                      style={{ height: `${deviceHeight * 0.65}px` }}
                       data={process(
                         subData2Result.data.map((row) => ({
                           ...row,

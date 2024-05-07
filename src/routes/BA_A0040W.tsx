@@ -177,7 +177,7 @@ const BA_A0040: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0040W", setCustomOptionData);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceHeight = window.innerHeight - 70;
   let isMobile = deviceWidth <= 1200;
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -2290,114 +2290,6 @@ const BA_A0040: React.FC = () => {
             <Title>품목관리</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>품목코드</th>
-                      <td>
-                        <Input
-                          name="itemcd"
-                          type="text"
-                          value={filters.itemcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onItemWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>품목명</th>
-                      <td>
-                        <Input
-                          name="itemnm"
-                          type="text"
-                          value={filters.itemnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>품목계정</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="itemacnt"
-                            value={filters.itemacnt}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>사용여부</th>
-                      <td colSpan={3}>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="raduseyn"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>규격</th>
-                      <td>
-                        <Input
-                          name="insiz"
-                          type="text"
-                          value={filters.insiz}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>사양</th>
-                      <td>
-                        <Input
-                          name="spec"
-                          type="text"
-                          value={filters.spec}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>비고</th>
-                      <td>
-                        <Input
-                          name="remark"
-                          type="text"
-                          value={filters.remark}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>업체코드</th>
-                      <td>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={filters.custcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onCustWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>업체명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={filters.custnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -2407,9 +2299,117 @@ const BA_A0040: React.FC = () => {
                 />
               )}
             </ButtonContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>품목코드</th>
+                    <td>
+                      <Input
+                        name="itemcd"
+                        type="text"
+                        value={filters.itemcd}
+                        onChange={filterInputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onItemWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>품목명</th>
+                    <td>
+                      <Input
+                        name="itemnm"
+                        type="text"
+                        value={filters.itemnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>품목계정</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="itemacnt"
+                          value={filters.itemacnt}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>사용여부</th>
+                    <td colSpan={3}>
+                      {customOptionData !== null && (
+                        <CustomOptionRadioGroup
+                          name="raduseyn"
+                          customOptionData={customOptionData}
+                          changeData={filterRadioChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>규격</th>
+                    <td>
+                      <Input
+                        name="insiz"
+                        type="text"
+                        value={filters.insiz}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>사양</th>
+                    <td>
+                      <Input
+                        name="spec"
+                        type="text"
+                        value={filters.spec}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>비고</th>
+                    <td>
+                      <Input
+                        name="remark"
+                        type="text"
+                        value={filters.remark}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                    <th>업체코드</th>
+                    <td>
+                      <Input
+                        name="custcd"
+                        type="text"
+                        value={filters.custcd}
+                        onChange={filterInputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onCustWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>업체명</th>
+                    <td>
+                      <Input
+                        name="custnm"
+                        type="text"
+                        value={filters.custnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2456,7 +2456,7 @@ const BA_A0040: React.FC = () => {
                   fileName="품목관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2552,7 +2552,7 @@ const BA_A0040: React.FC = () => {
                 </Button>
               </div>
               <GridContainer
-                style={{ minHeight: "70vh", width: `${deviceWidth - 30}px` }}
+                style={{ height: `${deviceHeight * 0.6}px`, width: `${deviceWidth - 30}px` }}
               >
                 <TabStrip
                   selected={tabSelected}
@@ -2563,7 +2563,7 @@ const BA_A0040: React.FC = () => {
                     <GridContainer>
                       <FormBoxWrap
                         style={{
-                          height: `${deviceHeight * 0.67}px`,
+                          height: `${deviceHeight * 0.62}px`,
                           width: "100%",
                           overflow: "scroll",
                         }}
@@ -2887,7 +2887,7 @@ const BA_A0040: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: `${deviceHeight * 0.63}px`,
+                            height: `${deviceHeight * 0.58}px`,
                             width: `${deviceWidth - 30}px`,
                             overflow: "scroll",
                           }}
@@ -2989,7 +2989,7 @@ const BA_A0040: React.FC = () => {
                     <GridContainer>
                       <FormBoxWrap
                         style={{
-                          height: `${deviceHeight * 0.67}px`,
+                          height: `${deviceHeight * 0.62}px`,
                           width: "100%",
                           overflow: "scroll",
                         }}
@@ -3025,7 +3025,7 @@ const BA_A0040: React.FC = () => {
                             </Grid>
                           </GridContainer>
                         </GridContainer>
-                       </FormBoxWrap>
+                      </FormBoxWrap>
                     </GridContainer>
                   </TabStripTab>
                 </TabStrip>
