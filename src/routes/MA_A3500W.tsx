@@ -3220,6 +3220,7 @@ const MA_A3500W: React.FC = () => {
                         width: "100%",
                       }}
                     >
+                      <ButtonContainer>
                       <Button
                         onClick={() => {
                           if (swiper) {
@@ -3232,6 +3233,7 @@ const MA_A3500W: React.FC = () => {
                       >
                         이전
                       </Button>
+                      </ButtonContainer>
                       <ButtonContainer>
                         <Button
                           onClick={onDeleteClick}
@@ -3677,7 +3679,7 @@ const MA_A3500W: React.FC = () => {
                         fileName="자재불출"
                       >
                         <Grid
-                          style={{ height: "33.1vh" }}
+                          style={{ height: "27vh" }}
                           data={process(
                             BOMDataResult.data.map((row) => ({
                               ...row,
@@ -3739,7 +3741,7 @@ const MA_A3500W: React.FC = () => {
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
-                    <GridContainer width={`calc(50% - ${GAP}px)`}>
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <FormBoxWrap>
                         <FormBox>
                           <tbody>

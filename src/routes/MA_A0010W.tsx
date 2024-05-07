@@ -69,6 +69,9 @@ const requiredfield = ["sub_code"];
 let temp = 0;
 let deletedMainRows: object[] = [];
 let targetRowIndex: null | number = null;
+let deviceWidth = window.innerWidth;
+let deviceHeight = window.innerHeight - 50;
+let isMobile = deviceWidth <= 1200;
 
 const MA_A0010W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -768,130 +771,170 @@ const MA_A0010W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>
-            요약정보
-            {permissions && (
-              <ExcelUploadButtons
-                saveExcel={saveExcel}
-                permissions={permissions}
-                style={{ marginLeft: "15px" }}
-              />
-            )}
-            <Button
-              title="Export Excel"
-              onClick={onAttachmentsWndClick}
-              icon="file"
-              fillMode="outline"
-              themeColor={"primary"}
-              style={{ marginLeft: "10px" }}
-            >
-              엑셀양식
-            </Button>
-          </GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-            ></Button>
-            <Button
-              onClick={onDeleteClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-            ></Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-              title="저장"
-            ></Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="적재장소마스터"
-        >
-          <Grid
-            style={{ height: "80vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
+
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <GridContainer
+            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
           >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : checkboxField.includes(item.fieldName)
-                          ? CheckBoxCell
-                          : undefined
-                      }
-                      headerCell={
-                        requiredfield.includes(item.fieldName)
-                          ? RequiredHeader
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <GridTitleContainer>
+              <GridTitle>
+                요약정보
+                {!isMobile && permissions && (
+                  <>
+                    <ExcelUploadButtons
+                      saveExcel={saveExcel}
+                      permissions={permissions}
+                      style={{ marginLeft: "15px" }}
+                    />
+                    <Button
+                      title="Export Excel"
+                      onClick={onAttachmentsWndClick}
+                      icon="file"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      엑셀양식
+                    </Button>
+                  </>
+                )}
+              </GridTitle>
+              <div
+                style={{
+                  paddingBottom: "5px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                {isMobile && permissions && (
+                  <ButtonContainer>
+                    <ExcelUploadButtons
+                      saveExcel={saveExcel}
+                      permissions={permissions}
+                      style={{ marginLeft: "0px" }}
+                    />
+                    <Button
+                      title="Export Excel"
+                      onClick={onAttachmentsWndClick}
+                      icon="file"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      style={{ marginLeft: "4px" }}
+                    >
+                      엑셀양식
+                    </Button>
+                  </ButtonContainer>
+                )}
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </div>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="적재장소마스터"
+            >
+              <Grid
+                style={{
+                  height: !isMobile ? "80vh" : `${deviceHeight * 0.7 + 5}px`,
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : checkboxField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredfield.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </div>
+      </div>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

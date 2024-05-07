@@ -1302,6 +1302,9 @@ const MA_B7200W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+		}
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1720,6 +1723,8 @@ const MA_B7200W: React.FC = () => {
     [collapsedState2]
   );
 
+  const [selectedMenu, setSelectedMenu] = useState(null);
+
   return (
     <>
       <TitleContainer>
@@ -1875,35 +1880,7 @@ const MA_B7200W: React.FC = () => {
                   >
                     <SwiperSlide key={0} className="leading_PDA_custom">
                       <GridTitleContainer>
-                        <div
-                          style={{
-                            paddingBottom: "5px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <GridTitle>품목별기간재고</GridTitle>
-                          <ButtonContainer>
-                            <Button
-                              onClick={() => {
-                                if (swiper) {
-                                  swiper.slideTo(1);
-                                }
-                              }}
-                            >
-                              입고상세
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                if (swiper) {
-                                  swiper.slideTo(2);
-                                }
-                              }}
-                            >
-                              출고상세
-                            </Button>
-                          </ButtonContainer>
-                        </div>
+                        <GridTitle>품목별기간재고</GridTitle>
                       </GridTitleContainer>
                       <GridContainer style={{ width: "100%", height: "100%" }}>
                         <Grid
@@ -1973,38 +1950,10 @@ const MA_B7200W: React.FC = () => {
                   </ExcelExport>
                   <SwiperSlide key={1} className="leading_PDA_custom">
                     <GridContainer style={{ width: "100%", height: "100%" }}>
-                      <GridTitleContainer>
-                        <div
-                          style={{
-                            paddingBottom: "5px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
+                      <GridTitleContainer>                       
                           <GridTitle>입고상세내역</GridTitle>
-                          <ButtonContainer>
-                            <Button
-                              onClick={() => {
-                                if (swiper) {
-                                  swiper.slideTo(0);
-                                }
-                              }}
-                              icon="arrow-left"
-                            >
-                              이전
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                if (swiper) {
-                                  swiper.slideTo(2);
-                                }
-                              }}
-                            >
-                              출고상세
-                            </Button>
-                          </ButtonContainer>
-                        </div>
                       </GridTitleContainer>
+                      
                       <ExcelExport
                         data={detailDataResult.data}
                         ref={(exporter) => {

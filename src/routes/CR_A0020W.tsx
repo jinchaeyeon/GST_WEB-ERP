@@ -698,7 +698,9 @@ const CR_A0020W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer width="100%">
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+      <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -822,6 +824,8 @@ const CR_A0020W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      </div>
+      </div>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

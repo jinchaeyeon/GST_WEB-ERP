@@ -1359,7 +1359,7 @@ const SY_A0500W: React.FC = () => {
                 }}
               >
                 <GridTitleContainer>
-                  <ButtonContainer>
+                  <ButtonContainer style={{paddingTop: "5px"}}>
                     <Button
                       onClick={onAddClick2}
                       themeColor={"primary"}

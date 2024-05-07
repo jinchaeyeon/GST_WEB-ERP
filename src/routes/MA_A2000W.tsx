@@ -1021,7 +1021,7 @@ const MA_A2000W: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-    
+
     if (swiper && isMobile) {
       swiper.slideTo(0);
 		}
@@ -1312,8 +1312,8 @@ const MA_A2000W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={1} className="swiper-slide">
-              <GridContainer>
-                <GridTitleContainer style={{ width: "100%", height: "100%" }}>
+              <GridContainer style={{ width: "100%", height: "100%" }}>
+                <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
                 </GridTitleContainer>
                 <div
@@ -1323,6 +1323,7 @@ const MA_A2000W: React.FC = () => {
                     width: "100%",
                   }}
                 >
+                  <ButtonContainer>
                   <Button
                     onClick={() => {
                       if (swiper) {
@@ -1335,6 +1336,7 @@ const MA_A2000W: React.FC = () => {
                   >
                     이전
                   </Button>
+                  </ButtonContainer>
                 </div>
                 <ExcelExport
                   data={detailDataResult.data}
