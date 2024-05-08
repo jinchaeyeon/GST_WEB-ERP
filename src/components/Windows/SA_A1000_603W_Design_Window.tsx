@@ -16,11 +16,12 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getQueryFromBizComponent,
-  numberWithCommas3
+  numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 
@@ -28,12 +29,20 @@ type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
   item: any;
+  save?: boolean;
   modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  filters,
+  item,
+  save = false,
+  modal = false,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -56,7 +65,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     setVisible(false);
   };
 
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171, L_BA173, L_BA174, L_BA008_603",
     setBizComponentData
@@ -74,6 +83,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
   const [injectcycleListData, setInjectcycleListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -200,11 +210,13 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
           geomcheprodqty_base: rows2[0].geomcheprodqty,
           totgeomche_base: rows2[0].totgeomche,
           remark_base: rows2[0].remark,
+          refineperiod_base: rows2[0].refineperiod,
           //회복
           yn_ex: rows3[0].yn == "Y" ? true : false,
           injectcnt_ex: rows3[0].injectcnt,
           injectcycle_ex: rows3[0].injectcycle,
           recoverday_ex: rows3[0].recoverday,
+          experiment_week_ex: rows3[0].experiment_week,
           chasu_ex: rows3[0].chasu,
           testperiod_ex: rows3[0].testperiod,
           recoverqty_ex: rows3[0].totqty,
@@ -216,6 +228,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
           geomcheprodqty_ex: rows3[0].geomcheprodqty,
           totgeomche_ex: rows3[0].geomcheqty,
           remark_ex: rows3[0].remark,
+          refineperiod_ex: rows3[0].refineperiod,
           //TK
           yn_tk: rows4[0].yn == "Y" ? true : false,
           bonyn_tk: rows4[0].bonyn == "Y" ? true : false,
@@ -233,6 +246,70 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
           femaleqty_tk: rows4[0].femaleqty,
           spareqty_tk: rows4[0].spareqty,
           remark_tk: rows4[0].remark,
+          refineperiod_tk: rows4[0].refineperiod,
+        });
+
+        setInformation_ori({
+          quotestnum: rows[0].quotestnum,
+          itemlvl1: rows[0].itemlvl1,
+          itemcd: rows[0].itemcd,
+          itemnm: rows[0].itemnm,
+          //기본
+          injectroute_base: rows2[0].injectroute,
+          teststs_base: rows2[0].teststs,
+          chlditemcd_base: rows2[0].chlditemcd,
+          injectcnt_base: rows2[0].injectcnt,
+          injectcycle_base: rows2[0].injectcycle,
+          chasu_base: rows2[0].chasu,
+          testperiod_base: rows2[0].testperiod,
+          experiment_week_base: rows2[0].experiment_week,
+          totqty_base: rows2[0].totqty,
+          experimentqty_base: rows2[0].experimentqty,
+          spareqty_base: rows2[0].spareqty,
+          maleqty_base: rows2[0].maleqty,
+          femaleqty_base: rows2[0].femaleqty,
+          chasuspace_base: rows2[0].chasuspace,
+          geomcheqty_base: rows2[0].geomcheqty,
+          geomcheprodqty_base: rows2[0].geomcheprodqty,
+          totgeomche_base: rows2[0].totgeomche,
+          remark_base: rows2[0].remark,
+          refineperiod_base: rows2[0].refineperiod,
+          //회복
+          yn_ex: rows3[0].yn == "Y" ? true : false,
+          injectcnt_ex: rows3[0].injectcnt,
+          injectcycle_ex: rows3[0].injectcycle,
+          recoverday_ex: rows3[0].recoverday,
+          experiment_week_ex: rows3[0].experiment_week,
+          chasu_ex: rows3[0].chasu,
+          testperiod_ex: rows3[0].testperiod,
+          recoverqty_ex: rows3[0].totqty,
+          experimentqty_ex: rows3[0].experimentqty,
+          spareqty_ex: rows3[0].spareqty,
+          maleqty_ex: rows3[0].maleqty,
+          femaleqty_ex: rows3[0].femaleqty,
+          geomcheqty_ex: rows3[0].geomcheqty,
+          geomcheprodqty_ex: rows3[0].geomcheprodqty,
+          totgeomche_ex: rows3[0].geomcheqty,
+          remark_ex: rows3[0].remark,
+          refineperiod_ex: rows3[0].refineperiod,
+          //TK
+          yn_tk: rows4[0].yn == "Y" ? true : false,
+          bonyn_tk: rows4[0].bonyn == "Y" ? true : false,
+          testcnt_tk: rows4[0].testcnt,
+          injectcnt_tk: rows4[0].injectcnt,
+          injectcycle_tk: rows4[0].injectcycle,
+          point_tk: rows4[0].point,
+          chasu_tk: rows4[0].chasu,
+          testperiod_tk: rows4[0].testperiod,
+          pointqty_tk: rows4[0].pointqty,
+          tkqty_tk: rows4[0].totqty,
+          experimentqty_tk: rows4[0].experimentqty,
+          sampleqty_tk: rows4[0].sampleqty,
+          maleqty_tk: rows4[0].maleqty,
+          femaleqty_tk: rows4[0].femaleqty,
+          spareqty_tk: rows4[0].spareqty,
+          remark_tk: rows4[0].remark,
+          refineperiod_tk: rows4[0].refineperiod,
         });
       }
     } else {
@@ -243,8 +320,10 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
   };
 
   useEffect(() => {
-    fetchMainGrid();
-  }, []);
+    if(bizComponentData !== null) {
+      fetchMainGrid();
+    }
+  }, [bizComponentData]);
 
   const [Information, setInformation] = useState({
     quotestnum: "",
@@ -270,11 +349,13 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     geomcheprodqty_base: 0,
     totgeomche_base: 0,
     remark_base: "",
+    refineperiod_base: 0,
     //회복
     yn_ex: false,
     injectcnt_ex: 0,
     injectcycle_ex: "",
     recoverday_ex: 0,
+    experiment_week_ex: 0,
     chasu_ex: 0,
     testperiod_ex: 0,
     recoverqty_ex: 0,
@@ -286,6 +367,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     geomcheprodqty_ex: 0,
     totgeomche_ex: 0,
     remark_ex: "",
+    refineperiod_ex: 0,
     //TK
     yn_tk: false,
     bonyn_tk: false,
@@ -303,7 +385,126 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     femaleqty_tk: 0,
     spareqty_tk: 0,
     remark_tk: "",
+    refineperiod_tk: 0,
   });
+
+  const [Information_ori, setInformation_ori] = useState({
+    quotestnum: "",
+    itemlvl1: "",
+    itemcd: "",
+    itemnm: "",
+    //기본
+    injectroute_base: "",
+    teststs_base: "",
+    chlditemcd_base: "",
+    injectcnt_base: 0,
+    injectcycle_base: "",
+    chasu_base: 0,
+    testperiod_base: 0,
+    experiment_week_base: 0,
+    totqty_base: 0,
+    experimentqty_base: 0,
+    spareqty_base: 0,
+    maleqty_base: 0,
+    femaleqty_base: 0,
+    chasuspace_base: 0,
+    geomcheqty_base: 0,
+    geomcheprodqty_base: 0,
+    totgeomche_base: 0,
+    remark_base: "",
+    refineperiod_base: 0,
+    //회복
+    yn_ex: false,
+    injectcnt_ex: 0,
+    injectcycle_ex: "",
+    recoverday_ex: 0,
+    experiment_week_ex: 0,
+    chasu_ex: 0,
+    testperiod_ex: 0,
+    recoverqty_ex: 0,
+    experimentqty_ex: 0,
+    spareqty_ex: 0,
+    maleqty_ex: 0,
+    femaleqty_ex: 0,
+    geomcheqty_ex: 0,
+    geomcheprodqty_ex: 0,
+    totgeomche_ex: 0,
+    remark_ex: "",
+    refineperiod_ex: 0,
+    //TK
+    yn_tk: false,
+    bonyn_tk: false,
+    testcnt_tk: 0,
+    injectcnt_tk: 0,
+    injectcycle_tk: "",
+    point_tk: 0,
+    chasu_tk: 0,
+    testperiod_tk: 0,
+    pointqty_tk: 0,
+    tkqty_tk: 0,
+    experimentqty_tk: 0,
+    sampleqty_tk: 0,
+    maleqty_tk: 0,
+    femaleqty_tk: 0,
+    spareqty_tk: 0,
+    remark_tk: "",
+    refineperiod_tk: 0,
+  });
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    if (name == "yn_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        recoverday_ex: Information_ori.recoverday_ex,
+        recoverqty_ex: Information_ori.recoverqty_ex,
+        experimentqty_ex: Information_ori.experimentqty_ex,
+        spareqty_ex: Information_ori.spareqty_ex,
+        maleqty_ex: Information_ori.maleqty_ex,
+        femaleqty_ex: Information_ori.femaleqty_ex,
+        geomcheqty_ex: Information_ori.geomcheqty_ex,
+        geomcheprodqty_ex: Information_ori.geomcheprodqty_ex,
+        refineperiod_ex: Information_ori.refineperiod_ex,
+        remark_ex: Information_ori.remark_ex,
+      }));
+    } else if (name == "yn_tk") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        testcnt_tk: Information_ori.testcnt_tk,
+        point_tk: Information_ori.point_tk,
+        pointqty_tk: Information_ori.pointqty_tk,
+        tkqty_tk: Information_ori.tkqty_tk,
+        experimentqty_tk: Information_ori.experimentqty_tk,
+        sampleqty_tk: Information_ori.sampleqty_tk,
+        maleqty_tk: Information_ori.maleqty_tk,
+        femaleqty_tk: Information_ori.femaleqty_tk,
+        spareqty_tk: Information_ori.spareqty_tk,
+        refineperiod_tk: Information_ori.refineperiod_tk,
+        remark_tk: Information_ori.remark_tk,
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const onSave = () => {
+
+  }
 
   return (
     <>
@@ -345,7 +546,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>품번</th>
+                <th>품목코드</th>
                 <td>
                   <Input
                     name="itemcd"
@@ -388,7 +589,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>시험계</th>
+                <th>동물종</th>
                 <td>
                   <Input
                     name="teststs_base"
@@ -401,66 +602,107 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>동물품번</th>
-                <td>
-                  <Input
-                    name="chlditemcd_base"
-                    type="text"
-                    value={Information.chlditemcd_base}
-                    className="readonly"
-                  />
-                </td>
+              </tr>
+              <tr>
                 <th>투여횟수</th>
                 <td>
-                  <Input
-                    name="injectcnt_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.injectcnt_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="injectcnt_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.injectcnt_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="injectcnt_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.injectcnt_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>투여주기</th>
+                <th>투여시간</th>
                 <td>
-                  <Input
-                    name="injectcycle_base"
-                    type="text"
-                    value={
-                      injectcycleListData.find(
-                        (item: any) =>
-                          item.sub_code == Information.injectcycle_base
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
+                  {save == true ? 
+                    (bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="injectcycle_base"
+                        value={Information.injectcycle_base}
+                        bizComponentId="L_BA008_603"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    ))
+                  : (
+                    <Input
+                      name="injectcycle_base"
+                      type="text"
+                      value={
+                        injectcycleListData.find(
+                          (item: any) =>
+                            item.sub_code == Information.injectcycle_base
+                        )?.code_name
+                      }
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
                 <th>차수</th>
                 <td>
-                  <Input
-                    name="chasu_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.chasu_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="chasu_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.chasu_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="chasu_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.chasu_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>실험기간(D)</th>
                 <td>
-                  <Input
-                    name="testperiod_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testperiod_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="testperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testperiod_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="testperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testperiod_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>실험기간(W)</th>
                 <td>
@@ -474,109 +716,203 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>동물 전체 마리수</th>
-                <td>
-                  <Input
-                    name="totqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.totqty_base)}
-                    className="readonly"
-                  />
-                </td>
-                <th></th>
-                <td></td>
               </tr>
               <tr>
+                <th>동물 전체 마리수</th>
+                <td>
+                  {save == true ? (
+                    <Input
+                      name="totqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.totqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="totqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.totqty_base)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
                 <th>실험동물수</th>
                 <td>
-                  <Input
-                    name="experimentqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experimentqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="experimentqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="experimentqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>여유동물</th>
+                <th>여유동물수</th>
                 <td>
-                  <Input
-                    name="spareqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.spareqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="spareqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="spareqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>수컷</th>
                 <td>
-                  <Input
-                    name="maleqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.maleqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="maleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="maleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>암컷</th>
                 <td>
-                  <Input
-                    name="femaleqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.femaleqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="femaleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="femaleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
                 <th>차수간격</th>
                 <td>
-                  <Input
-                    name="chasuspace_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.chasuspace_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="chasuspace_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.chasuspace_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="chasuspace_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.chasuspace_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>검체제작 마리 수</th>
                 <td>
-                  <Input
-                    name="geomcheqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.geomcheqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="geomcheqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="geomcheqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>검체제작 장기 수</th>
                 <td>
-                  <Input
-                    name="geomcheprodqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.geomcheprodqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="geomcheprodqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheprodqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="geomcheprodqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheprodqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>총 장기수</th>
                 <td>
@@ -592,14 +928,49 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                 </td>
               </tr>
               <tr>
+                <th>순화기간(D)</th>
+                <td>
+                  {save == true ? (
+                    <Input
+                      name="refineperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="refineperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_base)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
                 <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_base}
-                    name="remark_base"
-                    rows={2}
-                    className="readonly"
-                  />
+                <td colSpan={5}>
+                  {save == true ? (
+                    <TextArea
+                      value={Information.remark_base}
+                      name="remark_base"
+                      rows={2}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <TextArea
+                      value={Information.remark_base}
+                      name="remark_base"
+                      rows={2}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -614,8 +985,18 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
               <tr>
                 <th>회복여부</th>
                 <td>
-                  <Checkbox checked={Information.yn_ex} readOnly></Checkbox>
+                  {save == true ? (
+                    <Checkbox
+                      checked={Information.yn_ex}
+                      name="yn_ex"
+                      onChange={InputChange}
+                    ></Checkbox>
+                  ) : (
+                    <Checkbox checked={Information.yn_ex} readOnly></Checkbox>
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>투여횟수</th>
                 <td>
                   <Input
@@ -628,7 +1009,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>투여주기</th>
+                <th>투여시간</th>
                 <td>
                   <Input
                     name="injectcycle_ex"
@@ -642,15 +1023,15 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>회복기간(D)</th>
+                <th>회복기간(W)</th>
                 <td>
                   <Input
-                    name="recoverday_ex"
+                    name="experiment_week_ex"
                     type="number"
                     style={{
                       textAlign: "right",
                     }}
-                    value={numberWithCommas3(Information.recoverday_ex)}
+                    value={numberWithCommas3(Information.experiment_week_ex)}
                     className="readonly"
                   />
                 </td>
@@ -680,91 +1061,203 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
+                <th>회복기간(D)</th>
+                <td>
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="recoverday_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.recoverday_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="recoverday_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.recoverday_ex)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
                 <th>동물 전체 마리수</th>
                 <td>
-                  <Input
-                    name="recoverqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.recoverqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="recoverqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.recoverqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="recoverqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.recoverqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>실험동물수</th>
                 <td>
-                  <Input
-                    name="experimentqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experimentqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="experimentqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="experimentqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>여유동물</th>
+                <th>여유동물수</th>
                 <td>
-                  <Input
-                    name="spareqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.spareqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="spareqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="spareqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
                 <th>수컷</th>
                 <td>
-                  <Input
-                    name="maleqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.maleqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="maleqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="maleqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>암컷</th>
                 <td>
-                  <Input
-                    name="femaleqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.femaleqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="femaleqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="femaleqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>검체제작 마리 수</th>
                 <td>
-                  <Input
-                    name="geomcheqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.geomcheqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="geomcheqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="geomcheqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>검체제작 장기 수</th>
                 <td>
-                  <Input
-                    name="geomcheprodqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.geomcheprodqty_ex)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="geomcheprodqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheprodqty_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="geomcheprodqty_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.geomcheprodqty_ex)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>총 장기수</th>
                 <td>
@@ -780,14 +1273,49 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                 </td>
               </tr>
               <tr>
+                <th>순화기간(D)</th>
+                <td>
+                  {save == true && Information.yn_ex == true ? (
+                    <Input
+                      name="refineperiod_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_ex)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="refineperiod_ex"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_ex)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
                 <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_ex}
-                    name="remark_ex"
-                    rows={2}
-                    className="readonly"
-                  />
+                <td colSpan={5}>
+                  {save == true && Information.yn_ex == true ? (
+                    <TextArea
+                      value={Information.remark_ex}
+                      name="remark_ex"
+                      rows={2}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <TextArea
+                      value={Information.remark_ex}
+                      name="remark_ex"
+                      rows={2}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -802,7 +1330,15 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
               <tr>
                 <th>TK여부</th>
                 <td>
-                  <Checkbox checked={Information.yn_tk} readOnly></Checkbox>
+                  {save == true ? (
+                    <Checkbox
+                      checked={Information.yn_tk}
+                      name="yn_tk"
+                      onChange={InputChange}
+                    ></Checkbox>
+                  ) : (
+                    <Checkbox checked={Information.yn_tk} readOnly></Checkbox>
+                  )}
                 </td>
                 <th>본시험동물사용</th>
                 <td>
@@ -810,16 +1346,30 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                 </td>
                 <th>TK횟수</th>
                 <td>
-                  <Input
-                    name="testcnt_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testcnt_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="testcnt_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testcnt_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="testcnt_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testcnt_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>투여횟수</th>
                 <td>
                   <Input
@@ -832,7 +1382,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>투여주기</th>
+                <th>투여시간</th>
                 <td>
                   <Input
                     name="injectcycle_tk"
@@ -846,20 +1396,32 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-              </tr>
-              <tr>
                 <th>TK POINT</th>
                 <td>
-                  <Input
-                    name="point_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.point_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="point_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.point_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="point_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.point_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>차수</th>
                 <td>
                   <Input
@@ -886,100 +1448,221 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                 </td>
                 <th>POINT 당 마리 수</th>
                 <td>
-                  <Input
-                    name="pointqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.pointqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>동물 전체 마리수</th>
-                <td>
-                  <Input
-                    name="tkqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.tkqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="pointqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.pointqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="pointqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.pointqty_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
+                <th>동물 전체 마리수</th>
+                <td>
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="tkqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.tkqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="tkqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.tkqty_tk)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
                 <th>실험동물수</th>
                 <td>
-                  <Input
-                    name="experimentqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experimentqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="experimentqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="experimentqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.experimentqty_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>샘플수</th>
                 <td>
-                  <Input
-                    name="sampleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.sampleqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="sampleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.sampleqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="sampleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.sampleqty_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
+              </tr>
+              <tr>
                 <th>수컷</th>
                 <td>
-                  <Input
-                    name="maleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.maleqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="maleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="maleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.maleqty_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>암컷</th>
                 <td>
-                  <Input
-                    name="femaleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.femaleqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="femaleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="femaleqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.femaleqty_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>여유동물</th>
+                <th>여유동물수</th>
                 <td>
-                  <Input
-                    name="spareqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.spareqty_tk)}
-                    className="readonly"
-                  />
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="spareqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="spareqty_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.spareqty_tk)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>순화기간(D)</th>
+                <td>
+                  {save == true && Information.yn_tk == true ? (
+                    <Input
+                      name="refineperiod_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_tk)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="refineperiod_tk"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.refineperiod_tk)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
                 <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_tk}
-                    name="remark_tk"
-                    rows={2}
-                    className="readonly"
-                  />
+                <td colSpan={5}>
+                  {save == true && Information.yn_tk == true ? (
+                    <TextArea
+                      value={Information.remark_tk}
+                      name="remark_tk"
+                      rows={2}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <TextArea
+                      value={Information.remark_tk}
+                      name="remark_tk"
+                      rows={2}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -987,6 +1670,16 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         </FormBoxWrap>
         <BottomContainer>
           <ButtonContainer>
+            {save == true ? (
+              <Button
+                themeColor={"primary"}
+                onClick={onSave}
+              >
+                저장
+              </Button>
+            ) : (
+              ""
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

@@ -189,7 +189,7 @@ const SA_A1200_603W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001, L_SA001_603, L_BA037, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, R_YESNOALL, L_LEVEL_603",
     setBizComponentData
@@ -200,7 +200,7 @@ const SA_A1200_603W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"

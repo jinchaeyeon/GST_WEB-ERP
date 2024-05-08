@@ -195,7 +195,7 @@ const CM_A7000W: React.FC = () => {
   };
 
   //비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_SA019_603, L_Requestgb, L_SA001_603, L_sysUserMaster_001, L_CM700, L_CM701",
     setBizComponentData
@@ -219,7 +219,7 @@ const CM_A7000W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

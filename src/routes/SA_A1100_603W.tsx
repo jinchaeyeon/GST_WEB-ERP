@@ -239,7 +239,7 @@ const SA_A1100_603W: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001, L_SA001_603, L_BA037",
     setBizComponentData
@@ -257,7 +257,7 @@ const SA_A1100_603W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const contractgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA037")
       );

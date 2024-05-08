@@ -112,7 +112,7 @@ const MA_A3400_606W: React.FC = () => {
   const processApi = useApi();
 
   // 비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA061", setBizComponentData);
 
   const [itemacntListData, setItemacntListData] = useState([
@@ -120,7 +120,7 @@ const MA_A3400_606W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );

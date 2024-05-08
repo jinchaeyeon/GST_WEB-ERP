@@ -336,13 +336,13 @@ const AC_A6000W: React.FC = () => {
   UsePermissions(setPermissions);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A6000W", setCustomOptionData);
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"

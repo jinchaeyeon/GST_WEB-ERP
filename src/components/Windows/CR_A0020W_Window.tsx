@@ -104,7 +104,7 @@ const KendoWindow = ({
   }, [customOptionData]);
 
   // // 비즈니스 컴포넌트 조회
-  // const [bizComponentData, setBizComponentData] = useState<any>([]);
+  // const [bizComponentData, setBizComponentData] = useState<any>(null);
   // UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
 
   let deviceWidth = window.innerWidth;
