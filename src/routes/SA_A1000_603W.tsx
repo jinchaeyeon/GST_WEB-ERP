@@ -1067,16 +1067,20 @@ const SA_A1000_603W: React.FC = () => {
     )[0];
 
     if (data != undefined) {
-      if (data.type == "Basic") {
-        setDesignWindowVisible(true);
-      } else if (data.type == "Cheomdan") {
-        setDesignWindowVisible2(true);
-      } else if (data.type == "Invitro") {
-        setDesignWindowVisible3(true);
-      } else if (data.type == "Analyze") {
-        setDesignWindowVisible4(true);
+      if (data.rowstatus == "N" || data.rowstatus == "U") {
+        alert("저장 후 조회해주세요.");
       } else {
-        alert("미정");
+        if (data.type == "Basic") {
+          setDesignWindowVisible(true);
+        } else if (data.type == "Cheomdan") {
+          setDesignWindowVisible2(true);
+        } else if (data.type == "Invitro") {
+          setDesignWindowVisible3(true);
+        } else if (data.type == "Analyze") {
+          setDesignWindowVisible4(true);
+        } else {
+          alert("미정");
+        }
       }
     } else {
       alert("데이터가 없습니다.");
