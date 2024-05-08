@@ -1829,7 +1829,7 @@ const MA_A7000W: React.FC = () => {
             }}
           >
             <GridContainer
-            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+            style={{ height: "100%", width: "100%" }}
           >
               <GridTitleContainer>
                 <GridTitle>
