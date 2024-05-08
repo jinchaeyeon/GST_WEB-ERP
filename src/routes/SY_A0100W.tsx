@@ -70,7 +70,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 
 const App: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
 
   let isMobile = deviceWidth <= 1200;
 
@@ -121,16 +121,14 @@ const App: React.FC = () => {
       );
       setDataFilters((prev) => ({
         ...prev,
-        cboViewType: defaultOption.find(
-          (item: any) => item.id == "cboViewType"
-        )?.valueCode,
+        cboViewType: defaultOption.find((item: any) => item.id == "cboViewType")
+          ?.valueCode,
       }));
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -526,7 +524,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: isMobile? `${deviceHeight * 0.62}px` : "77.8vh"}}
+            style={{ height: isMobile ? `${deviceHeight * 0.62}px` : "77.8vh" }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({
@@ -766,22 +764,25 @@ const App: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <TabStrip
-        style={{ width: "100%" }}
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-      >
-        <TabStripTab title="데이터 등록 현황">
-          <CusomizedGrid></CusomizedGrid>
-        </TabStripTab>
-        <TabStripTab title="프로그램 접속 현황">
-          <CusomizedGrid></CusomizedGrid>
-        </TabStripTab>
-        <TabStripTab title="사용자별 프로그램 접속 현황">
-          <CusomizedGrid></CusomizedGrid>
-        </TabStripTab>
-      </TabStrip>
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <TabStrip
+            style={{ width: "100%" }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="데이터 등록 현황">
+              <CusomizedGrid></CusomizedGrid>
+            </TabStripTab>
+            <TabStripTab title="프로그램 접속 현황">
+              <CusomizedGrid></CusomizedGrid>
+            </TabStripTab>
+            <TabStripTab title="사용자별 프로그램 접속 현황">
+              <CusomizedGrid></CusomizedGrid>
+            </TabStripTab>
+          </TabStrip>
+        </div>
+      </div>
     </>
   );
 };

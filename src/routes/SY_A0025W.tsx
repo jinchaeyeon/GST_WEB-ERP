@@ -1198,7 +1198,6 @@ const SY_A0025W: React.FC = () => {
               <SwiperSlide key={0} className="leading_PDA_custom">
                 <GridContainer
                   style={{
-                    paddingBottom: "15px",
                     width: `${deviceWidth - 30}px`,
                     overflow: "auto",
                     height: "100%",
@@ -1211,7 +1210,7 @@ const SY_A0025W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: `${deviceHeight * 0.82}px`,
+                        height: `${deviceHeight * 0.8}px`,
                         overflow: "auto",
                       }}
                       data={process(
@@ -1346,7 +1345,7 @@ const SY_A0025W: React.FC = () => {
                     border={true}
                     style={{
                       width: `${deviceWidth - 30}px`,
-                      height: `${deviceHeight * 0.7}px`,
+                      height: `${deviceHeight * 0.68}px`,
                     }}
                   >
                     <FormBox>
@@ -1469,7 +1468,7 @@ const SY_A0025W: React.FC = () => {
                     border={true}
                     style={{
                       width: `${deviceWidth - 30}px`,
-                      height: `${deviceHeight * 0.71}px`,
+                      height: `${deviceHeight * 0.68}px`,
                       overflow: "scroll",
                     }}
                   >

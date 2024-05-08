@@ -960,8 +960,6 @@ const AC_A0000W: React.FC = () => {
                   />
                 )}
               </td>
-              <th></th>
-              <td></td>
             </tr>
           </tbody>
         </FilterBox>
