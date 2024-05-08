@@ -6756,6 +6756,21 @@ const SA_A1000_603W: React.FC = () => {
                 )[0]
               : ""
           }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
+          }
           modal={true}
         />
       )}

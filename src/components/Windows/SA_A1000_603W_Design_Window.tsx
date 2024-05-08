@@ -318,6 +318,12 @@ const CopyWindow = ({
           column_itemcd_base: rows2[0].column_itemcd,
           column_itemnm_base: rows2[0].column_itemnm,
           refineperiod_base: rows2[0].refineperiod,
+          tkqty_base: rows2[0].tkqty,
+          gunqty_base: rows2[0].gunqty,
+          genderyn_base: rows2[0].genderyn,
+          breedmeth_base: rows2[0].breedmeth,
+          cagetype_base: rows2[0].cagetype,
+          ref_key_base: rows2[0].ref_key,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -355,6 +361,12 @@ const CopyWindow = ({
           column_itemcd_base: rows2[0].column_itemcd,
           column_itemnm_base: rows2[0].column_itemnm,
           refineperiod_base: rows2[0].refineperiod,
+          tkqty_base: rows2[0].tkqty,
+          gunqty_base: rows2[0].gunqty,
+          genderyn_base: rows2[0].genderyn,
+          breedmeth_base: rows2[0].breedmeth,
+          cagetype_base: rows2[0].cagetype,
+          ref_key_base: rows2[0].ref_key,
         }));
       }
 
@@ -377,6 +389,9 @@ const CopyWindow = ({
           remark_ex: rows3[0].remark,
           refineperiod_ex: rows3[0].refineperiod,
           totqty_ex: rows3[0].totqty,
+          recoverweek_ex: rows3[0].recoverweek,
+          gunqty_ex: rows3[0].gunqty,
+          chasu_ex: rows3[0].chasu,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -396,6 +411,9 @@ const CopyWindow = ({
           remark_ex: rows3[0].remark,
           refineperiod_ex: rows3[0].refineperiod,
           totqty_ex: rows3[0].totqty,
+          recoverweek_ex: rows3[0].recoverweek,
+          gunqty_ex: rows3[0].gunqty,
+          chasu_ex: rows3[0].chasu,
         }));
       }
 
@@ -409,7 +427,7 @@ const CopyWindow = ({
           testcnt_tk: rows4[0].testcnt,
           point_tk: rows4[0].point,
           pointqty_tk: rows4[0].pointqty,
-          tkqty_tk: rows4[0].totqty,
+          totqty_tk: rows4[0].totqty,
           experimentqty_tk: rows4[0].experimentqty,
           sampleqty_tk: rows4[0].sampleqty,
           maleqty_tk: rows4[0].maleqty,
@@ -417,6 +435,11 @@ const CopyWindow = ({
           spareqty_tk: rows4[0].spareqty,
           remark_tk: rows4[0].remark,
           refineperiod_tk: rows4[0].refineperiod,
+          tkqty_tk: rows4[0].tkqty,
+          gunqty_tk: rows[0].gunqty,
+          chasu_tk: rows4[0].gunqty,
+          geomcheqty_tk: rows4[0].geomcheqty,
+          geomcheprodqty_tk: rows4[0].geomcheprodqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -424,17 +447,22 @@ const CopyWindow = ({
           seq_tk: rows4[0].seq,
           yn_tk: rows4[0].yn == "Y" ? true : false,
           bonyn_tk: rows4[0].bonyn == "Y" ? true : false,
-          testcnt_tk: rows4[0].testcnt,
-          point_tk: rows4[0].point,
-          pointqty_tk: rows4[0].pointqty,
-          tkqty_tk: rows4[0].totqty,
+          totqty_tk: rows4[0].totqty,
           experimentqty_tk: rows4[0].experimentqty,
           sampleqty_tk: rows4[0].sampleqty,
           maleqty_tk: rows4[0].maleqty,
           femaleqty_tk: rows4[0].femaleqty,
           spareqty_tk: rows4[0].spareqty,
+          testcnt_tk: rows4[0].testcnt,
+          point_tk: rows4[0].point,
+          pointqty_tk: rows4[0].pointqty,
           remark_tk: rows4[0].remark,
           refineperiod_tk: rows4[0].refineperiod,
+          tkqty_tk: rows4[0].tkqty,
+          gunqty_tk: rows[0].gunqty,
+          chasu_tk: rows4[0].gunqty,
+          geomcheqty_tk: rows4[0].geomcheqty,
+          geomcheprodqty_tk: rows4[0].geomcheprodqty,
         }));
       }
     } else {
@@ -494,6 +522,13 @@ const CopyWindow = ({
     column_itemcd_base: "",
     column_itemnm_base: "",
     refineperiod_base: 0,
+    tkqty_base: 0,
+    gunqty_base: 0,
+    genderyn_base: "",
+    breedmeth_base: "",
+    cagetype_base: "",
+    ref_key_base: "",
+
     //회복
     rowstatus_ex: "N",
     seq_ex: 0,
@@ -511,6 +546,9 @@ const CopyWindow = ({
     remark_ex: "",
     refineperiod_ex: 0,
     totqty_ex: 0,
+    recoverweek_ex: 0,
+    gunqty_ex: 0,
+    chasu_ex: 0,
 
     //TK
     rowstatus_tk: "N",
@@ -520,7 +558,7 @@ const CopyWindow = ({
     testcnt_tk: 0,
     point_tk: 0,
     pointqty_tk: 0,
-    tkqty_tk: 0,
+    totqty_tk: 0,
     experimentqty_tk: 0,
     sampleqty_tk: 0,
     maleqty_tk: 0,
@@ -528,6 +566,11 @@ const CopyWindow = ({
     spareqty_tk: 0,
     remark_tk: "",
     refineperiod_tk: 0,
+    tkqty_tk: 0,
+    gunqty_tk: 0,
+    chasu_tk: 0,
+    geomcheqty_tk: 0,
+    geomcheprodqty_tk: 0,
   });
 
   const [Information_ori, setInformation_ori] = useState({
@@ -591,6 +634,10 @@ const CopyWindow = ({
     remark_ex: "",
     refineperiod_ex: 0,
     totqty_ex: 0,
+    recoverweek_ex: 0,
+    gunqty_ex: 0,
+    chasu_ex: 0,
+
     //TK
     rowstatus_tk: "N",
     seq_tk: 0,
@@ -599,7 +646,7 @@ const CopyWindow = ({
     testcnt_tk: 0,
     point_tk: 0,
     pointqty_tk: 0,
-    tkqty_tk: 0,
+    totqty_tk: 0,
     experimentqty_tk: 0,
     sampleqty_tk: 0,
     maleqty_tk: 0,
@@ -607,6 +654,11 @@ const CopyWindow = ({
     spareqty_tk: 0,
     remark_tk: "",
     refineperiod_tk: 0,
+    tkqty_tk: 0,
+    gunqty_tk: 0,
+    chasu_tk: 0,
+    geomcheqty_tk: 0,
+    geomcheprodqty_tk: 0,
   });
 
   const InputChange = (e: any) => {
@@ -691,10 +743,10 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
             : Information_ori.pointqty_tk,
-        tkqty_tk:
+        totqty_tk:
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
-            : Information_ori.tkqty_tk,
+            : Information_ori.totqty_tk,
         experimentqty_tk:
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
@@ -723,6 +775,10 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_tk == "U"
             ? ""
             : Information_ori.remark_tk,
+        bonyn_tk:
+          value == false && Information_ori.rowstatus_tk == "U"
+            ? false
+            : Information_ori.bonyn_tk,
       }));
     } else {
       setInformation((prev) => ({
@@ -818,7 +874,7 @@ const CopyWindow = ({
     dataArr.totqty_s.push(Information.totqty_base.toString());
     dataArr.sampleqty_s.push("0");
     dataArr.urineqty_s.push("0");
-    dataArr.tkqty_s.push("0");
+    dataArr.tkqty_s.push(Information.tkqty_base.toString());
     dataArr.experimentqty_s.push(Information.experimentqty_base.toString());
     dataArr.autopsyqty_s.push("0");
     dataArr.spareqty_s.push(Information.spareqty_base.toString());
@@ -840,7 +896,7 @@ const CopyWindow = ({
     dataArr.cellqty_s.push(Information.cellqty_base.toString());
     dataArr.virusqty_s.push(Information.virusqty_base.toString());
     dataArr.runtime_s.push(Information.runtime_base.toString());
-    dataArr.gunqty_s.push("0");
+    dataArr.gunqty_s.push(Information.gunqty_base.toString());
     dataArr.concentrationcnt_s.push("0");
     dataArr.one_week_s.push("0");
     dataArr.two_week_s.push("0");
@@ -851,9 +907,9 @@ const CopyWindow = ({
     dataArr.autopsyperiod_s.push("0");
     dataArr.recoverweek_s.push("0");
     dataArr.recoverday_s.push("0");
-    dataArr.genderyn_s.push("");
-    dataArr.breedmeth_s.push("");
-    dataArr.cagetype_s.push("");
+    dataArr.genderyn_s.push(Information.genderyn_base);
+    dataArr.breedmeth_s.push(Information.breedmeth_base);
+    dataArr.cagetype_s.push(Information.cagetype_base);
     dataArr.prodmac_s.push(Information.prodmac_base);
     dataArr.assaytype_s.push(Information.assaytype_base);
 
@@ -869,7 +925,7 @@ const CopyWindow = ({
     dataArr.chasu_s.push(Information.chasu_base.toString());
     dataArr.chasuspace_s.push(Information.chasuspace_base.toString());
     dataArr.amt_s.push("0");
-    dataArr.ref_key_s.push("");
+    dataArr.ref_key_s.push(Information.ref_key_base);
 
     //회복
     dataArr.rowstatus_s.push(
@@ -910,7 +966,7 @@ const CopyWindow = ({
     dataArr.cellqty_s.push("0");
     dataArr.virusqty_s.push("0");
     dataArr.runtime_s.push("0");
-    dataArr.gunqty_s.push("0");
+    dataArr.gunqty_s.push(Information.gunqty_ex.toString());
     dataArr.concentrationcnt_s.push("0");
     dataArr.one_week_s.push("0");
     dataArr.two_week_s.push("0");
@@ -919,11 +975,11 @@ const CopyWindow = ({
     dataArr.testperiod_s.push(Information.testperiod_base.toString());
     dataArr.refineperiod_s.push(Information.refineperiod_ex.toString());
     dataArr.autopsyperiod_s.push("0");
-    dataArr.recoverweek_s.push("0");
+    dataArr.recoverweek_s.push(Information.recoverweek_ex.toString());
     dataArr.recoverday_s.push(Information.recoverday_ex.toString());
-    dataArr.genderyn_s.push("");
-    dataArr.breedmeth_s.push("");
-    dataArr.cagetype_s.push("");
+    dataArr.genderyn_s.push(Information.genderyn_base.toString());
+    dataArr.breedmeth_s.push(Information.breedmeth_base.toString());
+    dataArr.cagetype_s.push(Information.cagetype_base.toString());
     dataArr.prodmac_s.push("");
     dataArr.assaytype_s.push("");
 
@@ -936,7 +992,7 @@ const CopyWindow = ({
     dataArr.optioncd_s.push("");
     dataArr.bonyn_s.push("");
     dataArr.pointqty_s.push("0");
-    dataArr.chasu_s.push(Information.chasu_base.toString());
+    dataArr.chasu_s.push(Information.chasu_ex.toString());
     dataArr.chasuspace_s.push("0");
     dataArr.amt_s.push("0");
     dataArr.ref_key_s.push("");
@@ -955,7 +1011,7 @@ const CopyWindow = ({
     dataArr.injectcycle_s.push(Information.injectcycle_base);
     dataArr.maleqty_s.push(Information.maleqty_tk.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_tk.toString());
-    dataArr.totqty_s.push("0");
+    dataArr.totqty_s.push(Information.totqty_tk.toString());
     dataArr.sampleqty_s.push(Information.sampleqty_tk.toString());
     dataArr.urineqty_s.push("0");
     dataArr.tkqty_s.push(Information.tkqty_tk.toString());
@@ -969,8 +1025,8 @@ const CopyWindow = ({
     dataArr.infusiontime_s.push("0");
     dataArr.point_s.push(Information.point_tk.toString());
     dataArr.capacity_s.push("0");
-    dataArr.geomcheqty_s.push("0");
-    dataArr.geomcheprodqty_s.push("0");
+    dataArr.geomcheqty_s.push(Information.geomcheqty_tk.toString());
+    dataArr.geomcheprodqty_s.push(Information.geomcheprodqty_tk.toString());
     dataArr.infusioncount_s.push("0");
     dataArr.testcnt_s.push(Information.testcnt_tk.toString());
     dataArr.strainqty_s.push("0");
@@ -980,7 +1036,7 @@ const CopyWindow = ({
     dataArr.cellqty_s.push("0");
     dataArr.virusqty_s.push("0");
     dataArr.runtime_s.push("0");
-    dataArr.gunqty_s.push("0");
+    dataArr.gunqty_s.push(Information.gunqty_tk.toString());
     dataArr.concentrationcnt_s.push("0");
     dataArr.one_week_s.push("0");
     dataArr.two_week_s.push("0");
@@ -991,9 +1047,9 @@ const CopyWindow = ({
     dataArr.autopsyperiod_s.push("0");
     dataArr.recoverweek_s.push("0");
     dataArr.recoverday_s.push("0");
-    dataArr.genderyn_s.push("");
-    dataArr.breedmeth_s.push("");
-    dataArr.cagetype_s.push("");
+    dataArr.genderyn_s.push(Information.genderyn_base.toString());
+    dataArr.breedmeth_s.push(Information.breedmeth_base.toString());
+    dataArr.cagetype_s.push(Information.cagetype_base.toString());
     dataArr.prodmac_s.push("");
     dataArr.assaytype_s.push("");
 
@@ -1006,7 +1062,7 @@ const CopyWindow = ({
     dataArr.optioncd_s.push("");
     dataArr.bonyn_s.push(Information.bonyn_tk == true ? "Y" : "N");
     dataArr.pointqty_s.push(Information.pointqty_tk.toString());
-    dataArr.chasu_s.push(Information.chasu_base.toString());
+    dataArr.chasu_s.push(Information.chasu_tk.toString());
     dataArr.chasuspace_s.push("0");
     dataArr.amt_s.push("0");
     dataArr.ref_key_s.push("");
@@ -1949,7 +2005,18 @@ const CopyWindow = ({
                 </td>
                 <th>본시험동물사용</th>
                 <td>
-                  <Checkbox checked={Information.bonyn_tk} readOnly></Checkbox>
+                  {save == true && Information.yn_tk == true ? (
+                    <Checkbox
+                      checked={Information.bonyn_tk}
+                      name="bonyn_tk"
+                      onChange={InputChange}
+                    ></Checkbox>
+                  ) : (
+                    <Checkbox
+                      checked={Information.bonyn_tk}
+                      readOnly
+                    ></Checkbox>
+                  )}
                 </td>
                 <th>TK횟수</th>
                 <td>
@@ -2083,22 +2150,22 @@ const CopyWindow = ({
                 <td>
                   {save == true && Information.yn_tk == true ? (
                     <Input
-                      name="tkqty_tk"
+                      name="totqty_tk"
                       type="number"
                       style={{
                         textAlign: "right",
                       }}
-                      value={numberWithCommas3(Information.tkqty_tk)}
+                      value={numberWithCommas3(Information.totqty_tk)}
                       onChange={InputChange}
                     />
                   ) : (
                     <Input
-                      name="tkqty_tk"
+                      name="totqty_tk"
                       type="number"
                       style={{
                         textAlign: "right",
                       }}
-                      value={numberWithCommas3(Information.tkqty_tk)}
+                      value={numberWithCommas3(Information.totqty_tk)}
                       className="readonly"
                     />
                   )}
