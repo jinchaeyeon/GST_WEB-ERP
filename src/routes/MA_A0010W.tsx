@@ -775,7 +775,7 @@ const MA_A0010W: React.FC = () => {
       <div className={isMobile ? "leading_78_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
           <GridContainer
-            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+            style={{ height: "100%", width: "100%" }}
           >
             <GridTitleContainer>
               <GridTitle>

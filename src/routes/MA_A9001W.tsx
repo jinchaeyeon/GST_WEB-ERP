@@ -79,6 +79,9 @@ import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A9001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -137,6 +140,10 @@ type TdataArr2 = {
   pubperson_s: string[];
   advanceinfo_s: string[];
 };
+let deviceWidth = window.innerWidth;
+let deviceHeight = window.innerHeight - 50;
+let isMobile = deviceWidth <= 1200;
+var index = 0;
 
 const MA_A9001W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -150,6 +157,7 @@ const MA_A9001W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
+  const [swiper, setSwiper] = useState<SwiperCore>();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -1409,6 +1417,9 @@ const MA_A9001W: React.FC = () => {
       update_userid: update_userid == undefined ? "" : update_userid,
       wgt: selectedRowData.wgt,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1919,6 +1930,9 @@ const MA_A9001W: React.FC = () => {
       }
     } catch (e) {
       alert(e);
+    }
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
     }
   };
 
@@ -2551,662 +2565,1438 @@ const MA_A9001W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>요약정보</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onPurCreateClick}
-              themeColor={"primary"}
-              icon="plus-outline"
-            >
-              매입 전표 생성
-            </Button>
-            <Button
-              onClick={onPurDropClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus-outline"
-            >
-              매입 전표 해제
-            </Button>
-            <Button
-              onClick={onPayCreateClick}
-              themeColor={"primary"}
-              icon="plus-outline"
-            >
-              지급 전표 생성
-            </Button>
-            <Button
-              onClick={onPayDropClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus-outline"
-            >
-              지급 전표 해제
-            </Button>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
-              매입 E-TAX(전표) 생성
-            </Button>
-            <Button
-              onClick={onDeleteClick2}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-            >
-              매입 E-TAX(전표) 삭제
-            </Button>
-            <Button onClick={onSaveClick} themeColor={"primary"} icon="save">
-              매입 E-TAX(전표) 저장
-            </Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="매입 E-TAX(전표)"
-        >
-          <Grid
-            style={{ height: "25vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                taxtype: taxtypeListData.find(
-                  (item: any) => item.sub_code == row.taxtype
-                )?.code_name,
-                etax: etaxListData.find(
-                  (item: any) => item.sub_code == row.etax
-                )?.code_name,
-                exceptyn: exceptynListData.find(
-                  (item: any) => item.code == row.exceptyn
-                )?.name,
-                insert_userid: personListData.find(
-                  (item: any) => item.user_id == row.insert_userid
-                )?.user_name,
-                update_userid: personListData.find(
-                  (item: any) => item.user_id == row.update_userid
-                )?.user_name,
-                rtxisuyn: row.rtxisuyn == "Y" ? true : false,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-                chk: row.chk == "" ? false : row.chk,
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+
+      {isMobile ? (
+        <>
+          <Swiper
+            className="leading_78_Swiper"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onItemChange}
-            cellRender={customCellRender3}
-            rowRender={customRowRender3}
-            editField={EDIT_FIELD}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell}
-              cell={CheckBoxCell}
-            />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: "100%", height: "100%" }}>
+                <GridTitleContainer>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      flexWrap: "wrap",
+                      gap: "3px",
+                    }}
+                  >
+                    <Button
+                      onClick={onPurCreateClick}
+                      themeColor={"primary"}
+                      icon="plus-outline"
+                    >
+                      매입 전표 생성
+                    </Button>
+                    <Button
+                      onClick={onPurDropClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus-outline"
+                    >
+                      매입 전표 해제
+                    </Button>
+                    <Button
+                      onClick={onPayCreateClick}
+                      themeColor={"primary"}
+                      icon="plus-outline"
+                    >
+                      지급 전표 생성
+                    </Button>
+                    <Button
+                      onClick={onPayDropClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus-outline"
+                    >
+                      지급 전표 해제
+                    </Button>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      매입 E-TAX(전표) 생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      매입 E-TAX(전표) 삭제
+                    </Button>
+                  </div>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="매입 E-TAX(전표)"
+                >
+                  <Grid
+                    style={{
+                      height: `${deviceHeight * 0.67}px`,
+                      width: "100%",
+                    }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        taxtype: taxtypeListData.find(
+                          (item: any) => item.sub_code == row.taxtype
+                        )?.code_name,
+                        etax: etaxListData.find(
+                          (item: any) => item.sub_code == row.etax
+                        )?.code_name,
+                        exceptyn: exceptynListData.find(
+                          (item: any) => item.code == row.exceptyn
+                        )?.name,
+                        insert_userid: personListData.find(
+                          (item: any) => item.user_id == row.insert_userid
+                        )?.user_name,
+                        update_userid: personListData.find(
+                          (item: any) => item.user_id == row.update_userid
+                        )?.user_name,
+                        rtxisuyn: row.rtxisuyn == "Y" ? true : false,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                        chk: row.chk == "" ? false : row.chk,
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onItemChange}
+                    cellRender={customCellRender3}
+                    rowRender={customRowRender3}
+                    editField={EDIT_FIELD}
+                  >
                     <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : checkBoxField.includes(item.fieldName)
-                          ? CheckBoxReadOnlyCell
-                          : centerField.includes(item.fieldName)
-                          ? CenterCell
-                          : undefined
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell}
+                      cell={CheckBoxCell}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : checkBoxField.includes(item.fieldName)
+                                  ? CheckBoxReadOnlyCell
+                                  : centerField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField2.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+
+            <SwiperSlide key={1} className="leading_PDA">
+              <GridContainer style={{ width: "100%", height: "100%" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "0px 10px 0px 15px",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
                       }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(2);
                       }
-                    />
-                  )
-              )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
-      <GridContainerWrap>
-        <GridContainer width="45%">
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>계산서번호</th>
-                  <td>
-                    <Input
-                      name="taxnum"
-                      type="text"
-                      value={infomation.taxnum}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>TAX구분</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="etax"
-                        value={infomation.etax}
-                        bizComponentId="R_Etax"
-                        bizComponentData={bizComponentData}
-                        changeData={RadioChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>매입매출구분</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentRadioGroup
-                        name="inoutdiv"
-                        value={infomation.inoutdiv}
-                        bizComponentId="R_INOUTDIV2"
-                        bizComponentData={bizComponentData}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th></th>
-                  <td>
-                    <Checkbox
-                      name="rtxisuyn"
-                      label={"역발행여부"}
-                      value={infomation.rtxisuyn}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>사업장</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="location"
-                        value={infomation.location}
-                        bizComponentId="L_BA002"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
-                  </td>
-                  <th>사업부</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="position"
-                        value={infomation.position}
-                        bizComponentId="L_BA003"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>계산서일자</th>
-                  <td>
-                    <DatePicker
-                      name="taxdt"
-                      value={infomation.taxdt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                      className="required"
-                    />
-                  </td>
-                  <th>결재구분</th>
-                  <td>
-                    <Input
-                      name="acntdiv"
-                      type="text"
-                      value={infomation.acntdiv}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>업체코드</th>
-                  <td>
-                    <Input
-                      name="custcd"
-                      type="text"
-                      value={infomation.custcd}
-                      onChange={InputChange}
-                    />
-                    <ButtonInInput>
+                    }}
+                    icon="arrow-right"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    다음
+                  </Button>
+                </div>
+                <FormBoxWrap>
+                  <FormBox>
+                    <ButtonContainer>
                       <Button
-                        onClick={onCustWndClick2}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                  <th>업체명</th>
-                  <td>
-                    <Input
-                      name="custnm"
-                      type="text"
-                      value={infomation.custnm}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>지급예정일</th>
-                  <td>
-                    <DatePicker
-                      name="paydt"
-                      value={infomation.paydt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>사업자번호</th>
-                  <td>
-                    <Input
-                      name="custregnum"
-                      type="text"
-                      value={infomation.custregnum}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>수량</th>
-                  <td>
-                    <Input
-                      name="qty"
-                      type="number"
-                      value={infomation.qty}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>수량단위</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="qtyunit"
-                        value={infomation.qtyunit}
-                        bizComponentId="L_BA015"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>계산서유형</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="taxtype"
-                        value={infomation.taxtype}
-                        bizComponentId="L_AC013"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
-                  </td>
-                  <th>공급가액</th>
-                  <td>
-                    <Input
-                      name="splyamt"
-                      type="number"
-                      value={infomation.splyamt}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>신용카드</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="creditcd"
-                        value={infomation.creditcd}
-                        bizComponentId="L_AC030T"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField="Column1"
-                        valueField="creditcd"
-                      />
-                    )}
-                  </td>
-                  <th>부가세액</th>
-                  <td>
-                    <Input
-                      name="taxamt"
-                      type="number"
-                      value={infomation.taxamt}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>거래품목</th>
-                  <td>
-                    <Input
-                      name="items"
-                      type="text"
-                      value={infomation.items}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>합계금액</th>
-                  <td>
-                    <Input
-                      name="totamt"
-                      type="number"
-                      value={infomation.totamt}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>비고</th>
-                  <td colSpan={3}>
-                    <TextArea
-                      value={infomation.remark}
-                      name="remark"
-                      rows={3}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </GridContainer>
-        <GridContainer width={`calc(55% - ${GAP}px)`}>
-          <TabStrip
-            style={{ width: "100%" }}
-            selected={tabSelected}
-            onSelect={handleSelectTab}
-          >
-            <TabStripTab title="입고자료">
-              <GridContainerWrap>
-                <GridContainer width="100%">
-                  <ExcelExport
-                    data={subDataResult.data}
-                    ref={(exporter) => {
-                      _export2 = exporter;
+                        onClick={onSaveClick}
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        매입 E-TAX(전표) 저장
+                      </Button>
+                    </ButtonContainer>
+                    <tbody>
+                      <tr>
+                        <th>계산서번호</th>
+                        <td>
+                          <Input
+                            name="taxnum"
+                            type="text"
+                            value={infomation.taxnum}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>TAX구분</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="etax"
+                              value={infomation.etax}
+                              bizComponentId="R_Etax"
+                              bizComponentData={bizComponentData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>매입매출구분</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="inoutdiv"
+                              value={infomation.inoutdiv}
+                              bizComponentId="R_INOUTDIV2"
+                              bizComponentData={bizComponentData}
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th></th>
+                        <td>
+                          <Checkbox
+                            name="rtxisuyn"
+                            label={"역발행여부"}
+                            value={infomation.rtxisuyn}
+                            onChange={InputChange}
+                            labelClassName="k-radio-label"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>사업장</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="location"
+                              value={infomation.location}
+                              bizComponentId="L_BA002"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
+                        <th>사업부</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="position"
+                              value={infomation.position}
+                              bizComponentId="L_BA003"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>계산서일자</th>
+                        <td>
+                          <DatePicker
+                            name="taxdt"
+                            value={infomation.taxdt}
+                            format="yyyy-MM-dd"
+                            onChange={InputChange}
+                            placeholder=""
+                            className="required"
+                          />
+                        </td>
+                        <th>결재구분</th>
+                        <td>
+                          <Input
+                            name="acntdiv"
+                            type="text"
+                            value={infomation.acntdiv}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>업체코드</th>
+                        <td>
+                          <Input
+                            name="custcd"
+                            type="text"
+                            value={infomation.custcd}
+                            onChange={InputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              onClick={onCustWndClick2}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                        <th>업체명</th>
+                        <td>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={infomation.custnm}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>지급예정일</th>
+                        <td>
+                          <DatePicker
+                            name="paydt"
+                            value={infomation.paydt}
+                            format="yyyy-MM-dd"
+                            onChange={InputChange}
+                            placeholder=""
+                          />
+                        </td>
+                        <th>사업자번호</th>
+                        <td>
+                          <Input
+                            name="custregnum"
+                            type="text"
+                            value={infomation.custregnum}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>수량</th>
+                        <td>
+                          <Input
+                            name="qty"
+                            type="number"
+                            value={infomation.qty}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>수량단위</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="qtyunit"
+                              value={infomation.qtyunit}
+                              bizComponentId="L_BA015"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>계산서유형</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="taxtype"
+                              value={infomation.taxtype}
+                              bizComponentId="L_AC013"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
+                        <th>공급가액</th>
+                        <td>
+                          <Input
+                            name="splyamt"
+                            type="number"
+                            value={infomation.splyamt}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>신용카드</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="creditcd"
+                              value={infomation.creditcd}
+                              bizComponentId="L_AC030T"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              textField="Column1"
+                              valueField="creditcd"
+                            />
+                          )}
+                        </td>
+                        <th>부가세액</th>
+                        <td>
+                          <Input
+                            name="taxamt"
+                            type="number"
+                            value={infomation.taxamt}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>거래품목</th>
+                        <td>
+                          <Input
+                            name="items"
+                            type="text"
+                            value={infomation.items}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>합계금액</th>
+                        <td>
+                          <Input
+                            name="totamt"
+                            type="number"
+                            value={infomation.totamt}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>비고</th>
+                        <td colSpan={3}>
+                          <TextArea
+                            value={infomation.remark}
+                            name="remark"
+                            rows={3}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+
+            <SwiperSlide key={2} className="leading_PDA_custom">
+              <GridContainer style={{ width: "100%", height: "100%" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    width: "100%",
+                    paddingBottom: "5px",
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
                     }}
-                    fileName="매입 E-TAX(전표)"
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
                   >
-                    <Grid
-                      style={{ height: "42vh" }}
-                      data={process(
-                        subDataResult.data.map((row) => ({
-                          ...row,
-                          itemacnt: itemacntListData.find(
-                            (item: any) => item.sub_code == row.itemacnt
-                          )?.code_name,
-                          [SELECTED_FIELD]: selectedSubState[idGetter2(row)],
-                        })),
-                        subDataState
-                      )}
-                      {...subDataState}
-                      onDataStateChange={onSubDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY2}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSubSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={subDataResult.total}
-                      skip={page2.skip}
-                      take={page2.take}
-                      pageable={true}
-                      onPageChange={pageChange2}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onSubSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList2"
-                        ]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? subTotalFooterCell
-                                    : numberField2.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell2
-                                    : undefined
-                                }
-                              />
-                            )
+                    이전
+                  </Button>
+                </div>
+                <TabStrip
+                  style={{
+                    width: "100%",
+                    height: `${deviceHeight * 0.8 - 18}px`,
+                  }}
+                  selected={tabSelected}
+                  onSelect={handleSelectTab}
+                >
+                  <TabStripTab title="입고자료">
+                    <GridContainerWrap>
+                      <GridContainer width="100%">
+                        <ExcelExport
+                          data={subDataResult.data}
+                          ref={(exporter) => {
+                            _export2 = exporter;
+                          }}
+                          fileName="매입 E-TAX(전표)"
+                        >
+                          <Grid
+                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            data={process(
+                              subDataResult.data.map((row) => ({
+                                ...row,
+                                itemacnt: itemacntListData.find(
+                                  (item: any) => item.sub_code == row.itemacnt
+                                )?.code_name,
+                                [SELECTED_FIELD]:
+                                  selectedSubState[idGetter2(row)],
+                              })),
+                              subDataState
+                            )}
+                            {...subDataState}
+                            onDataStateChange={onSubDataStateChange}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY2}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSubSelectionChange}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={subDataResult.total}
+                            skip={page2.skip}
+                            take={page2.take}
+                            pageable={true}
+                            onPageChange={pageChange2}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onSubSortChange}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList2"
+                              ]?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell2
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </GridContainerWrap>
+                  </TabStripTab>
+                  <TabStripTab title="매입전표">
+                    <GridContainerWrap>
+                      <GridContainer width="100%">
+                        <ExcelExport
+                          data={subDataResult2.data}
+                          ref={(exporter) => {
+                            _export3 = exporter;
+                          }}
+                          fileName="매입 E-TAX(전표)"
+                        >
+                          <Grid
+                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            data={process(
+                              subDataResult2.data.map((row) => ({
+                                ...row,
+                                taxtype: taxtypeListData.find(
+                                  (item: any) => item.sub_code == row.taxtype
+                                )?.code_name,
+                                drcrdiv: drcrdivListData.find(
+                                  (item: any) => item.sub_code == row.drcrdiv
+                                )?.code_name,
+                                [SELECTED_FIELD]:
+                                  selectedSubState2[idGetter3(row)],
+                              })),
+                              subDataState2
+                            )}
+                            {...subDataState2}
+                            onDataStateChange={onSubDataStateChange2}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY3}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSubSelectionChange2}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={subDataResult2.total}
+                            skip={page3.skip}
+                            take={page3.take}
+                            pageable={true}
+                            onPageChange={pageChange3}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onSubSortChange2}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList3"
+                              ]?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell2
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell3
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </GridContainerWrap>
+                  </TabStripTab>
+                  <TabStripTab title="지급전표">
+                    <GridContainerWrap>
+                      <GridContainer width="100%">
+                        <ExcelExport
+                          data={subDataResult3.data}
+                          ref={(exporter) => {
+                            _export4 = exporter;
+                          }}
+                          fileName="매입 E-TAX(전표)"
+                        >
+                          <Grid
+                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            data={process(
+                              subDataResult3.data.map((row) => ({
+                                ...row,
+                                drcrdiv: drcrdivListData.find(
+                                  (item: any) => item.sub_code == row.drcrdiv
+                                )?.code_name,
+                                [SELECTED_FIELD]:
+                                  selectedSubState3[idGetter4(row)],
+                              })),
+                              subDataState3
+                            )}
+                            {...subDataState3}
+                            onDataStateChange={onSubDataStateChange3}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY4}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSubSelectionChange3}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={subDataResult3.total}
+                            skip={page4.skip}
+                            take={page4.take}
+                            pageable={true}
+                            onPageChange={pageChange4}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onSubSortChange3}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList4"
+                              ]?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell3
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell4
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </GridContainerWrap>
+                  </TabStripTab>
+                </TabStrip>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onPurCreateClick}
+                  themeColor={"primary"}
+                  icon="plus-outline"
+                >
+                  매입 전표 생성
+                </Button>
+                <Button
+                  onClick={onPurDropClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus-outline"
+                >
+                  매입 전표 해제
+                </Button>
+                <Button
+                  onClick={onPayCreateClick}
+                  themeColor={"primary"}
+                  icon="plus-outline"
+                >
+                  지급 전표 생성
+                </Button>
+                <Button
+                  onClick={onPayDropClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus-outline"
+                >
+                  지급 전표 해제
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  매입 E-TAX(전표) 생성
+                </Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  매입 E-TAX(전표) 삭제
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  매입 E-TAX(전표) 저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="매입 E-TAX(전표)"
+            >
+              <Grid
+                style={{ height: "25vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    taxtype: taxtypeListData.find(
+                      (item: any) => item.sub_code == row.taxtype
+                    )?.code_name,
+                    etax: etaxListData.find(
+                      (item: any) => item.sub_code == row.etax
+                    )?.code_name,
+                    exceptyn: exceptynListData.find(
+                      (item: any) => item.code == row.exceptyn
+                    )?.name,
+                    insert_userid: personListData.find(
+                      (item: any) => item.user_id == row.insert_userid
+                    )?.user_name,
+                    update_userid: personListData.find(
+                      (item: any) => item.user_id == row.update_userid
+                    )?.user_name,
+                    rtxisuyn: row.rtxisuyn == "Y" ? true : false,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    chk: row.chk == "" ? false : row.chk,
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onItemChange}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell}
+                  cell={CheckBoxCell}
+                />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? DateCell
+                              : checkBoxField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : numberField2.includes(item.fieldName)
+                              ? gridSumQtyFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+          <GridContainerWrap>
+            <GridContainer width="45%">
+              <FormBoxWrap>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>계산서번호</th>
+                      <td>
+                        <Input
+                          name="taxnum"
+                          type="text"
+                          value={infomation.taxnum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>TAX구분</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="etax"
+                            value={infomation.etax}
+                            bizComponentId="R_Etax"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
                         )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </GridContainerWrap>
-            </TabStripTab>
-            <TabStripTab title="매입전표">
-              <GridContainerWrap>
-                <GridContainer width="100%">
-                  <ExcelExport
-                    data={subDataResult2.data}
-                    ref={(exporter) => {
-                      _export3 = exporter;
-                    }}
-                    fileName="매입 E-TAX(전표)"
-                  >
-                    <Grid
-                      style={{ height: "42vh" }}
-                      data={process(
-                        subDataResult2.data.map((row) => ({
-                          ...row,
-                          taxtype: taxtypeListData.find(
-                            (item: any) => item.sub_code == row.taxtype
-                          )?.code_name,
-                          drcrdiv: drcrdivListData.find(
-                            (item: any) => item.sub_code == row.drcrdiv
-                          )?.code_name,
-                          [SELECTED_FIELD]: selectedSubState2[idGetter3(row)],
-                        })),
-                        subDataState2
-                      )}
-                      {...subDataState2}
-                      onDataStateChange={onSubDataStateChange2}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY3}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSubSelectionChange2}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={subDataResult2.total}
-                      skip={page3.skip}
-                      take={page3.take}
-                      pageable={true}
-                      onPageChange={pageChange3}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onSubSortChange2}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList3"
-                        ]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? subTotalFooterCell2
-                                    : numberField2.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell3
-                                    : undefined
-                                }
-                              />
-                            )
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>매입매출구분</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="inoutdiv"
+                            value={infomation.inoutdiv}
+                            bizComponentId="R_INOUTDIV2"
+                            bizComponentData={bizComponentData}
+                            className="readonly"
+                          />
                         )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </GridContainerWrap>
-            </TabStripTab>
-            <TabStripTab title="지급전표">
-              <GridContainerWrap>
-                <GridContainer width="100%">
-                  <ExcelExport
-                    data={subDataResult3.data}
-                    ref={(exporter) => {
-                      _export4 = exporter;
-                    }}
-                    fileName="매입 E-TAX(전표)"
-                  >
-                    <Grid
-                      style={{ height: "42vh" }}
-                      data={process(
-                        subDataResult3.data.map((row) => ({
-                          ...row,
-                          drcrdiv: drcrdivListData.find(
-                            (item: any) => item.sub_code == row.drcrdiv
-                          )?.code_name,
-                          [SELECTED_FIELD]: selectedSubState3[idGetter4(row)],
-                        })),
-                        subDataState3
-                      )}
-                      {...subDataState3}
-                      onDataStateChange={onSubDataStateChange3}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY4}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSubSelectionChange3}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={subDataResult3.total}
-                      skip={page4.skip}
-                      take={page4.take}
-                      pageable={true}
-                      onPageChange={pageChange4}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onSubSortChange3}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList4"
-                        ]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? subTotalFooterCell3
-                                    : numberField2.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell4
-                                    : undefined
-                                }
-                              />
-                            )
+                      </td>
+                      <th></th>
+                      <td>
+                        <Checkbox
+                          name="rtxisuyn"
+                          label={"역발행여부"}
+                          value={infomation.rtxisuyn}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="location"
+                            value={infomation.location}
+                            bizComponentId="L_BA002"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
                         )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </GridContainerWrap>
-            </TabStripTab>
-          </TabStrip>
-        </GridContainer>
-      </GridContainerWrap>
+                      </td>
+                      <th>사업부</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="position"
+                            value={infomation.position}
+                            bizComponentId="L_BA003"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계산서일자</th>
+                      <td>
+                        <DatePicker
+                          name="taxdt"
+                          value={infomation.taxdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>결재구분</th>
+                      <td>
+                        <Input
+                          name="acntdiv"
+                          type="text"
+                          value={infomation.acntdiv}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>업체코드</th>
+                      <td>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={infomation.custcd}
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCustWndClick2}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={infomation.custnm}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>지급예정일</th>
+                      <td>
+                        <DatePicker
+                          name="paydt"
+                          value={infomation.paydt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>사업자번호</th>
+                      <td>
+                        <Input
+                          name="custregnum"
+                          type="text"
+                          value={infomation.custregnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>수량</th>
+                      <td>
+                        <Input
+                          name="qty"
+                          type="number"
+                          value={infomation.qty}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>수량단위</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="qtyunit"
+                            value={infomation.qtyunit}
+                            bizComponentId="L_BA015"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계산서유형</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="taxtype"
+                            value={infomation.taxtype}
+                            bizComponentId="L_AC013"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>공급가액</th>
+                      <td>
+                        <Input
+                          name="splyamt"
+                          type="number"
+                          value={infomation.splyamt}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>신용카드</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="creditcd"
+                            value={infomation.creditcd}
+                            bizComponentId="L_AC030T"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField="Column1"
+                            valueField="creditcd"
+                          />
+                        )}
+                      </td>
+                      <th>부가세액</th>
+                      <td>
+                        <Input
+                          name="taxamt"
+                          type="number"
+                          value={infomation.taxamt}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>거래품목</th>
+                      <td>
+                        <Input
+                          name="items"
+                          type="text"
+                          value={infomation.items}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>합계금액</th>
+                      <td>
+                        <Input
+                          name="totamt"
+                          type="number"
+                          value={infomation.totamt}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={3}>
+                        <TextArea
+                          value={infomation.remark}
+                          name="remark"
+                          rows={3}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+            <GridContainer width={`calc(55% - ${GAP}px)`}>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected}
+                onSelect={handleSelectTab}
+              >
+                <TabStripTab title="입고자료">
+                  <GridContainerWrap>
+                    <GridContainer width="100%">
+                      <ExcelExport
+                        data={subDataResult.data}
+                        ref={(exporter) => {
+                          _export2 = exporter;
+                        }}
+                        fileName="매입 E-TAX(전표)"
+                      >
+                        <Grid
+                          style={{ height: "42vh" }}
+                          data={process(
+                            subDataResult.data.map((row) => ({
+                              ...row,
+                              itemacnt: itemacntListData.find(
+                                (item: any) => item.sub_code == row.itemacnt
+                              )?.code_name,
+                              [SELECTED_FIELD]:
+                                selectedSubState[idGetter2(row)],
+                            })),
+                            subDataState
+                          )}
+                          {...subDataState}
+                          onDataStateChange={onSubDataStateChange}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY2}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSubSelectionChange}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={subDataResult.total}
+                          skip={page2.skip}
+                          take={page2.take}
+                          pageable={true}
+                          onPageChange={pageChange2}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onSubSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList2"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </GridContainerWrap>
+                </TabStripTab>
+                <TabStripTab title="매입전표">
+                  <GridContainerWrap>
+                    <GridContainer width="100%">
+                      <ExcelExport
+                        data={subDataResult2.data}
+                        ref={(exporter) => {
+                          _export3 = exporter;
+                        }}
+                        fileName="매입 E-TAX(전표)"
+                      >
+                        <Grid
+                          style={{ height: "42vh" }}
+                          data={process(
+                            subDataResult2.data.map((row) => ({
+                              ...row,
+                              taxtype: taxtypeListData.find(
+                                (item: any) => item.sub_code == row.taxtype
+                              )?.code_name,
+                              drcrdiv: drcrdivListData.find(
+                                (item: any) => item.sub_code == row.drcrdiv
+                              )?.code_name,
+                              [SELECTED_FIELD]:
+                                selectedSubState2[idGetter3(row)],
+                            })),
+                            subDataState2
+                          )}
+                          {...subDataState2}
+                          onDataStateChange={onSubDataStateChange2}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY3}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSubSelectionChange2}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={subDataResult2.total}
+                          skip={page3.skip}
+                          take={page3.take}
+                          pageable={true}
+                          onPageChange={pageChange3}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onSubSortChange2}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList3"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell2
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </GridContainerWrap>
+                </TabStripTab>
+                <TabStripTab title="지급전표">
+                  <GridContainerWrap>
+                    <GridContainer width="100%">
+                      <ExcelExport
+                        data={subDataResult3.data}
+                        ref={(exporter) => {
+                          _export4 = exporter;
+                        }}
+                        fileName="매입 E-TAX(전표)"
+                      >
+                        <Grid
+                          style={{ height: "42vh" }}
+                          data={process(
+                            subDataResult3.data.map((row) => ({
+                              ...row,
+                              drcrdiv: drcrdivListData.find(
+                                (item: any) => item.sub_code == row.drcrdiv
+                              )?.code_name,
+                              [SELECTED_FIELD]:
+                                selectedSubState3[idGetter4(row)],
+                            })),
+                            subDataState3
+                          )}
+                          {...subDataState3}
+                          onDataStateChange={onSubDataStateChange3}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY4}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSubSelectionChange3}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={subDataResult3.total}
+                          skip={page4.skip}
+                          take={page4.take}
+                          pageable={true}
+                          onPageChange={pageChange4}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onSubSortChange3}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList4"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell3
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </GridContainerWrap>
+                </TabStripTab>
+              </TabStrip>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

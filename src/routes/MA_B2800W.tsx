@@ -149,6 +149,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+let deviceWidth = window.innerWidth;
+let deviceHeight = window.innerHeight - 50;
+let isMobile = deviceWidth <= 1200;
+
 const MA_B2800W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1139,13 +1143,18 @@ const MA_B2800W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
+      
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
       <FormContext.Provider
         value={{
           purInfo,
           setPutInfo,
         }}
       >
-        <GridContainer>
+        <GridContainer
+            style={{ height: "100%", width: "100%" }}
+          >
           <GridTitleContainer>
             <GridTitle>발주대비입고자료</GridTitle>
           </GridTitleContainer>
@@ -1157,7 +1166,7 @@ const MA_B2800W: React.FC = () => {
             fileName="발주대비입고현황"
           >
             <Grid
-              style={{ height: "72.5vh" }}
+              style={{ height: !isMobile ? "72.5vh" :`${deviceHeight * 0.8 - 20}px` }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1215,6 +1224,8 @@ const MA_B2800W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </FormContext.Provider>
+      </div>
+      </div>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
