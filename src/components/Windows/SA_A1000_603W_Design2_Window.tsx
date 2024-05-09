@@ -20,6 +20,7 @@ import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UseParaPc,
   getQueryFromBizComponent,
   numberWithCommas3,
 } from "../CommonFunction";
@@ -82,6 +83,8 @@ type TdataArr = {
   cagetype_s: string[];
   prodmac_s: string[];
   assaytype_s: string[];
+  assaytype1_s: string[];
+  assaytype2_s: string[];
 
   chlditemcd_s: string[];
   column_itemcd_s: string[];
@@ -113,6 +116,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: 800,
   });
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -243,9 +249,9 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const totalRowCnt2 = data.tables[1].TotalRowCount;
-      const totalRowCnt3 = data.tables[4].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt2 = data.tables[1].RowCount;
+      const totalRowCnt3 = data.tables[4].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[4].Rows;
@@ -299,13 +305,13 @@ const CopyWindow = ({
           remark_base: rows2[0].remark,
           point_base: rows2[0].point,
           strainqty_base: rows2[0].strainqty,
-          matterqty_base: rows2[0].matterqty,
           affiliationqty_base: rows2[0].affiliationqty,
           capacity_base: rows2[0].capacity,
           plateqty_base: rows2[0].plateqty,
           cellqty_base: rows2[0].cellqty,
           virusqty_base: rows2[0].virusqty,
           prodmac_base: rows2[0].prodmac,
+          matterqty_base: rows2[0].matterqty,
           runtime_base: rows2[0].runtime,
           assaytype_base: rows2[0].assaytype,
           column_itemcd_base: rows2[0].column_itemcd,
@@ -317,6 +323,10 @@ const CopyWindow = ({
           breedmeth_base: rows2[0].breedmeth,
           cagetype_base: rows2[0].cagetype,
           ref_key_base: rows2[0].ref_key,
+          concentrationcnt_base: rows2[0].concentrationcnt,
+          assaytype1_base: rows2[0].assaytype1,
+          assaytype2_base: rows2[0].assaytype2,
+          sampleqty_base: rows2[0].sampleqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -360,6 +370,10 @@ const CopyWindow = ({
           breedmeth_base: rows2[0].breedmeth,
           cagetype_base: rows2[0].cagetype,
           ref_key_base: rows2[0].ref_key,
+          concentrationcnt_base: rows2[0].concentrationcnt,
+          assaytype1_base: rows2[0].assaytype1,
+          assaytype2_base: rows2[0].assaytype2,
+          sampleqty_base: rows2[0].sampleqty,
         }));
       }
       if (totalRowCnt3 > 0) {
@@ -391,6 +405,7 @@ const CopyWindow = ({
           refineperiod_ex: rows3[0].refineperiod,
           testperiod_ex: rows3[0].testperiod,
           chasu_ex: rows3[0].chasu,
+          gunqty_ex: rows3[0].gunqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -420,6 +435,7 @@ const CopyWindow = ({
           refineperiod_ex: rows3[0].refineperiod,
           testperiod_ex: rows3[0].testperiod,
           chasu_ex: rows3[0].chasu,
+          gunqty_ex: rows3[0].gunqty,
         }));
       }
     } else {
@@ -479,6 +495,16 @@ const CopyWindow = ({
     column_itemcd_base: "",
     column_itemnm_base: "",
     refineperiod_base: 0,
+    tkqty_base: 0,
+    gunqty_base: 0,
+    genderyn_base: "",
+    breedmeth_base: "",
+    cagetype_base: "",
+    ref_key_base: "",
+    concentrationcnt_base: 0,
+    assaytype1_base: 0,
+    assaytype2_base: 0,
+    sampleqty_base: 0,
     //용량설정시험
     rowstatus_ex: "N",
     seq_ex: 0,
@@ -506,6 +532,7 @@ const CopyWindow = ({
     refineperiod_ex: 0,
     testperiod_ex: 0,
     chasu_ex: 0,
+    gunqty_ex: 0,
   });
 
   const [Information_ori, setInformation_ori] = useState({
@@ -552,6 +579,16 @@ const CopyWindow = ({
     column_itemcd_base: "",
     column_itemnm_base: "",
     refineperiod_base: 0,
+    tkqty_base: 0,
+    gunqty_base: 0,
+    genderyn_base: "",
+    breedmeth_base: "",
+    cagetype_base: "",
+    ref_key_base: "",
+    concentrationcnt_base: 0,
+    assaytype1_base: 0,
+    assaytype2_base: 0,
+    sampleqty_base: 0,
 
     //용량설정시험
     rowstatus_ex: "N",
@@ -580,6 +617,7 @@ const CopyWindow = ({
     refineperiod_ex: 0,
     testperiod_ex: 0,
     chasu_ex: 0,
+    gunqty_ex: 0,
   });
 
   const InputChange = (e: any) => {
@@ -662,6 +700,318 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const onSave = async () => {
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      seq_s: [],
+      itemcd_s: [],
+      injectcnt_s: [],
+      injectcycle_s: [],
+      maleqty_s: [],
+      femaleqty_s: [],
+      totqty_s: [],
+      sampleqty_s: [],
+      urineqty_s: [],
+      tkqty_s: [],
+      experimentqty_s: [],
+      autopsyqty_s: [],
+      spareqty_s: [],
+      recoverqty_s: [],
+      cageqty_s: [],
+      rackqty_s: [],
+      infusionqty_s: [],
+      infusiontime_s: [],
+      point_s: [],
+      capacity_s: [],
+      geomcheqty_s: [],
+      geomcheprodqty_s: [],
+      infusioncount_s: [],
+      testcnt_s: [],
+      strainqty_s: [],
+      matterqty_s: [],
+      affiliationqty_s: [],
+      plateqty_s: [],
+      cellqty_s: [],
+      virusqty_s: [],
+      runtime_s: [],
+      gunqty_s: [],
+      concentrationcnt_s: [],
+      one_week_s: [],
+      two_week_s: [],
+      one_twoweek_s: [],
+      guaranteeperiod_s: [],
+      testperiod_s: [],
+      refineperiod_s: [],
+      autopsyperiod_s: [],
+      recoverweek_s: [],
+      recoverday_s: [],
+      genderyn_s: [],
+      breedmeth_s: [],
+      cagetype_s: [],
+      prodmac_s: [],
+      assaytype_s: [],
+      assaytype1_s: [],
+      assaytype2_s: [],
+
+      chlditemcd_s: [],
+      column_itemcd_s: [],
+      column_itemnm_s: [],
+      gubun_s: [],
+      remark_s: [],
+      qty_s: [],
+      optioncd_s: [],
+      bonyn_s: [],
+      pointqty_s: [],
+      chasu_s: [],
+      chasuspace_s: [],
+      amt_s: [],
+      ref_key_s: [],
+    };
+
+    //기본
+    dataArr.rowstatus_s.push(Information.rowstatus_base);
+    dataArr.seq_s.push(Information.seq_base.toString());
+    dataArr.itemcd_s.push(Information.itemcd);
+    dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
+    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.maleqty_s.push(Information.maleqty_base.toString());
+    dataArr.femaleqty_s.push(Information.femaleqty_base.toString());
+    dataArr.totqty_s.push(Information.totqty_base.toString());
+    dataArr.sampleqty_s.push(Information.sampleqty_base.toString());
+    dataArr.urineqty_s.push("0");
+    dataArr.tkqty_s.push(Information.tkqty_base.toString());
+    dataArr.experimentqty_s.push(Information.experimentqty_base.toString());
+    dataArr.autopsyqty_s.push("0");
+    dataArr.spareqty_s.push(Information.spareqty_base.toString());
+    dataArr.recoverqty_s.push("0");
+    dataArr.cageqty_s.push("0");
+    dataArr.rackqty_s.push("0");
+    dataArr.infusionqty_s.push("0");
+    dataArr.infusiontime_s.push("0");
+    dataArr.point_s.push(Information.point_base.toString());
+    dataArr.capacity_s.push(Information.capacity_base.toString());
+    dataArr.geomcheqty_s.push(Information.geomcheqty_base.toString());
+    dataArr.geomcheprodqty_s.push(Information.geomcheprodqty_base.toString());
+    dataArr.infusioncount_s.push("0");
+    dataArr.testcnt_s.push("0");
+    dataArr.strainqty_s.push(Information.strainqty_base.toString());
+    dataArr.matterqty_s.push(Information.matterqty_base.toString());
+    dataArr.affiliationqty_s.push(Information.affiliationqty_base.toString());
+    dataArr.plateqty_s.push(Information.plateqty_base.toString());
+    dataArr.cellqty_s.push(Information.cellqty_base.toString());
+    dataArr.virusqty_s.push(Information.virusqty_base.toString());
+    dataArr.runtime_s.push(Information.runtime_base.toString());
+    dataArr.gunqty_s.push(Information.gunqty_base.toString());
+    dataArr.concentrationcnt_s.push(
+      Information.concentrationcnt_base.toString()
+    );
+    dataArr.one_week_s.push("0");
+    dataArr.two_week_s.push("0");
+    dataArr.one_twoweek_s.push("0");
+    dataArr.guaranteeperiod_s.push("0");
+    dataArr.testperiod_s.push(Information.testperiod_base.toString());
+    dataArr.refineperiod_s.push(Information.refineperiod_base.toString());
+    dataArr.autopsyperiod_s.push("0");
+    dataArr.recoverweek_s.push("0");
+    dataArr.recoverday_s.push("0");
+    dataArr.genderyn_s.push(Information.genderyn_base);
+    dataArr.breedmeth_s.push(Information.breedmeth_base);
+    dataArr.cagetype_s.push(Information.cagetype_base);
+    dataArr.prodmac_s.push(Information.prodmac_base);
+    dataArr.assaytype_s.push(Information.assaytype_base);
+    dataArr.assaytype1_s.push(Information.assaytype1_base.toString());
+    dataArr.assaytype2_s.push(Information.assaytype2_base.toString());
+
+    dataArr.chlditemcd_s.push(Information.chlditemcd_base);
+    dataArr.column_itemcd_s.push(Information.column_itemcd_base);
+    dataArr.column_itemnm_s.push(Information.column_itemnm_base);
+    dataArr.gubun_s.push("B");
+    dataArr.remark_s.push(Information.remark_base);
+    dataArr.qty_s.push("0");
+    dataArr.optioncd_s.push("");
+    dataArr.bonyn_s.push("");
+    dataArr.pointqty_s.push("0");
+    dataArr.chasu_s.push(Information.chasu_base.toString());
+    dataArr.chasuspace_s.push(Information.chasuspace_base.toString());
+    dataArr.amt_s.push("0");
+    dataArr.ref_key_s.push(Information.ref_key_base);
+
+    //용량시험설정
+    dataArr.rowstatus_s.push(
+      Information.yn_ex == false && Information.rowstatus_ex == "N"
+        ? ""
+        : Information.rowstatus_ex
+    );
+    dataArr.seq_s.push(
+      Information.rowstatus_ex == "D" ? "" : Information.seq_ex.toString()
+    );
+    dataArr.itemcd_s.push(Information.itemcd);
+    dataArr.injectcnt_s.push(Information.injectcnt_ex.toString());
+    dataArr.injectcycle_s.push(Information.injectcycle_ex);
+    dataArr.maleqty_s.push(Information.maleqty_ex.toString());
+    dataArr.femaleqty_s.push(Information.femaleqty_ex.toString());
+    dataArr.totqty_s.push(Information.totqty_ex.toString());
+    dataArr.sampleqty_s.push("0");
+    dataArr.urineqty_s.push("0");
+    dataArr.tkqty_s.push("0");
+    dataArr.experimentqty_s.push(Information.experimentqty_ex.toString());
+    dataArr.autopsyqty_s.push("0");
+    dataArr.spareqty_s.push(Information.spareqty_ex.toString());
+    dataArr.recoverqty_s.push("0");
+    dataArr.cageqty_s.push("0");
+    dataArr.rackqty_s.push("0");
+    dataArr.infusionqty_s.push("0");
+    dataArr.infusiontime_s.push("0");
+    dataArr.point_s.push(Information.point_ex.toString());
+    dataArr.capacity_s.push(Information.capacity_ex.toString());
+    dataArr.geomcheqty_s.push("0");
+    dataArr.geomcheprodqty_s.push("0");
+    dataArr.infusioncount_s.push("0");
+    dataArr.testcnt_s.push("0");
+    dataArr.strainqty_s.push(Information.strainqty_ex.toString());
+    dataArr.matterqty_s.push(Information.matterqty_ex.toString());
+    dataArr.affiliationqty_s.push(Information.affiliationqty_ex.toString());
+    dataArr.plateqty_s.push(Information.plateqty_ex.toString());
+    dataArr.cellqty_s.push(Information.cellqty_ex.toString());
+    dataArr.virusqty_s.push(Information.virusqty_ex.toString());
+    dataArr.runtime_s.push("0");
+    dataArr.gunqty_s.push(Information.gunqty_ex.toString());
+    dataArr.concentrationcnt_s.push("0");
+    dataArr.one_week_s.push("0");
+    dataArr.two_week_s.push("0");
+    dataArr.one_twoweek_s.push("0");
+    dataArr.guaranteeperiod_s.push("0");
+    dataArr.testperiod_s.push(Information.testperiod_ex.toString());
+    dataArr.refineperiod_s.push(Information.refineperiod_ex.toString());
+    dataArr.autopsyperiod_s.push("0");
+    dataArr.recoverweek_s.push("0");
+    dataArr.recoverday_s.push("0");
+    dataArr.genderyn_s.push(Information.genderyn_ex.toString());
+    dataArr.breedmeth_s.push("");
+    dataArr.cagetype_s.push("");
+    dataArr.prodmac_s.push("");
+    dataArr.assaytype_s.push("");
+    dataArr.assaytype1_s.push("0");
+    dataArr.assaytype2_s.push("0");
+
+    dataArr.chlditemcd_s.push("");
+    dataArr.column_itemcd_s.push("");
+    dataArr.column_itemnm_s.push("");
+    dataArr.gubun_s.push("W");
+    dataArr.remark_s.push(Information.remark_ex.toString());
+    dataArr.qty_s.push("0");
+    dataArr.optioncd_s.push("");
+    dataArr.bonyn_s.push("");
+    dataArr.pointqty_s.push("0");
+    dataArr.chasu_s.push(Information.chasu_ex.toString());
+    dataArr.chasuspace_s.push("0");
+    dataArr.amt_s.push("0");
+    dataArr.ref_key_s.push("");
+
+    const para: Iparameters = {
+      procedureName: "P_SA_A1000_603W_Sub1_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "N",
+        "@p_orgdiv": Information.orgdiv,
+        "@p_table_id": "SA051T",
+        "@p_table_key":
+          Information.quonum +
+          "-" +
+          Information.quorev +
+          "-" +
+          Information.quoseq,
+        "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
+        "@p_seq_s": dataArr.seq_s.join("|"),
+        "@p_itemcd_s": dataArr.itemcd_s.join("|"),
+        "@p_injectcnt_s": dataArr.injectcnt_s.join("|"),
+        "@p_injectcycle_s": dataArr.injectcycle_s.join("|"),
+        "@p_maleqty_s": dataArr.maleqty_s.join("|"),
+        "@p_femaleqty_s": dataArr.femaleqty_s.join("|"),
+        "@p_totqty_s": dataArr.totqty_s.join("|"),
+        "@p_sampleqty_s": dataArr.sampleqty_s.join("|"),
+        "@p_urineqty_s": dataArr.urineqty_s.join("|"),
+        "@p_tkqty_s": dataArr.tkqty_s.join("|"),
+        "@p_experimentqty_s": dataArr.experimentqty_s.join("|"),
+        "@p_autopsyqty_s": dataArr.autopsyqty_s.join("|"),
+        "@p_spareqty_s": dataArr.spareqty_s.join("|"),
+        "@p_recoverqty_s": dataArr.recoverqty_s.join("|"),
+        "@p_cageqty_s": dataArr.cageqty_s.join("|"),
+        "@p_rackqty_s": dataArr.rackqty_s.join("|"),
+        "@p_infusionqty_s": dataArr.infusionqty_s.join("|"),
+        "@p_infusiontime_s": dataArr.infusiontime_s.join("|"),
+        "@p_point_s": dataArr.point_s.join("|"),
+        "@p_capacity_s": dataArr.capacity_s.join("|"),
+        "@p_geomcheqty_s": dataArr.geomcheqty_s.join("|"),
+        "@p_geomcheprodqty_s": dataArr.geomcheprodqty_s.join("|"),
+        "@p_infusioncount_s": dataArr.infusioncount_s.join("|"),
+        "@p_testcnt_s": dataArr.testcnt_s.join("|"),
+        "@p_strainqty_s": dataArr.strainqty_s.join("|"),
+        "@p_matterqty_s": dataArr.matterqty_s.join("|"),
+        "@p_affiliationqty_s": dataArr.affiliationqty_s.join("|"),
+        "@p_plateqty_s": dataArr.plateqty_s.join("|"),
+        "@p_cellqty_s": dataArr.cellqty_s.join("|"),
+        "@p_virusqty_s": dataArr.virusqty_s.join("|"),
+        "@p_runtime_s": dataArr.runtime_s.join("|"),
+        "@p_gunqty_s": dataArr.gunqty_s.join("|"),
+        "@p_concentrationcnt_s": dataArr.concentrationcnt_s.join("|"),
+        "@p_one_week_s": dataArr.one_week_s.join("|"),
+        "@p_two_week_s": dataArr.two_week_s.join("|"),
+        "@p_one_twoweek_s": dataArr.one_twoweek_s.join("|"),
+        "@p_guaranteeperiod_s": dataArr.guaranteeperiod_s.join("|"),
+        "@p_testperiod_s": dataArr.testperiod_s.join("|"),
+        "@p_refineperiod_s": dataArr.refineperiod_s.join("|"),
+        "@p_autopsyperiod_s": dataArr.autopsyperiod_s.join("|"),
+        "@p_recoverweek_s": dataArr.recoverweek_s.join("|"),
+        "@p_recoverday_s": dataArr.recoverday_s.join("|"),
+        "@p_genderyn_s": dataArr.genderyn_s.join("|"),
+        "@p_breedmeth_s": dataArr.breedmeth_s.join("|"),
+        "@p_cagetype_s": dataArr.cagetype_s.join("|"),
+        "@p_prodmac_s": dataArr.prodmac_s.join("|"),
+        "@p_assaytype_s": dataArr.assaytype_s.join("|"),
+        "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
+        "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
+
+        "@p_chlditemcd_s": dataArr.chlditemcd_s.join("|"),
+        "@p_column_itemcd_s": dataArr.column_itemcd_s.join("|"),
+        "@p_column_itemnm_s": dataArr.column_itemnm_s.join("|"),
+        "@p_gubun_s": dataArr.gubun_s.join("|"),
+        "@p_remark_s": dataArr.remark_s.join("|"),
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_optioncd_s": dataArr.optioncd_s.join("|"),
+        "@p_bonyn_s": dataArr.bonyn_s.join("|"),
+        "@p_pointqty_s": dataArr.pointqty_s.join("|"),
+        "@p_chasu_s": dataArr.chasu_s.join("|"),
+        "@p_chasuspace_s": dataArr.chasuspace_s.join("|"),
+        "@p_amt_s": dataArr.amt_s.join("|"),
+        "@p_ref_key_s": dataArr.ref_key_s.join("|"),
+
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "SA_A1000_603W",
+      },
+    };
+
+    let data: any;
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
   };
 
   return (
@@ -1232,8 +1582,6 @@ const CopyWindow = ({
                     />
                   )}
                 </td>
-              </tr>
-              <tr>
                 <th>투여시간</th>
                 <td>
                   {save == true && Information.yn_ex == true ? (
@@ -1522,6 +1870,13 @@ const CopyWindow = ({
         </FormBoxWrap>
         <BottomContainer>
           <ButtonContainer>
+            {save == true ? (
+              <Button themeColor={"primary"} onClick={onSave}>
+                저장
+              </Button>
+            ) : (
+              ""
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

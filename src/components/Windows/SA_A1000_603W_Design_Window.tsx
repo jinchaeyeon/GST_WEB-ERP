@@ -83,6 +83,8 @@ type TdataArr = {
   cagetype_s: string[];
   prodmac_s: string[];
   assaytype_s: string[];
+  assaytype1_s: string[];
+  assaytype2_s: string[];
 
   chlditemcd_s: string[];
   column_itemcd_s: string[];
@@ -248,10 +250,10 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const totalRowCnt2 = data.tables[1].TotalRowCount;
-      const totalRowCnt3 = data.tables[2].TotalRowCount;
-      const totalRowCnt4 = data.tables[3].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt2 = data.tables[1].RowCount;
+      const totalRowCnt3 = data.tables[2].RowCount;
+      const totalRowCnt4 = data.tables[3].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[2].Rows;
@@ -306,13 +308,13 @@ const CopyWindow = ({
           remark_base: rows2[0].remark,
           point_base: rows2[0].point,
           strainqty_base: rows2[0].strainqty,
-          matterqty_base: rows2[0].matterqty,
           affiliationqty_base: rows2[0].affiliationqty,
           capacity_base: rows2[0].capacity,
           plateqty_base: rows2[0].plateqty,
           cellqty_base: rows2[0].cellqty,
           virusqty_base: rows2[0].virusqty,
           prodmac_base: rows2[0].prodmac,
+          matterqty_base: rows2[0].matterqty,
           runtime_base: rows2[0].runtime,
           assaytype_base: rows2[0].assaytype,
           column_itemcd_base: rows2[0].column_itemcd,
@@ -324,6 +326,10 @@ const CopyWindow = ({
           breedmeth_base: rows2[0].breedmeth,
           cagetype_base: rows2[0].cagetype,
           ref_key_base: rows2[0].ref_key,
+          concentrationcnt_base: rows2[0].concentrationcnt,
+          assaytype1_base: rows2[0].assaytype1,
+          assaytype2_base: rows2[0].assaytype2,
+          sampleqty_base: rows2[0].sampleqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -367,6 +373,10 @@ const CopyWindow = ({
           breedmeth_base: rows2[0].breedmeth,
           cagetype_base: rows2[0].cagetype,
           ref_key_base: rows2[0].ref_key,
+          concentrationcnt_base: rows2[0].concentrationcnt,
+          assaytype1_base: rows2[0].assaytype1,
+          assaytype2_base: rows2[0].assaytype2,
+          sampleqty_base: rows2[0].sampleqty,
         }));
       }
 
@@ -392,6 +402,7 @@ const CopyWindow = ({
           recoverweek_ex: rows3[0].recoverweek,
           gunqty_ex: rows3[0].gunqty,
           chasu_ex: rows3[0].chasu,
+          testperiod_ex: rows3[0].testperiod,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -414,6 +425,7 @@ const CopyWindow = ({
           recoverweek_ex: rows3[0].recoverweek,
           gunqty_ex: rows3[0].gunqty,
           chasu_ex: rows3[0].chasu,
+          testperiod_ex: rows3[0].testperiod,
         }));
       }
 
@@ -424,22 +436,23 @@ const CopyWindow = ({
           seq_tk: rows4[0].seq,
           yn_tk: rows4[0].yn == "Y" ? true : false,
           bonyn_tk: rows4[0].bonyn == "Y" ? true : false,
-          testcnt_tk: rows4[0].testcnt,
-          point_tk: rows4[0].point,
-          pointqty_tk: rows4[0].pointqty,
           totqty_tk: rows4[0].totqty,
           experimentqty_tk: rows4[0].experimentqty,
           sampleqty_tk: rows4[0].sampleqty,
           maleqty_tk: rows4[0].maleqty,
           femaleqty_tk: rows4[0].femaleqty,
           spareqty_tk: rows4[0].spareqty,
+          testcnt_tk: rows4[0].testcnt,
+          point_tk: rows4[0].point,
+          pointqty_tk: rows4[0].pointqty,
           remark_tk: rows4[0].remark,
           refineperiod_tk: rows4[0].refineperiod,
           tkqty_tk: rows4[0].tkqty,
-          gunqty_tk: rows[0].gunqty,
-          chasu_tk: rows4[0].gunqty,
+          gunqty_tk: rows4[0].gunqty,
+          chasu_tk: rows4[0].chasu,
           geomcheqty_tk: rows4[0].geomcheqty,
           geomcheprodqty_tk: rows4[0].geomcheprodqty,
+          testperiod_tk: rows4[0].testperiod,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -459,10 +472,11 @@ const CopyWindow = ({
           remark_tk: rows4[0].remark,
           refineperiod_tk: rows4[0].refineperiod,
           tkqty_tk: rows4[0].tkqty,
-          gunqty_tk: rows[0].gunqty,
-          chasu_tk: rows4[0].gunqty,
+          gunqty_tk: rows4[0].gunqty,
+          chasu_tk: rows4[0].chasu,
           geomcheqty_tk: rows4[0].geomcheqty,
           geomcheprodqty_tk: rows4[0].geomcheprodqty,
+          testperiod_tk: rows4[0].testperiod,
         }));
       }
     } else {
@@ -528,6 +542,10 @@ const CopyWindow = ({
     breedmeth_base: "",
     cagetype_base: "",
     ref_key_base: "",
+    concentrationcnt_base: 0,
+    assaytype1_base: 0,
+    assaytype2_base: 0,
+    sampleqty_base: 0,
 
     //회복
     rowstatus_ex: "N",
@@ -549,6 +567,7 @@ const CopyWindow = ({
     recoverweek_ex: 0,
     gunqty_ex: 0,
     chasu_ex: 0,
+    testperiod_ex: 0,
 
     //TK
     rowstatus_tk: "N",
@@ -571,6 +590,7 @@ const CopyWindow = ({
     chasu_tk: 0,
     geomcheqty_tk: 0,
     geomcheprodqty_tk: 0,
+    testperiod_tk: 0,
   });
 
   const [Information_ori, setInformation_ori] = useState({
@@ -617,6 +637,16 @@ const CopyWindow = ({
     column_itemcd_base: "",
     column_itemnm_base: "",
     refineperiod_base: 0,
+    tkqty_base: 0,
+    gunqty_base: 0,
+    genderyn_base: "",
+    breedmeth_base: "",
+    cagetype_base: "",
+    ref_key_base: "",
+    concentrationcnt_base: 0,
+    assaytype1_base: 0,
+    assaytype2_base: 0,
+    sampleqty_base: 0,
     //회복
     rowstatus_ex: "N",
     seq_ex: 0,
@@ -637,6 +667,7 @@ const CopyWindow = ({
     recoverweek_ex: 0,
     gunqty_ex: 0,
     chasu_ex: 0,
+    testperiod_ex: 0,
 
     //TK
     rowstatus_tk: "N",
@@ -659,6 +690,7 @@ const CopyWindow = ({
     chasu_tk: 0,
     geomcheqty_tk: 0,
     geomcheprodqty_tk: 0,
+    testperiod_tk: 0,
   });
 
   const InputChange = (e: any) => {
@@ -847,6 +879,8 @@ const CopyWindow = ({
       cagetype_s: [],
       prodmac_s: [],
       assaytype_s: [],
+      assaytype1_s: [],
+      assaytype2_s: [],
 
       chlditemcd_s: [],
       column_itemcd_s: [],
@@ -872,7 +906,7 @@ const CopyWindow = ({
     dataArr.maleqty_s.push(Information.maleqty_base.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_base.toString());
     dataArr.totqty_s.push(Information.totqty_base.toString());
-    dataArr.sampleqty_s.push("0");
+    dataArr.sampleqty_s.push(Information.sampleqty_base.toString());
     dataArr.urineqty_s.push("0");
     dataArr.tkqty_s.push(Information.tkqty_base.toString());
     dataArr.experimentqty_s.push(Information.experimentqty_base.toString());
@@ -897,7 +931,9 @@ const CopyWindow = ({
     dataArr.virusqty_s.push(Information.virusqty_base.toString());
     dataArr.runtime_s.push(Information.runtime_base.toString());
     dataArr.gunqty_s.push(Information.gunqty_base.toString());
-    dataArr.concentrationcnt_s.push("0");
+    dataArr.concentrationcnt_s.push(
+      Information.concentrationcnt_base.toString()
+    );
     dataArr.one_week_s.push("0");
     dataArr.two_week_s.push("0");
     dataArr.one_twoweek_s.push("0");
@@ -912,6 +948,8 @@ const CopyWindow = ({
     dataArr.cagetype_s.push(Information.cagetype_base);
     dataArr.prodmac_s.push(Information.prodmac_base);
     dataArr.assaytype_s.push(Information.assaytype_base);
+    dataArr.assaytype1_s.push(Information.assaytype1_base.toString());
+    dataArr.assaytype2_s.push(Information.assaytype2_base.toString());
 
     dataArr.chlditemcd_s.push(Information.chlditemcd_base);
     dataArr.column_itemcd_s.push(Information.column_itemcd_base);
@@ -972,16 +1010,18 @@ const CopyWindow = ({
     dataArr.two_week_s.push("0");
     dataArr.one_twoweek_s.push("0");
     dataArr.guaranteeperiod_s.push("0");
-    dataArr.testperiod_s.push(Information.testperiod_base.toString());
+    dataArr.testperiod_s.push(Information.testperiod_ex.toString());
     dataArr.refineperiod_s.push(Information.refineperiod_ex.toString());
     dataArr.autopsyperiod_s.push("0");
     dataArr.recoverweek_s.push(Information.recoverweek_ex.toString());
     dataArr.recoverday_s.push(Information.recoverday_ex.toString());
-    dataArr.genderyn_s.push(Information.genderyn_base.toString());
-    dataArr.breedmeth_s.push(Information.breedmeth_base.toString());
-    dataArr.cagetype_s.push(Information.cagetype_base.toString());
+    dataArr.genderyn_s.push("");
+    dataArr.breedmeth_s.push("");
+    dataArr.cagetype_s.push("");
     dataArr.prodmac_s.push("");
     dataArr.assaytype_s.push("");
+    dataArr.assaytype1_s.push("0");
+    dataArr.assaytype2_s.push("0");
 
     dataArr.chlditemcd_s.push("");
     dataArr.column_itemcd_s.push("");
@@ -1042,16 +1082,18 @@ const CopyWindow = ({
     dataArr.two_week_s.push("0");
     dataArr.one_twoweek_s.push("0");
     dataArr.guaranteeperiod_s.push("0");
-    dataArr.testperiod_s.push(Information.testperiod_base.toString());
+    dataArr.testperiod_s.push(Information.testperiod_tk.toString());
     dataArr.refineperiod_s.push(Information.refineperiod_tk.toString());
     dataArr.autopsyperiod_s.push("0");
     dataArr.recoverweek_s.push("0");
     dataArr.recoverday_s.push("0");
-    dataArr.genderyn_s.push(Information.genderyn_base.toString());
-    dataArr.breedmeth_s.push(Information.breedmeth_base.toString());
-    dataArr.cagetype_s.push(Information.cagetype_base.toString());
+    dataArr.genderyn_s.push("");
+    dataArr.breedmeth_s.push("");
+    dataArr.cagetype_s.push("");
     dataArr.prodmac_s.push("");
     dataArr.assaytype_s.push("");
+    dataArr.assaytype1_s.push("0");
+    dataArr.assaytype2_s.push("0");
 
     dataArr.chlditemcd_s.push("");
     dataArr.column_itemcd_s.push("");
@@ -1129,6 +1171,8 @@ const CopyWindow = ({
         "@p_cagetype_s": dataArr.cagetype_s.join("|"),
         "@p_prodmac_s": dataArr.prodmac_s.join("|"),
         "@p_assaytype_s": dataArr.assaytype_s.join("|"),
+        "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
+        "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
 
         "@p_chlditemcd_s": dataArr.chlditemcd_s.join("|"),
         "@p_column_itemcd_s": dataArr.column_itemcd_s.join("|"),

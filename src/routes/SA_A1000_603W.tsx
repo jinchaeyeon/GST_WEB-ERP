@@ -2295,7 +2295,9 @@ const SA_A1000_603W: React.FC = () => {
           seq: rows2[0].seq,
           passdt: rows2[0].passdt,
         });
-        setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        if(totalRowCnt3 > 0) {
+          setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        }
       } else {
         setInformation2({
           addordgb: "",
@@ -2323,6 +2325,9 @@ const SA_A1000_603W: React.FC = () => {
           seq: 0,
           passdt: 0,
         });
+        if(totalRowCnt3 > 0) {
+          setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -6791,6 +6796,21 @@ const SA_A1000_603W: React.FC = () => {
                 )[0]
               : ""
           }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
+          }
           modal={true}
         />
       )}
@@ -6842,6 +6862,21 @@ const SA_A1000_603W: React.FC = () => {
                     Object.getOwnPropertyNames(selectedState2)[0]
                 )[0]
               : ""
+          }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
           }
           modal={true}
         />

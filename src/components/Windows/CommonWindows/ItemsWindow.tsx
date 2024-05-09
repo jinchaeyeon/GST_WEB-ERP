@@ -33,6 +33,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; // 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  yn?: boolean;
 };
 
 const DATA_ITEM_KEY = "itemcd";
@@ -43,6 +44,7 @@ const ItemsWindow = ({
   setVisible,
   setData,
   modal = false,
+  yn = true,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -125,7 +127,7 @@ const ItemsWindow = ({
     custcd: "",
     custnm: "",
     dwgno: "",
-    useyn: "Y",
+    useyn: yn == true ? "Y" : yn == false ? "" : "N",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
