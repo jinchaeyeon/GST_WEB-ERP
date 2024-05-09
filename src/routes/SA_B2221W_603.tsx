@@ -1255,6 +1255,7 @@ const SA_B2221: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
           modal={true}
+          yn={false}
         />
       )}
       {DetailWindowVisible && (

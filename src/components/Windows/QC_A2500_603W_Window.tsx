@@ -784,6 +784,7 @@ const CopyWindow = ({
           setVisible={setItemWindowVisible}
           workType={"ROW_ADD"}
           setData={setItemData}
+          yn={false}
         />
       )}
       {userWindowVisible && (

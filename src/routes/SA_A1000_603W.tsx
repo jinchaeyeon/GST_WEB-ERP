@@ -486,6 +486,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
           workType={"ROW_ADD"}
           setData={setItemData2}
           modal={true}
+          yn={false}
         />
       )}
     </>
