@@ -2481,7 +2481,7 @@ const SA_A1100_603W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%" }}
+        style={{ width: "100%", paddingBottom: window.innerWidth <= 1200 ? "50px" : "" }}
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
@@ -2615,7 +2615,7 @@ const SA_A1100_603W: React.FC = () => {
               fileName="계약관리"
             >
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: "67vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
