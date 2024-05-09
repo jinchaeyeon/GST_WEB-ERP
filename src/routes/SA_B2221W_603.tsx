@@ -72,6 +72,7 @@ import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2221W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+const MAX_CHARACTERS = 6;
 const numberField: string[] = [
   "amt01",
   "amt02",
@@ -774,7 +775,11 @@ const SA_B2221: React.FC = () => {
                 </ChartValueAxis>
                 <ChartCategoryAxis>
                   <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
+                    categories={allChartDataResult.companies.map((name) =>
+                      isMobile && name.length > MAX_CHARACTERS
+                        ? name.slice(0, MAX_CHARACTERS) + "..."
+                        : name
+                    )}
                   >
                     <ChartCategoryAxisTitle text="품목" />
                   </ChartCategoryAxisItem>

@@ -305,10 +305,12 @@ const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
 const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: isMobile == true ? deviceWidth : 1200,
     height: 800,
   });
 
