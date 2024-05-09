@@ -868,7 +868,7 @@ const PanelBarNavContainer = (props: any) => {
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
-          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"}>
+          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"} style={{ paddingBottom: window.innerWidth <= 1200 ? "50px" : "" }}>
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               {companyCode == "2302BA03" ? (
                 <Logo size="120px" name={"BIO"} />
