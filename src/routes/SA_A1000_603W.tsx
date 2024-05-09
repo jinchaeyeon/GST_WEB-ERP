@@ -1067,16 +1067,20 @@ const SA_A1000_603W: React.FC = () => {
     )[0];
 
     if (data != undefined) {
-      if (data.type == "Basic") {
-        setDesignWindowVisible(true);
-      } else if (data.type == "Cheomdan") {
-        setDesignWindowVisible2(true);
-      } else if (data.type == "Invitro") {
-        setDesignWindowVisible3(true);
-      } else if (data.type == "Analyze") {
-        setDesignWindowVisible4(true);
+      if (data.rowstatus == "N" || data.rowstatus == "U") {
+        alert("저장 후 조회해주세요.");
       } else {
-        alert("미정");
+        if (data.type == "Basic") {
+          setDesignWindowVisible(true);
+        } else if (data.type == "Cheomdan") {
+          setDesignWindowVisible2(true);
+        } else if (data.type == "Invitro") {
+          setDesignWindowVisible3(true);
+        } else if (data.type == "Analyze") {
+          setDesignWindowVisible4(true);
+        } else {
+          alert("미정");
+        }
       }
     } else {
       alert("데이터가 없습니다.");
@@ -2291,7 +2295,9 @@ const SA_A1000_603W: React.FC = () => {
           seq: rows2[0].seq,
           passdt: rows2[0].passdt,
         });
-        setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        if(totalRowCnt3 > 0) {
+          setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        }
       } else {
         setInformation2({
           addordgb: "",
@@ -2319,6 +2325,9 @@ const SA_A1000_603W: React.FC = () => {
           seq: 0,
           passdt: 0,
         });
+        if(totalRowCnt3 > 0) {
+          setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -6752,6 +6761,21 @@ const SA_A1000_603W: React.FC = () => {
                 )[0]
               : ""
           }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
+          }
           modal={true}
         />
       )}
@@ -6771,6 +6795,21 @@ const SA_A1000_603W: React.FC = () => {
                     Object.getOwnPropertyNames(selectedState2)[0]
                 )[0]
               : ""
+          }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
           }
           modal={true}
         />
@@ -6823,6 +6862,21 @@ const SA_A1000_603W: React.FC = () => {
                     Object.getOwnPropertyNames(selectedState2)[0]
                 )[0]
               : ""
+          }
+          save={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0].quosts == "1"
+                ? true
+                : false
+              : false
           }
           modal={true}
         />

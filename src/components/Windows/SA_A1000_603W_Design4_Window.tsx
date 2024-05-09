@@ -1,28 +1,32 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FormBox,
   FormBoxWrap,
   GridTitle,
   GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { IWindowPosition } from "../../hooks/interfaces";
+import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UseParaPc,
   getQueryFromBizComponent,
-  numberWithCommas3
+  numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
+import SA_A1000_603W_Design4_PopUp_Window from "./SA_A1000_603W_Design4_PopUp_Window ";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -32,15 +36,91 @@ type IWindow = {
   modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: IWindow) => {
+type TdataArr = {
+  rowstatus_s: string[];
+  seq_s: string[];
+  itemcd_s: string[];
+  injectcnt_s: string[];
+  injectcycle_s: string[];
+  maleqty_s: string[];
+  femaleqty_s: string[];
+  totqty_s: string[];
+  sampleqty_s: string[];
+  urineqty_s: string[];
+  tkqty_s: string[];
+  experimentqty_s: string[];
+  autopsyqty_s: string[];
+  spareqty_s: string[];
+  recoverqty_s: string[];
+  cageqty_s: string[];
+  rackqty_s: string[];
+  infusionqty_s: string[];
+  infusiontime_s: string[];
+  point_s: string[];
+  capacity_s: string[];
+  geomcheqty_s: string[];
+  geomcheprodqty_s: string[];
+  infusioncount_s: string[];
+  testcnt_s: string[];
+  strainqty_s: string[];
+  matterqty_s: string[];
+  affiliationqty_s: string[];
+  plateqty_s: string[];
+  cellqty_s: string[];
+  virusqty_s: string[];
+  runtime_s: string[];
+  gunqty_s: string[];
+  concentrationcnt_s: string[];
+  one_week_s: string[];
+  two_week_s: string[];
+  one_twoweek_s: string[];
+  guaranteeperiod_s: string[];
+  testperiod_s: string[];
+  refineperiod_s: string[];
+  autopsyperiod_s: string[];
+  recoverweek_s: string[];
+  recoverday_s: string[];
+  genderyn_s: string[];
+  breedmeth_s: string[];
+  cagetype_s: string[];
+  prodmac_s: string[];
+  assaytype_s: string[];
+  assaytype1_s: string[];
+  assaytype2_s: string[];
+
+  chlditemcd_s: string[];
+  column_itemcd_s: string[];
+  column_itemnm_s: string[];
+  gubun_s: string[];
+  remark_s: string[];
+  qty_s: string[];
+  optioncd_s: string[];
+  bonyn_s: string[];
+  pointqty_s: string[];
+  chasu_s: string[];
+  chasuspace_s: string[];
+  amt_s: string[];
+  ref_key_s: string[];
+};
+
+const CopyWindow = ({
+  setVisible,
+  filters,
+  item,
+  save = false,
+  modal = false,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 700,
+    height: 650,
   });
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -58,7 +138,7 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
   };
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_BA171, L_BA012_603, L_SA010_603", setBizComponentData);
+  UseBizComponent("L_BA171, L_BA173", setBizComponentData);
 
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -66,27 +146,17 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
   const [prodmacListData, setProdmacListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [assaytypeListData, setAssaytypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_BA012_603"
-        )
-      );
-      const assaytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA010_603"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(prodmacQueryStr, setProdmacListData);
-      fetchQuery(assaytypeQueryStr, setAssaytypeListData);
     }
   }, [bizComponentData]);
 
@@ -162,41 +232,72 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
     }
 
     if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[1].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
+      const totalRowCnt2 = data.tables[1].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
-      const rows3 = data.tables[6].Rows;
 
       if (totalRowCnt > 0) {
-        setInformation({
+        setInformation((prev) => ({
+          ...prev,
+          orgdiv: rows[0].orgdiv,
+          quonum: rows[0].quonum,
+          quorev: rows[0].quorev,
+          quoseq: rows[0].quoseq,
           quotestnum: rows[0].quotestnum,
           itemlvl1: rows[0].itemlvl1,
           itemcd: rows[0].itemcd,
           itemnm: rows[0].itemnm,
-          //기본
+        }));
+      }
+      if (totalRowCnt2 > 0) {
+        setInformation((prev) => ({
+          ...prev,
+          rowstatus_base: "U",
+          seq_base: rows2[0].seq,
+          injectroute_base: rows2[0].injectroute,
+          teststs_base: rows2[0].teststs,
+          chlditemcd_base: rows2[0].chlditemcd,
+          injectcnt_base: rows2[0].injectcnt,
+          injectcycle_base: rows2[0].injectcycle,
+          chasu_base: rows2[0].chasu,
+          testperiod_base: rows2[0].testperiod,
+          experiment_week_base: rows2[0].experiment_week,
+          totqty_base: rows2[0].totqty,
+          experimentqty_base: rows2[0].experimentqty,
+          spareqty_base: rows2[0].spareqty,
+          maleqty_base: rows2[0].maleqty,
+          femaleqty_base: rows2[0].femaleqty,
+          chasuspace_base: rows2[0].chasuspace,
+          geomcheqty_base: rows2[0].geomcheqty,
+          geomcheprodqty_base: rows2[0].geomcheprodqty,
+          totgeomche_base: rows2[0].totgeomche,
+          remark_base: rows2[0].remark,
+          point_base: rows2[0].point,
+          strainqty_base: rows2[0].strainqty,
+          affiliationqty_base: rows2[0].affiliationqty,
+          capacity_base: rows2[0].capacity,
+          plateqty_base: rows2[0].plateqty,
+          cellqty_base: rows2[0].cellqty,
+          virusqty_base: rows2[0].virusqty,
           prodmac_base: rows2[0].prodmac,
           matterqty_base: rows2[0].matterqty,
           runtime_base: rows2[0].runtime,
           assaytype_base: rows2[0].assaytype,
           column_itemcd_base: rows2[0].column_itemcd,
           column_itemnm_base: rows2[0].column_itemnm,
-          testperiod_base: rows2[0].testperiod,
-          experiment_week_base: rows2[0].experiment_week,
-          remark_base: rows2[0].remark,
-          //회복
-          yn_ex: rows3[0].yn == "Y" ? true : false,
-          matterqty_ex: rows3[0].matterqty,
-          prodmac_ex: rows3[0].prodmac,
-          concentrationcnt_ex: rows3[0].concentrationcnt,
-          runtime_ex: rows3[0].runtime,
-          gunqty_ex: rows3[0].gunqty,
-          assaytype_ex: rows3[0].assaytype,
-          column_itemcd_ex: rows3[0].column_itemcd,
-          column_itemnm_ex: rows3[0].column_itemnm,
-          testperiod_ex: rows3[0].testperiod,
-          experiment_week_ex: rows3[0].experiment_week,
-          remark_ex: rows3[0].remark,
-        });
+          refineperiod_base: rows2[0].refineperiod,
+          tkqty_base: rows2[0].tkqty,
+          gunqty_base: rows2[0].gunqty,
+          genderyn_base: rows2[0].genderyn,
+          breedmeth_base: rows2[0].breedmeth,
+          cagetype_base: rows2[0].cagetype,
+          ref_key_base: rows2[0].ref_key,
+          concentrationcnt_base: rows2[0].concentrationcnt,
+          assaytype1_base: rows2[0].assaytype1,
+          assaytype2_base: rows2[0].assaytype2,
+          sampleqty_base: rows2[0].sampleqty,
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -206,38 +307,340 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
   };
 
   useEffect(() => {
-    fetchMainGrid();
-  }, []);
+    if (bizComponentData !== null) {
+      fetchMainGrid();
+    }
+  }, [bizComponentData]);
 
   const [Information, setInformation] = useState({
+    orgdiv: "",
+    quonum: "",
+    quorev: "01",
+    quoseq: "01",
     quotestnum: "",
     itemlvl1: "",
     itemcd: "",
     itemnm: "",
+
     //기본
-    prodmac_base: "",
+    rowstatus_base: "N",
+    seq_base: 0,
+    injectroute_base: "",
+    teststs_base: "",
+    chlditemcd_base: "",
+    injectcnt_base: 0,
+    injectcycle_base: "",
+    chasu_base: 0,
+    testperiod_base: 0,
+    experiment_week_base: 0,
+    totqty_base: 0,
+    experimentqty_base: 0,
+    spareqty_base: 0,
+    maleqty_base: 0,
+    femaleqty_base: 0,
+    chasuspace_base: 0,
+    geomcheqty_base: 0,
+    geomcheprodqty_base: 0,
+    totgeomche_base: 0,
+    remark_base: "",
+    point_base: 0,
+    strainqty_base: 0,
     matterqty_base: 0,
+    affiliationqty_base: 0,
+    capacity_base: 0,
+    plateqty_base: 0,
+    cellqty_base: 0,
+    virusqty_base: 0,
+    prodmac_base: "",
     runtime_base: 0,
     assaytype_base: "",
     column_itemcd_base: "",
     column_itemnm_base: "",
-    testperiod_base: 0,
-    experiment_week_base: 0,
-    remark_base: "",
-    //농도
-    yn_ex: false,
-    matterqty_ex: 0,
-    prodmac_ex: "",
-    concentrationcnt_ex: 0,
-    runtime_ex: 0,
-    gunqty_ex: 0,
-    assaytype_ex: "",
-    column_itemcd_ex: "",
-    column_itemnm_ex: "",
-    testperiod_ex: 0,
-    experiment_week_ex: 0,
-    remark_ex: "",
+    refineperiod_base: 0,
+    tkqty_base: 0,
+    gunqty_base: 0,
+    genderyn_base: "",
+    breedmeth_base: "",
+    cagetype_base: "",
+    ref_key_base: "",
+    concentrationcnt_base: 0,
+    assaytype1_base: 0,
+    assaytype2_base: 0,
+    sampleqty_base: 0,
   });
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+  const onItemWndClick = () => {
+    setItemWindowVisible(true);
+  };
+  const onDetailWndClick = () => {
+    setDetailWindowVisible(true);
+  };
+  const setItemData = (data: IItemData) => {
+    setInformation((prev) => ({
+      ...prev,
+      column_itemcd_base: data.itemcd,
+      column_itemnm_base: data.itemnm,
+    }));
+  };
+
+  const setData = (data: any) => {
+    setInformation((prev) => ({
+      ...prev,
+      ref_key_base: data,
+    }));
+  };
+
+  const onSave = async () => {
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      seq_s: [],
+      itemcd_s: [],
+      injectcnt_s: [],
+      injectcycle_s: [],
+      maleqty_s: [],
+      femaleqty_s: [],
+      totqty_s: [],
+      sampleqty_s: [],
+      urineqty_s: [],
+      tkqty_s: [],
+      experimentqty_s: [],
+      autopsyqty_s: [],
+      spareqty_s: [],
+      recoverqty_s: [],
+      cageqty_s: [],
+      rackqty_s: [],
+      infusionqty_s: [],
+      infusiontime_s: [],
+      point_s: [],
+      capacity_s: [],
+      geomcheqty_s: [],
+      geomcheprodqty_s: [],
+      infusioncount_s: [],
+      testcnt_s: [],
+      strainqty_s: [],
+      matterqty_s: [],
+      affiliationqty_s: [],
+      plateqty_s: [],
+      cellqty_s: [],
+      virusqty_s: [],
+      runtime_s: [],
+      gunqty_s: [],
+      concentrationcnt_s: [],
+      one_week_s: [],
+      two_week_s: [],
+      one_twoweek_s: [],
+      guaranteeperiod_s: [],
+      testperiod_s: [],
+      refineperiod_s: [],
+      autopsyperiod_s: [],
+      recoverweek_s: [],
+      recoverday_s: [],
+      genderyn_s: [],
+      breedmeth_s: [],
+      cagetype_s: [],
+      prodmac_s: [],
+      assaytype_s: [],
+      assaytype1_s: [],
+      assaytype2_s: [],
+
+      chlditemcd_s: [],
+      column_itemcd_s: [],
+      column_itemnm_s: [],
+      gubun_s: [],
+      remark_s: [],
+      qty_s: [],
+      optioncd_s: [],
+      bonyn_s: [],
+      pointqty_s: [],
+      chasu_s: [],
+      chasuspace_s: [],
+      amt_s: [],
+      ref_key_s: [],
+    };
+
+    //기본
+    dataArr.rowstatus_s.push(Information.rowstatus_base);
+    dataArr.seq_s.push(Information.seq_base.toString());
+    dataArr.itemcd_s.push(Information.itemcd);
+    dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
+    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.maleqty_s.push(Information.maleqty_base.toString());
+    dataArr.femaleqty_s.push(Information.femaleqty_base.toString());
+    dataArr.totqty_s.push(Information.totqty_base.toString());
+    dataArr.sampleqty_s.push(Information.sampleqty_base.toString());
+    dataArr.urineqty_s.push("0");
+    dataArr.tkqty_s.push(Information.tkqty_base.toString());
+    dataArr.experimentqty_s.push(Information.experimentqty_base.toString());
+    dataArr.autopsyqty_s.push("0");
+    dataArr.spareqty_s.push(Information.spareqty_base.toString());
+    dataArr.recoverqty_s.push("0");
+    dataArr.cageqty_s.push("0");
+    dataArr.rackqty_s.push("0");
+    dataArr.infusionqty_s.push("0");
+    dataArr.infusiontime_s.push("0");
+    dataArr.point_s.push(Information.point_base.toString());
+    dataArr.capacity_s.push(Information.capacity_base.toString());
+    dataArr.geomcheqty_s.push(Information.geomcheqty_base.toString());
+    dataArr.geomcheprodqty_s.push(Information.geomcheprodqty_base.toString());
+    dataArr.infusioncount_s.push("0");
+    dataArr.testcnt_s.push("0");
+    dataArr.strainqty_s.push(Information.strainqty_base.toString());
+    dataArr.matterqty_s.push(Information.matterqty_base.toString());
+    dataArr.affiliationqty_s.push(Information.affiliationqty_base.toString());
+    dataArr.plateqty_s.push(Information.plateqty_base.toString());
+    dataArr.cellqty_s.push(Information.cellqty_base.toString());
+    dataArr.virusqty_s.push(Information.virusqty_base.toString());
+    dataArr.runtime_s.push(Information.runtime_base.toString());
+    dataArr.gunqty_s.push(Information.gunqty_base.toString());
+    dataArr.concentrationcnt_s.push(
+      Information.concentrationcnt_base.toString()
+    );
+    dataArr.one_week_s.push("0");
+    dataArr.two_week_s.push("0");
+    dataArr.one_twoweek_s.push("0");
+    dataArr.guaranteeperiod_s.push("0");
+    dataArr.testperiod_s.push(Information.testperiod_base.toString());
+    dataArr.refineperiod_s.push(Information.refineperiod_base.toString());
+    dataArr.autopsyperiod_s.push("0");
+    dataArr.recoverweek_s.push("0");
+    dataArr.recoverday_s.push("0");
+    dataArr.genderyn_s.push(Information.genderyn_base);
+    dataArr.breedmeth_s.push(Information.breedmeth_base);
+    dataArr.cagetype_s.push(Information.cagetype_base);
+    dataArr.prodmac_s.push(Information.prodmac_base);
+    dataArr.assaytype_s.push(Information.assaytype_base);
+    dataArr.assaytype1_s.push(Information.assaytype1_base.toString());
+    dataArr.assaytype2_s.push(Information.assaytype2_base.toString());
+
+    dataArr.chlditemcd_s.push(Information.chlditemcd_base);
+    dataArr.column_itemcd_s.push(Information.column_itemcd_base);
+    dataArr.column_itemnm_s.push(Information.column_itemnm_base);
+    dataArr.gubun_s.push("B");
+    dataArr.remark_s.push(Information.remark_base);
+    dataArr.qty_s.push("0");
+    dataArr.optioncd_s.push("");
+    dataArr.bonyn_s.push("");
+    dataArr.pointqty_s.push("0");
+    dataArr.chasu_s.push(Information.chasu_base.toString());
+    dataArr.chasuspace_s.push(Information.chasuspace_base.toString());
+    dataArr.amt_s.push("0");
+    dataArr.ref_key_s.push(Information.ref_key_base);
+
+    const para: Iparameters = {
+      procedureName: "P_SA_A1000_603W_Sub1_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "N",
+        "@p_orgdiv": Information.orgdiv,
+        "@p_table_id": "SA051T",
+        "@p_table_key":
+          Information.quonum +
+          "-" +
+          Information.quorev +
+          "-" +
+          Information.quoseq,
+        "@p_rowstatus_s": dataArr.rowstatus_s.join("|"),
+        "@p_seq_s": dataArr.seq_s.join("|"),
+        "@p_itemcd_s": dataArr.itemcd_s.join("|"),
+        "@p_injectcnt_s": dataArr.injectcnt_s.join("|"),
+        "@p_injectcycle_s": dataArr.injectcycle_s.join("|"),
+        "@p_maleqty_s": dataArr.maleqty_s.join("|"),
+        "@p_femaleqty_s": dataArr.femaleqty_s.join("|"),
+        "@p_totqty_s": dataArr.totqty_s.join("|"),
+        "@p_sampleqty_s": dataArr.sampleqty_s.join("|"),
+        "@p_urineqty_s": dataArr.urineqty_s.join("|"),
+        "@p_tkqty_s": dataArr.tkqty_s.join("|"),
+        "@p_experimentqty_s": dataArr.experimentqty_s.join("|"),
+        "@p_autopsyqty_s": dataArr.autopsyqty_s.join("|"),
+        "@p_spareqty_s": dataArr.spareqty_s.join("|"),
+        "@p_recoverqty_s": dataArr.recoverqty_s.join("|"),
+        "@p_cageqty_s": dataArr.cageqty_s.join("|"),
+        "@p_rackqty_s": dataArr.rackqty_s.join("|"),
+        "@p_infusionqty_s": dataArr.infusionqty_s.join("|"),
+        "@p_infusiontime_s": dataArr.infusiontime_s.join("|"),
+        "@p_point_s": dataArr.point_s.join("|"),
+        "@p_capacity_s": dataArr.capacity_s.join("|"),
+        "@p_geomcheqty_s": dataArr.geomcheqty_s.join("|"),
+        "@p_geomcheprodqty_s": dataArr.geomcheprodqty_s.join("|"),
+        "@p_infusioncount_s": dataArr.infusioncount_s.join("|"),
+        "@p_testcnt_s": dataArr.testcnt_s.join("|"),
+        "@p_strainqty_s": dataArr.strainqty_s.join("|"),
+        "@p_matterqty_s": dataArr.matterqty_s.join("|"),
+        "@p_affiliationqty_s": dataArr.affiliationqty_s.join("|"),
+        "@p_plateqty_s": dataArr.plateqty_s.join("|"),
+        "@p_cellqty_s": dataArr.cellqty_s.join("|"),
+        "@p_virusqty_s": dataArr.virusqty_s.join("|"),
+        "@p_runtime_s": dataArr.runtime_s.join("|"),
+        "@p_gunqty_s": dataArr.gunqty_s.join("|"),
+        "@p_concentrationcnt_s": dataArr.concentrationcnt_s.join("|"),
+        "@p_one_week_s": dataArr.one_week_s.join("|"),
+        "@p_two_week_s": dataArr.two_week_s.join("|"),
+        "@p_one_twoweek_s": dataArr.one_twoweek_s.join("|"),
+        "@p_guaranteeperiod_s": dataArr.guaranteeperiod_s.join("|"),
+        "@p_testperiod_s": dataArr.testperiod_s.join("|"),
+        "@p_refineperiod_s": dataArr.refineperiod_s.join("|"),
+        "@p_autopsyperiod_s": dataArr.autopsyperiod_s.join("|"),
+        "@p_recoverweek_s": dataArr.recoverweek_s.join("|"),
+        "@p_recoverday_s": dataArr.recoverday_s.join("|"),
+        "@p_genderyn_s": dataArr.genderyn_s.join("|"),
+        "@p_breedmeth_s": dataArr.breedmeth_s.join("|"),
+        "@p_cagetype_s": dataArr.cagetype_s.join("|"),
+        "@p_prodmac_s": dataArr.prodmac_s.join("|"),
+        "@p_assaytype_s": dataArr.assaytype_s.join("|"),
+        "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
+        "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
+
+        "@p_chlditemcd_s": dataArr.chlditemcd_s.join("|"),
+        "@p_column_itemcd_s": dataArr.column_itemcd_s.join("|"),
+        "@p_column_itemnm_s": dataArr.column_itemnm_s.join("|"),
+        "@p_gubun_s": dataArr.gubun_s.join("|"),
+        "@p_remark_s": dataArr.remark_s.join("|"),
+        "@p_qty_s": dataArr.qty_s.join("|"),
+        "@p_optioncd_s": dataArr.optioncd_s.join("|"),
+        "@p_bonyn_s": dataArr.bonyn_s.join("|"),
+        "@p_pointqty_s": dataArr.pointqty_s.join("|"),
+        "@p_chasu_s": dataArr.chasu_s.join("|"),
+        "@p_chasuspace_s": dataArr.chasuspace_s.join("|"),
+        "@p_amt_s": dataArr.amt_s.join("|"),
+        "@p_ref_key_s": dataArr.ref_key_s.join("|"),
+
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "SA_A1000_603W",
+      },
+    };
+
+    let data: any;
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      fetchMainGrid();
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -308,6 +711,30 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
           <FormBox>
             <tbody>
               <tr>
+                <th>표준물질수량</th>
+                <td>
+                  {save == true ? (
+                    <Input
+                      name="matterqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.matterqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="matterqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.matterqty_base)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
                 <th>사용기기</th>
                 <td>
                   <Input
@@ -321,77 +748,254 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
                     className="readonly"
                   />
                 </td>
-                <th>시험물질수량</th>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th>농도분석횟수</th>
                 <td>
-                  <Input
-                    name="matterqty_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.matterqty_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="concentrationcnt_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(
+                        Information.concentrationcnt_base
+                      )}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="concentrationcnt_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(
+                        Information.concentrationcnt_base
+                      )}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>RUNTIME</th>
                 <td>
-                  <Input
-                    name="runtime_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.runtime_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="runtime_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.runtime_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="runtime_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.runtime_base)}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th>군구성</th>
+                <td>
+                  {save == true ? (
+                    <Input
+                      name="gunqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.gunqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="gunqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.gunqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
                 <th>분석유형</th>
                 <td>
-                  <Input
-                    name="assaytype_base"
-                    type="text"
-                    value={
-                      assaytypeListData.find(
-                        (item: any) =>
-                          item.sub_code == Information.assaytype_base
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
+                  <div style={{ display: "flex" }}>
+                    {save == true ? (
+                      <Input
+                        name="assaytype1_base"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                          width: "50%",
+                        }}
+                        value={numberWithCommas3(Information.assaytype1_base)}
+                        onChange={InputChange}
+                      />
+                    ) : (
+                      <Input
+                        name="assaytype1_base"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                          width: "50%",
+                        }}
+                        value={numberWithCommas3(Information.assaytype1_base)}
+                        className="readonly"
+                      />
+                    )}
+                    <p style={{ display: "flex", alignItems: "center" }}>
+                      &nbsp;종 개별
+                    </p>
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex" }}>
+                    {save == true ? (
+                      <Input
+                        name="assaytype2_base"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                          width: "50%",
+                        }}
+                        value={numberWithCommas3(Information.assaytype2_base)}
+                        onChange={InputChange}
+                      />
+                    ) : (
+                      <Input
+                        name="assaytype2_base"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                          width: "50%",
+                        }}
+                        value={numberWithCommas3(Information.assaytype2_base)}
+                        className="readonly"
+                      />
+                    )}
+                    <p style={{ display: "flex", alignItems: "center" }}>
+                      &nbsp;종 동시
+                    </p>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <th>총 SAMPLE 수</th>
+                <td>
+                  {save == true ? (
+                    <Input
+                      name="sampleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.sampleqty_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="sampleqty_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.sampleqty_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
-                <th>컬럼품번</th>
+                <th>품목코드</th>
                 <td>
-                  <Input
-                    name="column_itemcd_base"
-                    type="text"
-                    value={Information.column_itemcd_base}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <>
+                      <Input
+                        name="column_itemcd_base"
+                        type="text"
+                        value={Information.column_itemcd_base}
+                        onChange={InputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onItemWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </>
+                  ) : (
+                    <Input
+                      name="column_itemcd_base"
+                      type="text"
+                      value={Information.column_itemcd_base}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>컬럼품명</th>
+                <th>품목명</th>
                 <td>
-                  <Input
-                    name="column_itemnm_base"
-                    type="text"
-                    value={Information.column_itemnm_base}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="column_itemnm_base"
+                      type="text"
+                      value={Information.column_itemnm_base}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="column_itemnm_base"
+                      type="text"
+                      value={Information.column_itemnm_base}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>실험기간(D)</th>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th>시험기간(D)</th>
                 <td>
-                  <Input
-                    name="testperiod_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testperiod_base)}
-                    className="readonly"
-                  />
+                  {save == true ? (
+                    <Input
+                      name="testperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testperiod_base)}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <Input
+                      name="testperiod_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.testperiod_base)}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-                <th>실험기간(W)</th>
+                <th>시험기간(W)</th>
                 <td>
                   <Input
                     name="experiment_week_base"
@@ -403,169 +1007,84 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
                     className="readonly"
                   />
                 </td>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th>시험참조</th>
+                <td colSpan={3}>
+                  {save == true ? (
+                    <>
+                      <Input
+                        name="ref_key_base"
+                        type="text"
+                        value={Information.ref_key_base}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          onClick={onDetailWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                        <Button
+                          onClick={() => {
+                            setInformation((prev) => ({
+                              ...prev,
+                              ref_key_base: "",
+                            }));
+                          }}
+                          icon="close"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </>
+                  ) : (
+                    <Input
+                      name="ref_key_base"
+                      type="text"
+                      value={Information.ref_key_base}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+                <th></th>
+                <td></td>
               </tr>
               <tr>
                 <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_base}
-                    name="remark_base"
-                    rows={2}
-                    className="readonly"
-                  />
+                <td colSpan={3}>
+                  {save == true ? (
+                    <TextArea
+                      value={Information.remark_base}
+                      name="remark_base"
+                      rows={2}
+                      onChange={InputChange}
+                    />
+                  ) : (
+                    <TextArea
+                      value={Information.remark_base}
+                      name="remark_base"
+                      rows={2}
+                      className="readonly"
+                    />
+                  )}
                 </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <FormBoxWrap border={true}>
-          <GridTitleContainer>
-            <GridTitle>농도</GridTitle>
-          </GridTitleContainer>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>농도시험여부</th>
-                <td>
-                  <Checkbox checked={Information.yn_ex} readOnly></Checkbox>
-                </td>
-                <th>시험물질수량</th>
-                <td>
-                  <Input
-                    name="matterqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.matterqty_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>사용기기</th>
-                <td>
-                  <Input
-                    name="prodmac_ex"
-                    type="text"
-                    value={
-                      prodmacListData.find(
-                        (item: any) => item.sub_code == Information.prodmac_ex
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>농도분석횟수</th>
-                <td>
-                  <Input
-                    name="concentrationcnt_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.concentrationcnt_ex)}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>RUNTIME</th>
-                <td>
-                  <Input
-                    name="runtime_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.runtime_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>군구성</th>
-                <td>
-                  <Input
-                    name="gunqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.gunqty_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>분석유형</th>
-                <td>
-                  <Input
-                    name="assaytype_ex"
-                    type="text"
-                    value={
-                      assaytypeListData.find(
-                        (item: any) => item.sub_code == Information.assaytype_ex
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>컬럼품번</th>
-                <td>
-                  <Input
-                    name="column_itemcd_ex"
-                    type="text"
-                    value={Information.column_itemcd_ex}
-                    className="readonly"
-                  />
-                </td>
-                <th>컬럼품명</th>
-                <td>
-                  <Input
-                    name="column_itemnm_ex"
-                    type="text"
-                    value={Information.column_itemnm_ex}
-                    className="readonly"
-                  />
-                </td>
-                <th>실험기간(D)</th>
-                <td>
-                  <Input
-                    name="testperiod_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testperiod_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>실험기간(W)</th>
-                <td>
-                  <Input
-                    name="experiment_week_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experiment_week_ex)}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_ex}
-                    name="remark_ex"
-                    rows={2}
-                    className="readonly"
-                  />
-                </td>
+                <th></th>
+                <td></td>
               </tr>
             </tbody>
           </FormBox>
         </FormBoxWrap>
         <BottomContainer>
           <ButtonContainer>
+            {save == true ? (
+              <Button themeColor={"primary"} onClick={onSave}>
+                저장
+              </Button>
+            ) : (
+              ""
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
@@ -576,6 +1095,22 @@ const CopyWindow = ({ setVisible, filters, item, save = false, modal = false }: 
           </ButtonContainer>
         </BottomContainer>
       </Window>
+      {itemWindowVisible && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
+          yn={false}
+        />
+      )}
+      {detailWindowVisible && (
+        <SA_A1000_603W_Design4_PopUp_Window
+          setVisible={setDetailWindowVisible}
+          filters={filters}
+          item={item}
+          setData={setData}
+        />
+      )}
     </>
   );
 };
