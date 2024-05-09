@@ -2583,56 +2583,66 @@ const MA_A9001W: React.FC = () => {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "left",
+                      alignItems: "flex-end",
                       flexWrap: "wrap",
                       gap: "3px",
+                      flexDirection: "column",
                     }}
                   >
-                    <Button
-                      onClick={onPurCreateClick}
-                      themeColor={"primary"}
-                      icon="plus-outline"
-                    >
-                      매입 전표 생성
-                    </Button>
-                    <Button
-                      onClick={onPurDropClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus-outline"
-                    >
-                      매입 전표 해제
-                    </Button>
-                    <Button
-                      onClick={onPayCreateClick}
-                      themeColor={"primary"}
-                      icon="plus-outline"
-                    >
-                      지급 전표 생성
-                    </Button>
-                    <Button
-                      onClick={onPayDropClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus-outline"
-                    >
-                      지급 전표 해제
-                    </Button>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      매입 E-TAX(전표) 생성
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      매입 E-TAX(전표) 삭제
-                    </Button>
+                    <div>
+                      <Button
+                        onClick={onPurCreateClick}
+                        themeColor={"primary"}
+                        icon="plus-outline"
+                        style={{ marginRight: "4px" }}
+                      >
+                        매입 전표 생성
+                      </Button>
+                      <Button
+                        onClick={onPurDropClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus-outline"
+                      >
+                        매입 전표 해제
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        onClick={onPayCreateClick}
+                        themeColor={"primary"}
+                        icon="plus-outline"
+                        style={{ marginRight: "4px" }}
+                      >
+                        지급 전표 생성
+                      </Button>
+                      <Button
+                        onClick={onPayDropClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus-outline"
+                      >
+                        지급 전표 해제
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="file-add"
+                        style={{ marginRight: "4px" }}
+                      >
+                        매입 E-TAX(전표) 생성
+                      </Button>
+                      <Button
+                        onClick={onDeleteClick2}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="delete"
+                      >
+                        매입 E-TAX(전표) 삭제
+                      </Button>
+                    </div>
                   </div>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2747,11 +2757,11 @@ const MA_A9001W: React.FC = () => {
 
             <SwiperSlide key={1} className="leading_PDA">
               <GridContainer style={{ width: "100%", height: "100%" }}>
-                <div
+                <ButtonContainer
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    padding: "0px 10px 0px 15px",
+                    margin: "0 14px 0 11px",
                   }}
                 >
                   <Button
@@ -2767,278 +2777,274 @@ const MA_A9001W: React.FC = () => {
                     이전
                   </Button>
                   <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(2);
-                      }
-                    }}
-                    icon="arrow-right"
+                    onClick={onSaveClick}
                     themeColor={"primary"}
-                    fillMode={"outline"}
+                    icon="save"
                   >
-                    다음
+                    매입 E-TAX(전표) 저장
                   </Button>
-                </div>
+                </ButtonContainer>
                 <FormBoxWrap>
                   <FormBox>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onSaveClick}
-                        themeColor={"primary"}
-                        icon="save"
-                      >
-                        매입 E-TAX(전표) 저장
-                      </Button>
-                    </ButtonContainer>
-                    <tbody>
-                      <tr>
-                        <th>계산서번호</th>
-                        <td>
-                          <Input
-                            name="taxnum"
-                            type="text"
-                            value={infomation.taxnum}
-                            className="readonly"
-                          />
-                        </td>
-                        <th>TAX구분</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="etax"
-                              value={infomation.etax}
-                              bizComponentId="R_Etax"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>매입매출구분</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="inoutdiv"
-                              value={infomation.inoutdiv}
-                              bizComponentId="R_INOUTDIV2"
-                              bizComponentData={bizComponentData}
-                              className="readonly"
-                            />
-                          )}
-                        </td>
-                        <th></th>
-                        <td>
-                          <Checkbox
-                            name="rtxisuyn"
-                            label={"역발행여부"}
-                            value={infomation.rtxisuyn}
-                            onChange={InputChange}
-                            labelClassName="k-radio-label"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>사업장</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="location"
-                              value={infomation.location}
-                              bizComponentId="L_BA002"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                              className="required"
-                            />
-                          )}
-                        </td>
-                        <th>사업부</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="position"
-                              value={infomation.position}
-                              bizComponentId="L_BA003"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>계산서일자</th>
-                        <td>
-                          <DatePicker
-                            name="taxdt"
-                            value={infomation.taxdt}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            placeholder=""
-                            className="required"
-                          />
-                        </td>
-                        <th>결재구분</th>
-                        <td>
-                          <Input
-                            name="acntdiv"
-                            type="text"
-                            value={infomation.acntdiv}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>업체코드</th>
-                        <td>
-                          <Input
-                            name="custcd"
-                            type="text"
-                            value={infomation.custcd}
-                            onChange={InputChange}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onCustWndClick2}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>업체명</th>
-                        <td>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={infomation.custnm}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>지급예정일</th>
-                        <td>
-                          <DatePicker
-                            name="paydt"
-                            value={infomation.paydt}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            placeholder=""
-                          />
-                        </td>
-                        <th>사업자번호</th>
-                        <td>
-                          <Input
-                            name="custregnum"
-                            type="text"
-                            value={infomation.custregnum}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>수량</th>
-                        <td>
-                          <Input
-                            name="qty"
-                            type="number"
-                            value={infomation.qty}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>수량단위</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="qtyunit"
-                              value={infomation.qtyunit}
-                              bizComponentId="L_BA015"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>계산서유형</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="taxtype"
-                              value={infomation.taxtype}
-                              bizComponentId="L_AC013"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                              className="required"
-                            />
-                          )}
-                        </td>
-                        <th>공급가액</th>
-                        <td>
-                          <Input
-                            name="splyamt"
-                            type="number"
-                            value={infomation.splyamt}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>신용카드</th>
-                        <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="creditcd"
-                              value={infomation.creditcd}
-                              bizComponentId="L_AC030T"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                              textField="Column1"
-                              valueField="creditcd"
-                            />
-                          )}
-                        </td>
-                        <th>부가세액</th>
-                        <td>
-                          <Input
-                            name="taxamt"
-                            type="number"
-                            value={infomation.taxamt}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>거래품목</th>
-                        <td>
-                          <Input
-                            name="items"
-                            type="text"
-                            value={infomation.items}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>합계금액</th>
-                        <td>
-                          <Input
-                            name="totamt"
-                            type="number"
-                            value={infomation.totamt}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>비고</th>
-                        <td colSpan={3}>
-                          <TextArea
-                            value={infomation.remark}
-                            name="remark"
-                            rows={3}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
+                    <div
+                      style={{
+                        overflow: "scroll",
+                        height: `${deviceHeight * 0.74}px`,
+                        width: "100%",
+                      }}
+                    >
+                      <table style={{ width: "100%" }}>
+                        <tbody>
+                          <tr>
+                            <th>계산서번호</th>
+                            <td>
+                              <Input
+                                name="taxnum"
+                                type="text"
+                                value={infomation.taxnum}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>TAX구분</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="etax"
+                                  value={infomation.etax}
+                                  bizComponentId="R_Etax"
+                                  bizComponentData={bizComponentData}
+                                  changeData={RadioChange}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>매입매출구분</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="inoutdiv"
+                                  value={infomation.inoutdiv}
+                                  bizComponentId="R_INOUTDIV2"
+                                  bizComponentData={bizComponentData}
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                            <th></th>
+                            <td>
+                              <Checkbox
+                                name="rtxisuyn"
+                                label={"역발행여부"}
+                                value={infomation.rtxisuyn}
+                                onChange={InputChange}
+                                labelClassName="k-radio-label"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>사업장</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="location"
+                                  value={infomation.location}
+                                  bizComponentId="L_BA002"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                            <th>사업부</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="position"
+                                  value={infomation.position}
+                                  bizComponentId="L_BA003"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>계산서일자</th>
+                            <td>
+                              <DatePicker
+                                name="taxdt"
+                                value={infomation.taxdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                                className="required"
+                              />
+                            </td>
+                            <th>결재구분</th>
+                            <td>
+                              <Input
+                                name="acntdiv"
+                                type="text"
+                                value={infomation.acntdiv}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>업체코드</th>
+                            <td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={infomation.custcd}
+                                onChange={InputChange}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>업체명</th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={infomation.custnm}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>지급예정일</th>
+                            <td>
+                              <DatePicker
+                                name="paydt"
+                                value={infomation.paydt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>사업자번호</th>
+                            <td>
+                              <Input
+                                name="custregnum"
+                                type="text"
+                                value={infomation.custregnum}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>수량</th>
+                            <td>
+                              <Input
+                                name="qty"
+                                type="number"
+                                value={infomation.qty}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>수량단위</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="qtyunit"
+                                  value={infomation.qtyunit}
+                                  bizComponentId="L_BA015"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>계산서유형</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="taxtype"
+                                  value={infomation.taxtype}
+                                  bizComponentId="L_AC013"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                            <th>공급가액</th>
+                            <td>
+                              <Input
+                                name="splyamt"
+                                type="number"
+                                value={infomation.splyamt}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>신용카드</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="creditcd"
+                                  value={infomation.creditcd}
+                                  bizComponentId="L_AC030T"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  textField="Column1"
+                                  valueField="creditcd"
+                                />
+                              )}
+                            </td>
+                            <th>부가세액</th>
+                            <td>
+                              <Input
+                                name="taxamt"
+                                type="number"
+                                value={infomation.taxamt}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>거래품목</th>
+                            <td>
+                              <Input
+                                name="items"
+                                type="text"
+                                value={infomation.items}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>합계금액</th>
+                            <td>
+                              <Input
+                                name="totamt"
+                                type="number"
+                                value={infomation.totamt}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>비고</th>
+                            <td colSpan={3}>
+                              <TextArea
+                                value={infomation.remark}
+                                name="remark"
+                                rows={3}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
@@ -3051,21 +3057,23 @@ const MA_A9001W: React.FC = () => {
                     display: "flex",
                     justifyContent: "left",
                     width: "100%",
-                    paddingBottom: "5px",
+                    marginBottom: "5px",
                   }}
                 >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
                 </div>
                 <TabStrip
                   style={{

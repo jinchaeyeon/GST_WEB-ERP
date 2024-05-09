@@ -753,6 +753,7 @@ const SA_B2200W_603: React.FC = () => {
           workType={"FILTER"}
           setData={setItemData}
           modal={true}
+          yn={false}
         />
       )}
       {projectWindowVisible && (

@@ -486,6 +486,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
           workType={"ROW_ADD"}
           setData={setItemData2}
           modal={true}
+          yn={false}
         />
       )}
     </>
@@ -1560,7 +1561,28 @@ const SA_A1000_603W: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
   const onPrint = () => {
-    setPrintWindowVisible(true);
+    if (!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
+      return false;
+    }
+
+    if (mainDataResult.total > 0) {
+      setPrintWindowVisible(true);
+
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "FINISH",
+        orgdiv: data.orgdiv,
+        quonum: data.quonum,
+        quorev: data.quorev,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInformation((prev) => {
@@ -2295,7 +2317,7 @@ const SA_A1000_603W: React.FC = () => {
           seq: rows2[0].seq,
           passdt: rows2[0].passdt,
         });
-        if(totalRowCnt3 > 0) {
+        if (totalRowCnt3 > 0) {
           setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
         }
       } else {
@@ -2325,7 +2347,7 @@ const SA_A1000_603W: React.FC = () => {
           seq: 0,
           passdt: 0,
         });
-        if(totalRowCnt3 > 0) {
+        if (totalRowCnt3 > 0) {
           setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
         }
       }
@@ -3565,29 +3587,6 @@ const SA_A1000_603W: React.FC = () => {
     },
   };
 
-  const onChangeStatus = () => {
-    if (!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
-      return false;
-    }
-
-    if (mainDataResult.total > 0) {
-      const data = mainDataResult.data.filter(
-        (item) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-      )[0];
-
-      setParaData((prev) => ({
-        ...prev,
-        workType: "FINISH",
-        orgdiv: data.orgdiv,
-        quonum: data.quonum,
-        quorev: data.quorev,
-      }));
-    } else {
-      alert("데이터가 없습니다.");
-    }
-  };
-
   const onSaveClick2 = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
@@ -4559,14 +4558,6 @@ const SA_A1000_603W: React.FC = () => {
                   icon="delete"
                 >
                   삭제
-                </Button>
-                <Button
-                  onClick={onChangeStatus}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                >
-                  견적서 출력
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -5751,7 +5742,7 @@ const SA_A1000_603W: React.FC = () => {
                   fileName="프로젝트관리"
                 >
                   <Grid
-                    style={{ height: `calc(80vh - 500px)` }}
+                    style={{ height: isMobile ? "50vh" : `calc(80vh - 500px)` }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
