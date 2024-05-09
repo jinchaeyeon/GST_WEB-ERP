@@ -51,6 +51,9 @@ const DATA_ITEM_KEY = "num";
 const dateField = ["birdt", "regorgdt", "rtrdt"];
 
 const HU_B1020W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
 
@@ -420,10 +423,11 @@ const HU_B1020W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <GridContainer>
+      <div className={isMobile ? "leading_75_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+      <GridContainer style={{ height: "100%", width: "100%" }}>
         <GridTitleContainer>
-          <GridTitle style={{ height: "10%" }}>사원 LIST</GridTitle>
+          <GridTitle>사원 LIST</GridTitle>
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -433,7 +437,7 @@ const HU_B1020W: React.FC = () => {
           fileName="인원명부"
         >
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: isMobile ? `${deviceHeight * 0.72}px` :  "83vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -502,6 +506,8 @@ const HU_B1020W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      </div>
+      </div>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
