@@ -1865,7 +1865,11 @@ const MA_B7200W: React.FC = () => {
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ width: "100%" }}
+            style={{
+              height: `${deviceHeight * 0.847}px`,
+              width: "100%",
+              paddingBottom: "15px",
+            }}
           >
             <TabStripTab title="재고현황">
               <Swiper
@@ -1892,7 +1896,10 @@ const MA_B7200W: React.FC = () => {
                       </GridTitleContainer>
                       <GridContainer style={{ width: "100%", height: "100%" }}>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.62}px` }}
+                          style={{
+                            height: `${deviceHeight * 0.63}px`,
+                            width: "100%",
+                          }}
                           data={newData.map((item: { items: any[] }) => ({
                             ...item,
                             items: item.items.map((row: any) => ({
@@ -1987,7 +1994,7 @@ const MA_B7200W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: `${deviceHeight * 0.62}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                           data={process(
@@ -2100,7 +2107,7 @@ const MA_B7200W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height: `${deviceHeight * 0.62}px`,
+                              height: `${deviceHeight * 0.63}px`,
                               width: "100%",
                             }}
                             data={process(
@@ -2206,7 +2213,10 @@ const MA_B7200W: React.FC = () => {
                           <GridTitle>제공품재고</GridTitle>
                         </GridTitleContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.62}px` }}
+                          style={{
+                            height: `${deviceHeight * 0.63}px`,
+                            width: "100%",
+                          }}
                           data={newData2.map((item: { items: any[] }) => ({
                             ...item,
                             items: item.items.map((row: any) => ({
@@ -2318,7 +2328,7 @@ const MA_B7200W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: `${deviceHeight * 0.62}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                           data={process(
@@ -2426,7 +2436,7 @@ const MA_B7200W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: `${deviceHeight * 0.62}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                           data={process(

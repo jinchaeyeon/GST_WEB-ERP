@@ -3351,7 +3351,7 @@ const MA_A3500W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: `${deviceHeight * 0.8 - 50}px`,
+                        height: `${deviceHeight * 0.8 - 70}px`,
                         width: "100%",
                       }}
                       data={process(
