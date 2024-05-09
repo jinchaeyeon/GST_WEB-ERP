@@ -81,6 +81,10 @@ import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+var index = 0;
 
 const DATA_ITEM_KEY_USE = "prsnnum";
 const DATA_ITEM_KEY_USE_DETAIL = "startdate";
@@ -218,6 +222,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const HU_B4000W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter_use = getter(DATA_ITEM_KEY_USE);
   const idGetter_use_detail = getter(DATA_ITEM_KEY_USE_DETAIL);
@@ -287,9 +296,8 @@ const HU_B4000W: React.FC = () => {
       setAdjFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        prsnnum_adj: defaultOption.find(
-          (item: any) => item.id == "prsnnum_adj"
-        )?.valueCode,
+        prsnnum_adj: defaultOption.find((item: any) => item.id == "prsnnum_adj")
+          ?.valueCode,
         adjdiv: defaultOption.find((item: any) => item.id == "adjdiv")
           ?.valueCode,
       }));
@@ -1162,7 +1170,7 @@ const HU_B4000W: React.FC = () => {
     var parts = userAdjDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1174,7 +1182,7 @@ const HU_B4000W: React.FC = () => {
     var parts = adjDetailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1186,7 +1194,7 @@ const HU_B4000W: React.FC = () => {
     var parts = commuteDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1198,7 +1206,7 @@ const HU_B4000W: React.FC = () => {
     var parts = journalDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1210,7 +1218,7 @@ const HU_B4000W: React.FC = () => {
     var parts = adjDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1295,6 +1303,10 @@ const HU_B4000W: React.FC = () => {
       pgNum: 1,
       isSearch: true,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+      swiper.update();
+    }
   };
 
   const onAdjDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1937,310 +1949,765 @@ const HU_B4000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainerWrap>
-            <Splitter panes={horizontalPanes} onChange={onHorizontalChange}>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>사용자별 연차 집계</GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={userAdjDataResult.data}
-                  ref={(exporter) => {
-                    _export = exporter;
+          {isMobile ? (
+            <>
+              <GridContainerWrap>
+                <Swiper
+                  className="leading_60_Swiper"
+                  onSwiper={(swiper) => {
+                    setSwiper(swiper);
                   }}
-                  fileName="연차사용현황(관리자)"
-                >
-                  <Grid
-                    style={{ height: "72vh" }}
-                    data={process(
-                      userAdjDataResult.data.map((row) => ({
-                        ...row,
-                        [SELECTED_FIELD]:
-                          selectedUserAdjState[idGetter_use(row)],
-                      })),
-                      userAdjDataState
-                    )}
-                    {...userAdjDataState}
-                    onDataStateChange={onUserAdjDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY_USE}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={userAdjDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={userAdjPageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={grdUserAdj}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onUserAdjSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdUserAdj"
-                      ]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : NumberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>연차상세</GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={adjDetailDataResult.data}
-                  ref={(exporter) => {
-                    _export2 = exporter;
+                  onActiveIndexChange={(swiper) => {
+                    index = swiper.activeIndex;
                   }}
-                  fileName="연차사용현황(관리자)"
                 >
-                  <Grid
-                    style={{ height: "72vh" }}
-                    data={process(
-                      adjDetailDataResult.data.map((row) => ({
-                        ...row,
-                        [SELECTED_FIELD]:
-                          selectedAdjDetailState[idGetter_use_detail(row)],
-                      })),
-                      adjDetailDataState
-                    )}
-                    {...adjDetailDataState}
-                    onDataStateChange={onAdjDetailDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY_USE_DETAIL}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onAdjDetailSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={adjDetailDataResult.total}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={userAdjDetailPageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={grdAdjDetail}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onAdjDetailSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%" }}>
+                      <GridTitleContainer>
+                        <GridTitle>사용자별 연차 집계</GridTitle>
+                      </GridTitleContainer>
+                      <ExcelExport
+                        data={userAdjDataResult.data}
+                        ref={(exporter) => {
+                          _export = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: `${deviceHeight * 0.6}px` }}
+                          data={process(
+                            userAdjDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedUserAdjState[idGetter_use(row)],
+                            })),
+                            userAdjDataState
+                          )}
+                          {...userAdjDataState}
+                          onDataStateChange={onUserAdjDataStateChange}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY_USE}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={userAdjDataResult.total}
+                          skip={page.skip}
+                          take={page.take}
+                          pageable={true}
+                          onPageChange={userAdjPageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdUserAdj}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onUserAdjSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdUserAdj"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </SwiperSlide>
+                  <SwiperSlide
+                    key={1}
+                    className="leading_PDA_custom"
+                    style={{ display: "flex", flexDirection: "column" }}
                   >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdAdjDetail"
-                      ]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
+                    <GridContainer style={{ width: "100%" }}>
+                      <GridTitleContainer>
+                        <GridTitle>연차상세</GridTitle>
+                      </GridTitleContainer>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="arrow-left"
+                        >
+                          이전
+                        </Button>
+                        <div>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(2);
                               }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? subTotalFooterCell
-                                  : undefined
+                            }}
+                            style={{ marginRight: "5px" }}
+                          >
+                            출퇴근부
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(3);
                               }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-              <GridContainer>
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>출퇴근부</GridTitle>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={commuteDataResult.data}
-                    ref={(exporter) => {
-                      _export3 = exporter;
-                    }}
-                    fileName="연차사용현황(관리자)"
+                            }}
+                          >
+                            일지
+                          </Button>
+                        </div>
+                      </div>
+                      <ExcelExport
+                        data={adjDetailDataResult.data}
+                        ref={(exporter) => {
+                          _export2 = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: `${deviceHeight * 0.55}px` }}
+                          data={process(
+                            adjDetailDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedAdjDetailState[
+                                  idGetter_use_detail(row)
+                                ],
+                            })),
+                            adjDetailDataState
+                          )}
+                          {...adjDetailDataState}
+                          onDataStateChange={onAdjDetailDataStateChange}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY_USE_DETAIL}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onAdjDetailSelectionChange}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={adjDetailDataResult.total}
+                          skip={page2.skip}
+                          take={page2.take}
+                          pageable={true}
+                          onPageChange={userAdjDetailPageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdAdjDetail}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onAdjDetailSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdAdjDetail"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </SwiperSlide>
+                  <SwiperSlide
+                    key={2}
+                    className="leading_PDA_custom"
+                    style={{ display: "flex", flexDirection: "column" }}
                   >
-                    <Grid
-                      style={{ height: "40vh" }}
-                      data={process(
-                        commuteDataResult.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]:
-                            selectedCommuteState[idGetter_commute(row)],
-                        })),
-                        commuteDataState
-                      )}
-                      {...commuteDataState}
-                      onDataStateChange={onCommuteDataStateChange}
-                      // 선택 기능
-                      dataItemKey={DATA_ITEM_KEY_COMMUTE}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onCommuteSelectionChange}
-                      // 스크롤 조회 기능
-                      fixedScroll={true}
-                      total={commuteDataResult.total}
-                      skip={page3.skip}
-                      take={page3.take}
-                      pageable={true}
-                      onPageChange={commutePageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={grdCommuteRef}
-                      rowHeight={30}
-                      // 정렬기능
-                      sortable={true}
-                      onSortChange={onCommuteSortChange}
-                      // 컬럼순서조정
-                      reorderable={true}
-                      // 컬럼너비조정
-                      resizable={true}
-                    >
-                      <GridColumn
-                        field="dutydt"
-                        title="년월"
-                        width="100px"
-                        cell={CenterCell}
-                        footerCell={subTotalFooterCell2}
-                      />
-                      <GridColumn>{createDateColumn()}</GridColumn>
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>일지상세</GridTitle>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={journalDataResult.data}
-                    ref={(exporter) => {
-                      _export4 = exporter;
-                    }}
-                    fileName="연차사용현황(관리자)"
+                    <GridContainer style={{ width: "100%" }}>
+                      <GridTitleContainer>
+                        <GridTitle>출퇴근부</GridTitle>
+                      </GridTitleContainer>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                            icon="arrow-left"
+                            style={{ marginRight: "5px" }}
+                          >
+                            이전
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                          >
+                            연차상세
+                          </Button>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(3);
+                            }
+                          }}
+                        >
+                          일지
+                        </Button>
+                      </div>
+                      <ExcelExport
+                        data={commuteDataResult.data}
+                        ref={(exporter) => {
+                          _export3 = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: `${deviceHeight * 0.55}px` }}
+                          data={process(
+                            commuteDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedCommuteState[idGetter_commute(row)],
+                            })),
+                            commuteDataState
+                          )}
+                          {...commuteDataState}
+                          onDataStateChange={onCommuteDataStateChange}
+                          // 선택 기능
+                          dataItemKey={DATA_ITEM_KEY_COMMUTE}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onCommuteSelectionChange}
+                          // 스크롤 조회 기능
+                          fixedScroll={true}
+                          total={commuteDataResult.total}
+                          skip={page3.skip}
+                          take={page3.take}
+                          pageable={true}
+                          onPageChange={commutePageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdCommuteRef}
+                          rowHeight={30}
+                          // 정렬기능
+                          sortable={true}
+                          onSortChange={onCommuteSortChange}
+                          // 컬럼순서조정
+                          reorderable={true}
+                          // 컬럼너비조정
+                          resizable={true}
+                        >
+                          <GridColumn
+                            field="dutydt"
+                            title="년월"
+                            width="100px"
+                            cell={CenterCell}
+                            footerCell={subTotalFooterCell2}
+                          />
+                          <GridColumn>{createDateColumn()}</GridColumn>
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </SwiperSlide>
+                  <SwiperSlide
+                    key={1}
+                    className="leading_PDA_custom"
+                    style={{ display: "flex", flexDirection: "column" }}
                   >
-                    <Grid
-                      style={{ height: "28vh" }}
-                      data={process(
-                        journalDataResult.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]:
-                            selectedJournalState[idGetter_journal(row)], //선택된 데이터
-                        })),
-                        journalDataState
-                      )}
-                      {...journalDataState}
-                      onDataStateChange={onJournalDataStateChange}
-                      //선택기능
-                      dataItemKey={DATA_ITEM_KEY_JOURNARL}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
+                    <GridContainer style={{ width: "100%" }}>
+                      <GridTitleContainer>
+                        <GridTitle>일지상세</GridTitle>
+                      </GridTitleContainer>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                            style={{ marginRight: "5px" }}
+                            icon="arrow-left"
+                          >
+                            이전
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                          >
+                            연차상세
+                          </Button>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                        >
+                          출퇴근부
+                        </Button>
+                      </div>
+                      <ExcelExport
+                        data={journalDataResult.data}
+                        ref={(exporter) => {
+                          _export4 = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: `${deviceHeight * 0.55}px` }}
+                          data={process(
+                            journalDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedJournalState[idGetter_journal(row)], //선택된 데이터
+                            })),
+                            journalDataState
+                          )}
+                          {...journalDataState}
+                          onDataStateChange={onJournalDataStateChange}
+                          //선택기능
+                          dataItemKey={DATA_ITEM_KEY_JOURNARL}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onJournalSelectionChange}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={journalDataResult.total}
+                          skip={page4.skip}
+                          take={page4.take}
+                          pageable={true}
+                          onPageChange={journalPageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdJournalRef}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onJournalSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdJournalList"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </SwiperSlide>
+                </Swiper>
+              </GridContainerWrap>
+            </>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <Splitter panes={horizontalPanes} onChange={onHorizontalChange}>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>사용자별 연차 집계</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={userAdjDataResult.data}
+                      ref={(exporter) => {
+                        _export = exporter;
                       }}
-                      onSelectionChange={onJournalSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={journalDataResult.total}
-                      skip={page4.skip}
-                      take={page4.take}
-                      pageable={true}
-                      onPageChange={journalPageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={grdJournalRef}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onJournalSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
+                      fileName="연차사용현황(관리자)"
                     >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdJournalList"
-                        ]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  DateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? subTotalFooterCell3
-                                    : undefined
-                                }
-                              />
-                            )
+                      <Grid
+                        style={{ height: "72vh" }}
+                        data={process(
+                          userAdjDataResult.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedUserAdjState[idGetter_use(row)],
+                          })),
+                          userAdjDataState
                         )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </GridContainer>
-            </Splitter>
-          </GridContainerWrap>
+                        {...userAdjDataState}
+                        onDataStateChange={onUserAdjDataStateChange}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY_USE}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={userAdjDataResult.total}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable={true}
+                        onPageChange={userAdjPageChange}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={grdUserAdj}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onUserAdjSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdUserAdj"
+                          ]?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>연차상세</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={adjDetailDataResult.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="연차사용현황(관리자)"
+                    >
+                      <Grid
+                        style={{ height: "72vh" }}
+                        data={process(
+                          adjDetailDataResult.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedAdjDetailState[idGetter_use_detail(row)],
+                          })),
+                          adjDetailDataState
+                        )}
+                        {...adjDetailDataState}
+                        onDataStateChange={onAdjDetailDataStateChange}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY_USE_DETAIL}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onAdjDetailSelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={adjDetailDataResult.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={userAdjDetailPageChange}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={grdAdjDetail}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onAdjDetailSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdAdjDetail"
+                          ]?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? subTotalFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridContainer>
+                      <GridTitleContainer>
+                        <GridTitle>출퇴근부</GridTitle>
+                      </GridTitleContainer>
+                      <ExcelExport
+                        data={commuteDataResult.data}
+                        ref={(exporter) => {
+                          _export3 = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: "40vh" }}
+                          data={process(
+                            commuteDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedCommuteState[idGetter_commute(row)],
+                            })),
+                            commuteDataState
+                          )}
+                          {...commuteDataState}
+                          onDataStateChange={onCommuteDataStateChange}
+                          // 선택 기능
+                          dataItemKey={DATA_ITEM_KEY_COMMUTE}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onCommuteSelectionChange}
+                          // 스크롤 조회 기능
+                          fixedScroll={true}
+                          total={commuteDataResult.total}
+                          skip={page3.skip}
+                          take={page3.take}
+                          pageable={true}
+                          onPageChange={commutePageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdCommuteRef}
+                          rowHeight={30}
+                          // 정렬기능
+                          sortable={true}
+                          onSortChange={onCommuteSortChange}
+                          // 컬럼순서조정
+                          reorderable={true}
+                          // 컬럼너비조정
+                          resizable={true}
+                        >
+                          <GridColumn
+                            field="dutydt"
+                            title="년월"
+                            width="100px"
+                            cell={CenterCell}
+                            footerCell={subTotalFooterCell2}
+                          />
+                          <GridColumn>{createDateColumn()}</GridColumn>
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+
+                    <GridContainer>
+                      <GridTitleContainer>
+                        <GridTitle>일지상세</GridTitle>
+                      </GridTitleContainer>
+                      <ExcelExport
+                        data={journalDataResult.data}
+                        ref={(exporter) => {
+                          _export4 = exporter;
+                        }}
+                        fileName="연차사용현황(관리자)"
+                      >
+                        <Grid
+                          style={{ height: "28vh" }}
+                          data={process(
+                            journalDataResult.data.map((row) => ({
+                              ...row,
+                              [SELECTED_FIELD]:
+                                selectedJournalState[idGetter_journal(row)], //선택된 데이터
+                            })),
+                            journalDataState
+                          )}
+                          {...journalDataState}
+                          onDataStateChange={onJournalDataStateChange}
+                          //선택기능
+                          dataItemKey={DATA_ITEM_KEY_JOURNARL}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onJournalSelectionChange}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={journalDataResult.total}
+                          skip={page4.skip}
+                          take={page4.take}
+                          pageable={true}
+                          onPageChange={journalPageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={grdJournalRef}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onJournalSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdJournalList"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </GridContainer>
+                </Splitter>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="연차조정">
           <FilterContainer>

@@ -76,6 +76,7 @@ import {
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
+  PAGE_SIZE,
   GAP,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -173,7 +174,7 @@ interface Geometry {
 }
 
 // 지도 기업수 클러스터링 위해 페이지 사이즈 임의로 늘림
-const PAGE_SIZE = 10000;
+// const PAGE_SIZE = 100;
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";

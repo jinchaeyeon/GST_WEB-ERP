@@ -1620,95 +1620,84 @@ const HU_A1000W: React.FC = () => {
 
   return (
     <>
+      <TitleContainer>
+        <Title>인사관리</Title>
+        <ButtonContainer>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+              pathname="HU_A1000W"
+            />
+          )}
+        </ButtonContainer>
+      </TitleContainer>
+      <FilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>부서코드</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dptcd"
+                    value={filters.dptcd}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="dptnm"
+                    valueField="dptcd"
+                  />
+                )}
+              </td>
+              <th>사번</th>
+              <td>
+                <Input
+                  name="prsnnum"
+                  type="text"
+                  value={filters.prsnnum}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onUserWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>성명</th>
+              <td>
+                <Input
+                  name="prsnnm"
+                  type="text"
+                  value={filters.prsnnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>재직여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="rtrchk"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterContainer>
       {isMobile ? (
         <GridContainerWrap>
-          <Swiper
-            className="leading_95_Swiper"
-            onSwiper={(swiper) => {
-              setSwiper(swiper);
-            }}
-            onActiveIndexChange={(swiper) => {
-              index = swiper.activeIndex;
-            }}
-          >
-            <SwiperSlide key={0} className="leading_PDA_custom">
+          <div className={isMobile ? "leading_75_Swiper" : ""}>
+            <div className={isMobile ? "leading_PDA_custom" : ""}>
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <TitleContainer>
-                  <Title>인사관리</Title>
-                  <ButtonContainer>
-                  <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>부서코드</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="dptcd"
-                              value={filters.dptcd}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                              textField="dptnm"
-                              valueField="dptcd"
-                            />
-                          )}
-                        </td>
-                        <th>사번</th>
-                        <td>
-                          <Input
-                            name="prsnnum"
-                            type="text"
-                            value={filters.prsnnum}
-                            onChange={filterInputChange}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onUserWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>성명</th>
-                        <td>
-                          <Input
-                            name="prsnnm"
-                            type="text"
-                            value={filters.prsnnm}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>재직여부</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="rtrchk"
-                              customOptionData={customOptionData}
-                              changeData={filterRadioChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="HU_A1000W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                
                 <GridTitleContainer>
-                  <ButtonContainer style={{marginBottom:"5px"}}>
+                  <ButtonContainer>
                     <Button
                       onClick={() => setShowMap(!showMap)}
                       themeColor={"primary"}
@@ -1721,8 +1710,8 @@ const HU_A1000W: React.FC = () => {
                     >
                       {showOrg ? "리스트 보기" : "조직도 보기"}
                     </Button>
-                    </ButtonContainer>
-                    <ButtonContainer>
+                  </ButtonContainer>
+                  <ButtonContainer style={{ paddingTop: "5px" }}>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
@@ -1743,7 +1732,10 @@ const HU_A1000W: React.FC = () => {
 
                 {showMap ? (
                   <div
-                    style={{ height: isMobile ? `${deviceHeight * 0.73}px` : "72vh", marginTop: "5px" }}
+                    style={{
+                      height: isMobile ? `${deviceHeight * 0.67}px` : "72vh",
+                      marginTop: "5px",
+                    }}
                     id="map"
                   ></div>
                 ) : showOrg ? (
@@ -1757,7 +1749,9 @@ const HU_A1000W: React.FC = () => {
                     fileName="인사관리"
                   >
                     <Grid
-                      style={{ height: isMobile ? `${deviceHeight * 0.73}px` : "72vh" }}
+                      style={{
+                        height: isMobile ? `${deviceHeight * 0.67}px` : "72vh",
+                      }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1819,7 +1813,9 @@ const HU_A1000W: React.FC = () => {
                     >
                       <GridColumn cell={CommandCell} width="50px" />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList"
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1844,80 +1840,11 @@ const HU_A1000W: React.FC = () => {
                   </ExcelExport>
                 )}
               </GridContainer>
-            </SwiperSlide>
-          </Swiper>
+            </div>
+          </div>
         </GridContainerWrap>
       ) : (
         <>
-          <TitleContainer>
-            <Title>인사관리</Title>
-            <ButtonContainer>
-              {permissions && (
-                <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="HU_A1000W"
-                />
-              )}
-            </ButtonContainer>
-          </TitleContainer>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>부서코드</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="dptcd"
-                        value={filters.dptcd}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        textField="dptnm"
-                        valueField="dptcd"
-                      />
-                    )}
-                  </td>
-                  <th>사번</th>
-                  <td>
-                    <Input
-                      name="prsnnum"
-                      type="text"
-                      value={filters.prsnnum}
-                      onChange={filterInputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onUserWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                  <th>성명</th>
-                  <td>
-                    <Input
-                      name="prsnnm"
-                      type="text"
-                      value={filters.prsnnm}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>재직여부</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="rtrchk"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>기본정보</GridTitle>
