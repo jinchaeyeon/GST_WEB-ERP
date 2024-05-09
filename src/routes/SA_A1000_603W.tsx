@@ -2295,7 +2295,7 @@ const SA_A1000_603W: React.FC = () => {
           seq: rows2[0].seq,
           passdt: rows2[0].passdt,
         });
-        if(totalRowCnt3 > 0) {
+        if (totalRowCnt3 > 0) {
           setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
         }
       } else {
@@ -2325,7 +2325,7 @@ const SA_A1000_603W: React.FC = () => {
           seq: 0,
           passdt: 0,
         });
-        if(totalRowCnt3 > 0) {
+        if (totalRowCnt3 > 0) {
           setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
         }
       }
@@ -5751,7 +5751,7 @@ const SA_A1000_603W: React.FC = () => {
                   fileName="프로젝트관리"
                 >
                   <Grid
-                    style={{ height: `calc(80vh - 500px)` }}
+                    style={{ height: isMobile ? "50vh" : `calc(80vh - 500px)` }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
