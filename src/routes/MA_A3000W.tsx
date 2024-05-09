@@ -2250,40 +2250,25 @@ const MA_A3000W: React.FC = () => {
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer style={{ width: "100%", height: "100%" }}>
                 <GridTitleContainer>
-                  <GridTitle>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                      }}
+                  <div
+                    style={{ 
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onPrint}
+                      icon="print"
+                      style={{ marginLeft: "15px" }}
                     >
-                      요약정보
-                      <ButtonContainer>
-                        <Button
-                          themeColor={"primary"}
-                          fillMode="outline"
-                          onClick={onPrint}
-                          icon="print"
-                          style={{ marginLeft: "15px" }}
-                        >
-                          바코드출력
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            if (swiper) {
-                              swiper.slideTo(1);
-                            }
-                          }}
-                          icon="arrow-right"
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                        >
-                          다음
-                        </Button>
-                      </ButtonContainer>
-                    </div>
-                  </GridTitle>
+                      바코드출력
+                    </Button>
+                  </ButtonContainer>
+                  </div>
                   <ButtonContainer>
                     <Button
                       themeColor={"primary"}
@@ -2319,7 +2304,7 @@ const MA_A3000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.7}px`,
+                      height: `${deviceHeight * 0.72}px`,
                       width: "100%",
                     }}
                     data={process(
