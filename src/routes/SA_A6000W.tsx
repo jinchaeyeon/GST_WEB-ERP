@@ -2275,7 +2275,7 @@ const SA_A6000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{ width: "100%", height: "83vh" }}
+        style={{ width: "100%", height: "83vh", paddingBottom: window.innerWidth <= 1200 ? "50px" : ""  }}
         selected={tabSelected}
         onSelect={handleSelectTab}
       >
