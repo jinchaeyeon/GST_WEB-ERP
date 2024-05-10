@@ -30,7 +30,6 @@ import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   GridContainer,
   GridContainerWrap,
   GridTitle,
@@ -38,6 +37,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import DateCell from "../components/Cells/DateCell";
@@ -1444,7 +1444,7 @@ const HU_B4010W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterBoxWrap>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -1465,7 +1465,7 @@ const HU_B4010W: React.FC = () => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterBoxWrap>
+      </FilterContainer>
 
       <GridContainerWrap>
         <GridContainer width="17%">

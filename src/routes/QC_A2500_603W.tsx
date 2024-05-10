@@ -25,7 +25,6 @@ import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
-  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -35,6 +34,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -1697,7 +1697,7 @@ const BA_A0020_603: React.FC = () => {
         style={{ width: "100%", height: "90vh" }}
       >
         <TabStripTab title="요약정보">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox>
               <tbody>
                 <tr>
@@ -1852,7 +1852,7 @@ const BA_A0020_603: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>

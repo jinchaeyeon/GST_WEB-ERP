@@ -53,7 +53,6 @@ import {
   ButtonInGridInput,
   ButtonInInput,
   FilterBox,
-  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -63,6 +62,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import FilterContainer from "../components/Containers/FilterContainer";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import DateCell from "../components/Cells/DateCell";
@@ -4356,7 +4356,7 @@ const SA_A1000_603W: React.FC = () => {
         style={{ width: "100%" }}
       >
         <TabStripTab title="요약정보">
-          <FilterBoxWrap>
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -4489,7 +4489,7 @@ const SA_A1000_603W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
+          </FilterContainer>
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>

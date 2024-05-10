@@ -28,10 +28,13 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
 
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 500,
+    width: isMobile == true ? deviceWidth : 500,
     height: 320,
   });
 
