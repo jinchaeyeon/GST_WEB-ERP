@@ -2238,7 +2238,7 @@ const QC_A3000: React.FC = () => {
             fileName="공정검사"
           >
             <Grid
-              style={{ height: "35.4vh" }}
+              style={{ height: "36.5vh" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -2303,7 +2303,9 @@ const QC_A3000: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-        <FormBoxWrap border={true} style={{ width: "40vw", marginTop: "4vh" }}>
+        <FormBoxWrap 
+          border={true} 
+          style={{ width: "40vw", marginTop: "30px" }}>
           <FormBox style={{ marginLeft: "-3vh" }}>
             <tbody>
               <tr>
@@ -2460,7 +2462,7 @@ const QC_A3000: React.FC = () => {
               fileName="공정검사"
             >
               <Grid
-                style={{ height: "37.5vh" }}
+                style={{ height: "40.5vh", width: "35.5vw" }}
                 data={process(
                   detailDataResult2.data.map((row) => ({
                     ...row,

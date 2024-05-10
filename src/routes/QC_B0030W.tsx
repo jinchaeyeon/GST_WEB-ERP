@@ -984,7 +984,7 @@ const QC_B0030W: React.FC = () => {
         >
           {filters.dtgb == "A" ? (
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "34.3vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1049,7 +1049,7 @@ const QC_B0030W: React.FC = () => {
             </Grid>
           ) : (
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "34.3vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
