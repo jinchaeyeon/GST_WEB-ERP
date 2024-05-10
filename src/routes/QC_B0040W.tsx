@@ -1412,7 +1412,7 @@ const QC_B0040W: React.FC = () => {
           fileName="LOT정추적"
         >
           <Grid
-            style={{ height: "22vh" }}
+            style={{ height: "21vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

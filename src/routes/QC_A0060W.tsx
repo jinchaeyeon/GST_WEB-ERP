@@ -1112,7 +1112,7 @@ const QC_A0060W: React.FC = () => {
           fileName="검사표준서"
         >
           <Grid
-            style={{ height: "30vh" }}
+            style={{ height: "32vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
