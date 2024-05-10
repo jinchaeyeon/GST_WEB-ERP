@@ -517,7 +517,7 @@ const QC_A0120: React.FC = () => {
           fileName="불량내역조회"
         >
           <Grid
-            style={{ height: "78.5vh" }}
+            style={{ height: "68vh" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
@@ -769,15 +769,18 @@ const QC_A0120: React.FC = () => {
       </FilterContainer>
 
       <TabStrip
-        style={{ width: "100%" }}
+        style={{ width: "100%", height: "79vh" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
       >
         <TabStripTab title="공정불량">
           <GridContainerWrap>
-            <GridContainer width="60%">
+            <GridContainer style={{
+              width: "60%",
+              height:"100%"
+            }}>
               <GridContainerWrap>
-                <Chart
+                <Chart                 
                   seriesColors={
                     window.location.href.split("/")[2].split(".")[1] == "ddgd"
                       ? DDGDcolorList
