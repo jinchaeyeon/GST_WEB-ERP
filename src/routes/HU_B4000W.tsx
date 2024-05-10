@@ -2754,152 +2754,165 @@ const HU_B4000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainer>
-            <FormContext.Provider
-              value={{
-                prsnnum,
-                prsnnm,
-                setPrsnnum,
-                setPrsnnm,
-                adjDataState,
-                setAdjDataState,
-              }}
-            >
-              <GridTitleContainer>
-                <GridTitle>연차조정</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={adjDataResult.data}
-                ref={(exporter) => {
-                  _export5 = exporter;
+          <div className={isMobile ? "leading_65_Swiper" : ""}>
+            <div className={isMobile ? "leading_PDA_custom" : ""}>
+              <GridContainer
+                style={{
+                  width: "100%",
+                  paddingBottom: isMobile ? "15px" : "0px",
                 }}
-                fileName="연차사용현황(관리자)"
               >
-                <Grid
-                  style={{ height: "72vh" }}
-                  data={process(
-                    adjDataResult.data.map((row) => ({
-                      ...row,
-                      yyyy: row.yyyy
-                        ? new Date(dateformat(row.yyyy).substring(0, 4))
-                        : new Date(),
-                      recdt: row.recdt
-                        ? new Date(dateformat(row.recdt))
-                        : new Date(),
-                      insert_userid: personListData.find(
-                        (items: any) => items.prsnnum == row.insert_userid
-                      )?.prsnnm,
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      [SELECTED_FIELD]: selectedAdjState[idGetter_adj(row)],
-                    })),
-                    adjDataState
-                  )}
-                  {...adjDataState}
-                  onDataStateChange={conAdjDataStateChage}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY_ADJ}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <FormContext.Provider
+                  value={{
+                    prsnnum,
+                    prsnnm,
+                    setPrsnnum,
+                    setPrsnnm,
+                    adjDataState,
+                    setAdjDataState,
                   }}
-                  onSelectionChange={onAdjSelectionChange}
-                  // 스크롤 조회 기능
-                  fixedScroll={true}
-                  total={adjDataResult.total}
-                  skip={page5.skip}
-                  take={page5.take}
-                  pageable={true}
-                  onPageChange={adjPageChange}
-                  // 원하는 행 위치로 스크롤 기능
-                  ref={grdAdjRef}
-                  rowHeight={30}
-                  // 정렬기능
-                  sortable={true}
-                  onSortChange={onAdjSortChange}
-                  // 컬럼순서너비조정
-                  resizable={true}
-                  // incell 수정 기능
-                  onItemChange={onMainItemChange}
-                  cellRender={customCellRender}
-                  rowRender={customRowRender}
-                  editField={EDIT_FIELD}
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            className={
-                              requiredField.includes(item.fieldName)
-                                ? "required"
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            cell={
-                              YearDateField.includes(item.fieldName)
-                                ? YearDateCell
-                                : DateField.includes(item.fieldName)
-                                ? DateCell
-                                : CustomComboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : CommandField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? AdjTotalFooterCell
-                                : NumberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </FormContext.Provider>
-          </GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>연차조정</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={adjDataResult.data}
+                    ref={(exporter) => {
+                      _export5 = exporter;
+                    }}
+                    fileName="연차사용현황(관리자)"
+                  >
+                    <Grid
+                      style={{
+                        height: isMobile ? `${deviceHeight * 0.55}px` : "72vh",
+                      }}
+                      data={process(
+                        adjDataResult.data.map((row) => ({
+                          ...row,
+                          yyyy: row.yyyy
+                            ? new Date(dateformat(row.yyyy).substring(0, 4))
+                            : new Date(),
+                          recdt: row.recdt
+                            ? new Date(dateformat(row.recdt))
+                            : new Date(),
+                          insert_userid: personListData.find(
+                            (items: any) => items.prsnnum == row.insert_userid
+                          )?.prsnnm,
+                          rowstatus:
+                            row.rowstatus == null ||
+                            row.rowstatus == "" ||
+                            row.rowstatus == undefined
+                              ? ""
+                              : row.rowstatus,
+                          [SELECTED_FIELD]: selectedAdjState[idGetter_adj(row)],
+                        })),
+                        adjDataState
+                      )}
+                      {...adjDataState}
+                      onDataStateChange={conAdjDataStateChage}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY_ADJ}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onAdjSelectionChange}
+                      // 스크롤 조회 기능
+                      fixedScroll={true}
+                      total={adjDataResult.total}
+                      skip={page5.skip}
+                      take={page5.take}
+                      pageable={true}
+                      onPageChange={adjPageChange}
+                      // 원하는 행 위치로 스크롤 기능
+                      ref={grdAdjRef}
+                      rowHeight={30}
+                      // 정렬기능
+                      sortable={true}
+                      onSortChange={onAdjSortChange}
+                      // 컬럼순서너비조정
+                      resizable={true}
+                      // incell 수정 기능
+                      onItemChange={onMainItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdAdjList"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                className={
+                                  requiredField.includes(item.fieldName)
+                                    ? "required"
+                                    : undefined
+                                }
+                                headerCell={
+                                  requiredField.includes(item.fieldName)
+                                    ? RequiredHeader
+                                    : undefined
+                                }
+                                cell={
+                                  YearDateField.includes(item.fieldName)
+                                    ? YearDateCell
+                                    : DateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : CustomComboField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : CommandField.includes(item.fieldName)
+                                    ? ColumnCommandCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? AdjTotalFooterCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </FormContext.Provider>
+              </GridContainer>
+            </div>
+          </div>
         </TabStripTab>
       </TabStrip>
       {gridList.map((grid: TGrid) =>

@@ -66,6 +66,12 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { log } from "console";
+import { Button } from "@progress/kendo-react-buttons";
+var index = 0;
 
 const dateField = ["baddt", "reqdt"];
 
@@ -82,6 +88,11 @@ let targetRowIndex4: null | number = null;
 let targetRowIndex5: null | number = null;
 
 const HU_B4010W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
 
   const processApi = useApi();
@@ -268,6 +279,17 @@ const HU_B4010W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+  function convertDateLabel(label:any) {
+    // 정규 표현식을 사용하여 연도와 월을 추출
+    const matches = label.match(/(\d{4})년(\d{1,2})월/);
+    if (matches) {
+      // 연도의 뒷 두 자리와 월을 추출하여 포맷 변경
+      const year = matches[1].slice(2); // 연도의 마지막 두 자리
+      const month = matches[2]; // 월
+      return `${year}/${month}`;
+    }
+    return label; // 변환이 필요 없는 경우 원래 라벨 반환
+  }
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1201,6 +1223,10 @@ const HU_B4010W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+      swiper.update();
+    }    
   };
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -1444,706 +1470,1591 @@ const HU_B4010W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>기준년월</th>
-              <td>
-                <DatePicker
-                  name="yyyymm"
-                  value={filters.yyyymm}
-                  format="yyyy-MM"
-                  onChange={filterInputChange}
-                  className="required"
-                  placeholder=""
-                  calendar={MonthCalendar}
-                />
-              </td>
-              <th></th>
-              <td></td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+      {isMobile ? (
+        <>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>기준년월</th>
+                  <td>
+                    <DatePicker
+                      name="yyyymm"
+                      value={filters.yyyymm}
+                      format="yyyy-MM"
+                      onChange={filterInputChange}
+                      className="required"
+                      placeholder=""
+                      calendar={MonthCalendar}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
 
-      <GridContainerWrap>
-        <GridContainer width="17%">
-          <GridTitleContainer>
-            <GridTitle>사원목록</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="인사고과 모니터링"
-          >
-            <Grid
-              style={{ height: "78vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+          <GridContainerWrap>
+            <Swiper
+              className="leading_75_Swiper"
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+              <SwiperSlide key={0} className="leading_PDA_custom">
+                <GridContainer style={{
+                    width: `${deviceWidth - 30}px`,
+                  }}>
+                  <GridTitleContainer>
+                    <GridTitle>사원목록</GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="인사고과 모니터링"
+                  >
+                    <Grid
+                      style={{ height: `${deviceHeight * 0.73}px` }}
+                      data={process(
+                        mainDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)],
+                        })),
+                        mainDataState
+                      )}
+                      {...mainDataState}
+                      onDataStateChange={onMainDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide
+                key={1}
+                className="leading_PDA_custom"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <GridContainer style={{
+                    width: `${deviceWidth - 30}px`,
+                    height:"73vh",
+                    overflow:"scroll"
+                  }}>
+                  <GridContainer>
+                  <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="arrow-left"
+                          style={{ marginRight: "5px" }}
+                        >
+                          이전
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          월별 평균
+                        </Button>
+                      </div>
+                    <GridTitleContainer>
+                      <GridTitle>업무효율 및 능률</GridTitle>
+                    </GridTitleContainer>
+                    <Chart style={{ height: "24vh" }}>
+                      <ChartTooltip format="{0}" />
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={allChartDataResult.arguments.map(convertDateLabel)}
+                        />
+                      </ChartCategoryAxis>
+                      <ChartSeries>{Barchart()}</ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>인사고과 - 기본항목</GridTitle>
+                    </GridTitleContainer>
+                    <Chart style={{ height: "24vh" }}>
+                      <ChartTooltip format="{0}" />
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={allChartDataResult2.arguments.map(convertDateLabel)}
+                        />
+                      </ChartCategoryAxis>
+                      <ChartSeries>{Barchart2()}</ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
+                    </GridTitleContainer>
+                    <Chart style={{ height: "24vh" }}>
+                      <ChartTooltip format="{0}" />
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={allChartDataResult3.arguments.map(convertDateLabel)}
+                        />
+                      </ChartCategoryAxis>
+                      <ChartSeries>{Barchart3()}</ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide
+                key={2}
+                className="leading_PDA_custom"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <GridContainer style={{
+                    width: `${deviceWidth - 30}px`,
+                  }}>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>월별 평균</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="인사고과 모니터링"
+                    >
+                      <Grid
+                        style={{ height: "28vh" }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        <GridColumn
+                          field={"gubun"}
+                          title={"구분"}
+                          width="120px"
+                          footerCell={mainTotalFooterCell2}
+                        />
+                        <GridColumn
+                          field={"yyyymm01"}
+                          title={column12}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm02"}
+                          title={column11}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm03"}
+                          title={column10}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm04"}
+                          title={column9}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm05"}
+                          title={column8}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm06"}
+                          title={column7}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm07"}
+                          title={column6}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm08"}
+                          title={column5}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm09"}
+                          title={column4}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm10"}
+                          title={column3}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm11"}
+                          title={column2}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm12"}
+                          title={column1}
+                          width="120px"
+                        />
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+                    <TabStripTab title="당월 평가내용">
+                      <ExcelExport
+                        data={mainDataResult3.data}
+                        ref={(exporter) => {
+                          _export3 = exporter;
+                        }}
+                        fileName="인사고과 모니터링"
+                      >
+                        <Grid
+                          style={{ height: "30vh" }}
+                          data={process(
+                            mainDataResult3.data.map((row) => ({
+                              ...row,
+                              reviewlvl1: reviewlvl1ListData.find(
+                                (item: any) => item.sub_code == row.reviewlvl1
+                              )?.code_name,
+                              [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                            })),
+                            mainDataState3
+                          )}
+                          {...mainDataState3}
+                          onDataStateChange={onMainDataStateChange3}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY3}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange3}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult3.total}
+                          skip={page3.skip}
+                          take={page3.take}
+                          pageable={true}
+                          onPageChange={pageChange3}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={gridRef3}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange3}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList2"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </TabStripTab>
+                    <TabStripTab title="불량내역">
+                      <ExcelExport
+                        data={mainDataResult4.data}
+                        ref={(exporter) => {
+                          _export4 = exporter;
+                        }}
+                        fileName="인사고과 모니터링"
+                      >
+                        <Grid
+                          style={{ height: "30vh" }}
+                          data={process(
+                            mainDataResult4.data.map((row) => ({
+                              ...row,
+                              badcd: badcdListData.find(
+                                (item: any) => item.sub_code == row.badcd
+                              )?.code_name,
+                              [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                            })),
+                            mainDataState4
+                          )}
+                          {...mainDataState4}
+                          onDataStateChange={onMainDataStateChange4}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY4}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange4}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult4.total}
+                          skip={page4.skip}
+                          take={page4.take}
+                          pageable={true}
+                          onPageChange={pageChange4}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={gridRef4}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange4}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList3"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </TabStripTab>
+                    <TabStripTab title="상벌내역">
+                      <ExcelExport
+                        data={mainDataResult5.data}
+                        ref={(exporter) => {
+                          _export5 = exporter;
+                        }}
+                        fileName="인사고과 모니터링"
+                      >
+                        <Grid
+                          style={{ height: "30vh" }}
+                          data={process(
+                            mainDataResult5.data.map((row) => ({
+                              ...row,
+                              rnpdiv: rnpdivListData.find(
+                                (item: any) => item.sub_code == row.rnpdiv
+                              )?.code_name,
+                              [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                            })),
+                            mainDataState5
+                          )}
+                          {...mainDataState5}
+                          onDataStateChange={onMainDataStateChange5}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY5}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange5}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult5.total}
+                          skip={page5.skip}
+                          take={page5.take}
+                          pageable={true}
+                          onPageChange={pageChange5}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={gridRef4}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange5}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                        >
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList4"
+                            ]?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell5
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </TabStripTab>
+                  </TabStrip>
+                  <GridContainer style={{ marginTop: "10px" }}>
+                    <GridMui container spacing={2}>
+                      <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                        <Card
+                          style={{
+                            height: "10vh",
+                            color: "white",
+                            backgroundColor: "#6495ed",
+                          }}
+                        >
+                          <CardHeader
+                            subheaderTypographyProps={{
+                              color: "#8f918d",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "white",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  지각
+                                </Typography>
+                              </>
+                            }
+                            subheader={
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "1.4rem",
+                                }}
+                              >
+                                {mainDataResult6.total <= 0
+                                  ? "0 건"
+                                  : mainDataResult6.data[0].late}
+                              </Typography>
+                            }
+                          />
+                        </Card>
+                      </GridMui>
+                      <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                        <Card
+                          style={{
+                            height: "10vh",
+                            color: "white",
+                            backgroundColor: "#6495ed",
+                          }}
+                        >
+                          <CardHeader
+                            subheaderTypographyProps={{
+                              color: "#8f918d",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "white",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  근태 경고
+                                </Typography>
+                              </>
+                            }
+                            subheader={
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "1.4rem",
+                                }}
+                              >
+                                {mainDataResult6.total <= 0
+                                  ? "0 건"
+                                  : mainDataResult6.data[0].caution}
+                              </Typography>
+                            }
+                          />
+                        </Card>
+                      </GridMui>
+                      <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                        <Card
+                          style={{
+                            height: "10vh",
+                            color: "white",
+                            backgroundColor: "#6495ed",
+                          }}
+                        >
+                          <CardHeader
+                            subheaderTypographyProps={{
+                              color: "#8f918d",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "white",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  교육 이수
+                                </Typography>
+                              </>
+                            }
+                            subheader={
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "1.4rem",
+                                }}
+                              >
+                                {mainDataResult6.total <= 0
+                                  ? "0 건"
+                                  : mainDataResult6.data[0].edu}
+                              </Typography>
+                            }
+                          />
+                        </Card>
+                      </GridMui>
+                      <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                        <Card
+                          style={{
+                            height: "10vh",
+                            color: "white",
+                            backgroundColor: "#6495ed",
+                          }}
+                        >
+                          <CardHeader
+                            subheaderTypographyProps={{
+                              color: "#8f918d",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "white",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  상벌사항
+                                </Typography>
+                              </>
+                            }
+                            subheader={
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "1.4rem",
+                                }}
+                              >
+                                {mainDataResult6.total <= 0
+                                  ? "0 건"
+                                  : mainDataResult6.data[0].rnp}
+                              </Typography>
+                            }
+                          />
+                        </Card>
+                      </GridMui>
+                      <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                        <Card
+                          style={{
+                            height: "10vh",
+                            color: "white",
+                            backgroundColor: "#6495ed",
+                          }}
+                        >
+                          <CardHeader
+                            subheaderTypographyProps={{
+                              color: "#8f918d",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "white",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  처리불량
+                                </Typography>
+                              </>
+                            }
+                            subheader={
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "1.4rem",
+                                }}
+                              >
+                                {mainDataResult6.total <= 0
+                                  ? "0 건"
+                                  : mainDataResult6.data[0].bad}
+                              </Typography>
+                            }
+                          />
+                        </Card>
+                      </GridMui>
+                    </GridMui>
+                  </GridContainer>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          </GridContainerWrap>
+        </>
+      ) : (
+        <>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>기준년월</th>
+                  <td>
+                    <DatePicker
+                      name="yyyymm"
+                      value={filters.yyyymm}
+                      format="yyyy-MM"
+                      onChange={filterInputChange}
+                      className="required"
+                      placeholder=""
+                      calendar={MonthCalendar}
+                    />
+                  </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+
+          <GridContainerWrap>
+            <GridContainer width="17%">
+              <GridTitleContainer>
+                <GridTitle>사원목록</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="인사고과 모니터링"
+              >
+                <Grid
+                  style={{ height: "78vh" }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>업무효율 및 능률</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "24vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult.arguments}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart()}</ChartSeries>
+                </Chart>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>인사고과 - 기본항목</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "24vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult2.arguments}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart2()}</ChartSeries>
+                </Chart>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "24vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult3.arguments}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart3()}</ChartSeries>
+                </Chart>
+              </GridContainer>
+            </GridContainer>
+            <GridContainer width={`calc(33% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>월별 평균</GridTitle>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName="인사고과 모니터링"
+                >
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field={"gubun"}
+                      title={"구분"}
+                      width="120px"
+                      footerCell={mainTotalFooterCell2}
+                    />
+                    <GridColumn
+                      field={"yyyymm01"}
+                      title={column12}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm02"}
+                      title={column11}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm03"}
+                      title={column10}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm04"}
+                      title={column9}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm05"}
+                      title={column8}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm06"}
+                      title={column7}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm07"}
+                      title={column6}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm08"}
+                      title={column5}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm09"}
+                      title={column4}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm10"}
+                      title={column3}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm11"}
+                      title={column2}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"yyyymm12"}
+                      title={column1}
+                      width="120px"
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+                <TabStripTab title="당월 평가내용">
+                  <ExcelExport
+                    data={mainDataResult3.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="인사고과 모니터링"
+                  >
+                    <Grid
+                      style={{ height: "30vh" }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          reviewlvl1: reviewlvl1ListData.find(
+                            (item: any) => item.sub_code == row.reviewlvl1
+                          )?.code_name,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef3}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList2"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell3
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </TabStripTab>
+                <TabStripTab title="불량내역">
+                  <ExcelExport
+                    data={mainDataResult4.data}
+                    ref={(exporter) => {
+                      _export4 = exporter;
+                    }}
+                    fileName="인사고과 모니터링"
+                  >
+                    <Grid
+                      style={{ height: "30vh" }}
+                      data={process(
+                        mainDataResult4.data.map((row) => ({
+                          ...row,
+                          badcd: badcdListData.find(
+                            (item: any) => item.sub_code == row.badcd
+                          )?.code_name,
+                          [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                        })),
+                        mainDataState4
+                      )}
+                      {...mainDataState4}
+                      onDataStateChange={onMainDataStateChange4}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY4}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange4}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult4.total}
+                      skip={page4.skip}
+                      take={page4.take}
+                      pageable={true}
+                      onPageChange={pageChange4}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef4}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange4}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList3"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell4
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </TabStripTab>
+                <TabStripTab title="상벌내역">
+                  <ExcelExport
+                    data={mainDataResult5.data}
+                    ref={(exporter) => {
+                      _export5 = exporter;
+                    }}
+                    fileName="인사고과 모니터링"
+                  >
+                    <Grid
+                      style={{ height: "30vh" }}
+                      data={process(
+                        mainDataResult5.data.map((row) => ({
+                          ...row,
+                          rnpdiv: rnpdivListData.find(
+                            (item: any) => item.sub_code == row.rnpdiv
+                          )?.code_name,
+                          [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                        })),
+                        mainDataState5
+                      )}
+                      {...mainDataState5}
+                      onDataStateChange={onMainDataStateChange5}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY5}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange5}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult5.total}
+                      skip={page5.skip}
+                      take={page5.take}
+                      pageable={true}
+                      onPageChange={pageChange5}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef4}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange5}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList4"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell5
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </TabStripTab>
+              </TabStrip>
+              <GridContainer style={{ marginTop: "10px" }}>
+                <GridMui container spacing={2}>
+                  <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        height: "10vh",
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              지각
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1.4rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].late}
+                          </Typography>
                         }
                       />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>업무효율 및 능률</GridTitle>
-            </GridTitleContainer>
-            <Chart style={{ height: "24vh" }}>
-              <ChartTooltip format="{0}" />
-              <ChartValueAxis>
-                <ChartValueAxisItem
-                  labels={{
-                    visible: true,
-                    content: (e) => numberWithCommas(e.value) + "",
-                  }}
-                />
-              </ChartValueAxis>
-              <ChartCategoryAxis>
-                <ChartCategoryAxisItem
-                  categories={allChartDataResult.arguments}
-                />
-              </ChartCategoryAxis>
-              <ChartSeries>{Barchart()}</ChartSeries>
-            </Chart>
-          </GridContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>인사고과 - 기본항목</GridTitle>
-            </GridTitleContainer>
-            <Chart style={{ height: "24vh" }}>
-              <ChartTooltip format="{0}" />
-              <ChartValueAxis>
-                <ChartValueAxisItem
-                  labels={{
-                    visible: true,
-                    content: (e) => numberWithCommas(e.value) + "",
-                  }}
-                />
-              </ChartValueAxis>
-              <ChartCategoryAxis>
-                <ChartCategoryAxisItem
-                  categories={allChartDataResult2.arguments}
-                />
-              </ChartCategoryAxis>
-              <ChartSeries>{Barchart2()}</ChartSeries>
-            </Chart>
-          </GridContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
-            </GridTitleContainer>
-            <Chart style={{ height: "24vh" }}>
-              <ChartTooltip format="{0}" />
-              <ChartValueAxis>
-                <ChartValueAxisItem
-                  labels={{
-                    visible: true,
-                    content: (e) => numberWithCommas(e.value) + "",
-                  }}
-                />
-              </ChartValueAxis>
-              <ChartCategoryAxis>
-                <ChartCategoryAxisItem
-                  categories={allChartDataResult3.arguments}
-                />
-              </ChartCategoryAxis>
-              <ChartSeries>{Barchart3()}</ChartSeries>
-            </Chart>
-          </GridContainer>
-        </GridContainer>
-        <GridContainer width={`calc(33% - ${GAP}px)`}>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>월별 평균</GridTitle>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult2.data}
-              ref={(exporter) => {
-                _export2 = exporter;
-              }}
-              fileName="인사고과 모니터링"
-            >
-              <Grid
-                style={{ height: "28vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                <GridColumn
-                  field={"gubun"}
-                  title={"구분"}
-                  width="120px"
-                  footerCell={mainTotalFooterCell2}
-                />
-                <GridColumn field={"yyyymm01"} title={column12} width="120px" />
-                <GridColumn field={"yyyymm02"} title={column11} width="120px" />
-                <GridColumn field={"yyyymm03"} title={column10} width="120px" />
-                <GridColumn field={"yyyymm04"} title={column9} width="120px" />
-                <GridColumn field={"yyyymm05"} title={column8} width="120px" />
-                <GridColumn field={"yyyymm06"} title={column7} width="120px" />
-                <GridColumn field={"yyyymm07"} title={column6} width="120px" />
-                <GridColumn field={"yyyymm08"} title={column5} width="120px" />
-                <GridColumn field={"yyyymm09"} title={column4} width="120px" />
-                <GridColumn field={"yyyymm10"} title={column3} width="120px" />
-                <GridColumn field={"yyyymm11"} title={column2} width="120px" />
-                <GridColumn field={"yyyymm12"} title={column1} width="120px" />
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-          <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
-            <TabStripTab title="당월 평가내용">
-              <ExcelExport
-                data={mainDataResult3.data}
-                ref={(exporter) => {
-                  _export3 = exporter;
-                }}
-                fileName="인사고과 모니터링"
-              >
-                <Grid
-                  style={{ height: "30vh" }}
-                  data={process(
-                    mainDataResult3.data.map((row) => ({
-                      ...row,
-                      reviewlvl1: reviewlvl1ListData.find(
-                        (item: any) => item.sub_code == row.reviewlvl1
-                      )?.code_name,
-                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                    })),
-                    mainDataState3
-                  )}
-                  {...mainDataState3}
-                  onDataStateChange={onMainDataStateChange3}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY3}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange3}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3.total}
-                  skip={page3.skip}
-                  take={page3.take}
-                  pageable={true}
-                  onPageChange={pageChange3}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef3}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange3}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell3
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </TabStripTab>
-            <TabStripTab title="불량내역">
-              <ExcelExport
-                data={mainDataResult4.data}
-                ref={(exporter) => {
-                  _export4 = exporter;
-                }}
-                fileName="인사고과 모니터링"
-              >
-                <Grid
-                  style={{ height: "30vh" }}
-                  data={process(
-                    mainDataResult4.data.map((row) => ({
-                      ...row,
-                      badcd: badcdListData.find(
-                        (item: any) => item.sub_code == row.badcd
-                      )?.code_name,
-                      [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-                    })),
-                    mainDataState4
-                  )}
-                  {...mainDataState4}
-                  onDataStateChange={onMainDataStateChange4}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY4}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange4}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult4.total}
-                  skip={page4.skip}
-                  take={page4.take}
-                  pageable={true}
-                  onPageChange={pageChange4}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef4}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange4}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell4
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </TabStripTab>
-            <TabStripTab title="상벌내역">
-              <ExcelExport
-                data={mainDataResult5.data}
-                ref={(exporter) => {
-                  _export5 = exporter;
-                }}
-                fileName="인사고과 모니터링"
-              >
-                <Grid
-                  style={{ height: "30vh" }}
-                  data={process(
-                    mainDataResult5.data.map((row) => ({
-                      ...row,
-                      rnpdiv: rnpdivListData.find(
-                        (item: any) => item.sub_code == row.rnpdiv
-                      )?.code_name,
-                      [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                    })),
-                    mainDataState5
-                  )}
-                  {...mainDataState5}
-                  onDataStateChange={onMainDataStateChange5}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY5}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange5}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult5.total}
-                  skip={page5.skip}
-                  take={page5.take}
-                  pageable={true}
-                  onPageChange={pageChange5}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef4}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange5}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"]?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell5
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </TabStripTab>
-          </TabStrip>
-          <GridContainer style={{ marginTop: "10px" }}>
-            <GridMui container spacing={2}>
-              <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
-                <Card
-                  style={{
-                    height: "10vh",
-                    color: "white",
-                    backgroundColor: "#6495ed",
-                  }}
-                >
-                  <CardHeader
-                    subheaderTypographyProps={{
-                      color: "#8f918d",
-                      fontWeight: 500,
-                      fontFamily: "TheJamsil5Bold",
-                    }}
-                    title={
-                      <>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontWeight: 700,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          지각
-                        </Typography>
-                      </>
-                    }
-                    subheader={
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        height: "10vh",
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
                           fontFamily: "TheJamsil5Bold",
-                          fontSize: "1.4rem",
                         }}
-                      >
-                        {mainDataResult6.total <= 0
-                          ? "0 건"
-                          : mainDataResult6.data[0].late}
-                      </Typography>
-                    }
-                  />
-                </Card>
-              </GridMui>
-              <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
-                <Card
-                  style={{
-                    height: "10vh",
-                    color: "white",
-                    backgroundColor: "#6495ed",
-                  }}
-                >
-                  <CardHeader
-                    subheaderTypographyProps={{
-                      color: "#8f918d",
-                      fontWeight: 500,
-                      fontFamily: "TheJamsil5Bold",
-                    }}
-                    title={
-                      <>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontWeight: 700,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          근태 경고
-                        </Typography>
-                      </>
-                    }
-                    subheader={
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              근태 경고
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1.4rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].caution}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        height: "10vh",
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
                           fontFamily: "TheJamsil5Bold",
-                          fontSize: "1.4rem",
                         }}
-                      >
-                        {mainDataResult6.total <= 0
-                          ? "0 건"
-                          : mainDataResult6.data[0].caution}
-                      </Typography>
-                    }
-                  />
-                </Card>
-              </GridMui>
-              <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
-                <Card
-                  style={{
-                    height: "10vh",
-                    color: "white",
-                    backgroundColor: "#6495ed",
-                  }}
-                >
-                  <CardHeader
-                    subheaderTypographyProps={{
-                      color: "#8f918d",
-                      fontWeight: 500,
-                      fontFamily: "TheJamsil5Bold",
-                    }}
-                    title={
-                      <>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontWeight: 700,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          교육 이수
-                        </Typography>
-                      </>
-                    }
-                    subheader={
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              교육 이수
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1.4rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].edu}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        height: "10vh",
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
                           fontFamily: "TheJamsil5Bold",
-                          fontSize: "1.4rem",
                         }}
-                      >
-                        {mainDataResult6.total <= 0
-                          ? "0 건"
-                          : mainDataResult6.data[0].edu}
-                      </Typography>
-                    }
-                  />
-                </Card>
-              </GridMui>
-              <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
-                <Card
-                  style={{
-                    height: "10vh",
-                    color: "white",
-                    backgroundColor: "#6495ed",
-                  }}
-                >
-                  <CardHeader
-                    subheaderTypographyProps={{
-                      color: "#8f918d",
-                      fontWeight: 500,
-                      fontFamily: "TheJamsil5Bold",
-                    }}
-                    title={
-                      <>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontWeight: 700,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          상벌사항
-                        </Typography>
-                      </>
-                    }
-                    subheader={
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              상벌사항
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1.4rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].rnp}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        height: "10vh",
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
                           fontFamily: "TheJamsil5Bold",
-                          fontSize: "1.4rem",
                         }}
-                      >
-                        {mainDataResult6.total <= 0
-                          ? "0 건"
-                          : mainDataResult6.data[0].rnp}
-                      </Typography>
-                    }
-                  />
-                </Card>
-              </GridMui>
-              <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
-                <Card
-                  style={{
-                    height: "10vh",
-                    color: "white",
-                    backgroundColor: "#6495ed",
-                  }}
-                >
-                  <CardHeader
-                    subheaderTypographyProps={{
-                      color: "#8f918d",
-                      fontWeight: 500,
-                      fontFamily: "TheJamsil5Bold",
-                    }}
-                    title={
-                      <>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontWeight: 700,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          처리불량
-                        </Typography>
-                      </>
-                    }
-                    subheader={
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontWeight: 700,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontFamily: "TheJamsil5Bold",
-                          fontSize: "1.4rem",
-                        }}
-                      >
-                        {mainDataResult6.total <= 0
-                          ? "0 건"
-                          : mainDataResult6.data[0].bad}
-                      </Typography>
-                    }
-                  />
-                </Card>
-              </GridMui>
-            </GridMui>
-          </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              처리불량
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1.4rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].bad}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                </GridMui>
+              </GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

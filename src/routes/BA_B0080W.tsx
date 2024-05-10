@@ -647,12 +647,11 @@ const BA_B0080W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_78_Swiper" : ""}>
+      <div className={isMobile ? "leading_75_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
           <GridContainer
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              paddingBottom: isMobile ? "15px" : "0px",
             }}
           >
             <GridTitleContainer>

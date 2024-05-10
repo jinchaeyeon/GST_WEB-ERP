@@ -134,6 +134,10 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const HU_B1040W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -578,135 +582,147 @@ const HU_B1040W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="인사상세조회"
-        >
-          <Grid
-            style={{ height: "78vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code == row.postcd
-                )?.code_name,
-                orgdiv: orgdivListData.find(
-                  (item: any) => item.sub_code == row.orgdiv
-                )?.code_name,
-                location: locationListData.find(
-                  (item: any) => item.sub_code == row.location
-                )?.code_name,
-                position: positionListData.find(
-                  (item: any) => item.sub_code == row.position
-                )?.code_name,
-                nationcd: nationcdListData.find(
-                  (item: any) => item.sub_code == row.nationcd
-                )?.code_name,
-                dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd == row.dptcd
-                )?.dptnm,
-                ocptcd: ocptcdListData.find(
-                  (item: any) => item.sub_code == row.ocptcd
-                )?.code_name,
-                workgb: workgbListData.find(
-                  (item: any) => item.sub_code == row.workgb
-                )?.code_name,
-                workcls: workclsListData.find(
-                  (item: any) => item.sub_code == row.workcls
-                )?.code_name,
-                jobcd: jobcdListData.find(
-                  (item: any) => item.sub_code == row.jobcd
-                )?.code_name,
-                abilcd: abilcdListData.find(
-                  (item: any) => item.sub_code == row.abilcd
-                )?.code_name,
-                regcd: regcdListData.find(
-                  (item: any) => item.sub_code == row.regcd
-                )?.code_name,
-                rtrrsn: rtrrsnListData.find(
-                  (item: any) => item.sub_code == row.rtrrsn
-                )?.code_name,
-                emptype: emptypeListData.find(
-                  (item: any) => item.sub_code == row.emptype
-                )?.code_name,
-                paycd: paycdListData.find(
-                  (item: any) => item.sub_code == row.paycd
-                )?.code_name,
-                taxcd: taxcdListData.find(
-                  (item: any) => item.sub_code == row.taxcd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      <div className={isMobile ? "leading_75_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <GridContainer
+            style={{
+              width: isMobile ? `${deviceWidth - 30}px` : "100%",
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : checkReadField.includes(item.fieldName)
-                          ? CheckBoxReadOnlyCell
-                          : CustomRadioField.includes(item.fieldName)
-                          ? CustomRadioCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <GridTitleContainer>
+              <GridTitle>기본정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="인사상세조회"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? `${deviceHeight * 0.72}px` : "81vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    orgdiv: orgdivListData.find(
+                      (item: any) => item.sub_code == row.orgdiv
+                    )?.code_name,
+                    location: locationListData.find(
+                      (item: any) => item.sub_code == row.location
+                    )?.code_name,
+                    position: positionListData.find(
+                      (item: any) => item.sub_code == row.position
+                    )?.code_name,
+                    nationcd: nationcdListData.find(
+                      (item: any) => item.sub_code == row.nationcd
+                    )?.code_name,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd == row.dptcd
+                    )?.dptnm,
+                    ocptcd: ocptcdListData.find(
+                      (item: any) => item.sub_code == row.ocptcd
+                    )?.code_name,
+                    workgb: workgbListData.find(
+                      (item: any) => item.sub_code == row.workgb
+                    )?.code_name,
+                    workcls: workclsListData.find(
+                      (item: any) => item.sub_code == row.workcls
+                    )?.code_name,
+                    jobcd: jobcdListData.find(
+                      (item: any) => item.sub_code == row.jobcd
+                    )?.code_name,
+                    abilcd: abilcdListData.find(
+                      (item: any) => item.sub_code == row.abilcd
+                    )?.code_name,
+                    regcd: regcdListData.find(
+                      (item: any) => item.sub_code == row.regcd
+                    )?.code_name,
+                    rtrrsn: rtrrsnListData.find(
+                      (item: any) => item.sub_code == row.rtrrsn
+                    )?.code_name,
+                    emptype: emptypeListData.find(
+                      (item: any) => item.sub_code == row.emptype
+                    )?.code_name,
+                    paycd: paycdListData.find(
+                      (item: any) => item.sub_code == row.paycd
+                    )?.code_name,
+                    taxcd: taxcdListData.find(
+                      (item: any) => item.sub_code == row.taxcd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? DateCell
+                              : checkReadField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : CustomRadioField.includes(item.fieldName)
+                              ? CustomRadioCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </div>
+      </div>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
