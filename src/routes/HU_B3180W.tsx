@@ -139,6 +139,9 @@ const CustomColorCell2 = (props: GridCellProps) => {
 };
 
 const HU_B3180W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -540,76 +543,86 @@ const HU_B3180W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="출퇴근부_월별"
-        >
-          <Grid
-            style={{ height: "78vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd == row.dptcd
-                )?.dptnm,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      <div className={isMobile ? "leading_75_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <GridContainer
+            style={{
+              width: isMobile ? `${deviceWidth - 30}px` : "100%",
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
           >
-            <GridColumn
-              field="dptcd"
-              title="부서"
-              width="120px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="user_name" title="이름" width="120px" />
-            <GridColumn field="work_strtime" title="출근" width="120px" />
-            <GridColumn field="work_endtime" title="퇴근" width="120px" />
-            {list()}
-            <GridColumn
-              field="cnt"
-              title="연차집계"
-              width="100px"
-              cell={NumberCell}
-            />
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <GridTitleContainer>
+              <GridTitle>기본정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="출퇴근부_월별"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? `${deviceHeight * 0.73}px` : "81vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd == row.dptcd
+                    )?.dptnm,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="dptcd"
+                  title="부서"
+                  width="120px"
+                  footerCell={mainTotalFooterCell}
+                />
+                <GridColumn field="user_name" title="이름" width="120px" />
+                <GridColumn field="work_strtime" title="출근" width="120px" />
+                <GridColumn field="work_endtime" title="퇴근" width="120px" />
+                {list()}
+                <GridColumn
+                  field="cnt"
+                  title="연차집계"
+                  width="100px"
+                  cell={NumberCell}
+                />
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </div>
+      </div>
       {userWindowVisible && (
         <UserWindow
           setVisible={setuserWindowVisible}

@@ -647,12 +647,11 @@ const BA_B0080W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_78_Swiper" : ""}>
+      <div className={isMobile ? "leading_75_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
           <GridContainer
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              paddingBottom: isMobile ? "15px" : "0px",
             }}
           >
             <GridTitleContainer>
@@ -665,104 +664,170 @@ const BA_B0080W: React.FC = () => {
               }}
               fileName="단가조회"
             >
-              <Grid
-                style={{
-                  height: isMobile ? `${deviceHeight * 0.75}px` : "82vh",
-                }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    outkind: outkindListData.find(
-                      (item: any) => item.sub_code == row.outkind
-                    )?.code_name,
-                    doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code == row.doexdiv
-                    )?.code_name,
-                    대분류: itemlvl1ListData.find(
-                      (item: any) => item.sub_code == row.대분류
-                    )?.code_name,
-                    중분류: itemlvl2ListData.find(
-                      (item: any) => item.sub_code == row.중분류
-                    )?.code_name,
-                    소분류: itemlvl3ListData.find(
-                      (item: any) => item.sub_code == row.소분류
-                    )?.code_name,
-                    qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code == row.qtyunit
-                    )?.code_name,
-                    품목계정: itemacntListData.find(
-                      (item: any) => item.sub_code == row.품목계정
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                onScroll={onMainScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                <GridColumn
-                  field="품목코드"
-                  title="품목코드"
-                  width="120px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="품목명"
-                  title="품목명"
-                  width="150px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="품목계정"
-                  title="품목계정"
-                  width="120px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="규격"
-                  title="규격"
-                  width="140px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="대분류"
-                  title="대분류"
-                  width="120px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="중분류"
-                  title="중분류"
-                  width="120px"
-                  locked={true}
-                />
-                <GridColumn
-                  field="소분류"
-                  title="소분류"
-                  width="120px"
-                  locked={true}
-                />
-                {createColumn()}
-              </Grid>
+              {isMobile ? (
+                <Grid
+                  style={{
+                    height: isMobile ? `${deviceHeight * 0.75}px` : "82vh",
+                  }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      outkind: outkindListData.find(
+                        (item: any) => item.sub_code == row.outkind
+                      )?.code_name,
+                      doexdiv: doexdivListData.find(
+                        (item: any) => item.sub_code == row.doexdiv
+                      )?.code_name,
+                      대분류: itemlvl1ListData.find(
+                        (item: any) => item.sub_code == row.대분류
+                      )?.code_name,
+                      중분류: itemlvl2ListData.find(
+                        (item: any) => item.sub_code == row.중분류
+                      )?.code_name,
+                      소분류: itemlvl3ListData.find(
+                        (item: any) => item.sub_code == row.소분류
+                      )?.code_name,
+                      qtyunit: qtyunitListData.find(
+                        (item: any) => item.sub_code == row.qtyunit
+                      )?.code_name,
+                      품목계정: itemacntListData.find(
+                        (item: any) => item.sub_code == row.품목계정
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  onScroll={onMainScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn field="품목코드" title="품목코드" width="120px" />
+                  <GridColumn field="품목명" title="품목명" width="150px" />
+                  <GridColumn field="품목계정" title="품목계정" width="120px" />
+                  <GridColumn field="규격" title="규격" width="140px" />
+                  <GridColumn field="대분류" title="대분류" width="120px" />
+                  <GridColumn field="중분류" title="중분류" width="120px" />
+                  <GridColumn field="소분류" title="소분류" width="120px" />
+                  {createColumn()}
+                </Grid>
+              ) : (
+                <Grid
+                  style={{
+                    height: isMobile ? `${deviceHeight * 0.75}px` : "82vh",
+                  }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      outkind: outkindListData.find(
+                        (item: any) => item.sub_code == row.outkind
+                      )?.code_name,
+                      doexdiv: doexdivListData.find(
+                        (item: any) => item.sub_code == row.doexdiv
+                      )?.code_name,
+                      대분류: itemlvl1ListData.find(
+                        (item: any) => item.sub_code == row.대분류
+                      )?.code_name,
+                      중분류: itemlvl2ListData.find(
+                        (item: any) => item.sub_code == row.중분류
+                      )?.code_name,
+                      소분류: itemlvl3ListData.find(
+                        (item: any) => item.sub_code == row.소분류
+                      )?.code_name,
+                      qtyunit: qtyunitListData.find(
+                        (item: any) => item.sub_code == row.qtyunit
+                      )?.code_name,
+                      품목계정: itemacntListData.find(
+                        (item: any) => item.sub_code == row.품목계정
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  onScroll={onMainScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="품목코드"
+                    title="품목코드"
+                    width="120px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="품목명"
+                    title="품목명"
+                    width="150px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="품목계정"
+                    title="품목계정"
+                    width="120px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="규격"
+                    title="규격"
+                    width="140px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="대분류"
+                    title="대분류"
+                    width="120px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="중분류"
+                    title="중분류"
+                    width="120px"
+                    locked={true}
+                  />
+                  <GridColumn
+                    field="소분류"
+                    title="소분류"
+                    width="120px"
+                    locked={true}
+                  />
+                  {createColumn()}
+                </Grid>
+              )}
             </ExcelExport>
           </GridContainer>
         </div>

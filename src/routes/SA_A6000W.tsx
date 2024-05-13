@@ -179,13 +179,16 @@ const ColumnCommandCell = (props: GridCellProps) => {
 const CustomPercentCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const value = props.dataItem[field];
+  
+  const formattedValue = parseFloat(value).toLocaleString() + '%';
+
   return (
     <td
       style={{ textAlign: "right" }}
       aria-colindex={props.ariaColumnIndex}
       data-grid-col-index={props.columnIndex}
     >
-      {value}%
+      {formattedValue}
     </td>
   );
 };

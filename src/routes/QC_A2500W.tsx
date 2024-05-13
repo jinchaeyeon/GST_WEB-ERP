@@ -1245,7 +1245,7 @@ const QC_A2500W: React.FC = () => {
           fileName="NCR관리"
         >
           <Grid
-            style={{ height: "32.6vh" }}
+            style={{ height: "34vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

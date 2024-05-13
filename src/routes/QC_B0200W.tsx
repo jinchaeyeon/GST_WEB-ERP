@@ -1375,7 +1375,7 @@ const QC_B0200W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{ width: "100%", height: "80vh" }}
+        style={{ width: "100%", height: "79.3vh" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
       >
@@ -1392,7 +1392,7 @@ const QC_B0200W: React.FC = () => {
               fileName="검사실적현황"
             >
               <Grid
-                style={{ height: "67vh" }}
+                style={{ height: "68vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1481,7 +1481,7 @@ const QC_B0200W: React.FC = () => {
               fileName="검사실적현황"
             >
               <Grid
-                style={{ height: "30vh" }}
+                style={{ height: "32vh" }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,
@@ -1572,7 +1572,7 @@ const QC_B0200W: React.FC = () => {
                 fileName="검사실적현황"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: "31.5vh" }}
                   data={process(
                     detailDataResult2.data.map((row) => ({
                       ...row,
@@ -1642,7 +1642,7 @@ const QC_B0200W: React.FC = () => {
                 fileName="검사실적현황"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: "31.5vh" }}
                   data={process(
                     detailDataResult3.data.map((row) => ({
                       ...row,

@@ -631,7 +631,7 @@ const QC_B0300W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "68vh" }}
+            style={{ height: "69vh" }}
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,
