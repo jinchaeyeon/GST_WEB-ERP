@@ -293,6 +293,10 @@ input.readonly {
   width: 100% !important;
 }
 
+.k-grid .k-table.k-grid-table {
+  touch-action: auto !important;
+}
+
 /*DDGD 전용 css */
 .react-calendar {
   height: 100%!important;
