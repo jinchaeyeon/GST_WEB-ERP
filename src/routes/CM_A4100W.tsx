@@ -2165,7 +2165,7 @@ const CM_A4100W: React.FC = () => {
               fileName="교육관리"
             >
               <Grid
-                style={{ height: "55vh" }}
+                style={{ height: "56vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

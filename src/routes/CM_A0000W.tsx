@@ -808,7 +808,7 @@ const CM_A0000W: React.FC = () => {
           fileName="공지사항"
         >
           <Grid
-            style={{ height: "75vh" }}
+            style={{ height: "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

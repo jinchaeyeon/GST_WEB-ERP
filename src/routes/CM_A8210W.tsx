@@ -1812,7 +1812,7 @@ const CM_A8210W: React.FC = () => {
                 fileName="임률관리"
               >
                 <Grid
-                  style={{ height: "62vh" }}
+                  style={{ height: `calc(72.5vh - 70px)` }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

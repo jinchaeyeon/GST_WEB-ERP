@@ -706,9 +706,6 @@ const CM_B1000W: React.FC = () => {
       </TitleContainer>
       <GridContainerWrap>
         <GridContainer width="355px" style={{ marginTop: "5px" }}>
-          <GridTitleContainer>
-            <GridTitle>달력</GridTitle>
-          </GridTitleContainer>
           <Calendar
             focusedDate={filters.todt}
             value={filters.todt}
@@ -722,7 +719,7 @@ const CM_B1000W: React.FC = () => {
             fileName="일정조회"
           >
             <Grid
-              style={{ height: "55vh" }}
+              style={{ height: "57.4vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
