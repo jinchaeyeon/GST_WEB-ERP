@@ -16,6 +16,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -56,12 +59,9 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -88,9 +88,6 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const QC_B0200W: React.FC = () => {
@@ -108,6 +105,35 @@ const QC_B0200W: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
+  var height5 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
+  var container5 = document.querySelector(".k-tabstrip-items-wrapper");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
+  if (container5?.clientHeight != undefined) {
+    height5 = container5 == undefined ? 0 : container5.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -1248,7 +1274,7 @@ const QC_B0200W: React.FC = () => {
 
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   return (
@@ -1394,112 +1420,109 @@ const QC_B0200W: React.FC = () => {
       <TabStrip
         style={{
           width: "100%",
-          height: isMobile ? `${deviceHeight * 0.847}px` : "81vh",
+          height: isMobile ? "" : "81vh",
           paddingBottom: "15px",
         }}
         selected={tabSelected}
         onSelect={handleSelectTab}
       >
         <TabStripTab title="전체">
-          <div className={isMobile ? "leading_65_Swiper" : ""}>
-            <div className={isMobile ? "leading_PDA_custom" : ""}>
-              <GridContainer style={{ height: "100%", width: "100%" }}>
-                <GridTitleContainer>
-                  <GridTitle>검사내역</GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult.data}
-                  ref={(exporter) => {
-                    _export = exporter;
-                  }}
-                  fileName="검사실적현황"
-                >
-                  <Grid
-                    style={{
-                      height: isMobile ? `${deviceHeight * 0.63}px` : "67.5vh",
-                    }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        proccd: proccdListData.find(
-                          (items: any) => items.sub_code == row.proccd
-                        )?.code_name,
-                        qcperson: personListData.find(
-                          (items: any) => items.user_id == row.qcperson
-                        )?.user_name,
-                        prodemp: personListData.find(
-                          (items: any) => items.user_id == row.prodemp
-                        )?.user_name,
-                        inspeccd: inspeccdListData.find(
-                          (items: any) => items.sub_code == row.inspeccd
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)],
-                      })),
-                      mainDataState
-                    )}
-                    {...mainDataState}
-                    onDataStateChange={onMainDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : centerField.includes(item.fieldName)
-                                  ? CenterCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </div>
-          </div>
+          <GridContainer
+            style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+          >
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>검사내역</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="검사실적현황"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? deviceHeight - height - height5 : "67.5vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    proccd: proccdListData.find(
+                      (items: any) => items.sub_code == row.proccd
+                    )?.code_name,
+                    qcperson: personListData.find(
+                      (items: any) => items.user_id == row.qcperson
+                    )?.user_name,
+                    prodemp: personListData.find(
+                      (items: any) => items.user_id == row.prodemp
+                    )?.user_name,
+                    inspeccd: inspeccdListData.find(
+                      (items: any) => items.sub_code == row.inspeccd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </TabStripTab>
         <TabStripTab title="대상별">
           {isMobile ? (
             <>
               <Swiper
-                className="leading_65_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1507,9 +1530,11 @@ const QC_B0200W: React.FC = () => {
                   index = swiper.activeIndex;
                 }}
               >
-                <SwiperSlide key={0} className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <GridTitleContainer>
+                <SwiperSlide key={0}>
+                  <GridContainer
+                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  >
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle
                         style={{
                           display: "flex",
@@ -1540,7 +1565,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: `${deviceHeight * 0.63}px` }}
+                        style={{ height: deviceHeight - height2 - height5 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -1622,9 +1647,11 @@ const QC_B0200W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </SwiperSlide>
-                <SwiperSlide key={1} className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <GridTitleContainer>
+                <SwiperSlide key={1}>
+                  <GridContainer
+                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  >
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle
                         style={{
                           display: "flex",
@@ -1667,7 +1694,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: `${deviceHeight * 0.63}px` }}
+                        style={{ height: deviceHeight - height3 - height5 }}
                         data={process(
                           detailDataResult2.data.map((row) => ({
                             ...row,
@@ -1729,12 +1756,12 @@ const QC_B0200W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </SwiperSlide>
-                <SwiperSlide key={2} className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <GridTitleContainer>
-                      <GridTitle 
-                      style={{ marginBottom: "4px" }}
-                      >
+                <SwiperSlide key={2}>
+                  <GridContainer
+                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  >
+                    <GridTitleContainer className="ButtonContainer4">
+                      <GridTitle style={{ marginBottom: "4px" }}>
                         <div>
                           <Button
                             onClick={() => {
@@ -1758,7 +1785,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: `${deviceHeight * 0.63}px` }}
+                        style={{ height: deviceHeight - height4 - height5 }}
                         data={process(
                           detailDataResult3.data.map((row) => ({
                             ...row,

@@ -14,7 +14,10 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -55,12 +58,9 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -85,9 +85,6 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const QC_B0040W: React.FC = () => {
@@ -98,6 +95,29 @@ const QC_B0040W: React.FC = () => {
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -1256,7 +1276,7 @@ const QC_B0040W: React.FC = () => {
     }
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   return (
@@ -1415,7 +1435,6 @@ const QC_B0040W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_78_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1423,9 +1442,11 @@ const QC_B0040W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle
                     style={{
                       display: "flex",
@@ -1456,10 +1477,7 @@ const QC_B0040W: React.FC = () => {
                   fileName="LOT정추적"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1528,9 +1546,11 @@ const QC_B0040W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle
                     style={{
                       display: "flex",
@@ -1573,10 +1593,7 @@ const QC_B0040W: React.FC = () => {
                   fileName="LOT정추적"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1648,9 +1665,11 @@ const QC_B0040W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={2} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={2}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle
                     style={{
                       display: "flex",
@@ -1693,10 +1712,7 @@ const QC_B0040W: React.FC = () => {
                   fileName="LOT정추적"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height3 }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
                         ...row,
@@ -1764,9 +1780,11 @@ const QC_B0040W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={3} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={3}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>
                     <div>
                       <Button
@@ -1791,10 +1809,7 @@ const QC_B0040W: React.FC = () => {
                   fileName="LOT정추적"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height4 }}
                     data={process(
                       detailDataResult3.data.map((row) => ({
                         ...row,

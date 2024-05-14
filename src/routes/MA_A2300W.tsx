@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -59,14 +62,12 @@ import DetailWindow from "../components/Windows/MA_A2300W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
+  heightstate,
   isLoading,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -87,10 +88,6 @@ const numberField2 = ["amt", "wonamt", "taxamt", "totamt", "dlramt", "qty"];
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
-
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_A2000W: React.FC = () => {
@@ -103,6 +100,19 @@ const MA_A2000W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
+  let deviceWidth = window.innerWidth;
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -1191,9 +1201,7 @@ const MA_A2000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1201,9 +1209,11 @@ const MA_A2000W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -1231,10 +1241,7 @@ const MA_A2000W: React.FC = () => {
                   fileName="자재입고"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
-                      width: "90vw",
-                    }}
+                    style={{ height: deviceHeight - height }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1307,31 +1314,28 @@ const MA_A2000W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%" }}>
-                <GridTitleContainer>
+
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
-                </div>
                 <ExcelExport
                   data={detailDataResult.data}
                   ref={(exporter) => {
@@ -1340,10 +1344,7 @@ const MA_A2000W: React.FC = () => {
                   fileName="자재입고"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
-                      width: "90vw",
-                    }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
