@@ -14,7 +14,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -52,7 +52,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -75,7 +75,7 @@ const MA_B2100W: React.FC = () => {
   UseMessages("MA_B2100W", setMessagesData);
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
@@ -765,123 +765,115 @@ const MA_B2100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-          <GridContainer
-            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+      <GridContainer
+        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+      >
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+          fileName="입고현황"
+        >
+          <Grid
+            style={{
+              height: isMobile ? deviceHeight : "75vh",
+            }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                itemlvl1: itemlvl1ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl1
+                )?.code_name,
+                itemlvl2: itemlvl2ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl2
+                )?.code_name,
+                itemlvl3: itemlvl3ListData.find(
+                  (item: any) => item.sub_code == row.itemlvl3
+                )?.code_name,
+                person: usersListData.find(
+                  (item: any) => item.user_id == row.person
+                )?.user_name,
+                inkind: inkindListData.find(
+                  (item: any) => item.sub_code == row.inkind
+                )?.code_name,
+                amtunit: amtunitListData.find(
+                  (item: any) => item.sub_code == row.amtunit
+                )?.code_name,
+                qtyunit: qtyunitListData.find(
+                  (item: any) => item.sub_code == row.qtyunit
+                )?.code_name,
+                doexdiv: doexdivListData.find(
+                  (item: any) => item.sub_code == row.doexdiv
+                )?.code_name,
+                itemacnt: itemacntListData.find(
+                  (item: any) => item.sub_code == row.itemacnt
+                )?.code_name,
+                pac: PacListData.find(
+                  (item: any) => item.sub_code == row.inkind
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="입고현황"
-            >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                style={{
-                  height: !isMobile ? "73vh" : `${deviceHeight * 0.8 - 30}px`,
-                }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    itemlvl1: itemlvl1ListData.find(
-                      (item: any) => item.sub_code == row.itemlvl1
-                    )?.code_name,
-                    itemlvl2: itemlvl2ListData.find(
-                      (item: any) => item.sub_code == row.itemlvl2
-                    )?.code_name,
-                    itemlvl3: itemlvl3ListData.find(
-                      (item: any) => item.sub_code == row.itemlvl3
-                    )?.code_name,
-                    person: usersListData.find(
-                      (item: any) => item.user_id == row.person
-                    )?.user_name,
-                    inkind: inkindListData.find(
-                      (item: any) => item.sub_code == row.inkind
-                    )?.code_name,
-                    amtunit: amtunitListData.find(
-                      (item: any) => item.sub_code == row.amtunit
-                    )?.code_name,
-                    qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code == row.qtyunit
-                    )?.code_name,
-                    doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code == row.doexdiv
-                    )?.code_name,
-                    itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code == row.itemacnt
-                    )?.code_name,
-                    pac: PacListData.find(
-                      (item: any) => item.sub_code == row.inkind
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : numberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
-                          }
-                          locked={item.fixed == "None" ? false : true}
-                        ></GridColumn>
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </div>
-      </div>
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0
+                          ? mainTotalFooterCell
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                      locked={item.fixed == "None" ? false : true}
+                    ></GridColumn>
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
+      </GridContainer>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
