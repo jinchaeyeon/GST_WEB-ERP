@@ -23,7 +23,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -70,7 +70,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import Badwindow from "../components/Windows/CommonWindows/BadWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -204,10 +204,6 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
-
 const QC_A6000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -215,6 +211,14 @@ const QC_A6000: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1166,107 +1170,102 @@ const QC_A6000: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <div className={isMobile ? "leading_78_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-          <FormContext.Provider
-            value={{
-              key,
-              setKey,
-              bool,
-              setBool,
-              mainDataState,
-              setMainDataState,
-              // fetchGrid,
+      <FormContext.Provider
+        value={{
+          key,
+          setKey,
+          bool,
+          setBool,
+          mainDataState,
+          setMainDataState,
+          // fetchGrid,
+        }}
+      >
+        <GridContainer style={{ width: "100%" }}>
+          <GridTitleContainer className="ButtonContainer">
+            <GridTitle>기본정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
+            fileName="최종검사"
           >
-            <GridContainer style={{ width: "100%", height: "100%" }}>
-              <GridTitleContainer>
-                <GridTitle>기본정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName="최종검사"
-              >
-                <Grid
-                  style={{
-                    height: isMobile ? `${deviceHeight * 0.71}px` : "80vh",
-                  }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      proccd: proccdListData.find(
-                        (item: any) => item.sub_code == row.proccd
-                      )?.code_name,
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      prodemp: usersListData.find(
-                        (item: any) => item.user_id == row.prodemp
-                      )?.user_name,
-                      qcdt: row.qcdt
-                        ? new Date(dateformat(row.qcdt))
-                        : new Date(dateformat("99991231")),
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    })),
-                    mainDataState
-                  )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange}
-                  cellRender={customCellRender}
-                  rowRender={customRowRender}
-                  editField={EDIT_FIELD}
-                >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
-                  <GridColumn title="검사정보">{createColumn2()}</GridColumn>
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </FormContext.Provider>
-        </div>
-      </div>
+            <Grid
+              style={{
+                height: isMobile ? deviceHeight - height : "80vh",
+              }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  proccd: proccdListData.find(
+                    (item: any) => item.sub_code == row.proccd
+                  )?.code_name,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
+                  prodemp: usersListData.find(
+                    (item: any) => item.user_id == row.prodemp
+                  )?.user_name,
+                  qcdt: row.qcdt
+                    ? new Date(dateformat(row.qcdt))
+                    : new Date(dateformat("99991231")),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn title="생산실적정보">{createColumn()}</GridColumn>
+              <GridColumn title="검사정보">{createColumn2()}</GridColumn>
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      </FormContext.Provider>
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
