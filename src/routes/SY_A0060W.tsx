@@ -11,8 +11,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import SwiperCore from "swiper";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import "swiper/css";
 import {
   ButtonContainer,
@@ -36,16 +35,17 @@ import { PAGE_SIZE } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import FlowChart from "../components/Layout/FlowChart";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
-var index = 0;
-
 const SY_A0060W: React.FC = () => {
-  const [swiper, setSwiper] = useState<SwiperCore>();
-
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
 
   let isMobile = deviceWidth <= 1200;
 
@@ -257,27 +257,6 @@ const SY_A0060W: React.FC = () => {
         <>
           <TitleContainer>
             <Title>레이아웃 설정(NEW)</Title>
-            <FilterContainer>
-              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                <tbody>
-                  <tr>
-                    <th>사업장</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="location"
-                          value={filters.location}
-                          customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th></th>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </FilterBox>
-            </FilterContainer>
             <ButtonContainer>
               {permissions && (
                 <TopButtons
@@ -289,71 +268,80 @@ const SY_A0060W: React.FC = () => {
               )}
             </ButtonContainer>
           </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           <TabStrip
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              height: isMobile ? `${deviceHeight * 0.8}px` : "",
+              height: deviceHeight - height,
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}
           >
             <TabStripTab title="레이아웃 리스트">
-              <Box className="overflow_scrollhidden">
-                <GridTitleContainer>
-                  <GridTitle></GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onNewClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="file-add"
-                      style={{ marginBottom: "5px" }}
+              <Grid style={{ marginBottom: "30px" }} container spacing={2}>
+                {mainDataResult.data.map((item) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                    <Card
+                      onClick={(e) =>
+                        alert("모바일에서는 수정이 불가능합니다.")
+                      }
                     >
-                      신규
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <Grid style={{ marginBottom: "30px" }} container spacing={2}>
-                  {mainDataResult.data.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-                      <Card onClick={(e) => DetailView(item)}>
-                        <CardActionArea>
-                          {item.preview_image == "" ||
-                          item.preview_image == undefined ||
-                          item.preview_image == null ? (
-                            <div style={{ height: "250px" }}></div>
-                          ) : (
-                            <CardMedia
-                              component="img"
-                              height="250"
-                              image={item.preview_image}
-                              alt="layout"
-                            />
-                          )}
-                          <CardContent style={{ backgroundColor: "#f0f5fa" }}>
-                            <Typography
-                              gutterBottom
-                              variant="subtitle1"
-                              component="div"
-                              style={{ fontWeight: 600 }}
-                            >
-                              {item.layout_name}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              style={{ fontWeight: 400, color: "#b0adac" }}
-                            >
-                              {item.last_update_time == null
-                                ? "--"
-                                : dateformat7(item.last_update_time)}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
+                      <CardActionArea>
+                        {item.preview_image == "" ||
+                        item.preview_image == undefined ||
+                        item.preview_image == null ? (
+                          <div style={{ height: "250px" }}></div>
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="250"
+                            image={item.preview_image}
+                            alt="layout"
+                          />
+                        )}
+                        <CardContent style={{ backgroundColor: "#f0f5fa" }}>
+                          <Typography
+                            gutterBottom
+                            variant="subtitle1"
+                            component="div"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {item.layout_name}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            style={{ fontWeight: 400, color: "#b0adac" }}
+                          >
+                            {item.last_update_time == null
+                              ? "--"
+                              : dateformat7(item.last_update_time)}
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
             </TabStripTab>
             <TabStripTab title="레이아웃 설정" disabled={clicks}>
               <FlowChart
@@ -399,7 +387,7 @@ const SY_A0060W: React.FC = () => {
           <TabStrip
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              height: isMobile ? `${deviceHeight * 0.8}px` : "",
+              height: deviceHeight - height,
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}

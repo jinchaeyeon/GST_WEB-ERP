@@ -26,7 +26,7 @@ import { Checkbox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -52,7 +52,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let targetRowIndex: null | number = null;
@@ -70,7 +70,6 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 
 const App: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
 
   let isMobile = deviceWidth <= 1200;
 
@@ -89,7 +88,12 @@ const App: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".k-tabstrip-items-wrapper");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -524,7 +528,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: isMobile ? `${deviceHeight * 0.62}px` : "77.8vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "77.8vh" }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({
@@ -764,8 +768,8 @@ const App: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
+      <div>
+        <div>
           <TabStrip
             style={{ width: "100%" }}
             selected={tabSelected}

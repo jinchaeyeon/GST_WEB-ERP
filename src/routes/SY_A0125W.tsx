@@ -77,7 +77,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DepartmentsWindow from "../components/Windows/CommonWindows/DepartmentsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0125W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -129,7 +129,12 @@ const SY_A0125W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 70;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1337,93 +1342,80 @@ const SY_A0125W: React.FC = () => {
       </FilterContainer>
       {isMobile ? (
         <>
-          <GridContainerWrap>
-            <Swiper
-              className="leading_Swiper"
-              onSwiper={(swiper) => {
-                setSwiper(swiper);
-              }}
-              onActiveIndexChange={(swiper) => {
-                index = swiper.activeIndex;
-              }}
-            >
-              <SwiperSlide key={0} className="leading_PDA_custom">
-                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                  <ExcelExport
-                    ref={(exporter) => (_export = exporter)}
-                    hierarchy={true}
-                    fileName="부서관리"
-                  >
-                    <TreeList
-                      style={{
-                        height: `${deviceHeight * 0.8}px`,
-                        overflow: "auto",
-                      }}
-                      data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
-                        extendDataItem(item, SUB_ITEMS_FIELD, {
-                          [EXPANDED_FIELD]: expanded.includes(
-                            item[ALL_MENU_DATA_ITEM_KEY]
-                          ),
-                          [EDIT_FIELD]:
-                            item[ALL_MENU_DATA_ITEM_KEY] == editItemId
-                              ? editItemField
-                              : undefined,
-                          [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
-                        })
-                      )}
-                      expandField={EXPANDED_FIELD}
-                      subItemsField={SUB_ITEMS_FIELD}
-                      onExpandChange={onAllMenuExpandChange}
-                      // 선택
-                      selectable={{
-                        enabled: true,
-                        drag: false,
-                        cell: false,
-                        mode: "single",
-                      }}
-                      selectedField={SELECTED_FIELD}
-                      onSelectionChange={onSelectionChange}
-                      columns={allMenuColumns}
-                    />
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide
-                key={1}
-                className="leading_PDA_custom"
-                style={{ display: "flex", flexDirection: "column" }}
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "100%",
-                  }}
+                <ExcelExport
+                  ref={(exporter) => (_export = exporter)}
+                  hierarchy={true}
+                  fileName="부서관리"
                 >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
+                  <TreeList
+                    style={{
+                      height: deviceHeight - height,
+                      overflow: "auto",
                     }}
-                    icon="arrow-left"
-                  >
-                    이전
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(2);
-                      }
+                    data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                      extendDataItem(item, SUB_ITEMS_FIELD, {
+                        [EXPANDED_FIELD]: expanded.includes(
+                          item[ALL_MENU_DATA_ITEM_KEY]
+                        ),
+                        [EDIT_FIELD]:
+                          item[ALL_MENU_DATA_ITEM_KEY] == editItemId
+                            ? editItemField
+                            : undefined,
+                        [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+                      })
+                    )}
+                    expandField={EXPANDED_FIELD}
+                    subItemsField={SUB_ITEMS_FIELD}
+                    onExpandChange={onAllMenuExpandChange}
+                    // 선택
+                    selectable={{
+                      enabled: true,
+                      drag: false,
+                      cell: false,
+                      mode: "single",
                     }}
-                    icon="arrow-right"
-                  >
-                    부서인원 정보
-                  </Button>
-                </div>
-                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                  <GridTitleContainer>
-                    <ButtonContainer style={{ paddingTop: "5px" }}>
+                    selectedField={SELECTED_FIELD}
+                    onSelectionChange={onSelectionChange}
+                    columns={allMenuColumns}
+                  />
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "auto",
+                }}
+              >
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                    >
+                      이전
+                    </Button>
+                    <div>
                       <Button
                         onClick={onAddClick2}
                         themeColor={"primary"}
@@ -1447,118 +1439,125 @@ const SY_A0125W: React.FC = () => {
                       >
                         저장
                       </Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <FormBoxWrap
-                    border={true}
-                    style={{
-                      height: `${deviceHeight * 0.7}px`,
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "scroll",
-                    }}
-                  >
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>상위부서</th>
-                          <td>
-                            <Input
-                              name="prntdptcd"
-                              type="text"
-                              value={infomation.prntdptcd}
-                              onChange={InputChange}
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="arrow-right"
+                      >
+                        부서인원 정보
+                      </Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    height: deviceHeight - height,
+                    width: `${deviceWidth - 30}px`,
+                    overflow: "scroll",
+                  }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>상위부서</th>
+                        <td>
+                          <Input
+                            name="prntdptcd"
+                            type="text"
+                            value={infomation.prntdptcd}
+                            onChange={InputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              onClick={onDepartmentWndClick}
+                              icon="more-horizontal"
+                              fillMode="flat"
                             />
-                            <ButtonInInput>
-                              <Button
-                                onClick={onDepartmentWndClick}
-                                icon="more-horizontal"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                          <th>상위부서명</th>
-                          <td>
-                            <Input
-                              name="prntdptnm"
-                              type="text"
-                              value={infomation.prntdptnm}
-                              onChange={InputChange}
-                              className="readonly"
+                          </ButtonInInput>
+                        </td>
+                        <th>상위부서명</th>
+                        <td>
+                          <Input
+                            name="prntdptnm"
+                            type="text"
+                            value={infomation.prntdptnm}
+                            onChange={InputChange}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>사업장</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="location"
+                              value={infomation.location}
+                              bizComponentId="L_BA002"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
                             />
-                          </td>
-                          <th>사업장</th>
-                          <td>
-                            {bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="location"
-                                value={infomation.location}
-                                bizComponentId="L_BA002"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>부서코드</th>
-                          <td>
-                            <Input
-                              name="dptcd"
-                              type="text"
-                              value={infomation.dptcd}
-                              onChange={InputChange}
-                              className="required"
-                            />
-                          </td>
-                          <th>부서명</th>
-                          <td>
-                            <Input
-                              name="dptnm"
-                              type="text"
-                              value={infomation.dptnm}
-                              onChange={InputChange}
-                              className="required"
-                            />
-                          </td>
-                          <th>사용여부</th>
-                          <td>
-                            <Checkbox
-                              name="useyn"
-                              value={infomation.useyn == "Y" ? true : false}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>비고</th>
-                          <td colSpan={5}>
-                            <TextArea
-                              value={infomation.remark}
-                              name="remark"
-                              rows={2}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide
-                key={2}
-                className="leading_PDA_custom"
-                style={{ display: "flex", flexDirection: "column" }}
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>부서코드</th>
+                        <td>
+                          <Input
+                            name="dptcd"
+                            type="text"
+                            value={infomation.dptcd}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                        <th>부서명</th>
+                        <td>
+                          <Input
+                            name="dptnm"
+                            type="text"
+                            value={infomation.dptnm}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                        <th>사용여부</th>
+                        <td>
+                          <Checkbox
+                            name="useyn"
+                            value={infomation.useyn == "Y" ? true : false}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>비고</th>
+                        <td colSpan={5}>
+                          <TextArea
+                            value={infomation.remark}
+                            name="remark"
+                            rows={2}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={2}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>부서인원정보</GridTitle>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                  >
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
                         if (swiper) {
@@ -1576,7 +1575,7 @@ const SY_A0125W: React.FC = () => {
                       icon="save"
                       title="저장"
                     ></Button>
-                  </div>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
@@ -1585,8 +1584,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.72}px`,
-                      width: `${deviceWidth - 30}px`,
+                      height: deviceHeight - height,
                     }}
                     data={process(
                       subDataResult.data.map((row) => ({
@@ -1658,9 +1656,9 @@ const SY_A0125W: React.FC = () => {
                       )}
                   </Grid>
                 </ExcelExport>
-              </SwiperSlide>
-            </Swiper>
-          </GridContainerWrap>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
         </>
       ) : (
         <>

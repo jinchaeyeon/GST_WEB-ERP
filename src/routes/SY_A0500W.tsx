@@ -68,6 +68,7 @@ import DetailWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
   clickedState,
+  heightstate,
   infoState,
   isLoading,
   pointsState,
@@ -110,7 +111,12 @@ const SY_A0500W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 70;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
@@ -1209,7 +1215,7 @@ const SY_A0500W: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap onClick={deletemenu} style={{ gap: 0 }}>
+        <>
           <TitleContainer>
             <Title>레이아웃 설정</Title>
 
@@ -1244,7 +1250,6 @@ const SY_A0500W: React.FC = () => {
             </FormBox>
           </FilterContainer>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1252,7 +1257,7 @@ const SY_A0500W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
+            <SwiperSlide key={0}>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
@@ -1265,7 +1270,7 @@ const SY_A0500W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8}px`,
+                      height: deviceHeight - height,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1330,15 +1335,11 @@ const SY_A0500W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
-                }}
+              <ButtonContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "space-between" }}
               >
                 <Button
                   onClick={() => {
@@ -1350,7 +1351,7 @@ const SY_A0500W: React.FC = () => {
                 >
                   이전
                 </Button>
-              </div>
+              </ButtonContainer>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
@@ -1358,64 +1359,6 @@ const SY_A0500W: React.FC = () => {
                   overflow: "auto",
                 }}
               >
-                <GridTitleContainer>
-                  <ButtonContainer style={{paddingTop: "5px"}}>
-                    <Button
-                      onClick={onAddClick2}
-                      themeColor={"primary"}
-                      icon="plus"
-                    >
-                      행 추가
-                    </Button>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                    >
-                      열 추가
-                    </Button>
-                    <Button
-                      onClick={onRemoveClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    >
-                      행 삭제
-                    </Button>
-                    <Button
-                      onClick={onRemoveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                    >
-                      열 삭제
-                    </Button>
-                    <Button
-                      onClick={onAddClick3}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      신규
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      삭제
-                    </Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                    >
-                      저장
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <DndProvider backend={HTML5Backend}>
                   <div style={containerStyle}>
                     <div style={boardStyle}>{squares}</div>
@@ -1424,7 +1367,7 @@ const SY_A0500W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>

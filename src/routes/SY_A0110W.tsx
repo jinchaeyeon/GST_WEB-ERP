@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -37,7 +37,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0110W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -47,8 +47,12 @@ let targetRowIndex: null | number = null;
 
 const SY_A0110: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -350,89 +354,81 @@ const SY_A0110: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-          <GridContainer
-            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+      <GridContainer
+        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+      >
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+          fileName="사용자 이용 현황"
+        >
+          <GridTitleContainer>
+            {isMobile ? null : <GridTitle>요약정보</GridTitle>}
+          </GridTitleContainer>
+          <Grid
+            style={{
+              height: isMobile ? deviceHeight - height : "81.6vh",
+            }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                login_time: convertDateToStrWithTime2(new Date(row.login_time)),
+                logout_time: convertDateToStrWithTime2(
+                  new Date(row.logout_time)
+                ),
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onMainSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="사용자 이용 현황"
-            >
-              <GridTitleContainer>
-                {isMobile ? null : <GridTitle>요약정보</GridTitle>}
-              </GridTitleContainer>
-              <Grid
-                style={{
-                  height: isMobile ? `${deviceHeight * 0.75}px` : "81.6vh",
-                }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    login_time: convertDateToStrWithTime2(
-                      new Date(row.login_time)
-                    ),
-                    logout_time: convertDateToStrWithTime2(
-                      new Date(row.logout_time)
-                    ),
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onMainSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </div>
-      </div>
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      footerCell={
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
+      </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
