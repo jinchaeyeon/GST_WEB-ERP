@@ -87,11 +87,21 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
+  var height2 = 0;
+  var height3 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
   }
   let isMobile = deviceWidth <= 1200;
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
@@ -1211,7 +1221,7 @@ const SY_A0025W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1422,7 +1432,7 @@ const SY_A0025W: React.FC = () => {
                   width: `${deviceWidth - 30}px`,
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>채번구성정보</GridTitle>
                   <ButtonContainer
                     style={{
@@ -1456,7 +1466,7 @@ const SY_A0025W: React.FC = () => {
                   style={{
                     width: `${deviceWidth - 30}px`,
                     overflow: "scroll",
-                    height: deviceHeight - height,
+                    height: deviceHeight - height2,
                   }}
                 >
                   <FormBox>
@@ -1675,7 +1685,7 @@ const SY_A0025W: React.FC = () => {
                   width: `${deviceWidth - 30}px`,
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer3">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
@@ -1718,7 +1728,7 @@ const SY_A0025W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height3,
                       overflow: "auto",
                     }}
                     data={process(

@@ -59,12 +59,8 @@ let targetRowIndex: null | number = null;
 
 const SY_A0120: React.FC = () => {
   let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -512,12 +508,9 @@ const SY_A0120: React.FC = () => {
           }}
           fileName="로그인 현황"
         >
-          <GridTitleContainer>
-            {isMobile ? null : <GridTitle>요약정보</GridTitle>}
-          </GridTitleContainer>
           <Grid
             style={{
-              height: isMobile ? deviceHeight - height : "78vh",
+              height: isMobile ? deviceHeight : "78vh",
             }}
             data={process(
               mainDataResult.data.map((row) => ({

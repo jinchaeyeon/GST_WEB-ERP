@@ -47,12 +47,7 @@ let targetRowIndex: null | number = null;
 
 const SY_A0110: React.FC = () => {
   let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -364,12 +359,9 @@ const SY_A0110: React.FC = () => {
           }}
           fileName="사용자 이용 현황"
         >
-          <GridTitleContainer>
-            {isMobile ? null : <GridTitle>요약정보</GridTitle>}
-          </GridTitleContainer>
           <Grid
             style={{
-              height: isMobile ? deviceHeight - height : "81.6vh",
+              height: isMobile ? deviceHeight : "81.6vh",
             }}
             data={process(
               mainDataResult.data.map((row) => ({

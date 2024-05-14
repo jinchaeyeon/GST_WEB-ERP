@@ -27,7 +27,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -59,7 +59,11 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -104,7 +108,17 @@ const Page: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 70;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1300,7 +1314,6 @@ const Page: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1308,15 +1321,14 @@ const Page: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
+            <SwiperSlide key={0}>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
                   overflow: "auto",
-                  height: "100%",
                 }}
               >
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   {permissions !== null && (
                     <ButtonContainer>
                       <Button
@@ -1349,10 +1361,7 @@ const Page: React.FC = () => {
                 >
                   <Grid
                     ref={gridRef}
-                    style={{
-                      height: `${deviceHeight * 0.76}px`,
-                      overflow: "auto",
-                    }}
+                    style={{ height: deviceHeight - height }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
                       items: item.items.map((row: any) => ({
@@ -1418,27 +1427,22 @@ const Page: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
-                }}
-              >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
-                  }}
-                  icon="arrow-left"
-                >
-                  이전
-                </Button>
-              </div>
+              <GridTitleContainer className="ButtonContainer2">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                  >
+                    이전
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
@@ -1451,10 +1455,7 @@ const Page: React.FC = () => {
                   fileName="공통코드정보"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.76}px`,
-                      overflow: "auto",
-                    }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,

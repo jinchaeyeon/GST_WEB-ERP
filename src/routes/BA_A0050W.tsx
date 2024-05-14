@@ -420,9 +420,15 @@ const BA_A0050: React.FC = () => {
   let deviceWidth = window.innerWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
+  var height2 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
   }
   let isMobile = deviceWidth <= 1200;
 
@@ -2212,7 +2218,7 @@ const BA_A0050: React.FC = () => {
                   fileName="BOM관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: deviceHeight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2415,7 +2421,7 @@ const BA_A0050: React.FC = () => {
                     overflow: "auto",
                   }}
                 >
-                  <GridTitleContainer className="ButtonContainer">
+                  <GridTitleContainer className="ButtonContainer2">
                     <ButtonContainer
                       style={{ justifyContent: "space-between" }}
                     >
@@ -2468,7 +2474,7 @@ const BA_A0050: React.FC = () => {
                     fileName="BOM관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: deviceHeight - height2 }}
                       data={process(
                         subData2Result.data.map((row) => ({
                           ...row,

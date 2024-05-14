@@ -40,13 +40,7 @@ import { Iparameters, TPermissions } from "../store/types";
 
 const SY_A0060W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -292,7 +286,7 @@ const SY_A0060W: React.FC = () => {
           <TabStrip
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              height: deviceHeight - height,
+              height: deviceHeight,
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}
@@ -387,7 +381,7 @@ const SY_A0060W: React.FC = () => {
           <TabStrip
             style={{
               width: isMobile ? `${deviceWidth - 30}px` : "100%",
-              height: deviceHeight - height,
+              height: "",
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}

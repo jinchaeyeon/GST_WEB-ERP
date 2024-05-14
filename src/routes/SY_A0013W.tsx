@@ -230,14 +230,29 @@ const Page: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
   var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
   }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("SY_A0013W", setCustomOptionData);
@@ -2245,7 +2260,7 @@ const Page: React.FC = () => {
                   overflow: "auto",
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>권한그룹 정보</GridTitle>
                   {permissions && (
                     <ButtonContainer
@@ -2290,7 +2305,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,
@@ -2368,7 +2383,7 @@ const Page: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사용자별 메뉴 권한</GridTitle>
                   {permissions && (
                     <ButtonContainer
@@ -2402,7 +2417,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height3,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -2449,7 +2464,7 @@ const Page: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>[참조] 전체 메뉴</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2459,7 +2474,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height4,
                       overflowY: "scroll",
                     }}
                     data={mapTree(

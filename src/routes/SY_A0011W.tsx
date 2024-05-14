@@ -129,11 +129,21 @@ const Page: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
   const idGetter3 = getter(ALL_MENU_DATA_ITEM_KEY);
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
+  var height2 = 0;
+  var height3 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
   }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -1556,7 +1566,7 @@ const Page: React.FC = () => {
                   width: `${deviceWidth - 30}px`,
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
                   {permissions !== null && (
                     <ButtonContainer
@@ -1589,7 +1599,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height2,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1638,7 +1648,7 @@ const Page: React.FC = () => {
                   width: `${deviceWidth - 30}px`,
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>[참조] 전체 메뉴</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
@@ -1660,7 +1670,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height3,
                       overflowY: "scroll",
                     }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>

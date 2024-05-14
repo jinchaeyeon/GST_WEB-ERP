@@ -129,11 +129,16 @@ const SY_A0125W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
+  var height2 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
   }
   let isMobile = deviceWidth <= 1200;
 
@@ -1361,7 +1366,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1555,7 +1560,7 @@ const SY_A0125W: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>부서인원정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
@@ -1584,7 +1589,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight - height2,
                     }}
                     data={process(
                       subDataResult.data.map((row) => ({
