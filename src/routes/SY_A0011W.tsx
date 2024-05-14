@@ -1451,9 +1451,9 @@ const Page: React.FC = () => {
                   height: "100%",
                 }}
               >
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   {permissions && (
-                    <ButtonContainer className="ButtonContainer">
+                    <ButtonContainer>
                       <Button
                         onClick={onAddClick}
                         themeColor={"primary"}
@@ -1640,11 +1640,11 @@ const Page: React.FC = () => {
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>[참조] 전체 메뉴</GridTitle>
-                  <ButtonContainer>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
                         if (swiper) {
-                          swiper.slideTo(0);
+                          swiper.slideTo(1);
                         }
                       }}
                       icon="arrow-left"

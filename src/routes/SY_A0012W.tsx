@@ -72,7 +72,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0012W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 //그리드 별 키 필드값
@@ -505,8 +505,12 @@ const CustomRadioCell = (props: GridCellProps) => {
 
 const SY_A0120: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1502,8 +1506,8 @@ const SY_A0120: React.FC = () => {
               setMainDataState,
             }}
           >
-            <div className={isMobile ? "leading_Swiper" : ""}>
-              <div className={isMobile ? "leading_PDA_custom" : ""}>
+            <div>
+              <div>
                 <GridContainer
                   style={{
                     paddingBottom: "15px",
@@ -1511,7 +1515,7 @@ const SY_A0120: React.FC = () => {
                     width: "100%",
                   }}
                 >
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     {isMobile ? null : <GridTitle>사용자 리스트</GridTitle>}
                     {permissions && (
                       <ButtonContainer>
@@ -1548,9 +1552,7 @@ const SY_A0120: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: isMobile
-                          ? `${deviceHeight * 0.73}px`
-                          : "77.8vh",
+                        height: isMobile ? deviceHeight - height : "77.8vh",
                       }}
                       data={process(
                         mainDataResult.data.map((row, idx) => ({
