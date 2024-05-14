@@ -27,6 +27,8 @@ const FilterContainer = ({ children }: TChildren) => {
     if (container?.clientHeight != undefined) {
       height = container == undefined ? 0 : container.clientHeight;
       setIsFilterheightstates(height);
+    } else {
+      setIsFilterheightstates(0);
     }
   }, [isFilterHide]);
 
