@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -48,7 +48,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -110,7 +110,12 @@ let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -698,9 +703,7 @@ const CR_A0020W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-      <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
+      <GridContainer style={{ width: "100%" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -708,7 +711,7 @@ const CR_A0020W: React.FC = () => {
           }}
           fileName="반려견 정보"
         >
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>반려견 리스트</GridTitle>
             {permissions && (
               <ButtonContainer>
@@ -745,7 +748,7 @@ const CR_A0020W: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: isMobile ? `${deviceHeight * 0.65}px` :"81.5vh" }}
+            style={{ height: isMobile ? deviceHeight : "81.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -824,8 +827,6 @@ const CR_A0020W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      </div>
-      </div>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

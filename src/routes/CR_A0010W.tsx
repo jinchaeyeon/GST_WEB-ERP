@@ -67,7 +67,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -429,8 +429,12 @@ const CustomRadioCell = (props: GridCellProps) => {
 
 const CR_A0010W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -1449,180 +1453,174 @@ const CR_A0010W: React.FC = () => {
             setPassword,
           }}
         >
-          <div className={isMobile ? "leading_Swiper" : ""}>
-            <div className={isMobile ? "leading_PDA_custom" : ""}>
-              <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
-                <GridTitleContainer>
-                  <GridTitle>고객 리스트</GridTitle>
-                  {permissions && (
-                    <ButtonContainer>
-                      <ExcelUploadButtons
-                        saveExcel={saveExcel}
-                        permissions={permissions}
-                        style={{ marginLeft: "15px" }}
-                      />
-                      <Button
-                        title="Export Excel"
-                        onClick={onAttachmentsWndClick}
-                        icon="file"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                      >
-                        엑셀양식
-                      </Button>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onRemoveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  )}
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult.data}
-                  ref={(exporter) => {
-                    _export = exporter;
-                  }}
-                  fileName="고객관리"
-                >
-                  <Grid
-                    style={{
-                      height: isMobile ? `${deviceHeight * 0.65}px` : "77.8vh",
-                      width: isMobile ? `${deviceWidth - 30}px` : "100%",
-                    }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        birdt: row.birdt
-                          ? new Date(dateformat(row.birdt))
-                          : new Date(dateformat("99991231")),
-                        apply_start_date: row.apply_start_date
-                          ? new Date(dateformat(row.apply_start_date))
-                          : new Date(dateformat("99991231")),
-                        apply_end_date: row.apply_end_date
-                          ? new Date(dateformat(row.apply_end_date))
-                          : new Date(dateformat("99991231")),
-                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                      })),
-                      mainDataState
-                    )}
-                    {...mainDataState}
-                    onDataStateChange={onMainDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onMainSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    //incell 수정 기능
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
+          <GridContainer style={{ width: "100%" }}>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>고객 리스트</GridTitle>
+              {permissions && (
+                <ButtonContainer>
+                  <ExcelUploadButtons
+                    saveExcel={saveExcel}
+                    permissions={permissions}
+                    style={{ marginLeft: "15px" }}
+                  />
+                  <Button
+                    title="Export Excel"
+                    onClick={onAttachmentsWndClick}
+                    icon="file"
+                    fillMode="outline"
+                    themeColor={"primary"}
                   >
-                    <GridColumn
-                      field="rowstatus"
-                      title=" "
-                      width="50px"
-                      editable={false}
-                    />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                        (item: any, idx: number) => {
-                          const caption = getCaption(item.id, item.caption);
-                          return (
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={caption}
-                                width={item.width}
-                                cell={
-                                  NameField.includes(item.fieldName)
-                                    ? NameCell
-                                    : CustomField.includes(item.fieldName)
-                                    ? CustomComboBoxCell
-                                    : EncryptedField2.includes(item.fieldName)
-                                    ? EncryptedCell2
-                                    : EncryptedField.includes(item.fieldName)
-                                    ? EncryptedCell
-                                    : checkField.includes(item.fieldName)
-                                    ? CheckBoxCell
-                                    : DateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : CustomRadioField.includes(item.fieldName)
-                                    ? CustomRadioCell
-                                    : CustonCommandField.includes(
-                                        item.fieldName
-                                      )
-                                    ? ColumnCommandCell
-                                    : undefined
-                                }
-                                headerCell={
-                                  requiredHeaderField.includes(item.fieldName)
-                                    ? RequiredHeader
-                                    : undefined
-                                }
-                                className={
-                                  editableField.includes(item.fieldName)
-                                    ? "editable-new-only"
-                                    : requiredField.includes(item.fieldName)
-                                    ? "required"
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell
-                                    : undefined
-                                }
-                              />
-                            )
-                          );
-                        }
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </div>
-          </div>
+                    엑셀양식
+                  </Button>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                  <Button
+                    onClick={onRemoveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
+              )}
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="고객관리"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? deviceHeight - height : "77.8vh",
+                  width: isMobile ? `${deviceWidth - 30}px` : "100%",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    birdt: row.birdt
+                      ? new Date(dateformat(row.birdt))
+                      : new Date(dateformat("99991231")),
+                    apply_start_date: row.apply_start_date
+                      ? new Date(dateformat(row.apply_start_date))
+                      : new Date(dateformat("99991231")),
+                    apply_end_date: row.apply_end_date
+                      ? new Date(dateformat(row.apply_end_date))
+                      : new Date(dateformat("99991231")),
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onMainSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //incell 수정 기능
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field="rowstatus"
+                  title=" "
+                  width="50px"
+                  editable={false}
+                />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) => {
+                      const caption = getCaption(item.id, item.caption);
+                      return (
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={caption}
+                            width={item.width}
+                            cell={
+                              NameField.includes(item.fieldName)
+                                ? NameCell
+                                : CustomField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : EncryptedField2.includes(item.fieldName)
+                                ? EncryptedCell2
+                                : EncryptedField.includes(item.fieldName)
+                                ? EncryptedCell
+                                : checkField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : DateField.includes(item.fieldName)
+                                ? DateCell
+                                : CustomRadioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : CustonCommandField.includes(item.fieldName)
+                                ? ColumnCommandCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredHeaderField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            className={
+                              editableField.includes(item.fieldName)
+                                ? "editable-new-only"
+                                : requiredField.includes(item.fieldName)
+                                ? "required"
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                      );
+                    }
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </FormContext2.Provider>
       </FormContext.Provider>
       {/* 컨트롤 네임 불러오기 용 */}
