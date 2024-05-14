@@ -10,7 +10,7 @@ import {
   ChartTitle,
   ChartValueAxis,
   ChartValueAxisItem,
-  ChartValueAxisTitle
+  ChartValueAxisTitle,
 } from "@progress/kendo-react-charts";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -25,7 +25,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -34,8 +34,9 @@ import {
   FilterBox,
   GridContainer,
   GridTitle,
+  GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -58,7 +59,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -88,8 +89,18 @@ const SA_B3101W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B3101W", setMessagesData);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -436,7 +447,6 @@ const SA_B3101W: React.FC = () => {
           </FilterContainer>
 
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -444,13 +454,16 @@ const SA_B3101W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%", width: "100%" }}>
-                <GridTitle>차트</GridTitle>
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>차트</GridTitle>
+                </GridTitleContainer>
                 <Chart
                   style={{
-                    height: `${deviceHeight * 0.65}px`,
-                    width: "100%",
+                    height: deviceHeight - height,
                   }}
                 >
                   <ChartLegend position="top" orientation="horizontal" />
@@ -494,33 +507,32 @@ const SA_B3101W: React.FC = () => {
               }}
               fileName="매입매출현황"
             >
-              <SwiperSlide key={1} className="leading_PDA_custom">
-                <GridContainer style={{ width: "100%", height: "100%" }}>
-                  <GridTitle>상세정보</GridTitle>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "left",
-                      width: "100%",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
+              <SwiperSlide key={1}>
+                <GridContainer
+                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                >
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle>상세정보</GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
                     >
-                      이전
-                    </Button>
-                  </div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
-                      width: "90vw",
+                      height: deviceHeight - height2,
                     }}
                     data={gridDataResult.data}
                     {...gridDataState}
@@ -603,7 +615,6 @@ const SA_B3101W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
             </ExcelExport>
-            <div style={{ paddingBottom: "15px" }} />
           </Swiper>
         </>
       ) : (

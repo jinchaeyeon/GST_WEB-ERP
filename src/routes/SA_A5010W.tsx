@@ -63,6 +63,7 @@ import DetailWindow from "../components/Windows/SA_A5010W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
+  heightstate,
   isLoading,
   loginResultState,
 } from "../store/atoms";
@@ -105,8 +106,18 @@ const SA_A5010W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -1252,7 +1263,6 @@ const SA_A5010W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1260,9 +1270,11 @@ const SA_A5010W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -1291,8 +1303,7 @@ const SA_A5010W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
-                      width: "90vw",
+                      height: deviceHeight - height,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1370,31 +1381,27 @@ const SA_A5010W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
 
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
-                </div>
                 <ExcelExport
                   data={detailDataResult.data}
                   ref={(exporter) => {
@@ -1404,8 +1411,7 @@ const SA_A5010W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
-                      width: "90vw",
+                      height: deviceHeight - height2,
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({
