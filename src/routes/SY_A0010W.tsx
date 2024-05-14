@@ -1717,9 +1717,9 @@ const Page: React.FC = () => {
                 >
                   <GridColumn cell={CommandCell} width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions[
-                      "grdHeaderList"
-                    ]?.map(
+                    customOptionData.menuCustomColumnOptions["grdHeaderList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
