@@ -1014,7 +1014,7 @@ const CM_B1101W: React.FC = () => {
           fileName="고객대응시간분석"
         >
           <Grid
-            style={{ height: "28vh" }}
+            style={{ height: "29vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

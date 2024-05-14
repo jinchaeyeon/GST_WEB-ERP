@@ -695,7 +695,7 @@ const CM_A1710W: React.FC = () => {
           fileName="사내연락망"
         >
           <Grid
-            style={{ height: "72vh" }}
+            style={{ height: "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

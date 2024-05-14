@@ -5,7 +5,9 @@ import {
   ChartLegend,
   ChartSeries,
   ChartSeriesItem,
+  ChartSeriesLabels,
   ChartTitle,
+  ChartTooltip,
 } from "@progress/kendo-react-charts";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
@@ -28,6 +30,8 @@ import {
   ButtonInInput,
   DDGDcolorList,
   FilterBox,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
   GridContainerWrap,
   GridTitle,
@@ -66,8 +70,16 @@ import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
+
+let deviceWidth = window.innerWidth;
+let deviceHeight = window.innerHeight - 50;
+let isMobile = deviceWidth <= 1200;
+var index = 0;
 
 const QC_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -81,6 +93,7 @@ const QC_A0120: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const idGetter = getter(DATA_ITEM_KEY);
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -445,6 +458,10 @@ const QC_A0120: React.FC = () => {
         ],
       },
     });
+
+    if (swiper && isMobile) {
+      swiper.slideTo(4);
+    }
   };
 
   type TCusomizedGrid = {
@@ -494,20 +511,51 @@ const QC_A0120: React.FC = () => {
       <GridContainer maxWidth={maxWidth}>
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
-          <ButtonContainer>
-            <Input
-              name="gubun"
-              type="text"
-              value={selectedChartData.gubun}
-              className="readonly"
-            />
-            <Input
-              name="argument"
-              type="text"
-              value={selectedChartData.argument}
-              className="readonly"
-            />
-          </ButtonContainer>
+          {isMobile ? (
+            <div style={{ flexDirection: "row" }}>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "10px",
+                    }}
+                  >
+                    <Input
+                      name="gubun"
+                      type="text"
+                      value={selectedChartData.gubun}
+                      className="readonly"
+                      style={{ maxWidth: "30%" }}
+                    />
+                    <Input
+                      name="argument"
+                      type="text"
+                      value={selectedChartData.argument}
+                      className="readonly"
+                      style={{ maxWidth: "70%" }}
+                    />
+                  </div>
+                </FormBox>
+              </FormBoxWrap>
+            </div>
+          ) : (
+            <ButtonContainer>
+              <Input
+                name="gubun"
+                type="text"
+                value={selectedChartData.gubun}
+                className="readonly"
+              />
+              <Input
+                name="argument"
+                type="text"
+                value={selectedChartData.argument}
+                className="readonly"
+              />
+            </ButtonContainer>
+          )}
         </GridTitleContainer>
         <ExcelExport
           data={detail1DataResult.data}
@@ -517,7 +565,9 @@ const QC_A0120: React.FC = () => {
           fileName="불량내역조회"
         >
           <Grid
-            style={{ height: "68vh" }}
+            style={{
+              height: !isMobile ? "67vh" : `${deviceHeight * 0.6 - 40}px`,
+            }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
@@ -768,256 +818,613 @@ const QC_A0120: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <TabStrip
-        style={{ width: "100%", height: "79vh" }}
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-      >
-        <TabStripTab title="공정불량">
-          <GridContainerWrap>
-            <GridContainer style={{
-              width: "60%",
-              height:"100%"
-            }}>
+      {isMobile ? (
+        <>
+          <TabStrip
+            style={{
+              height: `${deviceHeight * 0.847}px`,
+              width: "100%",
+              paddingBottom: "15px",
+            }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="공정불량">
+              <Swiper
+                className="leading_65_Swiper"
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <GridContainerWrap>
+                  <GridContainer
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <GridContainerWrap>
+                      <SwiperSlide key={0} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          seriesColors={
+                            window.location.href.split("/")[2].split(".")[1] ==
+                            "ddgd"
+                              ? DDGDcolorList
+                              : WebErpcolorList
+                          }
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB1"}
+                        >
+                          <ChartTitle text="공정별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "공정별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                      <SwiperSlide key={1} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          seriesColors={
+                            window.location.href.split("/")[2].split(".")[1] ==
+                            "ddgd"
+                              ? DDGDcolorList
+                              : WebErpcolorList
+                          }
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB1"}
+                        >
+                          <ChartTitle text="설비별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "설비별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                    <GridContainerWrap>
+                      <SwiperSlide key={2} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          seriesColors={
+                            window.location.href.split("/")[2].split(".")[1] ==
+                            "ddgd"
+                              ? DDGDcolorList
+                              : WebErpcolorList
+                          }
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB1"}
+                        >
+                          <ChartTitle text="불량유형별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "불량유형별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                      <SwiperSlide key={3} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          seriesColors={
+                            window.location.href.split("/")[2].split(".")[1] ==
+                            "ddgd"
+                              ? DDGDcolorList
+                              : WebErpcolorList
+                          }
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB1"}
+                        >
+                          <ChartTitle text="품목별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "품목별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                  </GridContainer>
+                  <GridContainer width="100%">
+                    <SwiperSlide key={4} className="leading_PDA_custom">
+                      <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    </SwiperSlide>
+                  </GridContainer>
+                </GridContainerWrap>
+              </Swiper>
+            </TabStripTab>
+            <TabStripTab title="소재불량">
+              <Swiper
+                className="leading_65_Swiper"
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <GridContainerWrap>
+                  <GridContainer
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <GridContainerWrap>
+                      <SwiperSlide key={0} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB2"}
+                        >
+                          <ChartTitle text="공정별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "공정별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                      <SwiperSlide key={1} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB2"}
+                        >
+                          <ChartTitle text="설비별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              width={1200}
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "설비별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                    <GridContainerWrap>
+                      <SwiperSlide key={2} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB2"}
+                        >
+                          <ChartTitle text="불량유형별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "불량유형별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                      <SwiperSlide key={3} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB2"}
+                        >
+                          <ChartTitle text="품목별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "품목별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                  </GridContainer>
+                  <GridContainer width="100%">
+                    <SwiperSlide key={4} className="leading_PDA_custom">
+                      <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    </SwiperSlide>
+                  </GridContainer>
+                </GridContainerWrap>
+              </Swiper>
+            </TabStripTab>
+            <TabStripTab title="검사불량">
+              <Swiper
+                className="leading_65_Swiper"
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <GridContainerWrap>
+                  <GridContainer
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <GridContainerWrap>
+                      <SwiperSlide key={0} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB3"}
+                        >
+                          <ChartTitle text="불량유형별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "불량유형별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                    <GridContainerWrap>
+                      <SwiperSlide key={1} className="leading_PDA_custom">
+                        <Chart
+                          style={{ width: "100%" }}
+                          onSeriesClick={onChartSeriesClick}
+                          className={"QC_A0120_TAB3"}
+                        >
+                          <ChartTitle text="품목별" />
+                          <ChartLegend position="bottom" />
+                          <ChartSeries>
+                            <ChartSeriesItem
+                              type="pie"
+                              data={mainDataResult.filter(
+                                (item: any) => item.gubun == "품목별"
+                              )}
+                              field="value"
+                              categoryField="category"
+                              labels={{ visible: true, content: labelContent }}
+                            />
+                          </ChartSeries>
+                        </Chart>
+                      </SwiperSlide>
+                    </GridContainerWrap>
+                  </GridContainer>
+                  <GridContainer width="100%">
+                    <SwiperSlide key={4} className="leading_PDA_custom">
+                      <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    </SwiperSlide>
+                  </GridContainer>
+                </GridContainerWrap>
+              </Swiper>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      ) : (
+        <>
+          <TabStrip
+            style={{ width: "100%", height: "79vh" }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="공정불량">
               <GridContainerWrap>
-                <Chart                 
-                  seriesColors={
-                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                      ? DDGDcolorList
-                      : WebErpcolorList
-                  }
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB1"}
+                <GridContainer
+                  style={{
+                    width: "60%",
+                    height: "100%",
+                  }}
                 >
-                  <ChartTitle text="공정별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "공정별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-                <Chart
-                  seriesColors={
-                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                      ? DDGDcolorList
-                      : WebErpcolorList
-                  }
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB1"}
-                >
-                  <ChartTitle text="설비별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "설비별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB1"}
+                    >
+                      <ChartTitle text="공정별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "공정별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB1"}
+                    >
+                      <ChartTitle text="설비별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "설비별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB1"}
+                    >
+                      <ChartTitle text="불량유형별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "불량유형별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB1"}
+                    >
+                      <ChartTitle text="품목별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "품목별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                </GridContainer>
+                <GridContainer width={`calc(40% - ${GAP}px)`}>
+                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                </GridContainer>
               </GridContainerWrap>
+            </TabStripTab>
+            <TabStripTab title="소재불량">
               <GridContainerWrap>
-                <Chart
-                  seriesColors={
-                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                      ? DDGDcolorList
-                      : WebErpcolorList
-                  }
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB1"}
-                >
-                  <ChartTitle text="불량유형별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "불량유형별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-                <Chart
-                  seriesColors={
-                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                      ? DDGDcolorList
-                      : WebErpcolorList
-                  }
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB1"}
-                >
-                  <ChartTitle text="품목별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "품목별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
+                <GridContainer width="60%">
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB2"}
+                    >
+                      <ChartTitle text="공정별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "공정별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB2"}
+                    >
+                      <ChartTitle text="설비별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          width={1200}
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "설비별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB2"}
+                    >
+                      <ChartTitle text="불량유형별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "불량유형별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB2"}
+                    >
+                      <ChartTitle text="품목별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "품목별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                </GridContainer>
+                <GridContainer width={`calc(40% - ${GAP}px)`}>
+                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                </GridContainer>
               </GridContainerWrap>
-            </GridContainer>
-            <GridContainer width={`calc(40% - ${GAP}px)`}>
-              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="소재불량">
-          <GridContainerWrap>
-            <GridContainer width="60%">
+            </TabStripTab>
+            <TabStripTab title="검사불량">
               <GridContainerWrap>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB2"}
-                >
-                  <ChartTitle text="공정별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "공정별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB2"}
-                >
-                  <ChartTitle text="설비별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      width={1200}
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "설비별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
+                <GridContainer width="30%">
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB3"}
+                    >
+                      <ChartTitle text="불량유형별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "불량유형별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                  <GridContainerWrap>
+                    <Chart
+                      style={{ height: "36vh" }}
+                      onSeriesClick={onChartSeriesClick}
+                      className={"QC_A0120_TAB3"}
+                    >
+                      <ChartTitle text="품목별" />
+                      <ChartLegend position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          type="pie"
+                          data={mainDataResult.filter(
+                            (item: any) => item.gubun == "품목별"
+                          )}
+                          field="value"
+                          categoryField="category"
+                          labels={{ visible: true, content: labelContent }}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainerWrap>
+                </GridContainer>
+                <GridContainer width={`calc(70% - ${GAP}px)`}>
+                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                </GridContainer>
               </GridContainerWrap>
-              <GridContainerWrap>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB2"}
-                >
-                  <ChartTitle text="불량유형별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "불량유형별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB2"}
-                >
-                  <ChartTitle text="품목별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "품목별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-              </GridContainerWrap>
-            </GridContainer>
-            <GridContainer width={`calc(40% - ${GAP}px)`}>
-              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="검사불량">
-          <GridContainerWrap>
-            <GridContainer width="30%">
-              <GridContainerWrap>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB3"}
-                >
-                  <ChartTitle text="불량유형별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "불량유형별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-              </GridContainerWrap>
-              <GridContainerWrap>
-                <Chart
-                  onSeriesClick={onChartSeriesClick}
-                  className={"QC_A0120_TAB3"}
-                >
-                  <ChartTitle text="품목별" />
-                  <ChartLegend position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      type="pie"
-                      data={mainDataResult.filter(
-                        (item: any) => item.gubun == "품목별"
-                      )}
-                      field="value"
-                      categoryField="category"
-                      labels={{ visible: true, content: labelContent }}
-                    />
-                  </ChartSeries>
-                </Chart>
-              </GridContainerWrap>
-            </GridContainer>
-            <GridContainer width={`calc(70% - ${GAP}px)`}>
-              <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-      </TabStrip>
-
+            </TabStripTab>
+          </TabStrip>
+        </>
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

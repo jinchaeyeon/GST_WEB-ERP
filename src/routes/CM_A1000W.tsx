@@ -1418,15 +1418,15 @@ const CM_A1000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
-        <GridContainer width="355px" style={{ marginTop: "5px" }}>
+        <GridContainer width="355px" style={{ marginTop: "5px"}}>
           <Calendar
             focusedDate={filters.todt}
             value={filters.todt}
             onChange={filterInputChange}
           />
-          <GridTitleContainer>
+          <GridTitleContainer style={{ marginTop: "7px"}}>
             <GridTitle>메모(월 기준)</GridTitle>
-            <ButtonContainer>
+            <ButtonContainer style={{ marginBottom: "5px"}}>
               <Button
                 onClick={onMemoSaveClick}
                 fillMode="outline"

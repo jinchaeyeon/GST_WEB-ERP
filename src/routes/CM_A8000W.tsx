@@ -1707,7 +1707,7 @@ const CM_A8000W: React.FC = () => {
             fileName="ValueBox"
           >
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: "76.2vh" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
@@ -1765,7 +1765,7 @@ const CM_A8000W: React.FC = () => {
             fileName="ValueBox"
           >
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: "76.2vh" }}
               data={process(
                 detailDataResult2.data.map((row) => ({
                   ...row,
@@ -1822,7 +1822,7 @@ const CM_A8000W: React.FC = () => {
             fileName="ValueBox"
           >
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: "76.2vh" }}
               data={process(
                 detailDataResult3.data.map((row) => ({
                   ...row,
@@ -1869,45 +1869,53 @@ const CM_A8000W: React.FC = () => {
         </GridContainer>
         <GridContainer width={`calc(61% - ${GAP * 3}px)`}>
           <GridTitleContainer>
-            <GridTitle>
-              상세정보
-              <Button
-                style={{ marginLeft: "10px" }}
-                onClick={onPlusClick}
-                themeColor={"primary"}
-              >
-                [추가]
-              </Button>
+            <GridTitle
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <div>
+                상세정보
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  onClick={onPlusClick}
+                  themeColor={"primary"}
+                >
+                  [추가]
+                </Button>
+              </div>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+                <Button
+                  onClick={onCopyClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="copy"
+                  title="행 복사"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                ></Button>
+              </ButtonContainer>
             </GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-                title="행 복사"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
           </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
@@ -1917,7 +1925,7 @@ const CM_A8000W: React.FC = () => {
             fileName="ValueBox"
           >
             <Grid
-              style={{ height: "73vh" }}
+              style={{ height: "74.8vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

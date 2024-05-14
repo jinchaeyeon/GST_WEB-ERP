@@ -70,6 +70,11 @@ const numberField = [
 ];
 let targetRowIndex: null | number = null;
 
+let deviceWidth = window.innerWidth;
+let deviceHeight = window.innerHeight - 50;
+let isMobile = deviceWidth <= 1200;
+var index = 0;
+
 const QC_B0300W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -605,97 +610,129 @@ const QC_B0300W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <FormBoxWrap border={true}>
-        <FormBox>
-          <tbody>
-            <tr>
-              <th>합격</th>
-              <td colSpan={2}>{ok}</td>
-              <th>미흡</th>
-              <td colSpan={2}>{ok1}</td>
-              <th>불합격</th>
-              <td colSpan={2}>{ok2}</td>
-            </tr>
-          </tbody>
-        </FormBox>
-      </FormBoxWrap>
-      <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="단기공정능력현황"
-        >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "69vh" }}
-            data={process(
-              mainDataResult.data.map((row, idx) => ({
-                ...row,
-                inspeccd: inspeccdListData.find(
-                  (items: any) => items.sub_code == row.inspeccd
-                )?.code_name,
-                proccd: proccdListData.find(
-                  (items: any) => items.sub_code == row.proccd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
+
+      <div className={isMobile ? "leading_78_Swiper" : ""}>
+        <div className={isMobile ? "leading_PDA_custom" : ""}>
+          <FormBoxWrap border={true}>
+            <FormBox>
+              {isMobile ? (
+                <table style={{ width: "100%" }}>
+                  <tbody>
+                    <tr style={{ display: "flex", flexDirection: "row" }}>
+                      <th style={{ maxWidth: "10px" }}>합격</th>
+                      <td colSpan={2}>{ok}</td>
+                    </tr>
+                    <tr style={{ display: "flex", flexDirection: "row" }}>
+                      <th style={{ maxWidth: "10px" }}>미흡</th>
+                      <td colSpan={2}>{ok1}</td>
+                    </tr>
+                    <tr style={{ display: "flex", flexDirection: "row" }}>
+                      <th style={{ maxWidth: "10px" }}>
+                        불합격
+                      </th>
+                      <td colSpan={2}>{ok2}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              ) : (
+                <tbody>
+                  <tr>
+                    <th>합격</th>
+                    <td colSpan={2}>{ok}</td>
+                    <th>미흡</th>
+                    <td colSpan={2}>{ok1}</td>
+                    <th>불합격</th>
+                    <td colSpan={2}>{ok2}</td>
+                  </tr>
+                </tbody>
               )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            </FormBox>
+          </FormBoxWrap>
+          <GridContainer
+            style={{ paddingBottom: "15px", height: "100%", width: "100%" }}
+          >
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="단기공정능력현황"
+            >
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{
+                  height: isMobile ? `${deviceHeight * 0.5}px` : "69vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row, idx) => ({
+                    ...row,
+                    inspeccd: inspeccdListData.find(
+                      (items: any) => items.sub_code == row.inspeccd
+                    )?.code_name,
+                    proccd: proccdListData.find(
+                      (items: any) => items.sub_code == row.proccd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onMainSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </div>
+      </div>
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

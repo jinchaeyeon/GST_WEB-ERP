@@ -1462,7 +1462,7 @@ const CM_A3000W: React.FC = () => {
               <GridTitle>자료리스트</GridTitle>
             </GridTitleContainer>
             <TreeList
-              style={{ height: "81.3vh", overflow: "auto" }}
+              style={{ height: "80.5vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1500,7 +1500,7 @@ const CM_A3000W: React.FC = () => {
             fileName="자료실"
           >
             <Grid
-              style={{ height: "23.7vh" }}
+              style={{ height: "24.2vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
