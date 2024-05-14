@@ -15,7 +15,10 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -57,12 +60,13 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/QC_A2500W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+} from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -86,9 +90,6 @@ const numberField2 = ["reseq"];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const QC_A2500W: React.FC = () => {
@@ -101,6 +102,19 @@ const QC_A2500W: React.FC = () => {
   UseParaPc(setPc);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -1156,7 +1170,6 @@ const QC_A2500W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_78_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1164,9 +1177,11 @@ const QC_A2500W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>불량내역</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1177,10 +1192,7 @@ const QC_A2500W: React.FC = () => {
                   fileName="NCR관리"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 25}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1252,32 +1264,26 @@ const QC_A2500W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>요약정보</GridTitle>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                  >
-                    <ButtonContainer>
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(0);
-                          }
-                        }}
-                        icon="arrow-left"
-                        themeColor={"primary"}
-                        fillMode={"outline"}
-                      >
-                        이전
-                      </Button>
-                    </ButtonContainer>
-                    <ButtonContainer>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                    <div>
                       <Button
                         onClick={onAddClick}
                         themeColor={"primary"}
@@ -1293,8 +1299,8 @@ const QC_A2500W: React.FC = () => {
                       >
                         NCR삭제
                       </Button>
-                    </ButtonContainer>
-                  </div>
+                    </div>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={detailDataResult.data}
@@ -1304,10 +1310,7 @@ const QC_A2500W: React.FC = () => {
                   fileName="NCR관리"
                 >
                   <Grid
-                    style={{
-                      height: `${deviceHeight * 0.8 - 55}px`,
-                      width: "100%",
-                    }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
