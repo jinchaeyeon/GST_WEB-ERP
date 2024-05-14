@@ -88,7 +88,7 @@ const App: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".k-tabstrip-items-wrapper");
   if (container?.clientHeight != undefined) {

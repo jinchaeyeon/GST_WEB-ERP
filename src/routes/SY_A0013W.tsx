@@ -237,7 +237,7 @@ const Page: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("SY_A0013W", setCustomOptionData);

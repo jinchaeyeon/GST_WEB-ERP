@@ -47,7 +47,7 @@ let targetRowIndex: null | number = null;
 
 const SY_A0110: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");
   if (container?.clientHeight != undefined) {

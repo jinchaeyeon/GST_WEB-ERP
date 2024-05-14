@@ -505,7 +505,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 
 const SY_A0120: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");
   if (container?.clientHeight != undefined) {

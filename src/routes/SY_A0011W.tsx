@@ -129,7 +129,7 @@ const Page: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
   const idGetter3 = getter(ALL_MENU_DATA_ITEM_KEY);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");
   if (container?.clientHeight != undefined) {
