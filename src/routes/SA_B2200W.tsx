@@ -55,9 +55,8 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import {
   heightstate,
-  isFilterheightstate,
   isLoading,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
