@@ -1109,7 +1109,6 @@ const MA_B7000: React.FC = () => {
                 style={{
                   width: `${deviceWidth - 30}px`,
                   overflow: "auto",
-                  height: "100%",
                 }}
               >
                 <ExcelExport
@@ -1121,7 +1120,7 @@ const MA_B7000: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: deviceHeight,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1206,7 +1205,7 @@ const MA_B7000: React.FC = () => {
               key={1}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridContainer style={{ height: "100%", width: "100%" }}>
+              <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>계정별LOT</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>

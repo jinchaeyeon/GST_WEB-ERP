@@ -31,6 +31,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -77,9 +80,6 @@ import { ICustData } from "../hooks/interfaces";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 var index = 0;
 
@@ -113,7 +113,7 @@ const MA_B3000W: React.FC = () => {
   var container2 = document.querySelector(".k-tabstrip-items-wrapper");
 
   if (container?.clientHeight != undefined) {
-    height = (container == undefined ? 0 : container.clientHeight);
+    height = container == undefined ? 0 : container.clientHeight;
   }
   if (container2?.clientHeight != undefined) {
     height2 = container2 == undefined ? 0 : container2.clientHeight;
@@ -664,15 +664,11 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={0}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
                     <GridTitleContainer className="ButtonContainer">
-                      <ButtonContainer
-                        style={{ justifyContent: "space-between" }}
-                      >
+                      <ButtonContainer>
                         <Button
                           onClick={() => {
                             if (swiper) {
@@ -691,10 +687,7 @@ const MA_B3000W: React.FC = () => {
                           ? DDGDcolorList
                           : WebErpcolorList
                       }
-                      style={{
-                        height: deviceHeight - height - height2,
-                        width: "100%",
-                      }}
+                      style={{ width: "100%", height: deviceHeight - height }}
                     >
                       <ChartValueAxis>
                         <ChartValueAxisItem
@@ -731,13 +724,10 @@ const MA_B3000W: React.FC = () => {
                     </Chart>
                   </GridContainer>
                 </SwiperSlide>
-
                 <SwiperSlide key={1}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
                     <ExcelExport
@@ -747,19 +737,23 @@ const MA_B3000W: React.FC = () => {
                       }}
                       fileName="매입집계(업체)"
                     >
-                      <ButtonContainer style={{ paddingBottom: "10px" }}>
-                        <Button
-                          onClick={() => {
-                            if (swiper) {
-                              swiper.slideTo(0);
-                            }
-                          }}
+                      <GridTitleContainer className="ButtonContainer">
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
                         >
-                          차트 보기
-                        </Button>
-                      </ButtonContainer>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                          >
+                            차트 보기
+                          </Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
                       <Grid
-                        style={{ height: deviceHeight - height- height2 }}
+                        style={{ height: deviceHeight - height - height2 }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
@@ -845,9 +839,7 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={0}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
                     <ExcelExport
@@ -857,19 +849,21 @@ const MA_B3000W: React.FC = () => {
                       }}
                       fileName="매입집계(업체)"
                     >
-                      <ButtonContainer style={{ paddingBottom: "10px" }}>
-                        <Button
-                          onClick={() => {
-                            if (swiper) {
-                              swiper.slideTo(1);
-                            }
-                          }}
-                        >
-                          차트 보기
-                        </Button>
-                      </ButtonContainer>
+                      <GridTitleContainer className="ButtonContainer">
+                        <ButtonContainer>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                          >
+                            차트 보기
+                          </Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
                       <Grid
-                        style={{ height: deviceHeight - height - height }}
+                        style={{ height: deviceHeight - height - height2 }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
@@ -943,40 +937,39 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
-                    <ButtonContainer
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(0);
-                          }
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "space-between",
                         }}
                       >
-                        테이블 보기
-                      </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                        >
+                          테이블 보기
+                        </Button>
 
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                      >
-                        도넛차트 보기
-                      </Button>
-                    </ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                        >
+                          도넛차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <Chart
                       style={{
-                        height: deviceHeight - height - height,
+                        height: deviceHeight - height - height2,
                         width: "100%",
                       }}
                     >
@@ -1022,27 +1015,22 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={2}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
-                    <ButtonContainer
-                      style={{
-                        display: "flex",
-                        justifyContent: "left",
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(1);
-                          }
-                        }}
-                      >
-                        차트보기
-                      </Button>
-                    </ButtonContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <Chart>
                       <ChartLegend position="bottom" />
                       <ChartSeries>
@@ -1077,22 +1065,22 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={0}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
-                    <ButtonContainer>
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(1);
-                          }
-                        }}
-                      >
-                        차트 보기
-                      </Button>
-                    </ButtonContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <ExcelExport
                       data={gridDataResult.data}
                       ref={(exporter) => {
@@ -1101,7 +1089,7 @@ const MA_B3000W: React.FC = () => {
                       fileName="매입집계(업체)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height }}
+                        style={{ height: deviceHeight - height - height2 }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
@@ -1231,40 +1219,39 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
-                    <ButtonContainer
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(0);
-                          }
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "space-between",
                         }}
                       >
-                        테이블 보기
-                      </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                        >
+                          테이블 보기
+                        </Button>
 
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                      >
-                        도넛차트 보기
-                      </Button>
-                    </ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                        >
+                          도넛차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <Chart
                       style={{
-                        height: deviceHeight - height - height,
+                        height: deviceHeight - height - height2,
                         width: "100%",
                       }}
                     >
@@ -1342,28 +1329,22 @@ const MA_B3000W: React.FC = () => {
                 <SwiperSlide key={2}>
                   <GridContainer
                     style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "auto",
-                      height: "100%",
+                      width: "100%",
                     }}
                   >
-                    <ButtonContainer
-                      style={{
-                        display: "flex",
-                        justifyContent: "left",
-                        paddingBottom: "10px",
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(1);
-                          }
-                        }}
-                      >
-                        차트 보기
-                      </Button>
-                    </ButtonContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <Chart>
                       <ChartTitle text="분기별 매출 금액 비율(%)" />
                       <ChartTooltip render={quarterDonutRenderTooltip} />
