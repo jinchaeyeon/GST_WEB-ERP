@@ -687,7 +687,10 @@ const MA_B3000W: React.FC = () => {
                           ? DDGDcolorList
                           : WebErpcolorList
                       }
-                      style={{ width: "100%", height: deviceHeight - height }}
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
+                      }}
                     >
                       <ChartValueAxis>
                         <ChartValueAxisItem
@@ -753,7 +756,9 @@ const MA_B3000W: React.FC = () => {
                         </ButtonContainer>
                       </GridTitleContainer>
                       <Grid
-                        style={{ height: deviceHeight - height - height2 }}
+                        style={{
+                          height: deviceHeight - height - height2,
+                        }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
@@ -863,7 +868,9 @@ const MA_B3000W: React.FC = () => {
                         </ButtonContainer>
                       </GridTitleContainer>
                       <Grid
-                        style={{ height: deviceHeight - height - height2 }}
+                        style={{
+                          height: deviceHeight - height - height2,
+                        }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
@@ -1089,7 +1096,9 @@ const MA_B3000W: React.FC = () => {
                       fileName="매입집계(업체)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height2 }}
+                        style={{
+                          height: deviceHeight - height - height2,
+                        }}
                         data={process(
                           gridDataResult.data.map((row) => ({
                             ...row,
