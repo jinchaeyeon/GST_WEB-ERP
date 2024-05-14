@@ -78,6 +78,7 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
@@ -223,8 +224,13 @@ type TdataArr = {
 };
 const HU_A2140W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
@@ -1452,11 +1458,8 @@ const HU_A2140W: React.FC = () => {
           // fetchGrid,
         }}
       >
-        <div className={isMobile ? "leading_Swiper" : ""}>
-          <div className={isMobile ? "leading_PDA_custom" : ""}>
-            <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer>
-                {isMobile ? null : <GridTitle>요약정보</GridTitle>}
+            <GridContainer style={{ width: "100%", overflow: "auto"  }}>
+              <GridTitleContainer className="ButtonContainer">
                 <ButtonContainer>
                   <Button
                     onClick={onCheckClick}
@@ -1503,7 +1506,7 @@ const HU_A2140W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? `${deviceHeight * 0.73}px` : "77vh",
+                    height: isMobile ? deviceHeight - height : "79vh",
                   }}
                   data={process(
                     mainDataResult.data.map((row) => ({
@@ -1614,8 +1617,6 @@ const HU_A2140W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-          </div>
-        </div>
       </FormContext.Provider>
       {detailWindowVisible && (
         <ApprovalWindow

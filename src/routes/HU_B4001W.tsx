@@ -57,7 +57,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { Button } from "@progress/kendo-react-buttons";
@@ -73,8 +73,18 @@ const CenterField = ["insert_time"];
 
 const HU_B4001W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const setLoading = useSetRecoilState(isLoading);
   const idGetter_use = getter(DATA_ITEM_KEY_USE);
   const idGetter_adj = getter(DATA_ITEM_KEY_ADJ);
@@ -790,171 +800,171 @@ const HU_B4001W: React.FC = () => {
       </FilterContainer>
       {isMobile ? (
         <>
-          <GridContainerWrap>
-            <Swiper
-              className="leading_Swiper"
-              onSwiper={(swiper) => {
-                setSwiper(swiper);
-              }}
-              onActiveIndexChange={(swiper) => {
-                index = swiper.activeIndex;
-              }}
-            >
-              <SwiperSlide key={0} className="leading_PDA_custom">
-                <GridContainer>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                  >
-                    <GridTitle>사원정보</GridTitle>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(1);
-                        }
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainerWrap>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridContainer>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
                       }}
                     >
-                      연차조정
-                    </Button>
-                  </div>
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <div style={{ display: "flex" }}>
-                            <th
-                              style={{
-                                minWidth: "15%",
-                                width: "15%",
-                                padding: "0",
-                              }}
-                            >
-                              발생
-                            </th>
-                            <td>
-                              <Input
-                                name="totalday"
-                                type="number"
-                                value={userInfo.totalday}
-                                readOnly={true}
-                                style={{ textAlign: "center" }}
-                              />
-                            </td>
+                      <GridTitle>사원정보</GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        연차조정
+                      </Button>
+                    </div>
+                    <FormBoxWrap border={true}>
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <div style={{ display: "flex" }}>
+                              <th
+                                style={{
+                                  minWidth: "15%",
+                                  width: "15%",
+                                  padding: "0",
+                                }}
+                              >
+                                발생
+                              </th>
+                              <td>
+                                <Input
+                                  name="totalday"
+                                  type="number"
+                                  value={userInfo.totalday}
+                                  readOnly={true}
+                                  style={{ textAlign: "center" }}
+                                />
+                              </td>
 
-                            <th
-                              style={{
-                                minWidth: "15%",
-                                width: "15%",
-                                padding: "0",
-                              }}
-                            >
-                              사용
-                            </th>
-                            <td>
-                              <Input
-                                name="usedday"
-                                type="number"
-                                value={userInfo.usedday}
-                                readOnly={true}
-                                style={{ textAlign: "center" }}
-                              />
-                            </td>
+                              <th
+                                style={{
+                                  minWidth: "15%",
+                                  width: "15%",
+                                  padding: "0",
+                                }}
+                              >
+                                사용
+                              </th>
+                              <td>
+                                <Input
+                                  name="usedday"
+                                  type="number"
+                                  value={userInfo.usedday}
+                                  readOnly={true}
+                                  style={{ textAlign: "center" }}
+                                />
+                              </td>
 
+                              <th
+                                style={{
+                                  minWidth: "15%",
+                                  width: "15%",
+                                  padding: "0",
+                                }}
+                              >
+                                잔여
+                              </th>
+                              <td>
+                                <Input
+                                  name="ramainday"
+                                  type="number"
+                                  value={userInfo.ramainday}
+                                  readOnly={true}
+                                  style={{ textAlign: "center" }}
+                                />
+                              </td>
+                            </div>
                             <th
-                              style={{
-                                minWidth: "15%",
-                                width: "15%",
-                                padding: "0",
-                              }}
+                              onClick={toggleFormVisibility}
+                              style={{ cursor: "pointer" }}
                             >
-                              잔여
+                              {isVisible ? "△ 접기" : "▽ 더보기"}
                             </th>
-                            <td>
-                              <Input
-                                name="ramainday"
-                                type="number"
-                                value={userInfo.ramainday}
-                                readOnly={true}
-                                style={{ textAlign: "center" }}
-                              />
-                            </td>
-                          </div>
-                          <th
-                            onClick={toggleFormVisibility}
-                            style={{ cursor: "pointer" }}
-                          >
-                            {isVisible ? "△ 접기" : "▽ 더보기"}
-                          </th>
-                          {isVisible && (
-                            <>
-                              <div style={{ display: "flex" }}>
-                                <th style={{ minWidth: "30%", width: "30%" }}>
-                                  사번{" "}
-                                </th>
-                                <td>
-                                  <Input
-                                    name="prsnnum"
-                                    type="text"
-                                    value={userInfo.prsnum}
-                                    readOnly={true}
-                                  />
-                                </td>
-                              </div>
-                              <div style={{ display: "flex" }}>
-                                <th style={{ minWidth: "30%", width: "30%" }}>
-                                  성명
-                                </th>
-                                <td>
-                                  <Input
-                                    name="prsnnm"
-                                    type="text"
-                                    value={userInfo.prsnnm}
-                                    readOnly={true}
-                                  />
-                                </td>
-                              </div>
-                              <div style={{ display: "flex" }}>
-                                <th style={{ minWidth: "30%", width: "30%" }}>
-                                  입사일
-                                </th>
-                                <td>
-                                  <Input
-                                    name="regorgdt"
-                                    type="text"
-                                    value={userInfo.regorgdt}
-                                    readOnly={true}
-                                    style={{ textAlign: "center" }}
-                                  />
-                                </td>
-                              </div>
-                              <div style={{ display: "flex" }}>
-                                <th style={{ minWidth: "30%", width: "30%" }}>
-                                  퇴사일
-                                </th>
-                                <td>
-                                  <Input
-                                    name="rtrdt"
-                                    type="text"
-                                    value={userInfo.rtrdt}
-                                    readOnly={true}
-                                    style={{ textAlign: "center" }}
-                                  />
-                                </td>
-                              </div>
-                            </>
-                          )}
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                </GridContainer>
-                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                  <GridTitleContainer>
-                    <GridTitle>연차상세</GridTitle>
-                  </GridTitleContainer>
+                            {isVisible && (
+                              <>
+                                <div style={{ display: "flex" }}>
+                                  <th style={{ minWidth: "30%", width: "30%" }}>
+                                    사번{" "}
+                                  </th>
+                                  <td>
+                                    <Input
+                                      name="prsnnum"
+                                      type="text"
+                                      value={userInfo.prsnum}
+                                      readOnly={true}
+                                    />
+                                  </td>
+                                </div>
+                                <div style={{ display: "flex" }}>
+                                  <th style={{ minWidth: "30%", width: "30%" }}>
+                                    성명
+                                  </th>
+                                  <td>
+                                    <Input
+                                      name="prsnnm"
+                                      type="text"
+                                      value={userInfo.prsnnm}
+                                      readOnly={true}
+                                    />
+                                  </td>
+                                </div>
+                                <div style={{ display: "flex" }}>
+                                  <th style={{ minWidth: "30%", width: "30%" }}>
+                                    입사일
+                                  </th>
+                                  <td>
+                                    <Input
+                                      name="regorgdt"
+                                      type="text"
+                                      value={userInfo.regorgdt}
+                                      readOnly={true}
+                                      style={{ textAlign: "center" }}
+                                    />
+                                  </td>
+                                </div>
+                                <div style={{ display: "flex" }}>
+                                  <th style={{ minWidth: "30%", width: "30%" }}>
+                                    퇴사일
+                                  </th>
+                                  <td>
+                                    <Input
+                                      name="rtrdt"
+                                      type="text"
+                                      value={userInfo.rtrdt}
+                                      readOnly={true}
+                                      style={{ textAlign: "center" }}
+                                    />
+                                  </td>
+                                </div>
+                              </>
+                            )}
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </GridTitleContainer>
+                <GridContainer
+                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                >
                   <ExcelExport
                     data={useDataResult.data}
                     ref={(exporter) => {
@@ -963,7 +973,7 @@ const HU_B4001W: React.FC = () => {
                     fileName="연차사용현황(개인)"
                   >
                     <Grid
-                      style={{ height: `${deviceHeight * 0.47}px` }}
+                      style={{ height: deviceHeight - height }}
                       data={process(
                         useDataResult.data.map((row) => ({
                           ...row,
@@ -1022,20 +1032,15 @@ const HU_B4001W: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide
-                key={1}
-                className="leading_PDA_custom"
-                style={{ display: "flex", flexDirection: "column" }}
+              </GridContainerWrap>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                  >
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>연차조정</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
                         if (swiper) {
@@ -1046,93 +1051,90 @@ const HU_B4001W: React.FC = () => {
                     >
                       이전
                     </Button>
-                  </div>
-                  <GridTitleContainer>
-                    <GridTitle>연차조정</GridTitle>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={adjDataResult.data}
-                    ref={(exporter) => {
-                      _export2 = exporter;
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={adjDataResult.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName="연차사용현황(개인)"
+                >
+                  <Grid
+                    style={{ height: deviceHeight - height2 }}
+                    data={process(
+                      adjDataResult.data.map((row) => ({
+                        ...row,
+                        insert_userid: personListData.find(
+                          (items: any) => items.prsnnum == row.insert_userid
+                        )?.prsnnm,
+                        adjdiv: adjdivListData.find(
+                          (items: any) => (items.adjdiv = row.adjdiv)
+                        )?.code_name,
+                        insert_time: convertDateToStrWithTime2(
+                          new Date(row.insert_time)
+                        ),
+                        [SELECTED_FIELD]: subSelectedState[idGetter_adj(row)],
+                      })),
+                      adjDataState
+                    )}
+                    {...adjDataState}
+                    onSelectionChange={onSubSelectionChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY_ADJ}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
                     }}
-                    fileName="연차사용현황(개인)"
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={adjDataResult.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={grdAdj}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onSubSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
                   >
-                    <Grid
-                      style={{ height: `${deviceHeight * 0.67}px` }}
-                      data={process(
-                        adjDataResult.data.map((row) => ({
-                          ...row,
-                          insert_userid: personListData.find(
-                            (items: any) => items.prsnnum == row.insert_userid
-                          )?.prsnnm,
-                          adjdiv: adjdivListData.find(
-                            (items: any) => (items.adjdiv = row.adjdiv)
-                          )?.code_name,
-                          insert_time: convertDateToStrWithTime2(
-                            new Date(row.insert_time)
-                          ),
-                          [SELECTED_FIELD]: subSelectedState[idGetter_adj(row)],
-                        })),
-                        adjDataState
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdAdj"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : YearDateField.includes(item.fieldName)
+                                  ? YearDateCell
+                                  : CenterField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={grdTotalFooterCell}
+                            />
+                          )
                       )}
-                      {...adjDataState}
-                      onSelectionChange={onSubSelectionChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY_ADJ}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={adjDataResult.total}
-                      skip={page2.skip}
-                      take={page2.take}
-                      pageable={true}
-                      onPageChange={pageChange2}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={grdAdj}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onSubSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdAdj"]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  NumberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : DateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : YearDateField.includes(item.fieldName)
-                                    ? YearDateCell
-                                    : CenterField.includes(item.fieldName)
-                                    ? CenterCell
-                                    : undefined
-                                }
-                                footerCell={grdTotalFooterCell}
-                              />
-                            )
-                        )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-            </Swiper>
-          </GridContainerWrap>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
         </>
       ) : (
         <>

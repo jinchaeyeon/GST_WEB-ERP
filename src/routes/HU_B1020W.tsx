@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -43,7 +43,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -52,7 +52,7 @@ const dateField = ["birdt", "regorgdt", "rtrdt"];
 
 const HU_B1020W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -423,12 +423,8 @@ const HU_B1020W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-      <GridContainer style={{ height: "100%", width: "100%" }}>
-        <GridTitleContainer>
-          <GridTitle>사원 LIST</GridTitle>
-        </GridTitleContainer>
+
+      <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -437,7 +433,7 @@ const HU_B1020W: React.FC = () => {
           fileName="인원명부"
         >
           <Grid
-            style={{ height: isMobile ? `${deviceHeight * 0.72}px` :  "83vh" }}
+            style={{ height: isMobile ? deviceHeight :  "85vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -506,8 +502,6 @@ const HU_B1020W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      </div>
-      </div>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

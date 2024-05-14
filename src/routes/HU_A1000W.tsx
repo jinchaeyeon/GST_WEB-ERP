@@ -56,6 +56,7 @@ import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
+  heightstate,
   isLoading,
   loginResultState,
 } from "../store/atoms";
@@ -187,11 +188,14 @@ const PAGE_SIZE = 10000;
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const HU_A1000W: React.FC = () => {
-  const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
@@ -1690,159 +1694,151 @@ const HU_A1000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       {isMobile ? (
-        <GridContainerWrap>
-          <div className={isMobile ? "leading_Swiper" : ""}>
-            <div className={isMobile ? "leading_PDA_custom" : ""}>
-              <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+        <GridContainer
+          style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+        >
+          <GridTitleContainer className="ButtonContainer">
+            <ButtonContainer>
+              <Button
+                onClick={() => setShowMap(!showMap)}
+                themeColor={"primary"}
               >
-                <GridTitleContainer>
-                  <ButtonContainer>
-                    <Button
-                      onClick={() => setShowMap(!showMap)}
-                      themeColor={"primary"}
-                    >
-                      {showMap ? "리스트 보기" : "거주지 지도"}
-                    </Button>
-                    <Button
-                      onClick={() => setShowOrg(!showOrg)}
-                      themeColor={"primary"}
-                    >
-                      {showOrg ? "리스트 보기" : "조직도 보기"}
-                    </Button>
-                  </ButtonContainer>
-                  <ButtonContainer style={{ paddingTop: "5px" }}>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      사용자생성
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      icon="delete"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                    >
-                      사용자삭제
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
+                {showMap ? "리스트 보기" : "거주지 지도"}
+              </Button>
+              <Button
+                onClick={() => setShowOrg(!showOrg)}
+                themeColor={"primary"}
+              >
+                {showOrg ? "리스트 보기" : "조직도 보기"}
+              </Button>
+            </ButtonContainer>
+            <ButtonContainer style={{ paddingTop: "5px" }}>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                사용자생성
+              </Button>
+              <Button
+                onClick={onDeleteClick}
+                icon="delete"
+                fillMode="outline"
+                themeColor={"primary"}
+              >
+                사용자삭제
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
 
-                {showMap ? (
-                  <div
-                    style={{
-                      height: isMobile ? `${deviceHeight * 0.67}px` : "72vh",
-                      marginTop: "5px",
-                    }}
-                    id="map"
-                  ></div>
-                ) : showOrg ? (
-                  OrgData()
-                ) : (
-                  <ExcelExport
-                    data={mainDataResult.data}
-                    ref={(exporter) => {
-                      _export = exporter;
-                    }}
-                    fileName="인사관리"
-                  >
-                    <Grid
-                      style={{
-                        height: isMobile ? `${deviceHeight * 0.67}px` : "72vh",
-                      }}
-                      data={process(
-                        mainDataResult.data.map((row) => ({
-                          ...row,
-                          dptcd: dptcdListData.find(
-                            (item: any) => item.dptcd == row.dptcd
-                          )?.dptnm,
-                          postcd: postcdListData.find(
-                            (item: any) => item.sub_code == row.postcd
-                          )?.code_name,
-                          perregnum:
-                            row.perregnum == "" ||
-                            row.perregnum == null ||
-                            row.perregnum == undefined
-                              ? ""
-                              : decrypt(row.perregnum, row.salt),
-                          telephon:
-                            row.telephon == "" ||
-                            row.telephon == null ||
-                            row.telephon == undefined
-                              ? ""
-                              : decrypt(row.telephon, row.salt),
-                          phonenum:
-                            row.phonenum == "" ||
-                            row.phonenum == null ||
-                            row.phonenum == undefined
-                              ? ""
-                              : decrypt(row.phonenum, row.salt),
-                          [SELECTED_FIELD]: selectedState[idGetter(row)],
-                        })),
-                        mainDataState
-                      )}
-                      {...mainDataState}
-                      onDataStateChange={onMainDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult.total}
-                      skip={page.skip}
-                      take={page.take}
-                      pageable={true}
-                      onPageChange={pageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      <GridColumn cell={CommandCell} width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList"
-                        ]?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell
-                                    : undefined
-                                }
-                              ></GridColumn>
-                            )
-                        )}
-                    </Grid>
-                  </ExcelExport>
+          {showMap ? (
+            <div
+              style={{
+                height: isMobile ? deviceHeight - height : "72vh",
+                marginTop: "5px",
+              }}
+              id="map"
+            ></div>
+          ) : showOrg ? (
+            OrgData()
+          ) : (
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="인사관리"
+            >
+              <Grid
+                style={{
+                  height: isMobile ? deviceHeight - height : "72vh",
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd == row.dptcd
+                    )?.dptnm,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    perregnum:
+                      row.perregnum == "" ||
+                      row.perregnum == null ||
+                      row.perregnum == undefined
+                        ? ""
+                        : decrypt(row.perregnum, row.salt),
+                    telephon:
+                      row.telephon == "" ||
+                      row.telephon == null ||
+                      row.telephon == undefined
+                        ? ""
+                        : decrypt(row.telephon, row.salt),
+                    phonenum:
+                      row.phonenum == "" ||
+                      row.phonenum == null ||
+                      row.phonenum == undefined
+                        ? ""
+                        : decrypt(row.phonenum, row.salt),
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
                 )}
-              </GridContainer>
-            </div>
-          </div>
-        </GridContainerWrap>
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn cell={CommandCell} width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            dateField.includes(item.fieldName)
+                              ? DateCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          )}
+        </GridContainer>
       ) : (
         <>
           <GridContainer>
