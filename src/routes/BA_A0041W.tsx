@@ -16,11 +16,10 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -65,7 +64,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0041W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -146,7 +145,12 @@ const CustomCheckCell = (props: GridCellProps) => {
 const BA_A0041W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1902,158 +1906,154 @@ const BA_A0041W: React.FC = () => {
       </FilterContainer>
       {isMobile ? (
         <>
-          <div className={isMobile ? "leading_Swiper" : ""}>
-            <div className={isMobile ? "leading_PDA_custom" : ""}>
-              <GridContainer style={{ paddingBottom: "15px", height: "100%", width: "100%" }}>
-                <GridTitleContainer>
-                  <ButtonContainer>
-                    {permissions && (
-                      <ExcelUploadButtons
-                        saveExcel={() => saveExcel}
-                        permissions={permissions}
-                        style={{ marginLeft: "15px" }}
-                      />
-                    )}
-                    <Button
-                      title="Export Excel"
-                      onClick={onAttachmentsWndClick}
-                      icon="file"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                    >
-                      엑셀양식
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      즉시 삭제
-                    </Button>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult.data}
-                  ref={(exporter) => {
-                    _export = exporter;
-                  }}
-                  fileName="품목관리(멀티)"
+          <GridContainer style={{ width: "100%" }}>
+            <GridTitleContainer className="ButtonContainer">
+              <ButtonContainer>
+                {permissions && (
+                  <ExcelUploadButtons
+                    saveExcel={() => saveExcel}
+                    permissions={permissions}
+                    style={{ marginLeft: "15px" }}
+                  />
+                )}
+                <Button
+                  title="Export Excel"
+                  onClick={onAttachmentsWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
                 >
-                  <Grid
-                    style={{ height: `${deviceHeight * 0.68}px` }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        rowstatus:
-                          row.rowstatus == null ||
-                          row.rowstatus == "" ||
-                          row.rowstatus == undefined
-                            ? ""
-                            : row.rowstatus,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)],
-                      })),
-                      mainDataState
-                    )}
-                    {...mainDataState}
-                    onDataStateChange={onMainDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    <GridColumn
-                      field="chk"
-                      title=" "
-                      width="45px"
-                      headerCell={CustomCheckBoxCell2}
-                      cell={CheckBoxCell}
-                    />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                CheckField.includes(item.fieldName)
-                                  ? CustomCheckCell
-                                  : NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : CustomComboField.includes(item.fieldName)
-                                  ? CustomComboBoxCell
-                                  : undefined
-                              }
-                              headerCell={
-                                requiredField.includes(item.fieldName)
-                                  ? RequiredHeader
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 1
-                                  ? mainTotalFooterCell
-                                  : NumberField2.includes(item.fieldName)
-                                  ? editNumberFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </div>
-          </div>
+                  엑셀양식
+                </Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  즉시 삭제
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="품목관리(멀티)"
+            >
+              <Grid
+                style={{ height: deviceHeight - height }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    rowstatus:
+                      row.rowstatus == null ||
+                      row.rowstatus == "" ||
+                      row.rowstatus == undefined
+                        ? ""
+                        : row.rowstatus,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
+                />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            CheckField.includes(item.fieldName)
+                              ? CustomCheckCell
+                              : NumberField.includes(item.fieldName)
+                              ? NumberCell
+                              : CustomComboField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 1
+                              ? mainTotalFooterCell
+                              : NumberField2.includes(item.fieldName)
+                              ? editNumberFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </>
       ) : (
         <>

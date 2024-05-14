@@ -4,7 +4,6 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
-  GridCell,
   GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
@@ -14,9 +13,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Checkbox,
   CheckboxChangeEvent,
@@ -27,6 +23,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -82,6 +81,7 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
@@ -89,7 +89,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import saveAs from "file-saver";
 
 var index = 0;
 
@@ -177,9 +176,23 @@ const BA_A0040: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0040W", setCustomOptionData);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 70;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -2409,7 +2422,6 @@ const BA_A0040: React.FC = () => {
             </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2417,11 +2429,11 @@ const BA_A0040: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
+            <SwiperSlide key={0}>
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick2}
@@ -2456,7 +2468,7 @@ const BA_A0040: React.FC = () => {
                   fileName="품목관리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.75}px` }}
+                    style={{ height: deviceHeight - height }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2530,506 +2542,479 @@ const BA_A0040: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
-                }}
+              <TabStrip
+                selected={tabSelected}
+                onSelect={handleSelectTab}
+                style={{ width: "100%" }}
               >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
-                  }}
-                  icon="arrow-left"
-                >
-                  이전
-                </Button>
-              </div>
-              <GridContainer
-                style={{ height: `${deviceHeight * 0.6}px`, width: `${deviceWidth - 30}px` }}
-              >
-                <TabStrip
-                  selected={tabSelected}
-                  onSelect={handleSelectTab}
-                  style={{ width: "100%" }}
-                >
-                  <TabStripTab title="상세정보">
-                    <GridContainer>
-                      <FormBoxWrap
-                        style={{
-                          height: `${deviceHeight * 0.62}px`,
-                          width: "100%",
-                          overflow: "scroll",
-                        }}
-                      >
-                        <FormBox>
-                          <tbody>
-                            <tr>
-                              <th>품목코드</th>
-                              {infomation.itemcd != "자동생성" && yn == true ? (
-                                <>
-                                  <td>
-                                    <Input
-                                      name="itemcd"
-                                      type="text"
-                                      value={infomation.itemcd}
-                                      className="readonly"
-                                    />
-                                  </td>
-                                </>
-                              ) : (
-                                <>
-                                  <td>
-                                    {yn == true ? (
-                                      <div className="filter-item-wrap">
-                                        <Input
-                                          name="itemcd"
-                                          type="text"
-                                          value={"자동생성"}
-                                          className="readonly"
-                                          style={{ width: "100%" }}
+                <TabStripTab title="상세정보">
+                  <GridContainer>
+                    <FormBoxWrap
+                      style={{
+                        height: deviceHeight - height3,
+                        width: "100%",
+                        overflow: "scroll",
+                      }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>품목코드</th>
+                            {infomation.itemcd != "자동생성" && yn == true ? (
+                              <>
+                                <td>
+                                  <Input
+                                    name="itemcd"
+                                    type="text"
+                                    value={infomation.itemcd}
+                                    className="readonly"
+                                  />
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td>
+                                  {yn == true ? (
+                                    <div className="filter-item-wrap">
+                                      <Input
+                                        name="itemcd"
+                                        type="text"
+                                        value={"자동생성"}
+                                        className="readonly"
+                                        style={{ width: "100%" }}
+                                      />
+                                      <ButtonInInput>
+                                        <Checkbox
+                                          defaultChecked={true}
+                                          value={yn}
+                                          onChange={CheckChange}
+                                          style={{
+                                            marginTop: "7px",
+                                            marginRight: "5px",
+                                          }}
                                         />
-                                        <ButtonInInput>
-                                          <Checkbox
-                                            defaultChecked={true}
-                                            value={yn}
-                                            onChange={CheckChange}
-                                            style={{
-                                              marginTop: "7px",
-                                              marginRight: "5px",
-                                            }}
-                                          />
-                                        </ButtonInInput>
-                                      </div>
-                                    ) : (
-                                      <div className="filter-item-wrap">
-                                        <Input
-                                          name="itemcd"
-                                          type="text"
-                                          value={infomation.itemcd}
-                                          onChange={InputChange}
+                                      </ButtonInInput>
+                                    </div>
+                                  ) : (
+                                    <div className="filter-item-wrap">
+                                      <Input
+                                        name="itemcd"
+                                        type="text"
+                                        value={infomation.itemcd}
+                                        onChange={InputChange}
+                                      />
+                                      <ButtonInInput>
+                                        <Checkbox
+                                          defaultChecked={true}
+                                          value={yn}
+                                          onChange={CheckChange}
+                                          style={{
+                                            marginTop: "7px",
+                                            marginRight: "5px",
+                                          }}
                                         />
-                                        <ButtonInInput>
-                                          <Checkbox
-                                            defaultChecked={true}
-                                            value={yn}
-                                            onChange={CheckChange}
-                                            style={{
-                                              marginTop: "7px",
-                                              marginRight: "5px",
-                                            }}
-                                          />
-                                        </ButtonInInput>
-                                      </div>
-                                    )}
-                                  </td>
-                                </>
-                              )}
-                              <th>품목명</th>
-                              <td colSpan={3}>
-                                <Input
-                                  name="itemnm"
-                                  type="text"
-                                  value={infomation.itemnm}
-                                  onChange={InputChange}
+                                      </ButtonInInput>
+                                    </div>
+                                  )}
+                                </td>
+                              </>
+                            )}
+                            <th>품목명</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="itemnm"
+                                type="text"
+                                value={infomation.itemnm}
+                                onChange={InputChange}
+                                className="required"
+                              />
+                            </td>
+                            <th>품목계정</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="itemacnt"
+                                  value={infomation.itemacnt}
+                                  bizComponentId="L_BA061"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  textField={"code_name"}
+                                  valueField={"code_name"}
                                   className="required"
                                 />
-                              </td>
-                              <th>품목계정</th>
-                              <td>
-                                {bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="itemacnt"
-                                    value={infomation.itemacnt}
-                                    bizComponentId="L_BA061"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                    textField={"code_name"}
-                                    valueField={"code_name"}
-                                    className="required"
-                                  />
-                                )}
-                              </td>
-                              <th>수량단위</th>
-                              <td>
-                                {bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="invunit"
-                                    value={infomation.invunit}
-                                    bizComponentId="L_BA015"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                    textField={"code_name"}
-                                    valueField={"code_name"}
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>단위중량</th>
-                              <td>
-                                <Input
-                                  name="unitwgt"
-                                  type="number"
-                                  value={infomation.unitwgt}
-                                  onChange={InputChange}
-                                  style={{ textAlign: "right" }}
+                              )}
+                            </td>
+                            <th>수량단위</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="invunit"
+                                  value={infomation.invunit}
+                                  bizComponentId="L_BA015"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  textField={"code_name"}
+                                  valueField={"code_name"}
                                 />
-                              </td>
-                              <th>안전재고량</th>
-                              <td>
-                                <Input
-                                  name="safeqty"
-                                  type="number"
-                                  value={infomation.safeqty}
-                                  onChange={InputChange}
-                                  style={{ textAlign: "right" }}
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>단위중량</th>
+                            <td>
+                              <Input
+                                name="unitwgt"
+                                type="number"
+                                value={infomation.unitwgt}
+                                onChange={InputChange}
+                                style={{ textAlign: "right" }}
+                              />
+                            </td>
+                            <th>안전재고량</th>
+                            <td>
+                              <Input
+                                name="safeqty"
+                                type="number"
+                                value={infomation.safeqty}
+                                onChange={InputChange}
+                                style={{ textAlign: "right" }}
+                              />
+                            </td>
+                            <th>대분류</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="itemlvl1"
+                                  value={infomation.itemlvl1}
+                                  bizComponentId="L_BA171"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
                                 />
-                              </td>
-                              <th>대분류</th>
-                              <td>
-                                {bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="itemlvl1"
-                                    value={infomation.itemlvl1}
-                                    bizComponentId="L_BA171"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                  />
-                                )}
-                              </td>
-                              <th>중분류</th>
-                              <td>
-                                {bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="itemlvl2"
-                                    value={infomation.itemlvl2}
-                                    bizComponentId="L_BA172"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                  />
-                                )}
-                              </td>
-                              <th>소분류</th>
-                              <td>
-                                {bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="itemlvl3"
-                                    value={infomation.itemlvl3}
-                                    bizComponentId="L_BA173"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>사양</th>
-                              <td>
-                                <Input
-                                  name="spec"
-                                  type="text"
-                                  value={infomation.spec}
-                                  onChange={InputChange}
+                              )}
+                            </td>
+                            <th>중분류</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="itemlvl2"
+                                  value={infomation.itemlvl2}
+                                  bizComponentId="L_BA172"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
                                 />
-                              </td>
-                              <th>재질</th>
-                              <td>
-                                <Input
-                                  name="bnatur"
-                                  type="text"
-                                  value={infomation.bnatur}
-                                  onChange={InputChange}
+                              )}
+                            </td>
+                            <th>소분류</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="itemlvl3"
+                                  value={infomation.itemlvl3}
+                                  bizComponentId="L_BA173"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
                                 />
-                              </td>
-                              <th>업체코드</th>
-                              <td>
-                                <Input
-                                  name="custcd"
-                                  type="text"
-                                  value={infomation.custcd}
-                                  onChange={InputChange}
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>사양</th>
+                            <td>
+                              <Input
+                                name="spec"
+                                type="text"
+                                value={infomation.spec}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>재질</th>
+                            <td>
+                              <Input
+                                name="bnatur"
+                                type="text"
+                                value={infomation.bnatur}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>업체코드</th>
+                            <td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={infomation.custcd}
+                                onChange={InputChange}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
                                 />
-                                <ButtonInInput>
-                                  <Button
-                                    onClick={onCustWndClick2}
-                                    icon="more-horizontal"
-                                    fillMode="flat"
-                                  />
-                                </ButtonInInput>
-                              </td>
-                              <th>업체명</th>
-                              <td>
-                                <Input
-                                  name="custnm"
-                                  type="text"
-                                  value={infomation.custnm}
-                                  className="readonly"
+                              </ButtonInInput>
+                            </td>
+                            <th>업체명</th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={infomation.custnm}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>사용여부</th>
+                            <td>
+                              <Checkbox
+                                name="useyn"
+                                value={infomation.useyn == "Y" ? true : false}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>규격</th>
+                            <td>
+                              <Input
+                                name="insiz"
+                                type="text"
+                                value={infomation.insiz}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>도면번호</th>
+                            <td>
+                              <Input
+                                name="dwgno"
+                                type="text"
+                                value={infomation.dwgno}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>Marker</th>
+                            <td>
+                              <Input
+                                name="maker"
+                                type="text"
+                                value={infomation.maker}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>첨부파일</th>
+                            <td>
+                              <Input
+                                name="files"
+                                type="text"
+                                value={infomation.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onAttachmentsWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
                                 />
-                              </td>
-                              <th>사용여부</th>
-                              <td>
-                                <Checkbox
-                                  name="useyn"
-                                  value={infomation.useyn == "Y" ? true : false}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>규격</th>
-                              <td>
-                                <Input
-                                  name="insiz"
-                                  type="text"
-                                  value={infomation.insiz}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                              <th>도면번호</th>
-                              <td>
-                                <Input
-                                  name="dwgno"
-                                  type="text"
-                                  value={infomation.dwgno}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                              <th>Marker</th>
-                              <td>
-                                <Input
-                                  name="maker"
-                                  type="text"
-                                  value={infomation.maker}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                              <th>첨부파일</th>
-                              <td>
-                                <Input
-                                  name="files"
-                                  type="text"
-                                  value={infomation.files}
-                                  className="readonly"
-                                />
-                                <ButtonInInput>
-                                  <Button
-                                    type={"button"}
-                                    onClick={onAttachmentsWndClick}
-                                    icon="more-horizontal"
-                                    fillMode="flat"
-                                  />
-                                </ButtonInInput>
-                              </td>
-                              <th>검사유무</th>
-                              <td>
-                                <Checkbox
-                                  name="qcyn"
-                                  value={infomation.qcyn == "Y" ? true : false}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                            </tr>
-                            <tr>
-                              <th>비고</th>
-                              <td colSpan={10}>
-                                <TextArea
-                                  value={infomation.remark}
-                                  name="remark"
-                                  rows={4}
-                                  onChange={InputChange}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </FormBox>
-                      </FormBoxWrap>
-                    </GridContainer>
-                  </TabStripTab>
-                  <TabStripTab title="단가">
-                    <GridContainer>
-                      <GridTitleContainer>
-                        <ButtonContainer>
-                          <Button
-                            onClick={onAddClick}
-                            themeColor={"primary"}
-                            icon="plus"
-                            title="행 추가"
-                          ></Button>
-                          <Button
-                            onClick={onDeleteClick}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="minus"
-                            title="행 삭제"
-                          ></Button>
-                          <Button
-                            onClick={onSaveClick}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="save"
-                            title="저장"
-                          ></Button>
-                        </ButtonContainer>
-                      </GridTitleContainer>
-                      <ExcelExport
-                        data={subData2Result.data}
-                        ref={(exporter) => {
-                          _export2 = exporter;
-                        }}
-                        fileName="품목관리"
-                      >
-                        <Grid
-                          style={{
-                            height: `${deviceHeight * 0.58}px`,
-                            width: `${deviceWidth - 30}px`,
-                            overflow: "scroll",
-                          }}
-                          data={process(
-                            subData2Result.data.map((row) => ({
-                              ...row,
-                              rowstatus:
-                                row.rowstatus == null ||
-                                row.rowstatus == "" ||
-                                row.rowstatus == undefined
-                                  ? ""
-                                  : row.rowstatus,
-                              recdt: row.recdt
-                                ? new Date(dateformat(row.recdt))
-                                : new Date(dateformat("99991231")),
-                              [SELECTED_FIELD]:
-                                selectedsubData2State[idGetter2(row)],
-                            })),
-                            subData2State
-                          )}
-                          {...subData2State}
-                          onDataStateChange={onSubData2StateChange}
-                          //선택 기능
-                          dataItemKey={SUB_DATA_ITEM_KEY2}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSubData2SelectionChange}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={subData2Result.total}
-                          skip={page2.skip}
-                          take={page2.take}
-                          pageable={true}
-                          onPageChange={pageChange2}
-                          //원하는 행 위치로 스크롤 기능
-                          ref={gridRef2}
-                          rowHeight={30}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onSubData2SortChange}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                          onItemChange={onSubItemChange}
-                          cellRender={customCellRender}
-                          rowRender={customRowRender}
-                          editField={EDIT_FIELD}
-                        >
-                          <GridColumn
-                            field="rowstatus"
-                            title=" "
-                            width="50px"
-                          />
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList2"
-                            ]?.map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <GridColumn
-                                    key={idx}
-                                    id={item.id}
-                                    field={item.fieldName}
-                                    title={item.caption}
-                                    width={item.width}
-                                    cell={
-                                      DateField.includes(item.fieldName)
-                                        ? DateCell
-                                        : CustomComboField.includes(
-                                            item.fieldName
-                                          )
-                                        ? CustomComboBoxCell
-                                        : NumberField.includes(item.fieldName)
-                                        ? NumberCell
-                                        : undefined
-                                    }
-                                    headerCell={
-                                      requiredField.includes(item.fieldName)
-                                        ? RequiredHeader
-                                        : undefined
-                                    }
-                                    footerCell={
-                                      item.sortOrder == 0
-                                        ? sub2TotalFooterCell
-                                        : undefined
-                                    }
-                                  />
-                                )
-                            )}
-                        </Grid>
-                      </ExcelExport>
-                    </GridContainer>
-                  </TabStripTab>
-                  <TabStripTab title="이미지">
-                    <GridContainer>
-                      <FormBoxWrap
+                              </ButtonInInput>
+                            </td>
+                            <th>검사유무</th>
+                            <td>
+                              <Checkbox
+                                name="qcyn"
+                                value={infomation.qcyn == "Y" ? true : false}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>비고</th>
+                            <td colSpan={10}>
+                              <TextArea
+                                value={infomation.remark}
+                                name="remark"
+                                rows={4}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="단가">
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
+                        <Button
+                          onClick={onSaveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={subData2Result.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="품목관리"
+                    >
+                      <Grid
                         style={{
-                          height: `${deviceHeight * 0.62}px`,
-                          width: "100%",
+                          height: deviceHeight - height2 - height3,
+                          width: `${deviceWidth - 30}px`,
                           overflow: "scroll",
                         }}
+                        data={process(
+                          subData2Result.data.map((row) => ({
+                            ...row,
+                            rowstatus:
+                              row.rowstatus == null ||
+                              row.rowstatus == "" ||
+                              row.rowstatus == undefined
+                                ? ""
+                                : row.rowstatus,
+                            recdt: row.recdt
+                              ? new Date(dateformat(row.recdt))
+                              : new Date(dateformat("99991231")),
+                            [SELECTED_FIELD]:
+                              selectedsubData2State[idGetter2(row)],
+                          })),
+                          subData2State
+                        )}
+                        {...subData2State}
+                        onDataStateChange={onSubData2StateChange}
+                        //선택 기능
+                        dataItemKey={SUB_DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSubData2SelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={subData2Result.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onSubData2SortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onSubItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
                       >
-                        <GridContainer width={`calc(20% - ${GAP}px)`}>
-                          <GridContainer>
-                            <Grid
-                              style={{
-                                height: "fit-content",
-                              }}
-                              data={gridData}
-                            >
-                              <GridColumn
-                                field="image"
-                                title="이미지 1"
-                                cell={imgCell}
-                              />
-                            </Grid>
-                          </GridContainer>
-
-                          <GridContainer>
-                            <Grid
-                              style={{
-                                height: "fit-content",
-                              }}
-                              data={gridData2}
-                            >
-                              <GridColumn
-                                field="image"
-                                title="이미지 2"
-                                cell={imgCell2}
-                              />
-                            </Grid>
-                          </GridContainer>
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdList2"
+                          ]?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : CustomComboField.includes(
+                                          item.fieldName
+                                        )
+                                      ? CustomComboBoxCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? sub2TotalFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="이미지">
+                  <GridContainer>
+                    <FormBoxWrap
+                      style={{
+                        height: deviceHeight - height3,
+                        width: "100%",
+                        overflow: "scroll",
+                      }}
+                    >
+                      <GridContainer width={`calc(20% - ${GAP}px)`}>
+                        <GridContainer>
+                          <Grid
+                            style={{
+                              height: "fit-content",
+                            }}
+                            data={gridData}
+                          >
+                            <GridColumn
+                              field="image"
+                              title="이미지 1"
+                              cell={imgCell}
+                            />
+                          </Grid>
                         </GridContainer>
-                      </FormBoxWrap>
-                    </GridContainer>
-                  </TabStripTab>
-                </TabStrip>
-              </GridContainer>
+
+                        <GridContainer>
+                          <Grid
+                            style={{
+                              height: "fit-content",
+                            }}
+                            data={gridData2}
+                          >
+                            <GridColumn
+                              field="image"
+                              title="이미지 2"
+                              cell={imgCell2}
+                            />
+                          </Grid>
+                        </GridContainer>
+                      </GridContainer>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
             </SwiperSlide>
           </Swiper>
         </>
