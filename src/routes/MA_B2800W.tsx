@@ -25,7 +25,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -71,7 +71,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import MA_B2800W_Window from "../components/Windows/MA_B2800W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2800W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -154,6 +154,8 @@ let deviceHeight = window.innerHeight - 50;
 let isMobile = deviceWidth <= 1200;
 
 const MA_B2800W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -692,11 +694,7 @@ const MA_B2800W: React.FC = () => {
   const createColumn = () => {
     const array = [];
     array.push(
-      <GridColumn
-        field={"purnum"}
-        title={"발주번호"}
-        width="150px"
-      />
+      <GridColumn field={"purnum"} title={"발주번호"} width="150px" />
     );
     array.push(
       <GridColumn
@@ -717,22 +715,10 @@ const MA_B2800W: React.FC = () => {
         width="120px"
       />
     );
-    array.push(
-      <GridColumn field={"d_day"} title={"D-DAY"} width="80px" />
-    );
-    array.push(
-      <GridColumn field={"custnm"} title={"업체"} width="150px" />
-    );
-    array.push(
-      <GridColumn
-        field={"itemnm"}        
-        title={"품목명"}
-        width="150px"
-      />
-    );
-    array.push(
-      <GridColumn field={"insiz"} title={"규격"} width="150px" />
-    );
+    array.push(<GridColumn field={"d_day"} title={"D-DAY"} width="80px" />);
+    array.push(<GridColumn field={"custnm"} title={"업체"} width="150px" />);
+    array.push(<GridColumn field={"itemnm"} title={"품목명"} width="150px" />);
+    array.push(<GridColumn field={"insiz"} title={"규격"} width="150px" />);
     return array;
   };
 
@@ -1143,21 +1129,15 @@ const MA_B2800W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
+
       <FormContext.Provider
         value={{
           purInfo,
           setPutInfo,
         }}
       >
-        <GridContainer
-            style={{ height: "100%", width: "100%" }}
-          >
-          <GridTitleContainer>
-            <GridTitle>발주대비입고자료</GridTitle>
-          </GridTitleContainer>
+        <GridContainer style={{ width: "100%" }}>
+          <GridTitleContainer></GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
@@ -1166,7 +1146,7 @@ const MA_B2800W: React.FC = () => {
             fileName="발주대비입고현황"
           >
             <Grid
-              style={{ height: !isMobile ? "72.5vh" :`${deviceHeight * 0.8 - 20}px` }}
+              style={{ height: !isMobile ? "72.5vh" : deviceHeight }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1213,10 +1193,8 @@ const MA_B2800W: React.FC = () => {
               rowRender={customRowRender2}
               editField={EDIT_FIELD}
             >
-              <GridColumn cell={ColumnCommandCell} width="60px"/>
-              <GridColumn title="자료">
-                {createColumn()}
-              </GridColumn>
+              <GridColumn cell={ColumnCommandCell} width="60px" />
+              <GridColumn title="자료">{createColumn()}</GridColumn>
               <GridColumn title="발주">{createColumn2()}</GridColumn>
               <GridColumn title="입고">{createColumn3()}</GridColumn>
               <GridColumn title="미입고">{createColumn4()}</GridColumn>
@@ -1224,8 +1202,6 @@ const MA_B2800W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </FormContext.Provider>
-      </div>
-      </div>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

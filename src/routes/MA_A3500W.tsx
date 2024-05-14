@@ -133,32 +133,8 @@ const MA_A3500W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   let deviceWidth = window.innerWidth;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var height5 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  var container4 = document.querySelector(".ButtonContainer4");
-  var container5 = document.querySelector(".ButtonContainer5");
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
-  if (container5?.clientHeight != undefined) {
-    height5 = container5 == undefined ? 0 : container5.clientHeight;
-  }
+
   let isMobile = deviceWidth <= 1200;
 
   const userId = UseGetValueFromSessionItem("user_id");
@@ -170,6 +146,50 @@ const MA_A3500W: React.FC = () => {
   const [isVisibleDetail, setIsVisableDetail] = useState(false);
   const [isVisibleDetail2, setIsVisableDetail2] = useState(false);
   const [isVisibleDetail3, setIsVisableDetail3] = useState(false);
+
+  var height = 0;
+  const [height2, setHeight2] = useState(0);
+  const [height3, setHeight3] = useState(0);
+  const [height4, setHeight4] = useState(0);
+  var height5 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
+  var container5 = document.querySelector(".ButtonContainer5");
+  useEffect(() => {
+    if (container?.clientHeight != undefined) {
+      height = container == undefined ? 0 : container.clientHeight;
+    }
+    if (container2?.clientHeight != undefined) {
+      setHeight2(container2 == undefined ? 0 : container2.clientHeight);
+    }
+    if (container3?.clientHeight != undefined) {
+      setHeight3(container3 == undefined ? 0 : container3.clientHeight);
+    }
+    if (container4?.clientHeight != undefined) {
+      setHeight4(container4 == undefined ? 0 : container4.clientHeight);
+    }
+    if (container5?.clientHeight != undefined) {
+      height5 = container5 == undefined ? 0 : container5.clientHeight;
+    }
+  }, []);
+
+  const updateHeight = () => {
+    setTimeout(() => {
+      if (container2?.clientHeight != undefined) {
+        setHeight2(container2 == undefined ? 0 : container2.clientHeight);
+      }
+      if (container3?.clientHeight != undefined) {
+        setHeight3(container3 == undefined ? 0 : container3.clientHeight);
+      }
+      if (container4?.clientHeight != undefined) {
+        setHeight4(container4 == undefined ? 0 : container4.clientHeight);
+      }
+    }, 200);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -2753,9 +2773,10 @@ const MA_A3500W: React.FC = () => {
                             }}
                           >
                             <Button
-                              onClick={() =>
-                                setIsVisableDetail((prev) => !prev)
-                              }
+                              onClick={() => {
+                                setIsVisableDetail((prev) => !prev);
+                                updateHeight();
+                              }}
                               icon={
                                 isVisibleDetail ? "chevron-up" : "chevron-down"
                               }
@@ -2952,14 +2973,24 @@ const MA_A3500W: React.FC = () => {
                             style={{
                               display: "flex",
                               justifyContent: "left",
-                              width: "100%",
+                              flexDirection: isVisibleDetail2
+                                ? "column"
+                                : "row",
                             }}
                             className="ButtonContainer3"
                           >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "left",
+                                width: "100%",
+                              }}
+                            >
                             <Button
-                              onClick={() =>
-                                setIsVisableDetail2((prev) => !prev)
-                              }
+                              onClick={() => {
+                                setIsVisableDetail2((prev) => !prev);
+                                updateHeight();
+                              }}
                               icon={
                                 isVisibleDetail2 ? "chevron-up" : "chevron-down"
                               }
@@ -2968,7 +2999,7 @@ const MA_A3500W: React.FC = () => {
                             >
                               조회조건
                             </Button>
-                          </div>
+                            </div>
                           {isVisibleDetail2 && (
                             <FormBoxWrap border={true}>
                               <FormBox>
@@ -3008,6 +3039,7 @@ const MA_A3500W: React.FC = () => {
                               </FormBox>
                             </FormBoxWrap>
                           )}
+                          </div>
                           <ExcelExport
                             data={BOMDataResult.data}
                             ref={(exporter) => {
@@ -3105,9 +3137,10 @@ const MA_A3500W: React.FC = () => {
                               }}
                             >
                               <Button
-                                onClick={() =>
-                                  setIsVisableDetail3((prev) => !prev)
-                                }
+                                onClick={() => {
+                                  setIsVisableDetail3((prev) => !prev);
+                                  updateHeight();
+                                }}
                                 icon={
                                   isVisibleDetail3
                                     ? "chevron-up"

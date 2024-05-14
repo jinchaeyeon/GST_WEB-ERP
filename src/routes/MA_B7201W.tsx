@@ -26,7 +26,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -65,7 +65,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B7201W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -99,6 +99,24 @@ let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_B7201W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -1098,7 +1116,6 @@ const MA_B7201W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1106,9 +1123,9 @@ const MA_B7201W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
+            <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>품목별기간재고</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1120,7 +1137,7 @@ const MA_B7201W: React.FC = () => {
                   group={group}
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8 - 30}px` }}
+                    style={{ height: deviceHeight - height }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
                       items: item.items.map((row: any) => ({
@@ -1181,9 +1198,9 @@ const MA_B7201W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={1}>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer2">
                   <div
                     style={{
                       display: "flex",
@@ -1212,7 +1229,7 @@ const MA_B7201W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
+                      height: deviceHeight - height2,
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({
@@ -1285,9 +1302,9 @@ const MA_B7201W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={2} className="leading_PDA_custom">
-              <GridContainer  style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={2}>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer3">
                   <div
                     style={{
                       display: "flex",
@@ -1320,7 +1337,7 @@ const MA_B7201W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 30}px`,
+                      height: deviceHeight - height3,
                     }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
