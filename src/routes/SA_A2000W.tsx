@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -64,9 +67,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import "swiper/css";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -110,9 +110,14 @@ const SA_B2000: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
+  var height2 = 0;
   var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
   }
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -1485,17 +1490,9 @@ const SA_B2000: React.FC = () => {
             <GridContainer
               style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
-              </GridTitleContainer>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
-                }}
-              >
-                <ButtonContainer>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
                       if (swiper) {
@@ -1509,7 +1506,7 @@ const SA_B2000: React.FC = () => {
                     이전
                   </Button>
                 </ButtonContainer>
-              </div>
+              </GridTitleContainer>
               <ExcelExport
                 data={detailDataResult.data}
                 ref={(exporter) => {
@@ -1519,7 +1516,7 @@ const SA_B2000: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: deviceHeight - height,
+                    height: deviceHeight - height2,
                   }}
                   data={process(
                     detailDataResult.data.map((row) => ({
