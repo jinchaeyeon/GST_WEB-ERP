@@ -1337,25 +1337,25 @@ const SY_A0500W: React.FC = () => {
               key={1}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <ButtonContainer
-                className="ButtonContainer"
-                style={{ justifyContent: "space-between" }}
-              >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
-                  }}
-                  icon="arrow-left"
-                >
-                  이전
-                </Button>
-              </ButtonContainer>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle></GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                  >
+                    이전
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  height: `${deviceHeight * 0.75}px`,
+                  height: deviceHeight - height,
                   overflow: "auto",
                 }}
               >
