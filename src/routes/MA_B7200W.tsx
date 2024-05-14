@@ -1873,7 +1873,7 @@ const MA_B7200W: React.FC = () => {
           >
             <TabStripTab title="재고현황">
               <Swiper
-                className="leading_65_Swiper"
+                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -2190,7 +2190,7 @@ const MA_B7200W: React.FC = () => {
             </TabStripTab>
             <TabStripTab title="공정별 재공현황">
               <Swiper
-                className="leading_65_Swiper"
+                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}

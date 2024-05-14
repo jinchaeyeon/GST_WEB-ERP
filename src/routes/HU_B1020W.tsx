@@ -423,7 +423,7 @@ const HU_B1020W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_75_Swiper" : ""}>
+      <div className={isMobile ? "leading_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
       <GridContainer style={{ height: "100%", width: "100%" }}>
         <GridTitleContainer>

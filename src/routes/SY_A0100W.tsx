@@ -764,7 +764,7 @@ const App: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_78_Swiper" : ""}>
+      <div className={isMobile ? "leading_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
           <TabStrip
             style={{ width: "100%" }}

@@ -725,7 +725,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_65_Swiper"
+                  className="leading_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -792,7 +792,7 @@ const SA_B2221: React.FC = () => {
                     </GridContainer>
                   </SwiperSlide>
                   <SwiperSlide key={1} className="leading_PDA_custom">
-                    <GridContainer className="leading_70_Swiper" width={"100%"}>
+                    <GridContainer className="leading_Swiper" width={"100%"}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -886,7 +886,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="월별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_65_Swiper"
+                  className="leading_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1109,7 +1109,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="분기별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_65_Swiper"
+                  className="leading_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}

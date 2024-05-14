@@ -1452,7 +1452,7 @@ const HU_A2140W: React.FC = () => {
           // fetchGrid,
         }}
       >
-        <div className={isMobile ? "leading_75_Swiper" : ""}>
+        <div className={isMobile ? "leading_Swiper" : ""}>
           <div className={isMobile ? "leading_PDA_custom" : ""}>
             <GridContainer style={{ width: "100%" }}>
               <GridTitleContainer>

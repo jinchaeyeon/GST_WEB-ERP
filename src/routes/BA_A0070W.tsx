@@ -1272,7 +1272,7 @@ const BA_A0070W: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
-            className="leading_75_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

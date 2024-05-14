@@ -1144,7 +1144,7 @@ const MA_B2800W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       
-      <div className={isMobile ? "leading_78_Swiper" : ""}>
+      <div className={isMobile ? "leading_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
       <FormContext.Provider
         value={{

@@ -153,3 +153,18 @@ export const OSState = atom<boolean>({
   default: false,
   effects_UNSTABLE: [persistAtom]
 });
+
+export const heightstate = atom<number>({
+  key: "heightstate",
+  default: window.innerHeight - 150,
+});
+
+export const isFilterheightstate = atom<number>({
+  key: "isFilterheightstate",
+  default: 0,
+});
+
+export const isFilterHideState = atom<boolean>({
+  key: "isFilterHideState",
+  default: false,
+});

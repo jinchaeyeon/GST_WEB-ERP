@@ -2409,7 +2409,7 @@ const BA_A0040: React.FC = () => {
             </FilterContainer>
           </TitleContainer>
           <Swiper
-            className="leading_75_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

@@ -647,7 +647,7 @@ const BA_B0080W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_75_Swiper" : ""}>
+      <div className={isMobile ? "leading_Swiper" : ""}>
         <div className={isMobile ? "leading_PDA_custom" : ""}>
           <GridContainer
             style={{

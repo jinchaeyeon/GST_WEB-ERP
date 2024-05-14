@@ -1244,7 +1244,7 @@ const SY_A0500W: React.FC = () => {
             </FormBox>
           </FilterContainer>
           <Swiper
-            className="leading_75_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

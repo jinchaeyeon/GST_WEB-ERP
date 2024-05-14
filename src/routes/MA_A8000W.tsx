@@ -1012,7 +1012,7 @@ const MA_A8000W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_78_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

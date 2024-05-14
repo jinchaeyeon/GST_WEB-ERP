@@ -1495,7 +1495,7 @@ const HU_B4010W: React.FC = () => {
 
           <GridContainerWrap>
             <Swiper
-              className="leading_75_Swiper"
+              className="leading_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}

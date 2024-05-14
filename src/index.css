@@ -6,6 +6,13 @@ body {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   --swiper-navigation-size: 20px !important;
+  min-height: 100vh !important;
+  /* mobile viewport bug fix */
+  min-height: -webkit-fill-available !important;
+}
+
+html {
+  height: -webkit-fill-available !important;
 }
 
 code {
@@ -230,8 +237,7 @@ input.readonly {
 }
 
 .swiper-container {
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100 - 20);
+  height: 100%;
 }
 
 :root {
@@ -308,11 +314,6 @@ input.readonly {
   }
 }
 
-.swiper {
-  width: 100%!important;
-  height: 100%!important;
-}
-
 .overflow_scrollhidden{
   overflow-y: scroll;
   &::-webkit-scrollbar {
@@ -332,10 +333,7 @@ input.readonly {
   flex-direction: column !important;
   overflow: scroll;
 }
-.leading_80_Swiper {
-  width: 100% !important;
-  height: 80vh !important;
-}
+
 .leading_PDA_custom {
   text-align: center !important;
   font-size: 18px !important;
@@ -358,25 +356,9 @@ input.readonly {
   width: 100% !important;
   height: 90vh !important;
 }
-.leading_78_Swiper {
+.leading_Swiper {
   width: 100% !important;
-  height: 78vh !important;
-}
-.leading_75_Swiper {
-  width: 100% !important;
-  height: 75vh !important;
-}
-.leading_70_Swiper {
-  width: 100% !important;
-  height: 70vh !important;
-}
-.leading_65_Swiper {
-  width: 100% !important;
-  height: 65vh !important;
-}
-.leading_60_Swiper {
-  width: 100% !important;
-  height: 63vh !important;
+  height: 80% !important;
 }
 
 .swiper-slide {

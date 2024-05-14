@@ -1137,7 +1137,7 @@ const MA_A2500W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <Swiper
-            className="leading_78_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

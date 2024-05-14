@@ -1953,7 +1953,7 @@ const HU_B4000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <Swiper
-                  className="leading_60_Swiper"
+                  className="leading_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -2754,7 +2754,7 @@ const HU_B4000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <div className={isMobile ? "leading_65_Swiper" : ""}>
+          <div className={isMobile ? "leading_Swiper" : ""}>
             <div className={isMobile ? "leading_PDA_custom" : ""}>
               <GridContainer
                 style={{

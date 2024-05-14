@@ -977,13 +977,17 @@ export const Content = styled.div<ContentType>`
   }
 `;
 
-export const PageWrap = styled.div`
+type FilterType = {
+  isMenuOpen: number;
+};
+
+export const PageWrap = styled.div<FilterType>`
   padding: 0 15px;
   height: 100%;
-
+  
   @media (max-width: 1200px) {
     min-height: auto;
-    height: 100%;
+    height: calc(100vh + ${(props) => (props.isMenuOpen ? props.isMenuOpen : 0)}px);
     position: relative;
     padding-top: 50px;
   }
@@ -991,7 +995,7 @@ export const PageWrap = styled.div`
 
 export const Footer = styled.div`
   width: 100%;
-  height: 30px;
+  height: 30px; 
   border-top: solid 1px #ebebeb;
   position: fixed;
   bottom: 0;

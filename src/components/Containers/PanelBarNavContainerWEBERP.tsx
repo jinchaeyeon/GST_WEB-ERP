@@ -65,6 +65,7 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
+  isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
   linkState,
@@ -73,7 +74,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -147,6 +148,9 @@ const PanelBarNavContainer = (props: any) => {
   const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
+
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate);
 
   const [ip, setIp] = useState<any>(null);
   UseGetIp(setIp);
@@ -868,7 +872,11 @@ const PanelBarNavContainer = (props: any) => {
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
-          <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"} style={{ paddingBottom: window.innerWidth <= 1200 ? "100px" : "" }}>
+          <Gnv
+            isMobileMenuOpend={isMobileMenuOpend}
+            theme={"#2289c3"}
+            style={{ paddingBottom: window.innerWidth <= 1200 ? "100px" : "" }}
+          >
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               {companyCode == "2302BA03" ? (
                 <Logo size="120px" name={"BIO"} />
@@ -1581,7 +1589,9 @@ const PanelBarNavContainer = (props: any) => {
               onClick={onMenuBtnClick}
             />
           </TopTitle>
-          <PageWrap>{props.children}</PageWrap>
+          <PageWrap isMenuOpen={isFilterheightstates}>
+            {props.children}
+          </PageWrap>
         </Content>
         {userOptionsWindowVisible && (
           <UserOptionsWindow setVisible={setUserOptionsWindowVisible} />

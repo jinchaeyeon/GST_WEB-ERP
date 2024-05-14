@@ -1502,7 +1502,7 @@ const SY_A0120: React.FC = () => {
               setMainDataState,
             }}
           >
-            <div className={isMobile ? "leading_78_Swiper" : ""}>
+            <div className={isMobile ? "leading_Swiper" : ""}>
               <div className={isMobile ? "leading_PDA_custom" : ""}>
                 <GridContainer
                   style={{

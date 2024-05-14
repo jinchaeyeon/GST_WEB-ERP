@@ -3644,7 +3644,7 @@ const BA_A0020: React.FC = () => {
         <>
           <GridContainerWrap>
             <Swiper
-              className="leading_75_Swiper"
+              className="leading_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}

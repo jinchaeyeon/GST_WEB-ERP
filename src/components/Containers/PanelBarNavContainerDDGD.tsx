@@ -31,6 +31,7 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
+  isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
   loginResultState,
@@ -38,7 +39,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
@@ -84,6 +85,8 @@ const PanelBarNavContainer = (props: any) => {
   const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate);
 
   const [ip, setIp] = useState<any>(null);
   UseGetIp(setIp);
@@ -756,7 +759,9 @@ const PanelBarNavContainer = (props: any) => {
               onClick={onMenuBtnClick}
             />
           </TopTitle>
-          <PageWrap>{props.children}</PageWrap>
+          <PageWrap isMenuOpen={isFilterheightstates}>
+            {props.children}
+          </PageWrap>
         </Content>
         {userOptionsWindowVisible && (
           <UserOptionsWindow setVisible={setUserOptionsWindowVisible} />

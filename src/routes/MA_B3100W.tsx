@@ -676,7 +676,7 @@ const MA_B3100: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap>
                 <Swiper
-                  className="leading_65_Swiper"
+                  className="leading_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -844,7 +844,7 @@ const MA_B3100: React.FC = () => {
 
             <TabStripTab title="월별">
               <Swiper
-                className="leading_65_Swiper"
+                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1074,7 +1074,7 @@ const MA_B3100: React.FC = () => {
 
             <TabStripTab title="분기별">
               <Swiper
-                className="leading_65_Swiper"
+                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}

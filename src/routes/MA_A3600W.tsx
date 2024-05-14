@@ -1653,7 +1653,7 @@ const MA_A3600W: React.FC = () => {
           >
             <TabStripTab title="상세자료">
               <Swiper
-                className="leading_65_Swiper"
+                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1862,7 +1862,7 @@ const MA_A3600W: React.FC = () => {
               </Swiper>
             </TabStripTab>
             <TabStripTab title="처리영역">
-              <div className="leading_65_Swiper">
+              <div className="leading_Swiper">
                 <div className="leading_PDA_custom">
                   <GridContainer style={{ width: "100%", height: "100%" }}>
                     <ButtonContainer>

@@ -1271,7 +1271,7 @@ const SA_A5000: React.FC = () => {
           </FilterContainer>
 
           <Swiper
-            className="leading_78_Swiper"
+            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

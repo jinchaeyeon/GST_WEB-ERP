@@ -1339,7 +1339,7 @@ const SY_A0125W: React.FC = () => {
         <>
           <GridContainerWrap>
             <Swiper
-              className="leading_75_Swiper"
+              className="leading_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}

@@ -1691,7 +1691,7 @@ const HU_A1000W: React.FC = () => {
       </FilterContainer>
       {isMobile ? (
         <GridContainerWrap>
-          <div className={isMobile ? "leading_75_Swiper" : ""}>
+          <div className={isMobile ? "leading_Swiper" : ""}>
             <div className={isMobile ? "leading_PDA_custom" : ""}>
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
