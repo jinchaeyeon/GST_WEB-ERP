@@ -45,7 +45,11 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010_301W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -732,6 +736,9 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
+    if (swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   // selectedState가 바뀔때마다 data에 바뀐 selectedState 적용
