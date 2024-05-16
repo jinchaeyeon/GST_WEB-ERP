@@ -1,4 +1,10 @@
-import { Card, CardHeader, Grid as GridMui, Typography, styled } from "@mui/material";
+import {
+  Card,
+  CardHeader,
+  Grid as GridMui,
+  Typography,
+  styled,
+} from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import {
   Chart,
@@ -1517,64 +1523,64 @@ const HU_B4010W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-            <Swiper
-              onSwiper={(swiper) => {
-                setSwiper(swiper);
-              }}
-              onActiveIndexChange={(swiper) => {
-                index = swiper.activeIndex;
-              }}
-            >
-              <SwiperSlide key={0}>
-                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                  <ExcelExport
-                    data={mainDataResult.data}
-                    ref={(exporter) => {
-                      _export = exporter;
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="인사고과 모니터링"
+                >
+                  <Grid
+                    style={{ height: deviceHeight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
                     }}
-                    fileName="인사고과 모니터링"
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
                   >
-                    <Grid
-                      style={{ height: deviceHeight }}
-                      data={process(
-                        mainDataResult.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState[idGetter(row)],
-                        })),
-                        mainDataState
-                      )}
-                      {...mainDataState}
-                      onDataStateChange={onMainDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult.total}
-                      skip={page.skip}
-                      take={page.take}
-                      pageable={true}
-                      onPageChange={pageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1590,160 +1596,148 @@ const HU_B4010W: React.FC = () => {
                               />
                             )
                         )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide
-                key={1}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                }}
               >
-                <GridContainer
-                  style={{
-                    width: `${deviceWidth - 30}px`,
-                  }}
-                >
-                  <GridContainer  className="ButtonContainer">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      style={{ marginRight: "5px" }}
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(2);
+                        }
                       }}
                     >
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(0);
-                          }
-                        }}
-                        icon="arrow-left"
-                        style={{ marginRight: "5px" }}
-                      >
-                        이전
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                      >
-                        월별 평균
-                      </Button>
-                    </div>
-                    <GridTitleContainer>
-                      <GridTitle>업무효율 및 능률</GridTitle>
-                    </GridTitleContainer>
-                    <Chart style={{ height: "24vh" }}>
-                      <ChartTooltip format="{0}" />
-                      <ChartValueAxis>
-                        <ChartValueAxisItem
-                          labels={{
-                            visible: true,
-                            content: (e) => numberWithCommas(e.value) + "",
-                          }}
-                        />
-                      </ChartValueAxis>
-                      <ChartCategoryAxis>
-                        <ChartCategoryAxisItem
-                          categories={allChartDataResult.arguments.map(
-                            convertDateLabel
-                          )}
-                        />
-                      </ChartCategoryAxis>
-                      <ChartSeries>{Barchart()}</ChartSeries>
-                    </Chart>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridTitleContainer>
-                      <GridTitle>인사고과 - 기본항목</GridTitle>
-                    </GridTitleContainer>
-                    <Chart style={{ height: "24vh" }}>
-                      <ChartTooltip format="{0}" />
-                      <ChartValueAxis>
-                        <ChartValueAxisItem
-                          labels={{
-                            visible: true,
-                            content: (e) => numberWithCommas(e.value) + "",
-                          }}
-                        />
-                      </ChartValueAxis>
-                      <ChartCategoryAxis>
-                        <ChartCategoryAxisItem
-                          categories={allChartDataResult2.arguments.map(
-                            convertDateLabel
-                          )}
-                        />
-                      </ChartCategoryAxis>
-                      <ChartSeries>{Barchart2()}</ChartSeries>
-                    </Chart>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridTitleContainer>
-                      <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
-                    </GridTitleContainer>
-                    <Chart style={{ height: "24vh" }}>
-                      <ChartTooltip format="{0}" />
-                      <ChartValueAxis>
-                        <ChartValueAxisItem
-                          labels={{
-                            visible: true,
-                            content: (e) => numberWithCommas(e.value) + "",
-                          }}
-                        />
-                      </ChartValueAxis>
-                      <ChartCategoryAxis>
-                        <ChartCategoryAxisItem
-                          categories={allChartDataResult3.arguments.map(
-                            convertDateLabel
-                          )}
-                        />
-                      </ChartCategoryAxis>
-                      <ChartSeries>{Barchart3()}</ChartSeries>
-                    </Chart>
-                  </GridContainer>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide key={2}>
+                      월별 평균
+                    </Button>
+                  </ButtonContainer>
+                  <GridTitle>업무효율 및 능률</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "22vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult.arguments.map(
+                        convertDateLabel
+                      )}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart()}</ChartSeries>
+                </Chart>
+                <GridTitleContainer>
+                  <GridTitle>인사고과 - 기본항목</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "22vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult2.arguments.map(
+                        convertDateLabel
+                      )}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart2()}</ChartSeries>
+                </Chart>
+                <GridTitleContainer>
+                  <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
+                </GridTitleContainer>
+                <Chart style={{ height: "22vh" }}>
+                  <ChartTooltip format="{0}" />
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={allChartDataResult3.arguments.map(
+                        convertDateLabel
+                      )}
+                    />
+                  </ChartCategoryAxis>
+                  <ChartSeries>{Barchart3()}</ChartSeries>
+                </Chart>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
+                <GridTitleContainer className="ButtonContainer4">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      style={{ marginRight: "5px" }}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+
                 <GridContainer
-                  style={{
-                    width: `${deviceWidth - 30}px`,
-                    overflow: "scroll",
-                  }}
+                  style={{ marginTop: "5px", marginBottom: "5px" }}
+                  className="ButtonContainer2"
                 >
-                  <GridContainer style={{ marginTop: "5px", marginBottom: "5px" }}>
-                    <GridMui container spacing={0.3}>
-                      <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                        <Card
-                          style={{
-                            color: "white",
-                            backgroundColor: "#6495ed",
+                  <GridMui container spacing={0.3}>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
+                        }}
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
                           }}
-                        >
-                          <CustomCardHeader
-                            subheaderTypographyProps={{
-                              color: "#8f918d",
-                              fontWeight: 500,
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                    fontSize: "0.8rem",
-                                  }}
-                                >
-                                  지각
-                                </Typography>
-                              </>
-                            }
-                            subheader={
+                          title={
+                            <>
                               <Typography
                                 style={{
                                   color: "white",
@@ -1752,386 +1746,404 @@ const HU_B4010W: React.FC = () => {
                                   alignItems: "center",
                                   justifyContent: "center",
                                   fontFamily: "TheJamsil5Bold",
-                                  fontSize: "1rem",
+                                  fontSize: "0.8rem",
                                 }}
                               >
-                                {mainDataResult6.total <= 0
-                                  ? "0 건"
-                                  : mainDataResult6.data[0].late}
+                                지각
                               </Typography>
-                            }
-                          />
-                        </Card>
-                      </GridMui>
-                      <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                        <Card
-                          style={{
-                            color: "white",
-                            backgroundColor: "#6495ed",
-                          }}
-                        >
-                          <CustomCardHeader
-                            subheaderTypographyProps={{
-                              color: "#8f918d",
-                              fontWeight: 500,
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                    fontSize: "0.8rem",
-                                  }}
-                                >
-                                  근태경고
-                                </Typography>
-                              </>
-                            }
-                            subheader={
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                {mainDataResult6.total <= 0
-                                  ? "0 건"
-                                  : mainDataResult6.data[0].caution}
-                              </Typography>
-                            }
-                          />
-                        </Card>
-                      </GridMui>
-                      <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                        <Card
-                          style={{
-                            color: "white",
-                            backgroundColor: "#6495ed",
-                          }}
-                        >
-                          <CustomCardHeader
-                            subheaderTypographyProps={{
-                              color: "#8f918d",
-                              fontWeight: 500,
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                    fontSize: "0.8rem",
-                                  }}
-                                >
-                                  교육이수
-                                </Typography>
-                              </>
-                            }
-                            subheader={
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                {mainDataResult6.total <= 0
-                                  ? "0 건"
-                                  : mainDataResult6.data[0].edu}
-                              </Typography>
-                            }
-                          />
-                        </Card>
-                      </GridMui>
-                      <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                        <Card
-                          style={{
-                            color: "white",
-                            backgroundColor: "#6495ed",
-                          }}
-                        >
-                          <CustomCardHeader
-                            subheaderTypographyProps={{
-                              color: "#8f918d",
-                              fontWeight: 500,
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                    fontSize: "0.8rem",
-                                  }}
-                                >
-                                  상벌사항
-                                </Typography>
-                              </>
-                            }
-                            subheader={
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                {mainDataResult6.total <= 0
-                                  ? "0 건"
-                                  : mainDataResult6.data[0].rnp}
-                              </Typography>
-                            }
-                          />
-                        </Card>
-                      </GridMui>
-                      <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                        <Card
-                          style={{
-                            color: "white",
-                            backgroundColor: "#6495ed",
-                          }}
-                        >
-                          <CustomCardHeader
-                            subheaderTypographyProps={{
-                              color: "#8f918d",
-                              fontWeight: 500,
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                    fontSize: "0.8rem",
-                                  }}
-                                >
-                                  처리불량
-                                </Typography>
-                              </>
-                            }
-                            subheader={
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                {mainDataResult6.total <= 0
-                                  ? "0 건"
-                                  : mainDataResult6.data[0].bad}
-                              </Typography>
-                            }
-                          />
-                        </Card>
-                      </GridMui>
+                            </>
+                          }
+                          subheader={
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].late}
+                            </Typography>
+                          }
+                        />
+                      </Card>
                     </GridMui>
-                  </GridContainer>
-                  <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
-                    <TabStripTab title="월별 평균">
-                      <ExcelExport
-                        data={mainDataResult2.data}
-                        ref={(exporter) => {
-                          _export2 = exporter;
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        fileName="인사고과 모니터링"
                       >
-                        <Grid
-                          style={{ height: `${deviceHeight * 0.45}px` }}
-                          data={process(
-                            mainDataResult2.data.map((row) => ({
-                              ...row,
-                              [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                            })),
-                            mainDataState2
-                          )}
-                          {...mainDataState2}
-                          onDataStateChange={onMainDataStateChange2}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY2}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
                           }}
-                          onSelectionChange={onSelectionChange2}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult2.total}
-                          skip={page2.skip}
-                          take={page2.take}
-                          pageable={true}
-                          onPageChange={pageChange2}
-                          //원하는 행 위치로 스크롤 기능
-                          ref={gridRef2}
-                          rowHeight={30}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange2}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          <GridColumn
-                            field={"gubun"}
-                            title={"구분"}
-                            width="120px"
-                            footerCell={mainTotalFooterCell2}
-                          />
-                          <GridColumn
-                            field={"yyyymm01"}
-                            title={column12}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm02"}
-                            title={column11}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm03"}
-                            title={column10}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm04"}
-                            title={column9}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm05"}
-                            title={column8}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm06"}
-                            title={column7}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm07"}
-                            title={column6}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm08"}
-                            title={column5}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm09"}
-                            title={column4}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm10"}
-                            title={column3}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm11"}
-                            title={column2}
-                            width="120px"
-                          />
-                          <GridColumn
-                            field={"yyyymm12"}
-                            title={column1}
-                            width="120px"
-                          />
-                        </Grid>
-                      </ExcelExport>
-                    </TabStripTab>
-                    <TabStripTab title="당월 평가내용">
-                      <ExcelExport
-                        data={mainDataResult3.data}
-                        ref={(exporter) => {
-                          _export3 = exporter;
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                근태경고
+                              </Typography>
+                            </>
+                          }
+                          subheader={
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].caution}
+                            </Typography>
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        fileName="인사고과 모니터링"
                       >
-                        <Grid
-                          style={{ height: `${deviceHeight * 0.45}px` }}
-                          data={process(
-                            mainDataResult3.data.map((row) => ({
-                              ...row,
-                              reviewlvl1: reviewlvl1ListData.find(
-                                (item: any) => item.sub_code == row.reviewlvl1
-                              )?.code_name,
-                              [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                            })),
-                            mainDataState3
-                          )}
-                          {...mainDataState3}
-                          onDataStateChange={onMainDataStateChange3}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY3}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
                           }}
-                          onSelectionChange={onSelectionChange3}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult3.total}
-                          skip={page3.skip}
-                          take={page3.take}
-                          pageable={true}
-                          onPageChange={pageChange3}
-                          //원하는 행 위치로 스크롤 기능
-                          ref={gridRef3}
-                          rowHeight={30}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange3}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList2"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                교육이수
+                              </Typography>
+                            </>
+                          }
+                          subheader={
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].edu}
+                            </Typography>
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
+                        }}
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                상벌사항
+                              </Typography>
+                            </>
+                          }
+                          subheader={
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].rnp}
+                            </Typography>
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
+                        }}
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                처리불량
+                              </Typography>
+                            </>
+                          }
+                          subheader={
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "1rem",
+                              }}
+                            >
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].bad}
+                            </Typography>
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                  </GridMui>
+                </GridContainer>
+                <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+                  <TabStripTab title="월별 평균">
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="인사고과 모니터링"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height2 - height3 - height4 }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        <GridColumn
+                          field={"gubun"}
+                          title={"구분"}
+                          width="120px"
+                          footerCell={mainTotalFooterCell2}
+                        />
+                        <GridColumn
+                          field={"yyyymm01"}
+                          title={column12}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm02"}
+                          title={column11}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm03"}
+                          title={column10}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm04"}
+                          title={column9}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm05"}
+                          title={column8}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm06"}
+                          title={column7}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm07"}
+                          title={column6}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm08"}
+                          title={column5}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm09"}
+                          title={column4}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm10"}
+                          title={column3}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm11"}
+                          title={column2}
+                          width="120px"
+                        />
+                        <GridColumn
+                          field={"yyyymm12"}
+                          title={column1}
+                          width="120px"
+                        />
+                      </Grid>
+                    </ExcelExport>
+                  </TabStripTab>
+                  <TabStripTab title="당월 평가내용">
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="인사고과 모니터링"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height2 - height3 - height4 }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            reviewlvl1: reviewlvl1ListData.find(
+                              (item: any) => item.sub_code == row.reviewlvl1
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef3}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2147,61 +2159,63 @@ const HU_B4010W: React.FC = () => {
                                   />
                                 )
                             )}
-                        </Grid>
-                      </ExcelExport>
-                    </TabStripTab>
-                    <TabStripTab title="불량내역">
-                      <ExcelExport
-                        data={mainDataResult4.data}
-                        ref={(exporter) => {
-                          _export4 = exporter;
+                      </Grid>
+                    </ExcelExport>
+                  </TabStripTab>
+                  <TabStripTab title="불량내역">
+                    <ExcelExport
+                      data={mainDataResult4.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
+                      }}
+                      fileName="인사고과 모니터링"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height2 - height3 }}
+                        data={process(
+                          mainDataResult4.data.map((row) => ({
+                            ...row,
+                            badcd: badcdListData.find(
+                              (item: any) => item.sub_code == row.badcd
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                          })),
+                          mainDataState4
+                        )}
+                        {...mainDataState4}
+                        onDataStateChange={onMainDataStateChange4}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
                         }}
-                        fileName="인사고과 모니터링"
+                        onSelectionChange={onSelectionChange4}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4.total}
+                        skip={page4.skip}
+                        take={page4.take}
+                        pageable={true}
+                        onPageChange={pageChange4}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef4}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
                       >
-                        <Grid
-                          style={{ height: `${deviceHeight * 0.45}px` }}
-                          data={process(
-                            mainDataResult4.data.map((row) => ({
-                              ...row,
-                              badcd: badcdListData.find(
-                                (item: any) => item.sub_code == row.badcd
-                              )?.code_name,
-                              [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-                            })),
-                            mainDataState4
-                          )}
-                          {...mainDataState4}
-                          onDataStateChange={onMainDataStateChange4}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY4}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSelectionChange4}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult4.total}
-                          skip={page4.skip}
-                          take={page4.take}
-                          pageable={true}
-                          onPageChange={pageChange4}
-                          //원하는 행 위치로 스크롤 기능
-                          ref={gridRef4}
-                          rowHeight={30}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange4}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList3"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2222,61 +2236,63 @@ const HU_B4010W: React.FC = () => {
                                   />
                                 )
                             )}
-                        </Grid>
-                      </ExcelExport>
-                    </TabStripTab>
-                    <TabStripTab title="상벌내역">
-                      <ExcelExport
-                        data={mainDataResult5.data}
-                        ref={(exporter) => {
-                          _export5 = exporter;
+                      </Grid>
+                    </ExcelExport>
+                  </TabStripTab>
+                  <TabStripTab title="상벌내역">
+                    <ExcelExport
+                      data={mainDataResult5.data}
+                      ref={(exporter) => {
+                        _export5 = exporter;
+                      }}
+                      fileName="인사고과 모니터링"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height2 - height3 }}
+                        data={process(
+                          mainDataResult5.data.map((row) => ({
+                            ...row,
+                            rnpdiv: rnpdivListData.find(
+                              (item: any) => item.sub_code == row.rnpdiv
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                          })),
+                          mainDataState5
+                        )}
+                        {...mainDataState5}
+                        onDataStateChange={onMainDataStateChange5}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY5}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
                         }}
-                        fileName="인사고과 모니터링"
+                        onSelectionChange={onSelectionChange5}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult5.total}
+                        skip={page5.skip}
+                        take={page5.take}
+                        pageable={true}
+                        onPageChange={pageChange5}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef4}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange5}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
                       >
-                        <Grid
-                          style={{ height: `${deviceHeight * 0.45}px` }}
-                          data={process(
-                            mainDataResult5.data.map((row) => ({
-                              ...row,
-                              rnpdiv: rnpdivListData.find(
-                                (item: any) => item.sub_code == row.rnpdiv
-                              )?.code_name,
-                              [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                            })),
-                            mainDataState5
-                          )}
-                          {...mainDataState5}
-                          onDataStateChange={onMainDataStateChange5}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY5}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSelectionChange5}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult5.total}
-                          skip={page5.skip}
-                          take={page5.take}
-                          pageable={true}
-                          onPageChange={pageChange5}
-                          //원하는 행 위치로 스크롤 기능
-                          ref={gridRef4}
-                          rowHeight={30}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange5}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList4"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2297,13 +2313,13 @@ const HU_B4010W: React.FC = () => {
                                   />
                                 )
                             )}
-                        </Grid>
-                      </ExcelExport>
-                    </TabStripTab>
-                  </TabStrip>
-                </GridContainer>
-              </SwiperSlide>
-            </Swiper>
+                      </Grid>
+                    </ExcelExport>
+                  </TabStripTab>
+                </TabStrip>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
         </>
       ) : (
         <>
@@ -2380,22 +2396,24 @@ const HU_B4010W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -2635,24 +2653,24 @@ const HU_B4010W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList2"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell3
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdList2"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell3
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
@@ -2705,29 +2723,29 @@ const HU_B4010W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList3"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell4
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdList3"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell4
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
@@ -2780,29 +2798,29 @@ const HU_B4010W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList4"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell5
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdList4"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell5
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
