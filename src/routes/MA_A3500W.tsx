@@ -148,48 +148,22 @@ const MA_A3500W: React.FC = () => {
   const [isVisibleDetail3, setIsVisableDetail3] = useState(false);
 
   var height = 0;
-  const [height2, setHeight2] = useState(0);
-  const [height3, setHeight3] = useState(0);
-  const [height4, setHeight4] = useState(0);
-  var height5 = 0;
+  var height2 = 0;
+  var height3 = 0;
 
   var container = document.querySelector(".ButtonContainer");
   var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  var container4 = document.querySelector(".ButtonContainer4");
-  var container5 = document.querySelector(".ButtonContainer5");
-  useEffect(() => {
-    if (container?.clientHeight != undefined) {
-      height = container == undefined ? 0 : container.clientHeight;
-    }
-    if (container2?.clientHeight != undefined) {
-      setHeight2(container2 == undefined ? 0 : container2.clientHeight);
-    }
-    if (container3?.clientHeight != undefined) {
-      setHeight3(container3 == undefined ? 0 : container3.clientHeight);
-    }
-    if (container4?.clientHeight != undefined) {
-      setHeight4(container4 == undefined ? 0 : container4.clientHeight);
-    }
-    if (container5?.clientHeight != undefined) {
-      height5 = container5 == undefined ? 0 : container5.clientHeight;
-    }
-  }, []);
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
 
-  const updateHeight = () => {
-    setTimeout(() => {
-      if (container2?.clientHeight != undefined) {
-        setHeight2(container2 == undefined ? 0 : container2.clientHeight);
-      }
-      if (container3?.clientHeight != undefined) {
-        setHeight3(container3 == undefined ? 0 : container3.clientHeight);
-      }
-      if (container4?.clientHeight != undefined) {
-        setHeight4(container4 == undefined ? 0 : container4.clientHeight);
-      }
-    }, 200);
-  };
-
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -2749,6 +2723,8 @@ const MA_A3500W: React.FC = () => {
                 <TabStrip
                   style={{
                     width: "100%",
+                    height: deviceHeight - height3,
+                    overflow: "scroll",
                   }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
@@ -2763,7 +2739,6 @@ const MA_A3500W: React.FC = () => {
                             justifyContent: "space-between",
                             flexDirection: isVisibleDetail ? "column" : "row",
                           }}
-                          className="ButtonContainer2"
                         >
                           <div
                             style={{
@@ -2775,7 +2750,6 @@ const MA_A3500W: React.FC = () => {
                             <Button
                               onClick={() => {
                                 setIsVisableDetail((prev) => !prev);
-                                updateHeight();
                               }}
                               icon={
                                 isVisibleDetail ? "chevron-up" : "chevron-down"
@@ -2864,7 +2838,7 @@ const MA_A3500W: React.FC = () => {
                         fileName="자재불출"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 }}
+                          style={{ height: deviceHeight - height3 }}
                           data={process(
                             subDataResult.data.map((row) => ({
                               ...row,
@@ -2977,7 +2951,6 @@ const MA_A3500W: React.FC = () => {
                                 ? "column"
                                 : "row",
                             }}
-                            className="ButtonContainer3"
                           >
                             <div
                               style={{
@@ -2986,59 +2959,62 @@ const MA_A3500W: React.FC = () => {
                                 width: "100%",
                               }}
                             >
-                            <Button
-                              onClick={() => {
-                                setIsVisableDetail2((prev) => !prev);
-                                updateHeight();
-                              }}
-                              icon={
-                                isVisibleDetail2 ? "chevron-up" : "chevron-down"
-                              }
-                              fillMode={"flat"}
-                              themeColor={"secondary"}
-                            >
-                              조회조건
-                            </Button>
+                              <Button
+                                onClick={() => {
+                                  setIsVisableDetail2((prev) => !prev);
+                                }}
+                                icon={
+                                  isVisibleDetail2
+                                    ? "chevron-up"
+                                    : "chevron-down"
+                                }
+                                fillMode={"flat"}
+                                themeColor={"secondary"}
+                              >
+                                조회조건
+                              </Button>
                             </div>
-                          {isVisibleDetail2 && (
-                            <FormBoxWrap border={true}>
-                              <FormBox>
-                                <tbody>
-                                  <tr>
-                                    <th style={{ minWidth: "70px" }}>
-                                      품목코드
-                                    </th>
-                                    <td>
-                                      <Input
-                                        name="itemcd"
-                                        type="text"
-                                        value={infomation2.itemcd}
-                                        onChange={InputChange2}
-                                      />
-                                    </td>
-                                    <th style={{ minWidth: "70px" }}>품목명</th>
-                                    <td>
-                                      <Input
-                                        name="itemnm"
-                                        type="text"
-                                        value={infomation2.itemnm}
-                                        onChange={InputChange2}
-                                      />
-                                    </td>
-                                    <td>
-                                      <Button
-                                        onClick={onSearch3}
-                                        themeColor={"primary"}
-                                        icon="search"
-                                      >
-                                        조회
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </FormBox>
-                            </FormBoxWrap>
-                          )}
+                            {isVisibleDetail2 && (
+                              <FormBoxWrap border={true}>
+                                <FormBox>
+                                  <tbody>
+                                    <tr>
+                                      <th style={{ minWidth: "70px" }}>
+                                        품목코드
+                                      </th>
+                                      <td>
+                                        <Input
+                                          name="itemcd"
+                                          type="text"
+                                          value={infomation2.itemcd}
+                                          onChange={InputChange2}
+                                        />
+                                      </td>
+                                      <th style={{ minWidth: "70px" }}>
+                                        품목명
+                                      </th>
+                                      <td>
+                                        <Input
+                                          name="itemnm"
+                                          type="text"
+                                          value={infomation2.itemnm}
+                                          onChange={InputChange2}
+                                        />
+                                      </td>
+                                      <td>
+                                        <Button
+                                          onClick={onSearch3}
+                                          themeColor={"primary"}
+                                          icon="search"
+                                        >
+                                          조회
+                                        </Button>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </FormBox>
+                              </FormBoxWrap>
+                            )}
                           </div>
                           <ExcelExport
                             data={BOMDataResult.data}
@@ -3048,7 +3024,9 @@ const MA_A3500W: React.FC = () => {
                             fileName="자재불출"
                           >
                             <Grid
-                              style={{ height: deviceHeight - height3 }}
+                              style={{
+                                height: deviceHeight - height3,
+                              }}
                               data={process(
                                 BOMDataResult.data.map((row) => ({
                                   ...row,
@@ -3127,7 +3105,6 @@ const MA_A3500W: React.FC = () => {
                                 ? "column"
                                 : "row",
                             }}
-                            className="ButtonContainer4"
                           >
                             <div
                               style={{
@@ -3139,7 +3116,6 @@ const MA_A3500W: React.FC = () => {
                               <Button
                                 onClick={() => {
                                   setIsVisableDetail3((prev) => !prev);
-                                  updateHeight();
                                 }}
                                 icon={
                                   isVisibleDetail3
@@ -3241,7 +3217,9 @@ const MA_A3500W: React.FC = () => {
                             fileName="자재불출"
                           >
                             <Grid
-                              style={{ height: deviceHeight - height4 }}
+                              style={{
+                                height: deviceHeight - height3,
+                              }}
                               data={process(
                                 BOMDataResult2.data.map((row) => ({
                                   ...row,
@@ -3346,7 +3324,7 @@ const MA_A3500W: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer className="ButtonContainer5">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>처리정보</GridTitle>
                   <div
                     style={{
@@ -3395,7 +3373,7 @@ const MA_A3500W: React.FC = () => {
                   fileName="자재불출"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height5 }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       subDataResult2.data.map((row) => ({
                         ...row,
