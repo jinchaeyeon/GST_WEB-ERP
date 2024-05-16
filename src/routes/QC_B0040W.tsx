@@ -1270,12 +1270,12 @@ const QC_B0040W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

@@ -691,6 +691,9 @@ const QC_A0120: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

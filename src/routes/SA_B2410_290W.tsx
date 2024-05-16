@@ -1237,12 +1237,12 @@ const SA_B2410: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-    if (swiper) {
-      swiper.slideTo(0);
     }
   };
 

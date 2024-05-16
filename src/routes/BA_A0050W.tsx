@@ -1206,6 +1206,9 @@ const BA_A0050: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   let gridRef: any = useRef(null);

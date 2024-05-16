@@ -1944,12 +1944,12 @@ const MA_A9001W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

@@ -632,6 +632,9 @@ const BA_A0100W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const enterEdit = (dataItem: any, field: string) => {

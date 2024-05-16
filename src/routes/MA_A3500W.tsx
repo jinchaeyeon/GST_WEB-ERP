@@ -1879,12 +1879,12 @@ const MA_A3500W: React.FC = () => {
             find_row_value: "",
           }));
         }
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

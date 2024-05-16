@@ -745,6 +745,9 @@ const SY_A0500W: React.FC = () => {
       resetAllGrid();
       setXY([-1, -1]);
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      if(swiper) {
+        swiper.slideTo(0);
+      }
     } catch (e) {
       alert(e);
     }
