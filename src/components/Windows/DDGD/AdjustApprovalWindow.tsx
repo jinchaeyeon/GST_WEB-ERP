@@ -160,13 +160,6 @@ const AdjustApprovalWindow = ({
       width: event.width,
       height: event.height,
     });
-
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
   };
 
   const onClose = () => {
@@ -444,39 +437,6 @@ const AdjustApprovalWindow = ({
     },
   ];
 
-  const minGridWidth = useRef<number>(0);
-  const grid = useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = useState(false);
-  const [gridCurrent, setGridCurrent] = useState(0);
-
-  useEffect(() => {
-    grid.current = document.getElementById("grdAdjList");
-    //window.addEventListener("resize", handleResize);
-
-    //가장작은 그리드 이름
-    columnData?.map((item: TColumn) =>
-      item.width !== undefined
-        ? (minGridWidth.current += item.width)
-        : minGridWidth.current
-    );
-
-    minGridWidth.current += 60;
-
-    setGridCurrent(grid.current.clientWidth);
-    setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-  }, []);
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth + (gridCurrent - minGridWidth.current) / columnData.length;
-
-    return width;
-  };
-
   return (
     <Window
       title={"변경 신청 리스트"}
@@ -536,7 +496,6 @@ const AdjustApprovalWindow = ({
           onItemChange={onMainItemChange}
           //더블클릭
           onRowDoubleClick={onRowDoubleClick}
-          id="grdAdjList"
         >
           <GridColumn
             field="chk"
@@ -553,7 +512,7 @@ const AdjustApprovalWindow = ({
                 <GridColumn
                   field={column.field}
                   title={column.caption}
-                  width={setWidth("", column.width)}
+                  width={column.width}
                   footerCell={index == 0 ? mainTotalFooterCell : undefined}
                   cell={
                     centerField.includes(column.field) ? CenterCell : undefined

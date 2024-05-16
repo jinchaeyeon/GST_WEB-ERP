@@ -2259,7 +2259,7 @@ const CM_A4100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2533,7 +2533,7 @@ const CM_A4100W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2680,393 +2680,7 @@ const CM_A4100W: React.FC = () => {
           )}
         </TabStripTab>
         <TabStripTab title="교육참여/진행관리">
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>교육일자</th>
-                  <td>
-                    <CommonDateRangePicker
-                      value={{
-                        start: filters.frdt,
-                        end: filters.todt,
-                      }}
-                      onChange={(e: { value: { start: any; end: any } }) =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          frdt: e.value.start,
-                          todt: e.value.end,
-                        }))
-                      }
-                      className="required"
-                    />
-                  </td>
-                  <th>제목/내용</th>
-                  <td>
-                    <Input
-                      name="title"
-                      type="text"
-                      value={filters.title}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>교육자</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="person"
-                        value={filters.person}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <GridContainerWrap>
-            <GridContainer width="35%">
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult2.data}
-                ref={(exporter) => {
-                  _export2 = exporter;
-                }}
-                fileName="교육관리"
-              >
-                <Grid
-                  style={{ height: "73vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      person: personListData.find(
-                        (item: any) => item.user_id == row.person
-                      )?.user_name,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainer width={`calc(65% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>기본정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick2}
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    icon="delete"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                  >
-                    삭제
-                  </Button>
-                  <Button
-                    onClick={onSaveClick2}
-                    icon="save"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <FormBoxWrap style={{ height: "20vh" }} border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>교육진행번호</th>
-                      <td>
-                        <Input
-                          name="datnum"
-                          type="text"
-                          value={infomation.datnum}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>일자</th>
-                      <td>
-                        <DatePicker
-                          name="recdt"
-                          value={infomation.recdt}
-                          format="yyyy-MM-dd"
-                          onChange={InputChange}
-                          className="required"
-                          placeholder=""
-                        />
-                      </td>
-                      <th>교육자</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="person"
-                            value={infomation.person}
-                            bizComponentId="L_sysUserMaster_001"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            textField="user_name"
-                            valueField="user_name"
-                            className="required"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>제목</th>
-                      <td>
-                        <Input
-                          name="title"
-                          type="ext"
-                          value={infomation.title}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>교육번호</th>
-                      <td>
-                        <Input
-                          name="edunum"
-                          type="text"
-                          value={infomation.edunum}
-                          className="required"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onEducationWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                          <Button
-                            type={"button"}
-                            onClick={setEdunum}
-                            icon="x"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>교육명</th>
-                      <td>
-                        <Input
-                          name="eduname"
-                          type="text"
-                          value={infomation.eduname}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>내용</th>
-                      <td colSpan={9}>
-                        <TextArea
-                          value={infomation.contents}
-                          name="contents"
-                          rows={2}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>첨부파일</th>
-                      <td colSpan={9}>
-                        <Input
-                          name="files"
-                          type="text"
-                          value={infomation.files}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onAttachmentsWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-              <FormContext.Provider
-                value={{
-                  attdatnum,
-                  files,
-                  setAttdatnum,
-                  setFiles,
-                  mainDataState,
-                  setMainDataState,
-                  // fetchGrid,
-                }}
-              >
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={subDataResult.data}
-                  ref={(exporter) => {
-                    _export3 = exporter;
-                  }}
-                  fileName="교육관리"
-                >
-                  <Grid
-                    style={{ height: "48vh" }}
-                    data={process(
-                      subDataResult.data.map((row) => ({
-                        ...row,
-                        rowstatus:
-                          row.rowstatus == null ||
-                          row.rowstatus == "" ||
-                          row.rowstatus == undefined
-                            ? ""
-                            : row.rowstatus,
-                        [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
-                      })),
-                      subDataState
-                    )}
-                    {...subDataState}
-                    onDataStateChange={onSubDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSubDataSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={subDataResult.total}
-                    skip={page3.skip}
-                    take={page3.take}
-                    pageable={true}
-                    onPageChange={pageChange3}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef3}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onSubDataSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onSubItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                CustomComboField.includes(item.fieldName)
-                                  ? CustomComboBoxCell
-                                  : filesField.includes(item.fieldName)
-                                  ? ColumnCommandCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? subTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </FormContext.Provider>
-            </GridContainer>
-          </GridContainerWrap>
-          {isMobile ? (
+         {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
                 setSwiper(swiper);
@@ -3183,7 +2797,7 @@ const CM_A4100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -3489,7 +3103,7 @@ const CM_A4100W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList3"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -3623,7 +3237,7 @@ const CM_A4100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -3883,7 +3497,7 @@ const CM_A4100W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList3"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn

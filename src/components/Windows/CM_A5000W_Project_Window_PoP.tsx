@@ -599,7 +599,6 @@ const KendoWindow = ({
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList"
         >
           <GridColumn
             field="quokey"

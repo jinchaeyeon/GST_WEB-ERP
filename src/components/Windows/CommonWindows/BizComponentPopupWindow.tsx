@@ -96,15 +96,6 @@ const KendoWindow = ({
       width: event.width,
       height: event.height,
     });
-
-    // let a = grid.current.clientWidth - 40;
-
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
   };
 
   const onClose = () => {
@@ -332,8 +323,7 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) =>
-        !!idGetter && idGetter(row) == Object.keys(selectedState)[0]
+      (row: any) => !!idGetter && idGetter(row) == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기
@@ -419,45 +409,6 @@ const KendoWindow = ({
     return rowElements;
   };
 
-  const minGridWidth = useRef<number>(0);
-  const grid = useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = useState(false);
-  const [gridCurrent, setGridCurrent] = useState(0);
-
-  useEffect(() => {
-    if (!!columnData) {
-      grid.current = document.getElementById("popup_grdList");
-      minGridWidth.current = 0;
-      //window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      columnData.map((item: any) =>
-        item.columnWidth !== undefined
-          ? (minGridWidth.current += item.columnWidth)
-          : minGridWidth.current
-      );
-
-      // let a = grid.current.clientWidth - 40;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [columnData]);
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (!minWidth) {
-      minWidth = 0;
-    }
-
-    let width = minWidth;
-
-    if (!applyMinWidth && !!columnData) {
-      width += (gridCurrent - minGridWidth.current) / columnData.length;
-    }
-
-    return width;
-  };
-
   return (
     <Window
       title={title}
@@ -529,7 +480,6 @@ const KendoWindow = ({
           resizable={true}
           //더블클릭
           onRowDoubleClick={onRowDoubleClick}
-          id="popup_grdList"
         >
           {columnData &&
             columnData.length > 0 &&
@@ -540,7 +490,7 @@ const KendoWindow = ({
                   <GridColumn
                     field={column.fieldName}
                     title={column.caption}
-                    width={setWidth("popup_grdList", column.columnWidth)}
+                    width={column.columnWidth}
                     footerCell={index == 0 ? mainTotalFooterCell : undefined}
                   />
                 );

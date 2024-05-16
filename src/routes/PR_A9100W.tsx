@@ -1719,7 +1719,6 @@ const PR_A9100W: React.FC = () => {
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
-              id="grdList"
             >
               <GridColumn
                 field="rowstatus"
