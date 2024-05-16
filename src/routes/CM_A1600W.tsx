@@ -78,9 +78,17 @@ import { FormWithCustomEditor } from "../components/Scheduler/custom-form";
 import { CustomEditItem } from "../components/Scheduler/custom-item";
 import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading, loginResultState } from "../store/atoms";
+import {
+  OSState,
+  heightstate,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -138,6 +146,29 @@ const requiredField2 = [
 const CM_A1600: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".k-tabstrip-items-wrapper");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -541,7 +572,7 @@ const CM_A1600: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
       }));
-      
+
       if (userFilter.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
@@ -1140,9 +1171,8 @@ const CM_A1600: React.FC = () => {
               : defaultOption.find((item: any) => item.id == "person")
                   ?.valueCode
             : defaultOption.find((item: any) => item.id == "person")?.valueCode,
-        rdoplandiv2: defaultOption.find(
-          (item: any) => item.id == "rdoplandiv2"
-        )?.valueCode,
+        rdoplandiv2: defaultOption.find((item: any) => item.id == "rdoplandiv2")
+          ?.valueCode,
         isSearch: true,
       }));
 
@@ -2202,39 +2232,387 @@ const CM_A1600: React.FC = () => {
         onSelect={handleSelectTab}
       >
         <TabStripTab title="스케줄러">
-          <GridContainerWrap>
-            <GridContainer width="65%">
-              <GridTitleContainer>
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
+            >
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer>
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>작성자</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="person"
+                                  value={schedulerFilter.person}
+                                  bizComponentId="L_sysUserMaster_001"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterComboBoxChange}
+                                  valueField="user_id"
+                                  textField="user_name"
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                            <th>계획구분</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="rdoplandiv"
+                                  value={schedulerFilter.rdoplandiv}
+                                  bizComponentId="R_PLANDIV_YN"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterRadioChange}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
+
+                    <GridTitle>개인 스케줄(표)</GridTitle>
+                  </GridTitleContainer>
+                  {osstate == true ? (
+                    <div
+                      style={{
+                        backgroundColor: "#ccc",
+                        height: "73vh",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      현재 OS에서는 지원이 불가능합니다.
+                    </div>
+                  ) : (
+                    <Scheduler
+                      height={deviceHeight - height - height4}
+                      data={schedulerDataResult}
+                      onDataChange={handleDataChange}
+                      defaultDate={displayDate}
+                      editable={true}
+                      editItem={CustomEditItem}
+                      form={FormWithCustomEditor}
+                    >
+                      <WeekView />
+                      <MonthView />
+                      <DayView />
+                    </Scheduler>
+                  )}
+                </GridContainer>
+              </SwiperSlide>
+
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer>
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>일자</th>
+                            <td>
+                              <CommonDateRangePicker
+                                value={{
+                                  start: todoFilter.frdt,
+                                  end: todoFilter.todt,
+                                }}
+                                onChange={(e: {
+                                  value: { start: any; end: any };
+                                }) =>
+                                  setTodoFilter((prev) => ({
+                                    ...prev,
+                                    frdt: e.value.start,
+                                    todt: e.value.end,
+                                  }))
+                                }
+                                className="required"
+                              />
+                            </td>
+                            <th>완료</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="rdofinyn"
+                                  value={todoFilter.rdofinyn}
+                                  bizComponentId="R_YN"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterRadioChange2}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
+
+                    <GridTitle>To-do 리스트</GridTitle>
+
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                      {permissions && (
+                        <ButtonContainer>
+                          <Button
+                            onClick={onAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                            disabled={permissions.save ? false : true}
+                          ></Button>
+                          <Button
+                            onClick={onRemoveClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                            disabled={permissions.save ? false : true}
+                          ></Button>
+                          <Button
+                            onClick={onSaveClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="save"
+                            title="저장"
+                            disabled={permissions.save ? false : true}
+                          ></Button>
+                        </ButtonContainer>
+                      )}
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={todoDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="Scheduler"
+                  >
+                    <Grid
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height2 - height4,
+                      }}
+                      data={process(
+                        todoDataResult.data.map((row) => ({
+                          ...row,
+                          strtime: row.strtime
+                            ? new Date(dateformat(row.strtime))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
+                        })),
+                        todoDataState
+                      )}
+                      {...todoDataState}
+                      onDataStateChange={onTodoDataStateChange}
+                      //선택기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onTodoSelectionChange}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onTodoSortChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={todoDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      //incell 수정 기능
+                      onItemChange={onTodoItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn
+                        field="rowstatus"
+                        title=" "
+                        width="50px"
+                        editable={false}
+                      />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList"
+                        ]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : checkboxField.includes(item.fieldName)
+                                    ? CheckBoxCell
+                                    : undefined
+                                }
+                                headerCell={
+                                  requiredField.includes(item.fieldName)
+                                    ? RequiredHeader
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? todoTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <GridContainerWrap>
+              <GridContainer width="65%">
+                <GridTitleContainer>
+                  <FilterContainer>
+                    <FilterBox
+                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                    >
+                      <tbody>
+                        <tr>
+                          <th>작성자</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={schedulerFilter.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={filterComboBoxChange}
+                                valueField="user_id"
+                                textField="user_name"
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>계획구분</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="rdoplandiv"
+                                value={schedulerFilter.rdoplandiv}
+                                bizComponentId="R_PLANDIV_YN"
+                                bizComponentData={bizComponentData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
+                </GridTitleContainer>
+                <GridTitleContainer>
+                  <GridTitle>개인 스케줄(표)</GridTitle>
+                </GridTitleContainer>
+                {osstate == true ? (
+                  <div
+                    style={{
+                      backgroundColor: "#ccc",
+                      height: "73vh",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    현재 OS에서는 지원이 불가능합니다.
+                  </div>
+                ) : (
+                  <Scheduler
+                    height={"73vh"}
+                    data={schedulerDataResult}
+                    onDataChange={handleDataChange}
+                    defaultDate={displayDate}
+                    editable={true}
+                    editItem={CustomEditItem}
+                    form={FormWithCustomEditor}
+                  >
+                    <WeekView />
+                    <MonthView />
+                    <DayView />
+                  </Scheduler>
+                )}
+              </GridContainer>
+              <GridContainer width={`calc(35% - ${GAP}px)`}>
                 <FilterContainer>
                   <FilterBox
                     onKeyPress={(e) => handleKeyPressSearch(e, search)}
                   >
                     <tbody>
                       <tr>
-                        <th>작성자</th>
+                        <th>일자</th>
                         <td>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="person"
-                              value={schedulerFilter.person}
-                              bizComponentId="L_sysUserMaster_001"
-                              bizComponentData={bizComponentData}
-                              changeData={filterComboBoxChange}
-                              valueField="user_id"
-                              textField="user_name"
-                              className="required"
-                            />
-                          )}
+                          <CommonDateRangePicker
+                            value={{
+                              start: todoFilter.frdt,
+                              end: todoFilter.todt,
+                            }}
+                            onChange={(e: {
+                              value: { start: any; end: any };
+                            }) =>
+                              setTodoFilter((prev) => ({
+                                ...prev,
+                                frdt: e.value.start,
+                                todt: e.value.end,
+                              }))
+                            }
+                            className="required"
+                          />
                         </td>
-                        <th>계획구분</th>
+                        <th>완료</th>
                         <td>
                           {bizComponentData !== null && (
                             <BizComponentRadioGroup
-                              name="rdoplandiv"
-                              value={schedulerFilter.rdoplandiv}
-                              bizComponentId="R_PLANDIV_YN"
+                              name="rdofinyn"
+                              value={todoFilter.rdofinyn}
+                              bizComponentId="R_YN"
                               bizComponentData={bizComponentData}
-                              changeData={filterRadioChange}
+                              changeData={filterRadioChange2}
                             />
                           )}
                         </td>
@@ -2242,80 +2620,9 @@ const CM_A1600: React.FC = () => {
                     </tbody>
                   </FilterBox>
                 </FilterContainer>
-              </GridTitleContainer>
-              <GridTitleContainer>
-                <GridTitle>개인 스케줄(표)</GridTitle>
-              </GridTitleContainer>
-              {osstate == true ? (
-                <div
-                  style={{
-                    backgroundColor: "#ccc",
-                    height: "73vh",
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  현재 OS에서는 지원이 불가능합니다.
-                </div>
-              ) : (
-                <Scheduler
-                  height={"73vh"}
-                  data={schedulerDataResult}
-                  onDataChange={handleDataChange}
-                  defaultDate={displayDate}
-                  editable={true}
-                  editItem={CustomEditItem}
-                  form={FormWithCustomEditor}
-                >
-                  <WeekView />
-                  <MonthView />
-                  <DayView />
-                </Scheduler>
-              )}
-            </GridContainer>
-            <GridContainer width={`calc(35% - ${GAP}px)`}>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: todoFilter.frdt,
-                            end: todoFilter.todt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setTodoFilter((prev) => ({
-                              ...prev,
-                              frdt: e.value.start,
-                              todt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                      <th>완료</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentRadioGroup
-                            name="rdofinyn"
-                            value={todoFilter.rdofinyn}
-                            bizComponentId="R_YN"
-                            bizComponentData={bizComponentData}
-                            changeData={filterRadioChange2}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
 
-              <GridTitleContainer>
-                <GridTitle>To-do 리스트</GridTitle>
+                <GridTitleContainer>
+                  <GridTitle>To-do 리스트</GridTitle>
 
                 {permissions && (
                   <ButtonContainer>
@@ -2437,8 +2744,130 @@ const CM_A1600: React.FC = () => {
               </ExcelExport>
             </GridContainer>
           </GridContainerWrap>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onRemoveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+                <ExcelExport
+                  data={todoDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="Scheduler"
+                >
+                  <Grid
+                    style={{ height: "73vh" }}
+                    data={process(
+                      todoDataResult.data.map((row) => ({
+                        ...row,
+                        strtime: row.strtime
+                          ? new Date(dateformat(row.strtime))
+                          : new Date(dateformat("99991231")),
+                        [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
+                      })),
+                      todoDataState
+                    )}
+                    {...todoDataState}
+                    onDataStateChange={onTodoDataStateChange}
+                    //선택기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onTodoSelectionChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onTodoSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={todoDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onTodoItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="50px"
+                      editable={false}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : checkboxField.includes(item.fieldName)
+                                  ? CheckBoxCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? todoTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </GridContainerWrap>
+          )}
         </TabStripTab>
         <TabStripTab title="전체 스케줄러">
+        <GridTitleContainer>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2537,6 +2966,7 @@ const CM_A1600: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
+          </GridTitleContainer>
           <GridContainer>
             {osstate == true ? (
               <div
@@ -2553,7 +2983,7 @@ const CM_A1600: React.FC = () => {
               </div>
             ) : (
               <Scheduler
-                height={"77vh"}
+                height={ isMobile ? deviceHeight - height3 - height4 : "77vh"}
                 data={schedulerDataResult2}
                 defaultDate={displayDate}
                 group={{
@@ -2581,6 +3011,7 @@ const CM_A1600: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="개인 스케줄(표)">
+          <GridTitleContainer>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2633,6 +3064,7 @@ const CM_A1600: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
+          </GridTitleContainer>
           <GridContainer width="100%">
             <GridTitleContainer>
               <GridTitle>개인 스케줄(표)</GridTitle>
@@ -2673,7 +3105,7 @@ const CM_A1600: React.FC = () => {
               fileName="Scheduler"
             >
               <Grid
-                style={{ height: "73.5vh" }}
+                style={{ height: isMobile ? deviceHeight - height3 - height4 : "73.5vh" }}
                 data={process(
                   userDataResult.data.map((row) => ({
                     ...row,
