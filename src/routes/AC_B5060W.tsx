@@ -663,7 +663,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) + "#view=fit");
+        setUrl(URL.createObjectURL(blob) );
       } else {
         setUrl("");
       }
@@ -717,7 +717,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) + "#view=fit");
+        setUrl(URL.createObjectURL(blob) );
       } else {
         setUrl("");
       }
@@ -770,7 +770,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) + "#view=fit");
+        setUrl(URL.createObjectURL(blob) );
       } else {
         setUrl("");
       }
@@ -824,7 +824,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) + "#view=fit");
+        setUrl(URL.createObjectURL(blob) );
       } else {
         setUrl("");
       }

@@ -888,7 +888,7 @@ const HU_A1060W: React.FC = () => {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob) + "#view=fit");
+      setUrl(URL.createObjectURL(blob) );
     } else {
       //데이터 없을 경우
       setUrl("");
