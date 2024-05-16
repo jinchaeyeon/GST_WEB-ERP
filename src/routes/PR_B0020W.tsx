@@ -567,57 +567,6 @@ const PR_B0020W: React.FC = () => {
     });
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"]?.map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      minGridWidth.current += 100;
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-      }
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   const componentRef = useRef(null);
 
   return (
@@ -741,7 +690,6 @@ const PR_B0020W: React.FC = () => {
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
-              id="grdList"
             >
               <GridColumn
                 field="chk"
@@ -751,25 +699,29 @@ const PR_B0020W: React.FC = () => {
                 cell={CustomCheckBoxCell1}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={setWidth("grdList", item.width)}
-                        cell={
-                          centerField.includes(item.fieldName)
-                            ? CenterCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>

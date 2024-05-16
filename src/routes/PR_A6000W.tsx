@@ -1158,99 +1158,6 @@ const PR_A6000W: React.FC = () => {
     [collapsedState2]
   );
 
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid2.current = document.getElementById("grdList2");
-      grid3.current = document.getElementById("grdList3");
-
-      window.addEventListener("resize", handleResize);
-
-      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-
-      minGridWidth2.current += 50;
-      minGridWidth3.current += 100;
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth3(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid3.current && Name == "grdList3") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1397,24 +1304,28 @@ const PR_A6000W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1462,30 +1373,35 @@ const PR_A6000W: React.FC = () => {
               //원하는 행 위치로 스크롤 기능
               ref={gridRef2}
               rowHeight={30}
-              id="grdList2"
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={setWidth("grdList2", item.width)}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? detail2TotalFooterCell
-                            : undefined
-                        }
-                      />
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList2"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? detail2TotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1557,31 +1473,38 @@ const PR_A6000W: React.FC = () => {
             //원하는 행 위치로 스크롤 기능
             ref={gridRef3}
             rowHeight={30}
-            id="grdList3"
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={setWidth("grdList3", item.width)}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? CenterCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? detailTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList3"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? CenterCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? detailTotalFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
