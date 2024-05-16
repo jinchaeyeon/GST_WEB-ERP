@@ -19,6 +19,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -79,9 +82,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A9001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -2772,7 +2772,9 @@ const MA_A9001W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={1}>
-              <GridContainer style={{ width: "100%" }}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
                 <GridTitleContainer className="ButtonContainer2">
                   <ButtonContainer
                     style={{
