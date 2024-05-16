@@ -2624,6 +2624,126 @@ const CM_A1600: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>To-do 리스트</GridTitle>
 
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                )}
+              </GridTitleContainer>
+              <ExcelExport
+                data={todoDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="Scheduler"
+              >
+                <Grid
+                  style={{ height: "73vh" }}
+                  data={process(
+                    todoDataResult.data.map((row) => ({
+                      ...row,
+                      strtime: row.strtime
+                        ? new Date(dateformat(row.strtime))
+                        : new Date(dateformat("99991231")),
+                      [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
+                    })),
+                    todoDataState
+                  )}
+                  {...todoDataState}
+                  onDataStateChange={onTodoDataStateChange}
+                  //선택기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onTodoSelectionChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onTodoSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={todoDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //incell 수정 기능
+                  onItemChange={onTodoItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="50px"
+                    editable={false}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              dateField.includes(item.fieldName)
+                                ? DateCell
+                                : checkboxField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? todoTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </GridContainerWrap>
                   {permissions && (
                     <ButtonContainer>
                       <Button
@@ -3039,7 +3159,7 @@ const CM_A1600: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

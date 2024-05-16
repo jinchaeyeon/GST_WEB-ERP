@@ -1180,7 +1180,9 @@ const AC_A1000W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+              customOptionData.menuCustomColumnOptions["grdList"]
+              ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+              ?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

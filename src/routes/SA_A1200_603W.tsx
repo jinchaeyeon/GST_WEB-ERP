@@ -39,6 +39,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   dateformat2,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -1369,7 +1370,7 @@ const SA_A1200_603W: React.FC = () => {
   );
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "recdt" && field != "num") {
+    if (field != "rowstatus" && field != "num") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -2070,6 +2071,9 @@ const SA_A1200_603W: React.FC = () => {
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
+                      recdt: row.recdt
+                        ? new Date(dateformat(row.recdt))
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
                     mainDataState2
@@ -2103,6 +2107,7 @@ const SA_A1200_603W: React.FC = () => {
                   rowRender={customRowRender2}
                   editField={EDIT_FIELD}
                 >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>

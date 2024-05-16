@@ -1137,7 +1137,6 @@ const MA_B2800W: React.FC = () => {
         }}
       >
         <GridContainer style={{ width: "100%" }}>
-          <GridTitleContainer></GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {

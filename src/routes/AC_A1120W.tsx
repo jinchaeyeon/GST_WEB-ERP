@@ -595,7 +595,7 @@ const AC_A1120W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

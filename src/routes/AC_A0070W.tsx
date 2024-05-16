@@ -1334,7 +1334,9 @@ const AC_A0070W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdMaster"]?.map(
+                customOptionData.menuCustomColumnOptions["grdMaster"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1607,7 +1609,9 @@ const AC_A0070W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdItem"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdItem"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

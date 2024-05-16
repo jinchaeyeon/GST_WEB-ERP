@@ -673,7 +673,7 @@ const CM_A1000W_617: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -907,7 +907,7 @@ const CM_A1000W_617: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

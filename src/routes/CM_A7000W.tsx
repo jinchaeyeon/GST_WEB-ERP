@@ -146,7 +146,7 @@ const CM_A7000W: React.FC = () => {
 
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
-    const [searcProjectWindowVisible, setSearchProjectWindowVisible] =
+  const [searcProjectWindowVisible, setSearchProjectWindowVisible] =
     useState<boolean>(false);
 
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
@@ -439,9 +439,6 @@ const CM_A7000W: React.FC = () => {
           isSearch: true,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          custprsncd: defaultOption.find(
-            (item: any) => item.id == "custprsncd"
-          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
           )?.valueCode,
@@ -457,9 +454,6 @@ const CM_A7000W: React.FC = () => {
           ...prev,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          custprsncd: defaultOption.find(
-            (item: any) => item.id == "custprsncd"
-          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
           )?.valueCode,
@@ -884,8 +878,8 @@ const CM_A7000W: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
     setInformation2({
-      user_name: ""
-    })
+      user_name: "",
+    });
   };
 
   const search = () => {
@@ -1211,8 +1205,8 @@ const CM_A7000W: React.FC = () => {
         fetchDetail();
       }
       setInformation2({
-        user_name: ""
-      })
+        user_name: "",
+      });
       setParaDataSaved({
         workType: "",
         orgdiv: sessionOrgdiv,
@@ -1289,9 +1283,8 @@ const CM_A7000W: React.FC = () => {
         ?.valueCode,
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         ?.valueCode,
-      materialtype: defaultOption.find(
-        (item: any) => item.id == "materialtype"
-      )?.valueCode,
+      materialtype: defaultOption.find((item: any) => item.id == "materialtype")
+        ?.valueCode,
       type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
       extra_field2: "",
       place: "",
@@ -1548,13 +1541,13 @@ const CM_A7000W: React.FC = () => {
                       value={filters.ref_key}
                       onChange={filterInputChange}
                     />
-                     <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onSearchProjectWndClick}
-                          />
-                        </ButtonInInput>
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onSearchProjectWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                 </tr>
                 <tr>
@@ -1599,16 +1592,12 @@ const CM_A7000W: React.FC = () => {
                 <tr>
                   <th>의뢰자</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="custprsncd"
-                        value={filters.custprsncd}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        valueField="user_id"
-                        textField="user_name"
-                      />
-                    )}
+                    <Input
+                      name="custprsncd"
+                      type="text"
+                      value={filters.custprsncd}
+                      onChange={filterInputChange}
+                    />
                   </td>
                   <th>물질분야</th>
                   <td>
@@ -2152,13 +2141,13 @@ const CM_A7000W: React.FC = () => {
                       <Button
                         themeColor={"primary"}
                         onClick={() => {
-                          if(information2.user_name != "") {
+                          if (information2.user_name != "") {
                             detailDataResult.data.map((item) => {
                               if (item.num > temp) {
                                 temp = item.num;
                               }
                             });
-                            
+
                             const newDataItem = {
                               [DATA_ITEM_KEY]: ++temp,
                               prsnnm: information2.user_name,

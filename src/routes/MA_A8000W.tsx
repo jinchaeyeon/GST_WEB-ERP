@@ -16,7 +16,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -61,7 +61,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import DetailWindow from "../components/Windows/MA_A8000W_Popup_Window";
 import DetailWindow2 from "../components/Windows/MA_A8000W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -77,9 +77,6 @@ const RadioField = ["drcrdiv"];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const CustomRadioCell = (props: GridCellProps) => {
@@ -104,6 +101,22 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const MA_A8000W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -1012,7 +1025,6 @@ const MA_A8000W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1020,9 +1032,9 @@ const MA_A8000W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -1051,7 +1063,7 @@ const MA_A8000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
+                      height: deviceHeight - height,
                       width: "100%",
                     }}
                     data={process(
@@ -1127,19 +1139,11 @@ const MA_A8000W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
 
-            <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={1}>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                  }}
-                >
-                  <ButtonContainer>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
                         if (swiper) {
@@ -1153,7 +1157,7 @@ const MA_A8000W: React.FC = () => {
                       이전
                     </Button>
                   </ButtonContainer>
-                </div>
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
@@ -1163,7 +1167,7 @@ const MA_A8000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.8 - 50}px`,
+                      height: deviceHeight - height2,
                       width: "100%",
                     }}
                     data={process(

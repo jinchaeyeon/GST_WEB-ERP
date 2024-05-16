@@ -19,6 +19,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -76,12 +79,9 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import MA_A9001W_IN_Window from "../components/Windows/MA_A9001W_IN_Window";
 import MA_A9001W_Window from "../components/Windows/MA_A9001W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A9001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -141,11 +141,28 @@ type TdataArr2 = {
   advanceinfo_s: string[];
 };
 let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
 let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_A9001W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -2569,7 +2586,6 @@ const MA_A9001W: React.FC = () => {
       {isMobile ? (
         <>
           <Swiper
-            className="leading_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2577,9 +2593,9 @@ const MA_A9001W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <GridTitleContainer>
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer">
                   <div
                     style={{
                       display: "flex",
@@ -2654,7 +2670,7 @@ const MA_A9001W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.67}px`,
+                      height: deviceHeight - height,
                       width: "100%",
                     }}
                     data={process(
@@ -2755,41 +2771,44 @@ const MA_A9001W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
 
-            <SwiperSlide key={1} className="leading_PDA">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
-                <ButtonContainer
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    margin: "0 14px 0 11px",
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
+                  <ButtonContainer
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      margin: "0 14px 0 11px",
                     }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
                   >
-                    이전
-                  </Button>
-                  <Button
-                    onClick={onSaveClick}
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    매입 E-TAX(전표) 저장
-                  </Button>
-                </ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      매입 E-TAX(전표) 저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <FormBoxWrap>
                   <FormBox>
                     <div
                       style={{
-                        overflow: "scroll",
-                        height: `${deviceHeight * 0.74}px`,
+                        height: deviceHeight - height2,
                         width: "100%",
                       }}
                     >
@@ -3050,8 +3069,8 @@ const MA_A9001W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
 
-            <SwiperSlide key={2} className="leading_PDA_custom">
-              <GridContainer style={{ width: "100%", height: "100%" }}>
+            <SwiperSlide key={2}>
+              <GridContainer style={{ width: "100%" }}>
                 <div
                   style={{
                     display: "flex",
@@ -3076,10 +3095,7 @@ const MA_A9001W: React.FC = () => {
                   </ButtonContainer>
                 </div>
                 <TabStrip
-                  style={{
-                    width: "100%",
-                    height: `${deviceHeight * 0.8 - 18}px`,
-                  }}
+                  style={{ width: "100%" }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
                 >
@@ -3094,7 +3110,7 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            style={{ height: deviceHeight - height3 }}
                             data={process(
                               subDataResult.data.map((row) => ({
                                 ...row,
@@ -3175,7 +3191,7 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            style={{ height: deviceHeight - height3 }}
                             data={process(
                               subDataResult2.data.map((row) => ({
                                 ...row,
@@ -3259,7 +3275,7 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: `${deviceHeight * 0.7 - 35}px` }}
+                            style={{ height: deviceHeight - height3 }}
                             data={process(
                               subDataResult3.data.map((row) => ({
                                 ...row,
