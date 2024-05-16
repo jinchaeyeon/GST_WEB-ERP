@@ -944,7 +944,7 @@ const CR_A0040W: React.FC = () => {
               editable={false}
             /> */}
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                 (item: any, idx: number) => {
                   return (
                     item.sortOrder !== -1 && (

@@ -794,7 +794,7 @@ const CR_A0020W: React.FC = () => {
           >
             <GridColumn cell={ColumnCommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                 (item: any, idx: number) => {
                   return (
                     item.sortOrder !== -1 && (
