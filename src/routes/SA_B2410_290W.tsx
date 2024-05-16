@@ -1443,7 +1443,7 @@ const SA_B2410: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1522,7 +1522,7 @@ const SA_B2410: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1610,7 +1610,7 @@ const SA_B2410: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList3"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -1690,7 +1690,7 @@ const SA_B2410: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList4"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -1803,7 +1803,7 @@ const SA_B2410: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList5"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdList5"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1887,7 +1887,7 @@ const SA_B2410: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1964,7 +1964,7 @@ const SA_B2410: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2041,7 +2041,7 @@ const SA_B2410: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList3"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2116,7 +2116,7 @@ const SA_B2410: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList4"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2199,7 +2199,7 @@ const SA_B2410: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList5"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList5"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

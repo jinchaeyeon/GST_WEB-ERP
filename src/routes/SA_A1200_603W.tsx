@@ -121,8 +121,6 @@ const SA_A1200_603W: React.FC = () => {
             ?.valueCode,
           quodtstr: setDefaultDate(customOptionData, "quodtstr"),
           quodtend: setDefaultDate(customOptionData, "quodtend"),
-          cotracdtstr: setDefaultDate(customOptionData, "cotracdtstr"),
-          cotracdtend: setDefaultDate(customOptionData, "cotracdtend"),
           stdt: defaultOption.find((item: any) => item.id === "stdt")
             ?.valueCode,
           endt: defaultOption.find((item: any) => item.id === "endt")
@@ -144,8 +142,6 @@ const SA_A1200_603W: React.FC = () => {
             ?.valueCode,
           quodtstr: setDefaultDate(customOptionData, "quodtstr"),
           quodtend: setDefaultDate(customOptionData, "quodtend"),
-          cotracdtstr: setDefaultDate(customOptionData, "cotracdtstr"),
-          cotracdtend: setDefaultDate(customOptionData, "cotracdtend"),
           stdt: defaultOption.find((item: any) => item.id === "stdt")
             ?.valueCode,
           endt: defaultOption.find((item: any) => item.id === "endt")
@@ -238,7 +234,7 @@ const SA_A1200_603W: React.FC = () => {
   );
 
   // 조회조건
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     orgdiv: sessionOrgdiv,
     location: sessionLocation,
     quokey: "",
@@ -249,8 +245,8 @@ const SA_A1200_603W: React.FC = () => {
     finyn: "%",
     quodtstr: new Date(),
     quodtend: new Date(),
-    cotracdtstr: new Date(),
-    cotracdtend: new Date(),
+    cotracdtstr: null,
+    cotracdtend: null,
     feasibility: "",
     weight: "",
     stdt: 0,
@@ -1665,7 +1661,7 @@ const SA_A1200_603W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2109,7 +2105,7 @@ const SA_A1200_603W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

@@ -1615,7 +1615,7 @@ const SY_A0120: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList"
-                        ]?.map((item: any, idx: number) => {
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map((item: any, idx: number) => {
                           const caption = getCaption(item.id, item.caption);
                           return (
                             item.sortOrder !== -1 && (

@@ -1009,7 +1009,7 @@ const HU_B4001W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdUse"]?.map(
+                        customOptionData.menuCustomColumnOptions["grdUse"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1106,7 +1106,7 @@ const HU_B4001W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdAdj"]?.map(
+                      customOptionData.menuCustomColumnOptions["grdAdj"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1269,7 +1269,7 @@ const HU_B4001W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdUse"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdUse"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1350,7 +1350,7 @@ const HU_B4001W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdj"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdAdj"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

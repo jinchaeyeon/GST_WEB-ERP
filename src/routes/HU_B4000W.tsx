@@ -2033,7 +2033,7 @@ const HU_B4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdUserAdj"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -2153,7 +2153,7 @@ const HU_B4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdAdjDetail"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -2370,7 +2370,7 @@ const HU_B4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdJournalList"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -2454,7 +2454,7 @@ const HU_B4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdUserAdj"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -2535,7 +2535,7 @@ const HU_B4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdAdjDetail"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -2676,7 +2676,7 @@ const HU_B4000W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdJournalList"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2859,7 +2859,7 @@ const HU_B4000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

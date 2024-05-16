@@ -2737,7 +2737,7 @@ const MA_A9001W: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -3150,7 +3150,7 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList2"
-                              ]?.map(
+                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 && (
                                     <GridColumn
@@ -3234,7 +3234,7 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList3"
-                              ]?.map(
+                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 && (
                                     <GridColumn
@@ -3315,7 +3315,7 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList4"
-                              ]?.map(
+                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 && (
                                     <GridColumn
@@ -3483,7 +3483,7 @@ const MA_A9001W: React.FC = () => {
                   cell={CheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3827,7 +3827,7 @@ const MA_A9001W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList2"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -3909,7 +3909,7 @@ const MA_A9001W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList3"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -3988,7 +3988,7 @@ const MA_A9001W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList4"
-                            ]?.map(
+                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn

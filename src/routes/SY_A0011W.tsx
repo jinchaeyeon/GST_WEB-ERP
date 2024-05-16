@@ -1536,7 +1536,7 @@ const Page: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdHeaderList"
-                      ]?.map(
+                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1787,7 +1787,7 @@ const Page: React.FC = () => {
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
                       "grdHeaderList"
-                    ]?.map(
+                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

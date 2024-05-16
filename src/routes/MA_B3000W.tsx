@@ -800,7 +800,7 @@ const MA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdAllList"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -912,7 +912,7 @@ const MA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdMonthList"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -1141,7 +1141,7 @@ const MA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdQuarterList"
-                          ]?.map(
+                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 &&
                               (item.fieldName !== "custcd" &&
@@ -1581,7 +1581,7 @@ const MA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdAllList"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1666,7 +1666,7 @@ const MA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdMonthList"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1817,7 +1817,7 @@ const MA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdQuarterList"
-                        ]?.map(
+                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (item.fieldName !== "custcd" &&

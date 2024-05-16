@@ -843,7 +843,7 @@ const SA_B2221: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdAllList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -923,7 +923,7 @@ const SA_B2221: React.FC = () => {
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
                       "grdMonthList"
-                    ]?.map(
+                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1067,7 +1067,7 @@ const SA_B2221: React.FC = () => {
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
                       "grdQuarterList"
-                    ]?.map(
+                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 &&
                         (item.fieldName !== "sub_code" &&

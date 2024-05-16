@@ -751,7 +751,7 @@ const PR_B0020W: React.FC = () => {
                 cell={CustomCheckBoxCell1}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

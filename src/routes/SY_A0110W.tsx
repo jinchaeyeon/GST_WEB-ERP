@@ -403,7 +403,7 @@ const SY_A0110: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
+              customOptionData.menuCustomColumnOptions["grdAllList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
