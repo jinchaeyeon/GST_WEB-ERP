@@ -22,7 +22,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -68,7 +68,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3600W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -83,9 +83,6 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let temp = 0;
 let deletedMainRows: object[] = [];
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 export const FormContext = createContext<{
@@ -305,6 +302,27 @@ const dateField = ["outdt", "indt"];
 const numberField = ["qty", "cnt", "now_qty"];
 const numberField2 = ["qty"];
 const MA_A3600W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -1646,14 +1664,11 @@ const MA_A3600W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{
-              height: `${deviceHeight * 0.847}px`,
               width: "100%",
-              paddingBottom: "15px",
             }}
           >
             <TabStripTab title="상세자료">
               <Swiper
-                className="leading_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1661,9 +1676,9 @@ const MA_A3600W: React.FC = () => {
                   index = swiper.activeIndex;
                 }}
               >
-                <SwiperSlide key={0} className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <GridTitleContainer>
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
                       <GridTitle>출고상세자료</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -1674,7 +1689,7 @@ const MA_A3600W: React.FC = () => {
                       fileName="전용처리"
                     >
                       <Grid
-                        style={{ height: `${deviceHeight * 0.63}px` }}
+                        style={{ height: deviceHeight - height - height3 }}
                         data={process(
                           mainDataResult.data.map((row) => ({
                             ...row,
@@ -1760,9 +1775,9 @@ const MA_A3600W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </SwiperSlide>
-                <SwiperSlide key={1} className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <GridTitleContainer>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
                       <GridTitle>입고상세자료</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -1773,7 +1788,7 @@ const MA_A3600W: React.FC = () => {
                       fileName="전용처리"
                     >
                       <Grid
-                        style={{ height: `${deviceHeight * 0.63}px` }}
+                        style={{ height: deviceHeight - height - height3 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -1862,86 +1877,78 @@ const MA_A3600W: React.FC = () => {
               </Swiper>
             </TabStripTab>
             <TabStripTab title="처리영역">
-              <div className="leading_Swiper">
-                <div className="leading_PDA_custom">
-                  <GridContainer style={{ width: "100%", height: "100%" }}>
-                    <ButtonContainer>
-                      <Button
-                        //onClick={onAddClick5}
-                        themeColor={"primary"}
-                        icon="folder"
-                      >
-                        재고참조팝업
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                      <Button
-                        //onClick={onSaveClick4}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                      ></Button>
-                    </ButtonContainer>
-                    <ExcelExport
-                      data={mainDataResult3.data}
-                      ref={(exporter) => {
-                        _export3 = exporter;
-                      }}
-                      fileName="전용처리"
-                    >
-                      <Grid
-                        style={{
-                          height: `${deviceHeight * 0.64}px`,
-                          width: "100%",
-                        }}
-                        data={process(
-                          mainDataResult3.data.map((row) => ({
-                            ...row,
-                            [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                          })),
-                          mainDataState3
-                        )}
-                        {...mainDataState3}
-                        onDataStateChange={onMainDataStateChange3}
-                        //선택 기능
-                        dataItemKey={DATA_ITEM_KEY3}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
-                        }}
-                        onSelectionChange={onSelectionChange3}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={mainDataResult3.total}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onMainSortChange3}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        onItemChange={onMainItemChange}
-                        cellRender={customCellRender}
-                        rowRender={customRowRender}
-                        editField={EDIT_FIELD}
-                      >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
-                        <GridColumn title="변경전">{createColumn()}</GridColumn>
-                        <GridColumn title="변경후">
-                          {createColumn2()}
-                        </GridColumn>
-                      </Grid>
-                    </ExcelExport>
-                  </GridContainer>
-                </div>
-              </div>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer2">
+                  <ButtonContainer>
+                    <Button themeColor={"primary"} icon="folder">
+                      재고참조팝업
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      //onClick={onSaveClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
+                  }}
+                  fileName="전용처리"
+                >
+                  <Grid
+                    style={{
+                      height: deviceHeight - height2 - height3,
+                      width: "100%",
+                    }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    <GridColumn title="변경전">{createColumn()}</GridColumn>
+                    <GridColumn title="변경후">{createColumn2()}</GridColumn>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
             </TabStripTab>
           </TabStrip>
         </>
