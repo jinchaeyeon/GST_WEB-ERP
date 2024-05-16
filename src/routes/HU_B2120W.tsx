@@ -51,7 +51,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B2120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -77,8 +77,15 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 
 const HU_B2120W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+
+  var container = document.querySelector(".k-tabstrip-items-wrapper");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -641,146 +648,138 @@ const HU_B2120W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <div className={isMobile ? "leading_Swiper" : ""}>
-        <div className={isMobile ? "leading_PDA_custom" : ""}>
-          <TabStrip
-            style={{ width: isMobile ? `${deviceWidth - 30}px` : "100%" }}
-            selected={tabSelected}
-            onSelect={handleSelectTab}
-          >
-            <TabStripTab title="근무시간기록부">
-              <GridContainer width="100%">
-                <ExcelExport
-                  data={newData}
-                  ref={(exporter) => {
-                    _export = exporter;
-                  }}
-                  fileName="근태집계현황"
-                  group={group}
-                >
-                  <Grid
-                    style={{
-                      height: isMobile ? `${deviceHeight * 0.65}px` : "77vh",
-                    }}
-                    data={newData.map((item: { items: any[] }) => ({
-                      ...item,
-                      items: item.items.map((row: any) => ({
-                        ...row,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                      })),
-                    }))}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    //그룹기능
-                    group={group}
-                    groupable={true}
-                    onExpandChange={onExpandChange}
-                    expandField="expanded"
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //페이지네이션
-                    total={total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </TabStripTab>
-            <TabStripTab title="근태별현황">
-              <GridContainer width="100%">
-                <ExcelExport
-                  data={newData2}
-                  ref={(exporter) => {
-                    _export2 = exporter;
-                  }}
-                  fileName="근태집계현황"
-                  group={group2}
-                >
-                  <Grid
-                    style={{
-                      height: isMobile ? `${deviceHeight * 0.65}px` : "77vh",
-                    }}
-                    data={newData2.map((item: { items: any[] }) => ({
-                      ...item,
-                      items: item.items.map((row: any) => ({
-                        ...row,
-                        [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                      })),
-                    }))}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    //그룹기능
-                    group={group2}
-                    groupable={true}
-                    onExpandChange={onExpandChange2}
-                    expandField="expanded"
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY2}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange2}
-                    //페이지네이션
-                    total={total2}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={pageChange2}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell2
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </TabStripTab>
-          </TabStrip>
-        </div>
-      </div>
+      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+        <TabStripTab title="근무시간기록부">
+          <GridContainer width="100%">
+            <ExcelExport
+              data={newData}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="근태집계현황"
+              group={group}
+            >
+              <Grid
+                style={{
+                  height: isMobile ? deviceHeight - height : "77vh",
+                }}
+                data={newData.map((item: { items: any[] }) => ({
+                  ...item,
+                  items: item.items.map((row: any) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                }))}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                //그룹기능
+                group={group}
+                groupable={true}
+                onExpandChange={onExpandChange}
+                expandField="expanded"
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //페이지네이션
+                total={total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+        <TabStripTab title="근태별현황">
+          <GridContainer width="100%">
+            <ExcelExport
+              data={newData2}
+              ref={(exporter) => {
+                _export2 = exporter;
+              }}
+              fileName="근태집계현황"
+              group={group2}
+            >
+              <Grid
+                style={{
+                  height: isMobile ? deviceHeight - height : "77vh",
+                }}
+                data={newData2.map((item: { items: any[] }) => ({
+                  ...item,
+                  items: item.items.map((row: any) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                  })),
+                }))}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                //그룹기능
+                group={group2}
+                groupable={true}
+                onExpandChange={onExpandChange2}
+                expandField="expanded"
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange2}
+                //페이지네이션
+                total={total2}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell2
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+      </TabStrip>
       {userWindowVisible && (
         <UserWindow
           setVisible={setuserWindowVisible}
