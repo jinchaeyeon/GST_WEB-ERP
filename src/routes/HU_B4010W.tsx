@@ -1054,6 +1054,9 @@ const HU_B4010W: React.FC = () => {
         setDate10(new Date(year, month - 9, day));
         setDate11(new Date(year, month - 10, day));
         setDate12(new Date(year, month - 11, day));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

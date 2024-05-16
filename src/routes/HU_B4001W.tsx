@@ -711,6 +711,9 @@ const HU_B4001W: React.FC = () => {
         find_row_value: "",
         isSearch: true,
       }));
+      if(swiper) {
+        swiper.slideTo(0);
+      }
     } catch (e) {
       alert(e);
     }

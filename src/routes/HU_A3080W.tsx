@@ -71,7 +71,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import HU_A3080W_Window from "../components/Windows/HU_A3080W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -624,6 +624,22 @@ type TdataArr = {
 };
 
 const HU_A3080W: React.FC = () => {
+  
+ let deviceWidth = window.innerWidth;
+ const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+ let isMobile = deviceWidth <= 1200;
+ var height = 0;
+ var height2 = 0;
+
+ var container = document.querySelector(".ButtonContainer");
+ var container2 = document.querySelector(".k-tabstrip-items-wrapper");
+
+ if (container?.clientHeight != undefined) {
+   height = container == undefined ? 0 : container.clientHeight;
+ }
+ if (container2?.clientHeight != undefined) {
+  height2 = container2 == undefined ? 0 : container2.clientHeight;
+}
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
@@ -4543,8 +4559,8 @@ const HU_A3080W: React.FC = () => {
               // fetchGrid,
             }}
           >
-            <GridContainer>
-              <GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -4584,7 +4600,7 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -4686,8 +4702,8 @@ const HU_A3080W: React.FC = () => {
               // fetchGrid,
             }}
           >
-            <GridContainer>
-              <GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -4734,7 +4750,7 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -4841,8 +4857,8 @@ const HU_A3080W: React.FC = () => {
               // fetchGrid,
             }}
           >
-            <GridContainer>
-              <GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -4889,7 +4905,7 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -4996,8 +5012,8 @@ const HU_A3080W: React.FC = () => {
               // fetchGrid,
             }}
           >
-            <GridContainer>
-              <GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -5037,7 +5053,7 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,
@@ -5144,8 +5160,8 @@ const HU_A3080W: React.FC = () => {
               // fetchGrid,
             }}
           >
-            <GridContainer>
-              <GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -5185,7 +5201,7 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
                   data={process(
                     mainDataResult5.data.map((row) => ({
                       ...row,

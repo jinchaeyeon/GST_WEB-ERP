@@ -16,7 +16,7 @@ import {
 import { NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -60,9 +60,13 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+var index = 0;
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -168,6 +172,28 @@ type TdataArr4 = {
 };
 
 const HU_A3060W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -279,6 +305,9 @@ const HU_A3060W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
+      }
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
       }
     } catch (e) {
       alert(e);
@@ -1249,6 +1278,10 @@ const HU_A3060W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+      swiper.update();
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -1270,6 +1303,10 @@ const HU_A3060W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+      swiper.update();
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -3204,741 +3241,1538 @@ const HU_A3060W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <TabStrip
-        style={{ width: "100%" }}
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-      >
-        <TabStripTab title="소득세율">
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>기준년도</th>
-                  <td>
-                    <DatePicker
-                      name="stdyr"
-                      value={filters.stdyr}
-                      format="yyyy"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                      calendar={YearCalendar}
-                    />
-                  </td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  onClick={onCopyClick}
-                  icon="copy"
-                >
-                  전년도 소득세율 복사
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="정산기준"
-            >
-              <Grid
-                style={{ height: "75vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
-        <TabStripTab title="급여기준정보">
-          <GridContainerWrap>
-            <GridContainer width="15%">
-              <GridTitleContainer>
-                <GridTitle>기준일자</GridTitle>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult2.data}
-                ref={(exporter) => {
-                  _export2 = exporter;
-                }}
-                fileName="정산기준"
-              >
-                <Grid
-                  style={{ height: "80vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  <GridColumn
-                    field="payyrmm"
-                    cell={DateCell}
-                    title="기준일자"
-                    width="120px"
-                    footerCell={mainTotalFooterCell2}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainer width={`calc(85% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle></GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick2}
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onSaveClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <FormBoxWrap>
-                <FormBox>
+      {isMobile ? (
+        <>
+          <TabStrip
+            style={{ width: "100%" }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="소득세율">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
                     <tr>
+                      <th>기준년도</th>
+                      <td>
+                        <DatePicker
+                          name="stdyr"
+                          value={filters.stdyr}
+                          format="yyyy"
+                          onChange={filterInputChange}
+                          className="required"
+                          placeholder=""
+                          calendar={YearCalendar}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={onCopyClick}
+                      icon="copy"
+                    >
+                      전년도 소득세율 복사
+                    </Button>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="정산기준"
+                >
+                  <Grid
+                    style={{ height: deviceHeight - height - height3 }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="30px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+            <TabStripTab title="급여기준정보">
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="정산기준"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height3 }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        <GridColumn
+                          field="payyrmm"
+                          cell={DateCell}
+                          title="기준일자"
+                          width="120px"
+                          footerCell={mainTotalFooterCell2}
+                        />
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick2}
+                          themeColor={"primary"}
+                          icon="file-add"
+                        >
+                          신규
+                        </Button>
+                        <Button
+                          onClick={onSaveClick2}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                        >
+                          저장
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <FormBoxWrap
+                      style={{
+                        height: deviceHeight - height2 - height3,
+                        overflow: "auto",
+                      }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <td>건강보험</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+                              <NumericTextBox
+                                name="medprvrat"
+                                value={Information.medprvrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                회사부담율
+                              </th>
+                              <NumericTextBox
+                                name="medcomprat"
+                                value={Information.medcomprat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>보험률</th>
+                              <NumericTextBox
+                                name="medrat"
+                                value={Information.medrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>국민연금</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="pnsprvrat"
+                                value={Information.pnsprvrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                회사부담율
+                              </th>
+
+                              <NumericTextBox
+                                name="pnscomprat"
+                                value={Information.pnscomprat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>보험률</th>
+
+                              <NumericTextBox
+                                name="pnsrat"
+                                value={Information.pnsrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>상한액</th>
+
+                              <NumericTextBox
+                                name="maxprice"
+                                value={Information.maxprice}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>하한액</th>
+
+                              <NumericTextBox
+                                name="minprice"
+                                value={Information.minprice}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>고용보험율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="empinsurancerat"
+                                value={Information.empinsurancerat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                회사부담율
+                              </th>
+
+                              <NumericTextBox
+                                name="hircomprat"
+                                value={Information.hircomprat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>요양보험보험률</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="medrat2"
+                                value={Information.medrat2}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>보험대상자보험률</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="chkrat"
+                                value={Information.chkrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>주민세율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="locataxrat"
+                                value={Information.locataxrat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>직과세표준금액</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="daytaxstd"
+                                value={Information.daytaxstd}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>일용직소득세율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="dayinctax"
+                                value={Information.dayinctax}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>일용직주민세율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="daylocatax"
+                                value={Information.daylocatax}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>근로세액공제율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="daytaxrate"
+                                value={Information.daytaxrate}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                          <td></td>
+                            <td>일용직고용보험율</td>
+                            <td>
+                              <th style={{ textAlign: "center" }}>
+                                개인공제율
+                              </th>
+
+                              <NumericTextBox
+                                name="dayhirinsurat"
+                                value={Information.dayhirinsurat}
+                                format="n2"
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </TabStripTab>
+            <TabStripTab title="소득세조건표">
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer  className="ButtonContainer">
+                    <GridTitle>기준일자</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="delete"
+                      >
+                        삭제
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult3.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="정산기준"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height3 }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef3}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="payyrmm"
+                        cell={DateCell}
+                        title="기준일자"
+                        width="120px"
+                        footerCell={mainTotalFooterCell3}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle>기본정보</GridTitle>
+                    <ButtonContainer>
+                      <ExcelUploadButton
+                        saveExcel={saveExcel}
+                        permissions={{
+                          view: true,
+                          save: true,
+                          delete: true,
+                          print: true,
+                        }}
+                        style={{ marginLeft: "15px" }}
+                      />
+                      <Button
+                        onClick={onSaveClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult3_1.data}
+                    ref={(exporter) => {
+                      _export4 = exporter;
+                    }}
+                    fileName="정산기준"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height2 - height3 }}
+                      data={process(
+                        mainDataResult3_1.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3_1[idGetter3_1(row)], //선택된 데이터
+                        })),
+                        mainDataState3_1
+                      )}
+                      {...mainDataState3_1}
+                      onDataStateChange={onMainDataStateChange3_1}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3_1}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3_1}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3_1.total}
+                      skip={page3_1.skip}
+                      take={page3_1.take}
+                      pageable={true}
+                      onPageChange={pageChange3_1}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3_1}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange3_1}
+                      cellRender={customCellRender3_1}
+                      rowRender={customRowRender3_1}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      <GridColumn title="월급여액(비과세소득제외)">
+                        {createColumn()}
+                      </GridColumn>
+                      <GridColumn title="공제대상 가족의 수(본인, 배우자를 각각 1인으로 봄)">
+                        {createColumn2()}
+                      </GridColumn>
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                </SwiperSlide>
+                </Swiper>
+            </TabStripTab>
+            <TabStripTab title="계산공식">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>급여지급유형</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="paycd"
+                            value={filters4.paycd}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>공제_지급코드</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="payitemcd"
+                            value={filters4.payitemcd}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick4}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult4.data}
+                  ref={(exporter) => {
+                    _export5 = exporter;
+                  }}
+                  fileName="정산기준"
+                >
+                  <Grid
+                    style={{ height: deviceHeight - height - height3 }}
+                    data={process(
+                      mainDataResult4.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                      })),
+                      mainDataState4
+                    )}
+                    {...mainDataState4}
+                    onDataStateChange={onMainDataStateChange4}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY4}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange4}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult4.total}
+                    skip={page4.skip}
+                    take={page4.take}
+                    pageable={true}
+                    onPageChange={pageChange4}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef4}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange4}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange4}
+                    cellRender={customCellRender4}
+                    rowRender={customRowRender4}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList4"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : comboField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : checkField.includes(item.fieldName)
+                                    ? CheckBoxCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell4
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      ) : (
+        <>
+          <TabStrip
+            style={{ width: "100%" }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="소득세율">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>기준년도</th>
+                      <td>
+                        <DatePicker
+                          name="stdyr"
+                          value={filters.stdyr}
+                          format="yyyy"
+                          onChange={filterInputChange}
+                          className="required"
+                          placeholder=""
+                          calendar={YearCalendar}
+                        />
+                      </td>
                       <th></th>
-                      <th style={{ textAlign: "center" }}>개인공제율</th>
-                      <th style={{ textAlign: "center" }}>회사부담율</th>
-                      <th style={{ textAlign: "center" }}>보험률</th>
-                      <th style={{ textAlign: "center" }}>상한액</th>
-                      <th style={{ textAlign: "center" }}>하한액</th>
-                    </tr>
-                    <tr>
-                      <td>건강보험</td>
-                      <td>
-                        <NumericTextBox
-                          name="medprvrat"
-                          value={Information.medprvrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="medcomprat"
-                          value={Information.medcomprat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="medrat"
-                          value={Information.medrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>국민연금</td>
-                      <td>
-                        <NumericTextBox
-                          name="pnsprvrat"
-                          value={Information.pnsprvrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="pnscomprat"
-                          value={Information.pnscomprat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="pnsrat"
-                          value={Information.pnsrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="maxprice"
-                          value={Information.maxprice}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="minprice"
-                          value={Information.minprice}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>고용보험율</td>
-                      <td>
-                        <NumericTextBox
-                          name="empinsurancerat"
-                          value={Information.empinsurancerat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td>
-                        <NumericTextBox
-                          name="hircomprat"
-                          value={Information.hircomprat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>요양보험보험률</td>
-                      <td></td>
-                      <td></td>
-                      <td>
-                        <NumericTextBox
-                          name="medrat2"
-                          value={Information.medrat2}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>보험대상자보험률</td>
-                      <td></td>
-                      <td></td>
-                      <td>
-                        <NumericTextBox
-                          name="chkrat"
-                          value={Information.chkrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>주민세율</td>
-                      <td>
-                        <NumericTextBox
-                          name="locataxrat"
-                          value={Information.locataxrat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>직과세표준금액</td>
-                      <td>
-                        <NumericTextBox
-                          name="daytaxstd"
-                          value={Information.daytaxstd}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>일용직소득세율</td>
-                      <td>
-                        <NumericTextBox
-                          name="dayinctax"
-                          value={Information.dayinctax}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>일용직주민세율</td>
-                      <td>
-                        <NumericTextBox
-                          name="daylocatax"
-                          value={Information.daylocatax}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>근로세액공제율</td>
-                      <td>
-                        <NumericTextBox
-                          name="daytaxrate"
-                          value={Information.daytaxrate}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>일용직고용보험율</td>
-                      <td>
-                        <NumericTextBox
-                          name="dayhirinsurat"
-                          value={Information.dayhirinsurat}
-                          format="n2"
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
                       <td></td>
                     </tr>
                   </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="소득세조건표">
-          <GridContainerWrap>
-            <GridContainer width="15%">
-              <GridTitleContainer>
-                <GridTitle>기준일자</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onDeleteClick3}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult3.data}
-                ref={(exporter) => {
-                  _export3 = exporter;
-                }}
-                fileName="정산기준"
-              >
-                <Grid
-                  style={{ height: "80vh" }}
-                  data={process(
-                    mainDataResult3.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                    })),
-                    mainDataState3
-                  )}
-                  {...mainDataState3}
-                  onDataStateChange={onMainDataStateChange3}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY3}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                </FilterBox>
+              </FilterContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={onCopyClick}
+                      icon="copy"
+                    >
+                      전년도 소득세율 복사
+                    </Button>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
                   }}
-                  onSelectionChange={onSelectionChange3}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3.total}
-                  skip={page3.skip}
-                  take={page3.take}
-                  pageable={true}
-                  onPageChange={pageChange3}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef3}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange3}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="정산기준"
                 >
-                  <GridColumn
-                    field="payyrmm"
-                    cell={DateCell}
-                    title="기준일자"
-                    width="120px"
-                    footerCell={mainTotalFooterCell3}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainer width={`calc(85% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>기본정보</GridTitle>
-                <ButtonContainer>
-                  <ExcelUploadButton
-                    saveExcel={saveExcel}
-                    permissions={{
-                      view: true,
-                      save: true,
-                      delete: true,
-                      print: true,
+                  <Grid
+                    style={{ height: "75vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
                     }}
-                    style={{ marginLeft: "15px" }}
-                  />
-                  <Button
-                    onClick={onSaveClick3}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult3_1.data}
-                ref={(exporter) => {
-                  _export4 = exporter;
-                }}
-                fileName="정산기준"
-              >
-                <Grid
-                  style={{ height: "80vh" }}
-                  data={process(
-                    mainDataResult3_1.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState3_1[idGetter3_1(row)], //선택된 데이터
-                    })),
-                    mainDataState3_1
-                  )}
-                  {...mainDataState3_1}
-                  onDataStateChange={onMainDataStateChange3_1}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY3_1}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+            <TabStripTab title="급여기준정보">
+              <GridContainerWrap>
+                <GridContainer width="15%">
+                  <GridTitleContainer>
+                    <GridTitle>기준일자</GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult2.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="정산기준"
+                  >
+                    <Grid
+                      style={{ height: "80vh" }}
+                      data={process(
+                        mainDataResult2.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                        })),
+                        mainDataState2
+                      )}
+                      {...mainDataState2}
+                      onDataStateChange={onMainDataStateChange2}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange2}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult2.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef2}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange2}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="payyrmm"
+                        cell={DateCell}
+                        title="기준일자"
+                        width="120px"
+                        footerCell={mainTotalFooterCell2}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                <GridContainer width={`calc(85% - ${GAP}px)`}>
+                  <GridTitleContainer>
+                    <GridTitle></GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick2}
+                        themeColor={"primary"}
+                        icon="file-add"
+                      >
+                        신규
+                      </Button>
+                      <Button
+                        onClick={onSaveClick2}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <FormBoxWrap>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th></th>
+                          <th style={{ textAlign: "center" }}>개인공제율</th>
+                          <th style={{ textAlign: "center" }}>회사부담율</th>
+                          <th style={{ textAlign: "center" }}>보험률</th>
+                          <th style={{ textAlign: "center" }}>상한액</th>
+                          <th style={{ textAlign: "center" }}>하한액</th>
+                        </tr>
+                        <tr>
+                          <td>건강보험</td>
+                          <td>
+                            <NumericTextBox
+                              name="medprvrat"
+                              value={Information.medprvrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="medcomprat"
+                              value={Information.medcomprat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="medrat"
+                              value={Information.medrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>국민연금</td>
+                          <td>
+                            <NumericTextBox
+                              name="pnsprvrat"
+                              value={Information.pnsprvrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="pnscomprat"
+                              value={Information.pnscomprat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="pnsrat"
+                              value={Information.pnsrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="maxprice"
+                              value={Information.maxprice}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="minprice"
+                              value={Information.minprice}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>고용보험율</td>
+                          <td>
+                            <NumericTextBox
+                              name="empinsurancerat"
+                              value={Information.empinsurancerat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td>
+                            <NumericTextBox
+                              name="hircomprat"
+                              value={Information.hircomprat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>요양보험보험률</td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <NumericTextBox
+                              name="medrat2"
+                              value={Information.medrat2}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>보험대상자보험률</td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <NumericTextBox
+                              name="chkrat"
+                              value={Information.chkrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>주민세율</td>
+                          <td>
+                            <NumericTextBox
+                              name="locataxrat"
+                              value={Information.locataxrat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>직과세표준금액</td>
+                          <td>
+                            <NumericTextBox
+                              name="daytaxstd"
+                              value={Information.daytaxstd}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>일용직소득세율</td>
+                          <td>
+                            <NumericTextBox
+                              name="dayinctax"
+                              value={Information.dayinctax}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>일용직주민세율</td>
+                          <td>
+                            <NumericTextBox
+                              name="daylocatax"
+                              value={Information.daylocatax}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>근로세액공제율</td>
+                          <td>
+                            <NumericTextBox
+                              name="daytaxrate"
+                              value={Information.daytaxrate}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>일용직고용보험율</td>
+                          <td>
+                            <NumericTextBox
+                              name="dayhirinsurat"
+                              value={Information.dayhirinsurat}
+                              format="n2"
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+              </GridContainerWrap>
+            </TabStripTab>
+            <TabStripTab title="소득세조건표">
+              <GridContainerWrap>
+                <GridContainer width="15%">
+                  <GridTitleContainer>
+                    <GridTitle>기준일자</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="delete"
+                      >
+                        삭제
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult3.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="정산기준"
+                  >
+                    <Grid
+                      style={{ height: "80vh" }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef3}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="payyrmm"
+                        cell={DateCell}
+                        title="기준일자"
+                        width="120px"
+                        footerCell={mainTotalFooterCell3}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                <GridContainer width={`calc(85% - ${GAP}px)`}>
+                  <GridTitleContainer>
+                    <GridTitle>기본정보</GridTitle>
+                    <ButtonContainer>
+                      <ExcelUploadButton
+                        saveExcel={saveExcel}
+                        permissions={{
+                          view: true,
+                          save: true,
+                          delete: true,
+                          print: true,
+                        }}
+                        style={{ marginLeft: "15px" }}
+                      />
+                      <Button
+                        onClick={onSaveClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult3_1.data}
+                    ref={(exporter) => {
+                      _export4 = exporter;
+                    }}
+                    fileName="정산기준"
+                  >
+                    <Grid
+                      style={{ height: "80vh" }}
+                      data={process(
+                        mainDataResult3_1.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3_1[idGetter3_1(row)], //선택된 데이터
+                        })),
+                        mainDataState3_1
+                      )}
+                      {...mainDataState3_1}
+                      onDataStateChange={onMainDataStateChange3_1}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3_1}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3_1}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3_1.total}
+                      skip={page3_1.skip}
+                      take={page3_1.take}
+                      pageable={true}
+                      onPageChange={pageChange3_1}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3_1}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange3_1}
+                      cellRender={customCellRender3_1}
+                      rowRender={customRowRender3_1}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      <GridColumn title="월급여액(비과세소득제외)">
+                        {createColumn()}
+                      </GridColumn>
+                      <GridColumn title="공제대상 가족의 수(본인, 배우자를 각각 1인으로 봄)">
+                        {createColumn2()}
+                      </GridColumn>
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </GridContainerWrap>
+            </TabStripTab>
+            <TabStripTab title="계산공식">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>급여지급유형</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="paycd"
+                            value={filters4.paycd}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>공제_지급코드</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="payitemcd"
+                            value={filters4.payitemcd}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick4}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult4.data}
+                  ref={(exporter) => {
+                    _export5 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange3_1}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3_1.total}
-                  skip={page3_1.skip}
-                  take={page3_1.take}
-                  pageable={true}
-                  onPageChange={pageChange3_1}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange3_1}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange3_1}
-                  cellRender={customCellRender3_1}
-                  rowRender={customRowRender3_1}
-                  editField={EDIT_FIELD}
+                  fileName="정산기준"
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  <GridColumn title="월급여액(비과세소득제외)">
-                    {createColumn()}
-                  </GridColumn>
-                  <GridColumn title="공제대상 가족의 수(본인, 배우자를 각각 1인으로 봄)">
-                    {createColumn2()}
-                  </GridColumn>
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="계산공식">
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>급여지급유형</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="paycd"
-                        value={filters4.paycd}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
+                  <Grid
+                    style={{ height: "75vh" }}
+                    data={process(
+                      mainDataResult4.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                      })),
+                      mainDataState4
                     )}
-                  </td>
-                  <th>공제_지급코드</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="payitemcd"
-                        value={filters4.payitemcd}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick4}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick4}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick4}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult4.data}
-              ref={(exporter) => {
-                _export5 = exporter;
-              }}
-              fileName="정산기준"
-            >
-              <Grid
-                style={{ height: "75vh" }}
-                data={process(
-                  mainDataResult4.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                  })),
-                  mainDataState4
-                )}
-                {...mainDataState4}
-                onDataStateChange={onMainDataStateChange4}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY4}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange4}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult4.total}
-                skip={page4.skip}
-                take={page4.take}
-                pageable={true}
-                onPageChange={pageChange4}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef4}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange4}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange4}
-                cellRender={customCellRender4}
-                rowRender={customRowRender4}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : checkField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell4
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
-      </TabStrip>
+                    {...mainDataState4}
+                    onDataStateChange={onMainDataStateChange4}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY4}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange4}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult4.total}
+                    skip={page4.skip}
+                    take={page4.take}
+                    pageable={true}
+                    onPageChange={pageChange4}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef4}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange4}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange4}
+                    cellRender={customCellRender4}
+                    rowRender={customRowRender4}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList4"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : comboField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : checkField.includes(item.fieldName)
+                                    ? CheckBoxCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell4
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

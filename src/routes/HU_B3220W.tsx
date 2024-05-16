@@ -413,6 +413,9 @@ const HU_B3220W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   //그리드 리셋
