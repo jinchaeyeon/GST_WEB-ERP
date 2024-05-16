@@ -1098,7 +1098,7 @@ const MA_A2410W: React.FC = () => {
               <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <ButtonContainer>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
