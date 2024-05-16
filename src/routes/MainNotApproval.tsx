@@ -21,6 +21,9 @@ import {
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   GridContainer,
@@ -50,7 +53,7 @@ import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
-
+var index = 0;
 const boardStyle: CSSProperties = {
   width: "100%",
   height: "100%",
@@ -749,171 +752,392 @@ const Main: React.FC = () => {
     });
     return valid;
   }
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
 
   return (
     <>
-      <MainTopContainer>
-        <ButtonContainer>
-          <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
-            HOMEPAGE
-          </Button>
-        </ButtonContainer>
-      </MainTopContainer>
-      <GridContainerWrap>
-        <GridContainer width="65%">
-          <TabStrip
-            style={{ width: "100%" }}
-            selected={tabSelected}
-            onSelect={handleSelectTab}
+      {isMobile ? (
+        <GridContainerWrap>
+          <Swiper
+            className="leading_PDA_container"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <TabStripTab title="업무 달력">
-              <GridContainer>
-                {osstate == true ? (
-                  <div
-                    style={{
-                      backgroundColor: "#ccc",
-                      height: "718px",
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <MainTopContainer>
+                <ButtonContainer>
+                  <Button
+                    icon={"home"}
+                    fillMode={"flat"}
+                    themeColor={"primary"}
                   >
-                    현재 OS에서는 지원이 불가능합니다.
-                  </div>
-                ) : (
-                  <>
-                    <GridTitleContainer>
-                      <GridTitle></GridTitle>
-                      {customOptionData !== null && (
-                        <div>
-                          <CustomOptionComboBox
-                            name="cboSchedulerType"
-                            value={schedulerFilter.cboSchedulerType}
-                            customOptionData={customOptionData}
-                            changeData={schedulerFilterChange}
-                          />
-                        </div>
-                      )}
-                    </GridTitleContainer>
-                    <Scheduler
-                      height={"718px"}
-                      data={schedulerDataResult}
-                      defaultDate={displayDate}
-                      item={CustomItem}
+                    HOMEPAGE
+                  </Button>
+                </ButtonContainer>
+              </MainTopContainer>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, marginTop: "1vh" }}
+              >
+                <TabStrip
+                  style={{ width: "100%" }}
+                  selected={tabSelected}
+                  onSelect={handleSelectTab}
+                >
+                  <TabStripTab title="업무 달력">
+                    <GridContainer
+                      style={{
+                        overflow: "auto",
+                        height: `${deviceHeight * 0.6}px`,
+                      }}
                     >
-                      <MonthView />
-                      <DayView />
-                      <WeekView />
-                    </Scheduler>
-                  </>
-                )}
+                      {osstate == true ? (
+                        <div
+                          style={{
+                            backgroundColor: "#ccc",
+                            height: "718px",
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          현재 OS에서는 지원이 불가능합니다.
+                        </div>
+                      ) : (
+                        <>
+                          <GridTitleContainer>
+                            <GridTitle></GridTitle>
+                            {customOptionData !== null && (
+                              <div>
+                                <CustomOptionComboBox
+                                  name="cboSchedulerType"
+                                  value={schedulerFilter.cboSchedulerType}
+                                  customOptionData={customOptionData}
+                                  changeData={schedulerFilterChange}
+                                />
+                              </div>
+                            )}
+                          </GridTitleContainer>
+                          <Scheduler
+                            height={"718px"}
+                            data={schedulerDataResult}
+                            defaultDate={displayDate}
+                            item={CustomItem}
+                          >
+                            <MonthView />
+                            <DayView />
+                            <WeekView />
+                          </Scheduler>
+                        </>
+                      )}
+                    </GridContainer>
+                  </TabStripTab>
+                  <TabStripTab
+                    title="프로세스 레이아웃"
+                    disabled={mainDataResult.total == 0 ? true : false}
+                  >
+                    <TabStrip
+                      style={{
+                        width: "100%",
+                        height: `${deviceHeight * 0.6}px`,
+                      }}
+                      selected={tabSelected2}
+                      onSelect={handleSelectTab2}
+                    >
+                      {layoutTab}
+                    </TabStrip>
+                  </TabStripTab>
+                </TabStrip>
               </GridContainer>
-            </TabStripTab>
-            <TabStripTab
-              title="프로세스 레이아웃"
-              disabled={mainDataResult.total == 0 ? true : false}
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
             >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
+              <GridContainer width={`calc(35% - ${GAP}px)`}>
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>공지사항</GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: `${deviceHeight * 0.37}px` }}
+                    data={process(
+                      noticeDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                      })),
+                      noticeDataState
+                    )}
+                    {...noticeDataState}
+                    onDataStateChange={onNoticeDataStateChange}
+                    //선택기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onNoticeSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={noticeDataResult.total}
+                    onScroll={onNoticeScrollHandler}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="recdt_week"
+                      title="작성일"
+                      cell={CenterCell}
+                      footerCell={noticeTotalFooterCell}
+                      width="140px"
+                    />
+                    <GridColumn
+                      field="person"
+                      title="작성자"
+                      cell={CenterCell}
+                      width="120px"
+                    />
+                    <GridColumn field="title" title="제목" />
+                  </Grid>
+                </GridContainer>
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>업무지시요청</GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: `${deviceHeight * 0.42}px` }}
+                    data={process(workOrderDataResult.data, workOrderDataState)}
+                    {...workOrderDataState}
+                    onDataStateChange={onWorkOrderDataStateChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onWorkOrderSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={workOrderDataResult.total}
+                    onScroll={onWorkOrderScrollHandler}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="recdt_week"
+                      title="작성일"
+                      cell={CenterCell}
+                      footerCell={workOrderTotalFooterCell}
+                      width="140px"
+                    />
+                    <GridColumn
+                      field="user_name"
+                      title="작성자"
+                      cell={CenterCell}
+                      width="120px"
+                    />
+                    <GridColumn field="title" title="제목" />
+                  </Grid>
+                </GridContainer>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </GridContainerWrap>
+      ) : (
+        <>
+          <MainTopContainer>
+            <ButtonContainer>
+              <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
+                HOMEPAGE
+              </Button>
+            </ButtonContainer>
+          </MainTopContainer>
+          <GridContainerWrap>
+            <GridContainer width="65%">
               <TabStrip
                 style={{ width: "100%" }}
-                selected={tabSelected2}
-                onSelect={handleSelectTab2}
+                selected={tabSelected}
+                onSelect={handleSelectTab}
               >
-                {layoutTab}
+                <TabStripTab title="업무 달력">
+                  <GridContainer>
+                    {osstate == true ? (
+                      <div
+                        style={{
+                          backgroundColor: "#ccc",
+                          height: "718px",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        현재 OS에서는 지원이 불가능합니다.
+                      </div>
+                    ) : (
+                      <>
+                        <GridTitleContainer>
+                          <GridTitle></GridTitle>
+                          {customOptionData !== null && (
+                            <div>
+                              <CustomOptionComboBox
+                                name="cboSchedulerType"
+                                value={schedulerFilter.cboSchedulerType}
+                                customOptionData={customOptionData}
+                                changeData={schedulerFilterChange}
+                              />
+                            </div>
+                          )}
+                        </GridTitleContainer>
+                        <Scheduler
+                          height={"718px"}
+                          data={schedulerDataResult}
+                          defaultDate={displayDate}
+                          item={CustomItem}
+                        >
+                          <MonthView />
+                          <DayView />
+                          <WeekView />
+                        </Scheduler>
+                      </>
+                    )}
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab
+                  title="프로세스 레이아웃"
+                  disabled={mainDataResult.total == 0 ? true : false}
+                >
+                  <TabStrip
+                    style={{ width: "100%" }}
+                    selected={tabSelected2}
+                    onSelect={handleSelectTab2}
+                  >
+                    {layoutTab}
+                  </TabStrip>
+                </TabStripTab>
               </TabStrip>
-            </TabStripTab>
-          </TabStrip>
-        </GridContainer>
-        <GridContainer width={`calc(35% - ${GAP}px)`}>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>공지사항</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "380px" }}
-              data={process(
-                noticeDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
-                })),
-                noticeDataState
-              )}
-              {...noticeDataState}
-              onDataStateChange={onNoticeDataStateChange}
-              //선택기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              //정렬기능
-              sortable={true}
-              onSortChange={onNoticeSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={noticeDataResult.total}
-              onScroll={onNoticeScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={noticeTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="person"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
-          </GridContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>업무지시요청</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "380px" }}
-              data={process(workOrderDataResult.data, workOrderDataState)}
-              {...workOrderDataState}
-              onDataStateChange={onWorkOrderDataStateChange}
-              //정렬기능
-              sortable={true}
-              onSortChange={onWorkOrderSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={workOrderDataResult.total}
-              onScroll={onWorkOrderScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={workOrderTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="user_name"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
-          </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+            </GridContainer>
+            <GridContainer width={`calc(35% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>공지사항</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "380px" }}
+                  data={process(
+                    noticeDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                    })),
+                    noticeDataState
+                  )}
+                  {...noticeDataState}
+                  onDataStateChange={onNoticeDataStateChange}
+                  //선택기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onNoticeSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={noticeDataResult.total}
+                  onScroll={onNoticeScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={noticeTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="person"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>업무지시요청</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "380px" }}
+                  data={process(workOrderDataResult.data, workOrderDataState)}
+                  {...workOrderDataState}
+                  onDataStateChange={onWorkOrderDataStateChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onWorkOrderSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={workOrderDataResult.total}
+                  onScroll={onWorkOrderScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={workOrderTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="user_name"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
+              </GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
     </>
   );
 };
