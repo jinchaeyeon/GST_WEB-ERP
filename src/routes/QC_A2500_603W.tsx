@@ -946,8 +946,8 @@ const BA_A0020_603: React.FC = () => {
       requiretext: "",
       protext: "",
       errtext: "",
-      custcd: data.custcd,
-      custnm: data.custnm,
+      custcd: data.custcd == undefined ? "" : data.custcd,
+      custnm: data.custnm == undefined ? "" : data.custnm,
       datnum: "",
       ordnum: data.ordnum == undefined ? "" : data.ordnum,
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
@@ -964,7 +964,7 @@ const BA_A0020_603: React.FC = () => {
           ? defaultOption.find((item: any) => item.id == "chkperson2")
               ?.valueCode
           : data.chkperson2,
-      custprsnnm: data.custprsnnm,
+      custprsnnm: data.custprsnnm == undefined ? "" : data.custprsnnm,
       qcdt: null,
     });
     deletedMainRows = [];

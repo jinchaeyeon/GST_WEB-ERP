@@ -13,7 +13,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -25,7 +25,7 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import {
@@ -60,6 +60,8 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -68,7 +70,6 @@ const KendoWindow = ({
   });
 
   const setLoading = useSetRecoilState(isLoading);
-
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA026,R_USEYN",
@@ -168,7 +169,7 @@ const KendoWindow = ({
     custcd: "",
     custnm: "",
     custdiv: "",
-    useyn: "Y",
+    useyn: companyCode == "2302BA03" ? "%" : "Y",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
