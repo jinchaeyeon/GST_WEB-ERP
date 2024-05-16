@@ -1889,6 +1889,9 @@ const CM_A1600: React.FC = () => {
             width: widths,
             number2: number2,
           }));
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
         }
       } else if (tabSelected == 2) {
         if (

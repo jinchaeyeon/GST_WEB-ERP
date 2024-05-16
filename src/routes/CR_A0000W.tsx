@@ -464,9 +464,9 @@ const CR_A0000W: React.FC = () => {
         <TitleContainer style={{ display: "block" }}>
           <Title>{userName}님 안녕하세요!</Title>
         </TitleContainer>
-        <GridContainerWrap height={isMobile ? "" : "90%"}>
-          {!isMobile ? (
-            <>
+        {!isMobile ? (
+          <>
+            <GridContainerWrap height={"90%"}>
               <GridContainer
                 width="25%"
                 height="100%"
@@ -534,62 +534,118 @@ const CR_A0000W: React.FC = () => {
                   }}
                 />
               </GridContainer>
-            </>
-          ) : (
-            <Swiper
-              className="mySwiper"
-              onSwiper={(swiper) => {
-                setSwiper(swiper);
-              }}
-            >
-              <SwiperSlide key={0}>
-                <GridContainer
-                  width="100%"
-                  style={{ height: "100vh", overflowY: "scroll" }}
-                >
-                  <TitleContainer>
-                    <Title>
-                      우리집 강아지
-                      <img
-                        src={`/PuppyFoot.png`}
-                        alt=""
-                        width={"30px"}
-                        height={"30px"}
-                        style={{ marginLeft: "5px", marginBottom: "-3px" }}
+            </GridContainerWrap>
+          </>
+        ) : (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <TitleContainer>
+                  <Title>
+                    우리집 강아지
+                    <img
+                      src={`/PuppyFoot.png`}
+                      alt=""
+                      width={"30px"}
+                      height={"30px"}
+                      style={{ marginLeft: "5px", marginBottom: "-3px" }}
+                    />
+                  </Title>
+                </TitleContainer>
+                <Grid container spacing={2}>
+                  {cardOptionData.data.map((item) => (
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <CardBox
+                        name={item.custnm}
+                        class={item.class}
+                        date={`${dateformat4(item.strdt)} ~ ${dateformat4(
+                          item.enddt
+                        )}`}
+                        attendance={item.useqty}
+                        change={item.adjqty}
+                        backgroundColor={item.color}
+                        day={getDayOfWeeks(item.dayofweek)}
+                        fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                        propFunction={(code: string) => changeColor(code)}
+                        Click={() => {
+                          setSelectedState(item[DATA_ITEM_KEY]);
+                          setChangeDate("");
+                          setSlice(false);
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
                       />
-                    </Title>
-                  </TitleContainer>
-                  <Grid container spacing={2}>
-                    {cardOptionData.data.map((item) => (
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <CardBox
-                          name={item.custnm}
-                          class={item.class}
-                          date={`${dateformat4(item.strdt)} ~ ${dateformat4(
-                            item.enddt
-                          )}`}
-                          attendance={item.useqty}
-                          change={item.adjqty}
-                          backgroundColor={item.color}
-                          day={getDayOfWeeks(item.dayofweek)}
-                          fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                          propFunction={(code: string) => changeColor(code)}
-                          Click={() => {
-                            setSelectedState(item[DATA_ITEM_KEY]);
-                            setChangeDate("");
-                            setSlice(false);
-                            if (swiper) {
-                              swiper.slideTo(1);
-                            }
-                          }}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide key={1}>
-                <GridContainer width="100%" height="100%">
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer width="100%" height="100%">
+                <TitleContainer>
+                  <Title>
+                    <span
+                      style={{
+                        color:
+                          cardOptionData.data.filter(
+                            (item) => item[DATA_ITEM_KEY] == selectedState
+                          )[0] == undefined
+                            ? "black"
+                            : cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].color,
+                      }}
+                      className="k-icon k-i-arrow-60-left k-icon-lg"
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                    ></span>
+                    {cardOptionData.data.filter(
+                      (item) => item[DATA_ITEM_KEY] == selectedState
+                    )[0] == undefined
+                      ? ""
+                      : cardOptionData.data.filter(
+                          (item) => item[DATA_ITEM_KEY] == selectedState
+                        )[0].custnm}
+                    의 스케줄 관리
+                    <img
+                      src={`/PuppyFoot.png`}
+                      alt=""
+                      width={"30px"}
+                      height={"30px"}
+                      style={{ marginLeft: "5px", marginBottom: "-3px" }}
+                    />
+                  </Title>
+                </TitleContainer>
+                <Calender
+                  data={
+                    cardOptionData.data.filter(
+                      (item) => item[DATA_ITEM_KEY] == selectedState
+                    )[0]
+                  }
+                  propFunction={(date: string) => {
+                    setChangeDate(date);
+                    setSlice(true);
+                  }}
+                />
+              </GridContainer>
+            </SwiperSlide>
+            {changeDate != "" || slice == true ? (
+              <SwiperSlide key={2}>
+                <GridContainer
+                  height="100vh"
+                  width="100%"
+                  style={{ overflowY: "scroll" }}
+                >
                   <TitleContainer>
                     <Title>
                       <span
@@ -606,18 +662,18 @@ const CR_A0000W: React.FC = () => {
                         className="k-icon k-i-arrow-60-left k-icon-lg"
                         onClick={() => {
                           if (swiper) {
-                            swiper.slideTo(0);
+                            swiper.slideTo(1);
                           }
+                          setChangeDate("");
+                          setSlice(false);
                         }}
                       ></span>
-                      {cardOptionData.data.filter(
-                        (item) => item[DATA_ITEM_KEY] == selectedState
-                      )[0] == undefined
-                        ? ""
-                        : cardOptionData.data.filter(
-                            (item) => item[DATA_ITEM_KEY] == selectedState
-                          )[0].custnm}
-                      의 스케줄 관리
+                      {
+                        cardOptionData.data.filter(
+                          (item) => item[DATA_ITEM_KEY] == selectedState
+                        )[0].custnm
+                      }
+                      의 등원 변경신청
                       <img
                         src={`/PuppyFoot.png`}
                         alt=""
@@ -627,41 +683,308 @@ const CR_A0000W: React.FC = () => {
                       />
                     </Title>
                   </TitleContainer>
-                  <Calender
-                    data={
-                      cardOptionData.data.filter(
-                        (item) => item[DATA_ITEM_KEY] == selectedState
-                      )[0]
-                    }
-                    propFunction={(date: string) => {
-                      setChangeDate(date);
-                      setSlice(true);
-                    }}
-                  />
-                </GridContainer>
-              </SwiperSlide>
-              {changeDate != "" || slice == true ? (
-                <SwiperSlide key={2}>
-                  <GridContainer
-                    height="100vh"
-                    width="100%"
-                    style={{ overflowY: "scroll" }}
-                  >
-                    <TitleContainer>
-                      <Title>
-                        <span
-                          style={{
-                            color:
-                              cardOptionData.data.filter(
-                                (item) => item[DATA_ITEM_KEY] == selectedState
-                              )[0] == undefined
-                                ? "black"
-                                : cardOptionData.data.filter(
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  fontSize: "20px",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                }}
+                              >
+                                <img
+                                  src={`/Born.png`}
+                                  alt=""
+                                  width={"20px"}
+                                  height={"20px"}
+                                  style={{
+                                    marginRight: "2px",
+                                    marginBottom: "2px",
+                                  }}
+                                />
+                                {
+                                  cardOptionData.data.filter(
                                     (item) =>
                                       item[DATA_ITEM_KEY] == selectedState
-                                  )[0].color,
+                                  )[0].custnm
+                                }
+                                의 등원 변경 가능 횟수
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <CardContent style={{ display: "flex" }}>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {
+                              cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].adjqty
+                            }
+                            회
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  fontSize: "20px",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                }}
+                              >
+                                <img
+                                  src={`/Born.png`}
+                                  alt=""
+                                  width={"20px"}
+                                  height={"20px"}
+                                  style={{
+                                    marginRight: "2px",
+                                    marginBottom: "2px",
+                                  }}
+                                />
+                                선택 등원일
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <CardContent style={{ display: "flex" }}>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {dateformat4(changeDate)}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  fontSize: "20px",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                }}
+                              >
+                                <img
+                                  src={`/Born.png`}
+                                  alt=""
+                                  width={"20px"}
+                                  height={"20px"}
+                                  style={{
+                                    marginRight: "2px",
+                                    marginBottom: "2px",
+                                  }}
+                                />
+                                회원권 유효기간
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <CardContent style={{ display: "flex" }}>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "1.2rem",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {dateformat4(
+                              cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].strdt
+                            )}
+                            ~
+                            {dateformat4(
+                              cardOptionData.data.filter(
+                                (item) => item[DATA_ITEM_KEY] == selectedState
+                              )[0].enddt
+                            )}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: cardOptionData.data.filter(
+                            (item) => item[DATA_ITEM_KEY] == selectedState
+                          )[0].color,
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  fontSize: "20px",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                }}
+                              >
+                                <img
+                                  src={`/Born.png`}
+                                  alt=""
+                                  width={"20px"}
+                                  height={"20px"}
+                                  style={{
+                                    marginRight: "2px",
+                                    marginBottom: "2px",
+                                  }}
+                                />
+                                변경 등원일
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <CardContent style={{ display: "flex" }}>
+                          <Typography
+                            style={{
+                              color: "#8f918d",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              alignItems: "center",
+                              width: "100%",
+                            }}
+                          >
+                            <Calendar
+                              navigation={false}
+                              value={date}
+                              onChange={filterInputChange}
+                            />
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
                           }}
-                          className="k-icon k-i-arrow-60-left k-icon-lg"
+                        >
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                          >
+                            해당 일자 잔여석
+                          </Typography>
+                          <Typography
+                            style={{
+                              color: "black",
+                              fontSize: "25px",
+                              fontWeight: 500,
+                              fontFamily: "TheJamsil5Bold",
+                            }}
+                          >
+                            {adjnumber}석
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    {show ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <p style={{ color: "red" }}>
+                          설정하신 일자가 회원권 종료일 이후입니다.
+                        </p>
+                        <p style={{ color: "red" }}>다시 설정해주세요.</p>
+                      </Grid>
+                    ) : (
+                      ""
+                    )}
+                    {show2 ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <p style={{ color: "red" }}>
+                          설정하신 일자가 오늘 이전입니다.
+                        </p>
+                        <p style={{ color: "red" }}>다시 설정해주세요.</p>
+                      </Grid>
+                    ) : (
+                      ""
+                    )}
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <ButtonContainer>
+                        <Buttons
                           onClick={() => {
                             if (swiper) {
                               swiper.slideTo(1);
@@ -669,360 +992,34 @@ const CR_A0000W: React.FC = () => {
                             setChangeDate("");
                             setSlice(false);
                           }}
-                        ></span>
-                        {
-                          cardOptionData.data.filter(
-                            (item) => item[DATA_ITEM_KEY] == selectedState
-                          )[0].custnm
-                        }
-                        의 등원 변경신청
-                        <img
-                          src={`/PuppyFoot.png`}
-                          alt=""
-                          width={"30px"}
-                          height={"30px"}
-                          style={{ marginLeft: "5px", marginBottom: "-3px" }}
-                        />
-                      </Title>
-                    </TitleContainer>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: "white",
-                          }}
+                          style={{ width: "48%", backgroundColor: "#D3D3D3" }}
                         >
-                          <CardHeader
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "black",
-                                    fontSize: "20px",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  <img
-                                    src={`/Born.png`}
-                                    alt=""
-                                    width={"20px"}
-                                    height={"20px"}
-                                    style={{
-                                      marginRight: "2px",
-                                      marginBottom: "2px",
-                                    }}
-                                  />
-                                  {
-                                    cardOptionData.data.filter(
-                                      (item) =>
-                                        item[DATA_ITEM_KEY] == selectedState
-                                    )[0].custnm
-                                  }
-                                  의 등원 변경 가능 횟수
-                                </Typography>
-                              </>
-                            }
-                          />
-                          <CardContent style={{ display: "flex" }}>
-                            <Typography
-                              style={{
-                                color: "black",
-                                fontSize: "25px",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              {
-                                cardOptionData.data.filter(
-                                  (item) => item[DATA_ITEM_KEY] == selectedState
-                                )[0].adjqty
-                              }
-                              회
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: "white",
-                          }}
+                          취소
+                        </Buttons>
+                        <Buttons
+                          themeColor={"primary"}
+                          onClick={() =>
+                            onSave(
+                              changeDate,
+                              convertDateToStr(date),
+                              show,
+                              show2
+                            )
+                          }
+                          style={{ width: "48%" }}
                         >
-                          <CardHeader
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "black",
-                                    fontSize: "20px",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  <img
-                                    src={`/Born.png`}
-                                    alt=""
-                                    width={"20px"}
-                                    height={"20px"}
-                                    style={{
-                                      marginRight: "2px",
-                                      marginBottom: "2px",
-                                    }}
-                                  />
-                                  선택 등원일
-                                </Typography>
-                              </>
-                            }
-                          />
-                          <CardContent style={{ display: "flex" }}>
-                            <Typography
-                              style={{
-                                color: "black",
-                                fontSize: "25px",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              {dateformat4(changeDate)}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: "white",
-                          }}
-                        >
-                          <CardHeader
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "black",
-                                    fontSize: "20px",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  <img
-                                    src={`/Born.png`}
-                                    alt=""
-                                    width={"20px"}
-                                    height={"20px"}
-                                    style={{
-                                      marginRight: "2px",
-                                      marginBottom: "2px",
-                                    }}
-                                  />
-                                  회원권 유효기간
-                                </Typography>
-                              </>
-                            }
-                          />
-                          <CardContent style={{ display: "flex" }}>
-                            <Typography
-                              style={{
-                                color: "black",
-                                fontSize: "1.2rem",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              {dateformat4(
-                                cardOptionData.data.filter(
-                                  (item) => item[DATA_ITEM_KEY] == selectedState
-                                )[0].strdt
-                              )}
-                              ~
-                              {dateformat4(
-                                cardOptionData.data.filter(
-                                  (item) => item[DATA_ITEM_KEY] == selectedState
-                                )[0].enddt
-                              )}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: cardOptionData.data.filter(
-                              (item) => item[DATA_ITEM_KEY] == selectedState
-                            )[0].color,
-                          }}
-                        >
-                          <CardHeader
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    color: "black",
-                                    fontSize: "20px",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  <img
-                                    src={`/Born.png`}
-                                    alt=""
-                                    width={"20px"}
-                                    height={"20px"}
-                                    style={{
-                                      marginRight: "2px",
-                                      marginBottom: "2px",
-                                    }}
-                                  />
-                                  변경 등원일
-                                </Typography>
-                              </>
-                            }
-                          />
-                          <CardContent style={{ display: "flex" }}>
-                            <Typography
-                              style={{
-                                color: "#8f918d",
-                                fontSize: "25px",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                                display: "flex",
-                                alignItems: "center",
-                                width: "100%",
-                              }}
-                            >
-                              <Calendar
-                                navigation={false}
-                                value={date}
-                                onChange={filterInputChange}
-                              />
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: "white",
-                          }}
-                        >
-                          <CardContent
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <Typography
-                              style={{
-                                color: "black",
-                                fontSize: "25px",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                              }}
-                            >
-                              해당 일자 잔여석
-                            </Typography>
-                            <Typography
-                              style={{
-                                color: "black",
-                                fontSize: "25px",
-                                fontWeight: 500,
-                                fontFamily: "TheJamsil5Bold",
-                              }}
-                            >
-                              {adjnumber}석
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                      {show ? (
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                          <p style={{ color: "red" }}>
-                            설정하신 일자가 회원권 종료일 이후입니다.
-                          </p>
-                          <p style={{ color: "red" }}>다시 설정해주세요.</p>
-                        </Grid>
-                      ) : (
-                        ""
-                      )}
-                      {show2 ? (
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                          <p style={{ color: "red" }}>
-                            설정하신 일자가 오늘 이전입니다.
-                          </p>
-                          <p style={{ color: "red" }}>다시 설정해주세요.</p>
-                        </Grid>
-                      ) : (
-                        ""
-                      )}
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <ButtonContainer>
-                          <Buttons
-                            onClick={() => {
-                              if (swiper) {
-                                swiper.slideTo(1);
-                              }
-                              setChangeDate("");
-                              setSlice(false);
-                            }}
-                            style={{ width: "48%", backgroundColor: "#D3D3D3" }}
-                          >
-                            취소
-                          </Buttons>
-                          <Buttons
-                            themeColor={"primary"}
-                            onClick={() =>
-                              onSave(
-                                changeDate,
-                                convertDateToStr(date),
-                                show,
-                                show2
-                              )
-                            }
-                            style={{ width: "48%" }}
-                          >
-                            변경신청
-                          </Buttons>
-                        </ButtonContainer>
-                      </Grid>
+                          변경신청
+                        </Buttons>
+                      </ButtonContainer>
                     </Grid>
-                  </GridContainer>
-                </SwiperSlide>
-              ) : (
-                ""
-              )}
-            </Swiper>
-          )}
-        </GridContainerWrap>
+                  </Grid>
+                </GridContainer>
+              </SwiperSlide>
+            ) : (
+              ""
+            )}
+          </Swiper>
+        )}
         {ChangeDateVisible && (
           <SelectDateWindow
             setVisible={setChangeDateVisible}

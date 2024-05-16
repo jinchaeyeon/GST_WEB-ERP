@@ -532,6 +532,9 @@ const MA_B3000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

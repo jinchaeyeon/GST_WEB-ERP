@@ -1637,6 +1637,9 @@ const BA_A0040: React.FC = () => {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {

@@ -1410,12 +1410,12 @@ const CM_A4100W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

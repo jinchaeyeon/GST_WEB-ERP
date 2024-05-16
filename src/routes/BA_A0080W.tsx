@@ -1242,6 +1242,9 @@ const BA_A0080: React.FC = () => {
           isSearch: true,
         }));
         deletedMainRows = [];
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

@@ -1789,6 +1789,9 @@ const BA_A0020: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
     setyn(true);
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {

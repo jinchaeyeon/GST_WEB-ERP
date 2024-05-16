@@ -795,15 +795,13 @@ const MA_A3600W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
+        setTabSelected(0);
       }
     } catch (e) {
       alert(e);
-    }
-
-    setTabSelected(0);
-
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

@@ -658,6 +658,9 @@ const SY_A0025W: React.FC = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     deletedMainRows = [];
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const enterEdit = (dataItem: any, field: string) => {

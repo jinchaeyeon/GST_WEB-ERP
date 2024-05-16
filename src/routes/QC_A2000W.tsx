@@ -1505,6 +1505,9 @@ const QC_A2000: React.FC = () => {
           find_row_value: "",
           pgNum: 1,
         }));
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

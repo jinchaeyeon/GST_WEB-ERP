@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -52,7 +52,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -210,7 +210,15 @@ const CR_A0040W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
 
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
@@ -841,8 +849,13 @@ const CR_A0040W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer width="100%">
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          width: isMobile ? `${deviceWidth - 30}px` : "100%",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>회원권 리스트</GridTitle>
           {permissions && (
             <ButtonContainer>
@@ -894,7 +907,7 @@ const CR_A0040W: React.FC = () => {
           fileName="회원권 리스트"
         >
           <Grid
-            style={{ height: "80.5vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "80.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -944,8 +957,9 @@ const CR_A0040W: React.FC = () => {
               editable={false}
             /> */}
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) => {
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map((item: any, idx: number) => {
                   return (
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -990,8 +1004,7 @@ const CR_A0040W: React.FC = () => {
                       />
                     )
                   );
-                }
-              )}
+                })}
           </Grid>
         </ExcelExport>
       </GridContainer>

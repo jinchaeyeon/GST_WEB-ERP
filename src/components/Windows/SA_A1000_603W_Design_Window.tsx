@@ -696,7 +696,79 @@ const CopyWindow = ({
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "yn_ex") {
+    if(name == "testperiod_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        experiment_week_base: Math.floor(Number(value)/7),
+      }));
+    } else if(name == "recoverday_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        experiment_week_ex: Math.floor(Number(value)/7),
+      }));
+    } else if (name == "experimentqty_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totqty_base: Number(value) + Number(prev.spareqty_base),
+      }));
+    } else if (name == "spareqty_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totqty_base: Number(value) + Number(prev.experimentqty_base),
+      }));
+    } else if (name == "experimentqty_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        recoverqty_ex: Number(value) + Number(prev.spareqty_ex),
+      }));
+    } else if (name == "spareqty_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        recoverqty_ex: Number(value) + Number(prev.experimentqty_ex),
+      }));
+    } if (name == "experimentqty_tk") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totqty_tk: Number(value) + Number(prev.spareqty_tk),
+      }));
+    } else if (name == "spareqty_tk") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totqty_tk: Number(value) + Number(prev.experimentqty_tk),
+      }));
+    } else if (name == "geomcheqty_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totgeomche_base: Number(value) * Number(prev.geomcheprodqty_base),
+      }));
+    } else if (name == "geomcheprodqty_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totgeomche_base: Number(value) * Number(prev.geomcheqty_base),
+      }));
+    } else if (name == "geomcheqty_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totgeomche_ex: Number(value) * Number(prev.geomcheprodqty_ex),
+      }));
+    } else if (name == "geomcheprodqty_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        totgeomche_ex: Number(value) * Number(prev.geomcheqty_ex),
+      }));
+    } else if (name == "yn_ex") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,

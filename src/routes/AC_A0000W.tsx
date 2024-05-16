@@ -651,6 +651,9 @@ const AC_A0000W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const [paraDataDeleted, setParaDataDeleted] = useState({

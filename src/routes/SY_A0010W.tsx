@@ -776,6 +776,9 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   useEffect(() => {

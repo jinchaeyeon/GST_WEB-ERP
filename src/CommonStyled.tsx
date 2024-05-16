@@ -834,8 +834,10 @@ export const NumberKeypad = styled.div`
   padding: 1%;
   border: solid 1px #f0f0f0;
   display: inline-block;
-  margin: 5px 0;
-  margin-left: 5px;
+  @media (min-width: 1200px) {
+    margin: 5px 0;
+    margin-left: 5px;
+  }
 `;
 export const NumberKeypadRow = styled.div`
   display: flex;

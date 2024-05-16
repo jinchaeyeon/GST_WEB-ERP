@@ -15,7 +15,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -51,7 +51,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/CM_A2000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -66,7 +66,14 @@ const CM_A2000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -692,7 +699,7 @@ const CM_A2000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridTitleContainer>
+      <GridTitleContainer className="ButtonContainer">
         <GridTitle>요약정보</GridTitle>
         <ButtonContainer>
           <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
@@ -708,7 +715,9 @@ const CM_A2000W: React.FC = () => {
           </Button>
         </ButtonContainer>
       </GridTitleContainer>
-      <GridContainer>
+      <GridContainer
+        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+      >
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -717,7 +726,9 @@ const CM_A2000W: React.FC = () => {
           fileName="업무지시요청"
         >
           <Grid
-            style={{ height: "76vh" }}
+            style={{
+              height: isMobile ? deviceHeight - height : "76vh",
+            }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

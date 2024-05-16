@@ -1152,13 +1152,12 @@ const MA_B7200W: React.FC = () => {
             isSearch: true,
           }));
         }
+        if(swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
-    }
-
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
   useEffect(() => {
