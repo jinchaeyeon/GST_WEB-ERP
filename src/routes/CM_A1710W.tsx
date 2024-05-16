@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -49,7 +49,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1710W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -92,6 +92,14 @@ const CM_A1710W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -674,8 +682,10 @@ const CM_A1710W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
-        <GridTitleContainer>
+      <GridContainer
+        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+      >
+         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
             <Button
@@ -695,7 +705,9 @@ const CM_A1710W: React.FC = () => {
           fileName="사내연락망"
         >
           <Grid
-            style={{ height: "76vh" }}
+            style={{
+              height: isMobile ? deviceHeight - height : "76vh",
+            }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
