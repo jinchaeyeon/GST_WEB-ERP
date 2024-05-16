@@ -84,12 +84,16 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
   isLoading,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DateField = ["recdt"];
 
@@ -132,7 +136,21 @@ const CM_A3000W: React.FC = () => {
   const dptcd = UseGetValueFromSessionItem("dptcd");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -817,6 +835,10 @@ const CM_A3000W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -866,6 +888,10 @@ const CM_A3000W: React.FC = () => {
       recdt: toDate(selectedRowData.recdt),
       title: selectedRowData.title,
     });
+
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   const onAttDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1007,6 +1033,9 @@ const CM_A3000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+      }
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
       }
     } catch (e) {
       alert(e);
@@ -1451,352 +1480,761 @@ const CM_A3000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width="30%">
-          <ExcelExport
-            ref={(exporter) => (_export = exporter)}
-            hierarchy={true}
-            fileName="자료실"
-          >
-            <GridTitleContainer>
-              <GridTitle>자료리스트</GridTitle>
-            </GridTitleContainer>
-            <TreeList
-              style={{ height: "80.5vh", overflow: "auto" }}
-              data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
-                extendDataItem(item, SUB_ITEMS_FIELD, {
-                  [EXPANDED_FIELD]: expanded.includes(
-                    item[ALL_MENU_DATA_ITEM_KEY]
-                  ),
-                  [EDIT_FIELD]:
-                    item[ALL_MENU_DATA_ITEM_KEY] == editItemId
-                      ? editItemField
-                      : undefined,
-                  [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
-                })
-              )}
-              expandField={EXPANDED_FIELD}
-              subItemsField={SUB_ITEMS_FIELD}
-              onExpandChange={onAllMenuExpandChange}
-              selectable={{
-                enabled: true,
-                drag: false,
-                cell: false,
-                mode: "single",
-              }}
-              selectedField={SELECTED_FIELD}
-              onSelectionChange={onSelectionChange}
-              columns={allMenuColumns}
-            />
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(70% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export2 = exporter)}
-            data={subDataResult.data}
-            fileName="자료실"
-          >
-            <Grid
-              style={{ height: "24.2vh" }}
-              data={process(
-                subDataResult.data.map((row) => ({
-                  ...row,
-                  person: userListData.find(
-                    (item: any) => item.user_id == row.person
-                  )?.user_name,
-                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                })),
-                subDataState
-              )}
-              {...subDataState}
-              onDataStateChange={onSubDataStateChange}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSubDataSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+          <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        className={
-                          item.sortOrder == 0
-                            ? "readonly"
-                            : item.sortOrder == 1
-                            ? "readonly"
-                            : undefined
-                        }
-                        cell={
-                          DateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? subTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-          <GridTitleContainer>
-            <GridTitle>세부정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick2}
-                themeColor={"primary"}
-                icon="file-add"
+              <ExcelExport
+                ref={(exporter) => (_export = exporter)}
+                hierarchy={true}
+                fileName="자료실"
               >
-                신규
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>자료리스트</GridTitle>
+                </GridTitleContainer>
+                <TreeList
+                  style={{
+                    height: deviceHeight - height,
+                  }}
+                  data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                    extendDataItem(item, SUB_ITEMS_FIELD, {
+                      [EXPANDED_FIELD]: expanded.includes(
+                        item[ALL_MENU_DATA_ITEM_KEY]
+                      ),
+                      [EDIT_FIELD]:
+                        item[ALL_MENU_DATA_ITEM_KEY] == editItemId
+                          ? editItemField
+                          : undefined,
+                      [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+                    })
+                  )}
+                  expandField={EXPANDED_FIELD}
+                  subItemsField={SUB_ITEMS_FIELD}
+                  onExpandChange={onAllMenuExpandChange}
+                  selectable={{
+                    enabled: true,
+                    drag: false,
+                    cell: false,
+                    mode: "single",
+                  }}
+                  selectedField={SELECTED_FIELD}
+                  onSelectionChange={onSelectionChange}
+                  columns={allMenuColumns}
+                />
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>요약정보</GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                data={subDataResult.data}
+                fileName="자료실"
               >
-                삭제
-              </Button>
-              <Button
-                onClick={onSaveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <FormBoxWrap border={true}>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>대분류</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl1"
-                        value={infomation.itemlvl1}
-                        bizComponentId="L_BA198"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>작성일</th>
-                  <td>
-                    <DatePicker
-                      name="recdt"
-                      value={infomation.recdt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                      className="required"
-                    />
-                  </td>
-                  <th>작성자</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="person"
-                        value={infomation.person}
-                        customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
+                <Grid
+                  style={{
+                    height: deviceHeight - height2,
+                  }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      person: userListData.find(
+                        (item: any) => item.user_id == row.person
+                      )?.user_name,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              className={
+                                item.sortOrder == 0
+                                  ? "readonly"
+                                  : item.sortOrder == 1
+                                  ? "readonly"
+                                  : undefined
+                              }
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? subTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+          <GridContainer style={{ width: "100%" }}>
+            <GridTitleContainer className="ButtonContainer2">
+              <GridTitle>세부정보</GridTitle>
+              <ButtonContainer style={{ justifyContent: "space-between" }}>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(1);
+                    }
+                  }}
+                  icon="arrow-left"
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                >
+                  이전
+                </Button>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                  <Button
+                    onClick={onSaveClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <FormBoxWrap
+              style={{ height: deviceHeight - height2, overflow: "auto" }}
+              border={true}
+            >
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>대분류</th>
+                    <td>
+                      {bizComponentData !== null && (
+                        <BizComponentComboBox
+                          name="itemlvl1"
+                          value={infomation.itemlvl1}
+                          bizComponentId="L_BA198"
+                          bizComponentData={bizComponentData}
+                          changeData={ComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>작성일</th>
+                    <td>
+                      <DatePicker
+                        name="recdt"
+                        value={infomation.recdt}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
                         className="required"
-                        valueField="user_id"
-                        textField="user_name"
                       />
-                    )}
-                  </td>
-                  <th>부서코드</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="dptcd"
-                        value={infomation.dptcd}
-                        customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                        textField="dptnm"
-                        valueField="dptcd"
+                    </td>
+                    <th>작성자</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="person"
+                          value={infomation.person}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                          valueField="user_id"
+                          textField="user_name"
+                        />
+                      )}
+                    </td>
+                    <th>부서코드</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="dptcd"
+                          value={infomation.dptcd}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          className="required"
+                          textField="dptnm"
+                          valueField="dptcd"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>제목</th>
+                    <td colSpan={7}>
+                      <Input
+                        value={infomation.title}
+                        name="title"
+                        type="text"
+                        onChange={InputChange}
                       />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>제목</th>
-                  <td colSpan={7}>
-                    <Input
-                      value={infomation.title}
-                      name="title"
-                      type="text"
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>내용</th>
-                  <td colSpan={7}>
-                    <TextArea
-                      value={infomation.contents}
-                      name="contents"
-                      rows={7}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>첨부파일</th>
-                  <td colSpan={7}>
-                    <GridContainer>
-                      <Grid
-                        style={{ height: "20vh" }}
-                        data={process(
-                          attDataResult.data.map((row) => ({
-                            ...row,
-                            person: userListData.find(
-                              (item: any) => item.user_id == row.person
-                            )?.user_name,
-                            insert_time: convertDateToStrWithTime2(
-                              new Date(row.insert_time)
-                            ),
-                            [SELECTED_FIELD]:
-                              selectedattDataState[idGetter3(row)],
-                          })),
-                          {}
-                        )}
-                        sortable={true}
-                        groupable={false}
-                        reorderable={true}
-                        //onDataStateChange={dataStateChange}
-                        fixedScroll={true}
-                        total={attDataResult.total}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          drag: false,
-                          cell: false,
-                          mode: "single",
-                        }}
-                        onSelectionChange={onAttDataSelectionChange}
-                        onItemChange={onAttItemChange}
-                        cellRender={customCellRender}
-                        rowRender={customRowRender}
-                        editField={EDIT_FIELD}
-                      >
-                        <GridColumn
-                          field="chk"
-                          title=" "
-                          width="45px"
-                          headerCell={CustomCheckBoxCell2}
-                          cell={CheckBoxCell}
-                        />
-                        <GridColumn
-                          field="original_name"
-                          title="파일이름"
-                          width="400px"
-                        />
-                        <GridColumn
-                          field="file_size"
-                          title="파일SIZE"
-                          width="150px"
-                        />
-                        <GridColumn
-                          field="user_name"
-                          title="등록자명"
-                          width="150px"
-                        />
-                        <GridColumn
-                          field="insert_time"
-                          title="입력시간"
-                          width="200px"
-                        />
-                      </Grid>
-                    </GridContainer>
-                  </td>
-                </tr>
-                <tr>
-                  <th></th>
-                  <td colSpan={2}>
-                    <ButtonContainer style={{ justifyContent: "flex-start" }}>
-                      <Button
-                        onClick={upload}
-                        themeColor={"primary"}
-                        icon={"upload"}
-                      >
-                        업로드
-                        <input
-                          id="uploadAttachment"
-                          style={{ display: "none" }}
-                          type="file"
-                          multiple
-                          ref={excelsInput}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            handleFileUpload(event.target.files);
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>내용</th>
+                    <td colSpan={7}>
+                      <TextArea
+                        value={infomation.contents}
+                        name="contents"
+                        rows={7}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>첨부파일</th>
+                    <td colSpan={7}>
+                      <GridContainer>
+                        <Grid
+                          style={{ height: "20vh" }}
+                          data={process(
+                            attDataResult.data.map((row) => ({
+                              ...row,
+                              person: userListData.find(
+                                (item: any) => item.user_id == row.person
+                              )?.user_name,
+                              insert_time: convertDateToStrWithTime2(
+                                new Date(row.insert_time)
+                              ),
+                              [SELECTED_FIELD]:
+                                selectedattDataState[idGetter3(row)],
+                            })),
+                            {}
+                          )}
+                          sortable={true}
+                          groupable={false}
+                          reorderable={true}
+                          //onDataStateChange={dataStateChange}
+                          fixedScroll={true}
+                          total={attDataResult.total}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            drag: false,
+                            cell: false,
+                            mode: "single",
                           }}
+                          onSelectionChange={onAttDataSelectionChange}
+                          onItemChange={onAttItemChange}
+                          cellRender={customCellRender}
+                          rowRender={customRowRender}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="chk"
+                            title=" "
+                            width="10px"
+                            headerCell={CustomCheckBoxCell2}
+                            cell={CheckBoxCell}
+                          />
+                          <GridColumn
+                            field="original_name"
+                            title="파일이름"
+                            width="100px"
+                          />
+                          <GridColumn
+                            field="file_size"
+                            title="파일SIZE"
+                            width="40px"
+                          />
+                          <GridColumn
+                            field="user_name"
+                            title="등록자명"
+                            width="40px"
+                          />
+                          <GridColumn
+                            field="insert_time"
+                            title="입력시간"
+                            width="50px"
+                          />
+                        </Grid>
+                      </GridContainer>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2}>
+                      <ButtonContainer style={{ justifyContent: "flex-start" }}>
+                        <Button
+                          onClick={upload}
+                          themeColor={"primary"}
+                          icon={"upload"}
+                        >
+                          업로드
+                          <input
+                            id="uploadAttachment"
+                            style={{ display: "none" }}
+                            type="file"
+                            multiple
+                            ref={excelsInput}
+                            onChange={(
+                              event: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              handleFileUpload(event.target.files);
+                            }}
+                          />
+                        </Button>
+                        <Button
+                          onClick={downloadFiles}
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                          icon={"download"}
+                        >
+                          다운로드
+                        </Button>
+                        <Button
+                          onClick={deleteFiles}
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                          icon={"delete"}
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </td>   
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width="30%">
+              <ExcelExport
+                ref={(exporter) => (_export = exporter)}
+                hierarchy={true}
+                fileName="자료실"
+              >
+                <GridTitleContainer>
+                  <GridTitle>자료리스트</GridTitle>
+                </GridTitleContainer>
+                <TreeList
+                  style={{ height: "80.5vh", overflow: "auto" }}
+                  data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                    extendDataItem(item, SUB_ITEMS_FIELD, {
+                      [EXPANDED_FIELD]: expanded.includes(
+                        item[ALL_MENU_DATA_ITEM_KEY]
+                      ),
+                      [EDIT_FIELD]:
+                        item[ALL_MENU_DATA_ITEM_KEY] == editItemId
+                          ? editItemField
+                          : undefined,
+                      [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+                    })
+                  )}
+                  expandField={EXPANDED_FIELD}
+                  subItemsField={SUB_ITEMS_FIELD}
+                  onExpandChange={onAllMenuExpandChange}
+                  selectable={{
+                    enabled: true,
+                    drag: false,
+                    cell: false,
+                    mode: "single",
+                  }}
+                  selectedField={SELECTED_FIELD}
+                  onSelectionChange={onSelectionChange}
+                  columns={allMenuColumns}
+                />
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                data={subDataResult.data}
+                fileName="자료실"
+              >
+                <Grid
+                  style={{ height: "24.2vh" }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      person: userListData.find(
+                        (item: any) => item.user_id == row.person
+                      )?.user_name,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              className={
+                                item.sortOrder == 0
+                                  ? "readonly"
+                                  : item.sortOrder == 1
+                                  ? "readonly"
+                                  : undefined
+                              }
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? subTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+              <GridTitleContainer>
+                <GridTitle>세부정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                  <Button
+                    onClick={onSaveClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>대분류</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemlvl1"
+                            value={infomation.itemlvl1}
+                            bizComponentId="L_BA198"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>작성일</th>
+                      <td>
+                        <DatePicker
+                          name="recdt"
+                          value={infomation.recdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                          className="required"
                         />
-                      </Button>
-                      <Button
-                        onClick={downloadFiles}
-                        themeColor={"primary"}
-                        fillMode={"outline"}
-                        icon={"download"}
-                      >
-                        다운로드
-                      </Button>
-                      <Button
-                        onClick={deleteFiles}
-                        themeColor={"primary"}
-                        fillMode={"outline"}
-                        icon={"delete"}
-                      >
-                        삭제
-                      </Button>
-                    </ButtonContainer>
-                  </td>
-                  <td></td>
-                  <th></th>
-                  <td></td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </GridContainer>
-      </GridContainerWrap>
+                      </td>
+                      <th>작성자</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="person"
+                            value={infomation.person}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                            valueField="user_id"
+                            textField="user_name"
+                          />
+                        )}
+                      </td>
+                      <th>부서코드</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="dptcd"
+                            value={infomation.dptcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                            textField="dptnm"
+                            valueField="dptcd"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>제목</th>
+                      <td colSpan={7}>
+                        <Input
+                          value={infomation.title}
+                          name="title"
+                          type="text"
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>내용</th>
+                      <td colSpan={7}>
+                        <TextArea
+                          value={infomation.contents}
+                          name="contents"
+                          rows={7}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={7}>
+                        <GridContainer>
+                          <Grid
+                            style={{ height: "20vh" }}
+                            data={process(
+                              attDataResult.data.map((row) => ({
+                                ...row,
+                                person: userListData.find(
+                                  (item: any) => item.user_id == row.person
+                                )?.user_name,
+                                insert_time: convertDateToStrWithTime2(
+                                  new Date(row.insert_time)
+                                ),
+                                [SELECTED_FIELD]:
+                                  selectedattDataState[idGetter3(row)],
+                              })),
+                              {}
+                            )}
+                            sortable={true}
+                            groupable={false}
+                            reorderable={true}
+                            //onDataStateChange={dataStateChange}
+                            fixedScroll={true}
+                            total={attDataResult.total}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              drag: false,
+                              cell: false,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onAttDataSelectionChange}
+                            onItemChange={onAttItemChange}
+                            cellRender={customCellRender}
+                            rowRender={customRowRender}
+                            editField={EDIT_FIELD}
+                          >
+                            <GridColumn
+                              field="chk"
+                              title=" "
+                              width="45px"
+                              headerCell={CustomCheckBoxCell2}
+                              cell={CheckBoxCell}
+                            />
+                            <GridColumn
+                              field="original_name"
+                              title="파일이름"
+                              width="400px"
+                            />
+                            <GridColumn
+                              field="file_size"
+                              title="파일SIZE"
+                              width="150px"
+                            />
+                            <GridColumn
+                              field="user_name"
+                              title="등록자명"
+                              width="150px"
+                            />
+                            <GridColumn
+                              field="insert_time"
+                              title="입력시간"
+                              width="200px"
+                            />
+                          </Grid>
+                        </GridContainer>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td colSpan={2}>
+                        <ButtonContainer
+                          style={{ justifyContent: "flex-start" }}
+                        >
+                          <Button
+                            onClick={upload}
+                            themeColor={"primary"}
+                            icon={"upload"}
+                          >
+                            업로드
+                            <input
+                              id="uploadAttachment"
+                              style={{ display: "none" }}
+                              type="file"
+                              multiple
+                              ref={excelsInput}
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                handleFileUpload(event.target.files);
+                              }}
+                            />
+                          </Button>
+                          <Button
+                            onClick={downloadFiles}
+                            themeColor={"primary"}
+                            fillMode={"outline"}
+                            icon={"download"}
+                          >
+                            다운로드
+                          </Button>
+                          <Button
+                            onClick={deleteFiles}
+                            themeColor={"primary"}
+                            fillMode={"outline"}
+                            icon={"delete"}
+                          >
+                            삭제
+                          </Button>
+                        </ButtonContainer>
+                      </td>
+                      <td></td>
+                      <th></th>
+                      <td></td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

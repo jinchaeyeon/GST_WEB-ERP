@@ -623,6 +623,9 @@ const CM_A8250W: React.FC = () => {
           pgNum: 1,
         }));
       }
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } catch (e) {
       alert(e);
     }
@@ -1037,205 +1040,6 @@ const CM_A8250W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width={`15%`}>
-          <GridTitleContainer>
-            <GridTitle>기준일자</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={subDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="제경비표준"
-          >
-            <Grid
-              style={{ height: "80vh" }}
-              data={process(
-                subDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                })),
-                subDataState
-              )}
-              {...subDataState}
-              onDataStateChange={onSubDataStateChange}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSubDataSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt"
-                cell={DateCell}
-                title="기준일"
-                width="225px"
-              />
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(85% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                생성
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                삭제
-              </Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export2 = exporter;
-            }}
-            fileName="제경비표준"
-          >
-            <Grid
-              style={{ height: "80vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  recdt: row.recdt
-                    ? new Date(dateformat(row.recdt))
-                    : new Date(dateformat("99991231")),
-                  rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
-                      ? ""
-                      : row.rowstatus,
-                  insert_userid: userListData.find(
-                    (item: any) => item.user_id == row.insert_userid
-                  )?.user_name,
-                  insert_time:
-                    row.insert_item != undefined
-                      ? convertDateToStrWithTime2(new Date(row.insert_time))
-                      : "",
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //incell 수정 기능
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field="rowstatus"
-                title=" "
-                width="50px"
-                editable={false}
-              />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          DateField.includes(item.fieldName)
-                            ? DateCell
-                            : CustomComboField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : NumberField.includes(item.fieldName)
-                            ? NumberCell
-                            : centerField.includes(item.fieldName)
-                            ? CenterCell
-                            : undefined
-                        }
-                        className={
-                          requiredField.includes(item.fieldName)
-                            ? "required"
-                            : undefined
-                        }
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
 
       {isMobile ? (
         <Swiper
@@ -1247,10 +1051,10 @@ const CM_A8250W: React.FC = () => {
           }}
         >
           <SwiperSlide key={0}>
-          <GridContainer
+            <GridContainer
               style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
-             <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기준일자</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1261,7 +1065,7 @@ const CM_A8250W: React.FC = () => {
                 fileName="제경비표준"
               >
                 <Grid
-                  style={{ height: "80vh" }}
+                  style={{  height: deviceHeight - height, }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -1308,33 +1112,49 @@ const CM_A8250W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer width={`calc(85% - ${GAP}px)`}>
-              <GridTitleContainer>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
-                <ButtonContainer>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
-                    onClick={onAddClick}
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
                     themeColor={"primary"}
-                    icon="file-add"
+                    fillMode={"outline"}
                   >
-                    생성
+                    이전
                   </Button>
-                  <Button
-                    onClick={onDeleteClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
                 </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
@@ -1345,7 +1165,7 @@ const CM_A8250W: React.FC = () => {
                 fileName="제경비표준"
               >
                 <Grid
-                  style={{ height: "80vh" }}
+                  style={{ height: deviceHeight - height2, }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1409,44 +1229,46 @@ const CM_A8250W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : CustomComboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : centerField.includes(item.fieldName)
-                                ? CenterCell
-                                : undefined
-                            }
-                            className={
-                              requiredField.includes(item.fieldName)
-                                ? "required"
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : CustomComboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : centerField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              className={
+                                requiredField.includes(item.fieldName)
+                                  ? "required"
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1612,44 +1434,46 @@ const CM_A8250W: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : CustomComboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : centerField.includes(item.fieldName)
-                              ? CenterCell
-                              : undefined
-                          }
-                          className={
-                            requiredField.includes(item.fieldName)
-                              ? "required"
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : CustomComboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : centerField.includes(item.fieldName)
+                                ? CenterCell
+                                : undefined
+                            }
+                            className={
+                              requiredField.includes(item.fieldName)
+                                ? "required"
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
