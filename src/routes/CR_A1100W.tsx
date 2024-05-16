@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -54,7 +54,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CR_A1100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -117,7 +117,14 @@ const CR_A1100W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -854,8 +861,13 @@ const CR_A1100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          width: isMobile ? `${deviceWidth - 30}px` : "",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>출석 리스트</GridTitle>
           <ButtonContainer>
             <Button
@@ -875,7 +887,7 @@ const CR_A1100W: React.FC = () => {
           fileName="출석관리"
         >
           <Grid
-            style={{ height: "75vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "75vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -932,32 +944,34 @@ const CR_A1100W: React.FC = () => {
               editable={false}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        DateField.includes(item.fieldName)
-                          ? DateCell
-                          : CustomComboField.includes(item.fieldName)
-                          ? CustomComboBoxCell
-                          : NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : CenterField.includes(item.fieldName)
-                          ? CenterCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          DateField.includes(item.fieldName)
+                            ? DateCell
+                            : CustomComboField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : CenterField.includes(item.fieldName)
+                            ? CenterCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

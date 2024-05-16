@@ -965,18 +965,19 @@ const AppInner: React.FC = () => {
               : DEFAULT_LANG_CODE.code
           }
         >
-          <Suspense fallback={<Loader />}>
-            <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
-            <Router>
-              <Switch>
-                <Route sensitive={false} path="/" component={LoginCRM} exact />
-                <Route
-                  sensitive={false}
-                  path="/Error"
-                  component={NotFound}
-                  exact
-                />
-                <PanelBarNavContainerDDGD>
+          <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
+
+          <Router>
+            <Switch>
+              <Route sensitive={false} path="/" component={LoginCRM} exact />
+              <Route
+                sensitive={false}
+                path="/Error"
+                component={NotFound}
+                exact
+              />
+              <PanelBarNavContainerDDGD>
+                <Suspense fallback={<Loader />}>
                   {/* 메인 홈 */}
                   {loginResult ? (
                     <AuthRoute
@@ -1239,10 +1240,10 @@ const AppInner: React.FC = () => {
                     component={SA_A2300W_PDA}
                     exact
                   />
-                </PanelBarNavContainerDDGD>
-              </Switch>
-            </Router>
-          </Suspense>
+                </Suspense>
+              </PanelBarNavContainerDDGD>
+            </Switch>
+          </Router>
         </IntlProvider>
       </LocalizationProvider>
     </>

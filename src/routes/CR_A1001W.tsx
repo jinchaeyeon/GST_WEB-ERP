@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -46,7 +46,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CR_A1001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -58,7 +58,14 @@ const Page: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("CR_A1001W", setCustomOptionData);
@@ -570,8 +577,14 @@ const Page: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="78vh">
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          width: isMobile ? `${deviceWidth - 30}px` : "",
+          overflow: isMobile ? "auto" : undefined,
+          height: isMobile ? "" : "78vh",
+        }}
+      >
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>등원 스케줄</GridTitle>
           <ButtonContainer>
             <Button
@@ -591,7 +604,7 @@ const Page: React.FC = () => {
           fileName="일별 출석 및 부가서비스 관리"
         >
           <Grid
-            style={{ height: "100%" }}
+            style={{ height: isMobile ? deviceHeight - height : "100%" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -628,26 +641,28 @@ const Page: React.FC = () => {
             editField={EDIT_FIELD}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        CheckField.includes(item.fieldName)
-                          ? CheckBoxCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          CheckField.includes(item.fieldName)
+                            ? CheckBoxCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

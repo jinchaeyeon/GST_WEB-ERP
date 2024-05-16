@@ -15,7 +15,10 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -42,7 +45,7 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010_301W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -97,6 +100,20 @@ const Page: React.FC = () => {
   const [num3, setNum3] = useState("숫자참조3");
   const [num4, setNum4] = useState("숫자참조4");
   const [num5, setNum5] = useState("숫자참조5");
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  let isMobile = deviceWidth <= 1200;
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1239,285 +1256,705 @@ const Page: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
-      <GridContainerWrap>
-        <GridContainer width={`30%`}>
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="공통코드정보"
-          >
-            <Grid
-              style={{ height: "76.5vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[listIdGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataTotal}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //그룹기능
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+        >
+          <SwiperSlide key={0}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
-              <GridColumn cell={CommandCell} width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdHeaderList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="공통코드정보"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[listIdGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataTotal}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //그룹기능
+                >
+                  <GridColumn cell={CommandCell} width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdHeaderList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide
+            key={1}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <GridContainer
+              style={{
+                width: `${deviceWidth - 30}px`,
+                overflow: "auto",
+              }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>상세정보</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                data={detailDataResult.data}
+                fileName="공통코드정보"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height2 }}
+                  data={process(
+                    detailDataResult.data.map((row) => ({
+                      ...row,
+                      insert_userid: userListData.find(
+                        (items: any) => items.user_id == row.insert_userid
+                      )?.user_name,
+                      update_userid: userListData.find(
+                        (items: any) => items.user_id == row.update_userid
+                      )?.user_name,
+                      [SELECTED_FIELD]:
+                        detailSelectedState[detailIdGetter(row)],
+                    })),
+                    detailDataState
+                  )}
+                  {...detailDataState}
+                  onDataStateChange={onDetailDataStateChange}
+                  dataItemKey={DETAIL_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onDetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onDetailSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="sub_code"
+                    width="120px"
+                    title="세부코드"
+                    footerCell={detailTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="code_name"
+                    width="200px"
+                    title="세부코드명"
+                  />
+                  <GridColumn
+                    field="system_yn"
+                    width="120px"
+                    title="시스템코드"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="sort_seq"
+                    width="120px"
+                    title="정렬순서"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="use_yn"
+                    width="95px"
+                    title="사용"
+                    cell={CheckBoxCell}
+                  />
+                  {/* <GridColumn field="extra_field1" width="200px" title={field1} />
+             <GridColumn field="extra_field2" width="200px" title={field2} />
+             <GridColumn field="extra_field3" width="200px" title={field3} />
+             <GridColumn field="extra_field4" width="200px" title={field4} />
+             <GridColumn field="extra_field5" width="200px" title={field5} />
+             <GridColumn field="extra_field6" width="200px" title={field6} />
+             <GridColumn field="extra_field7" width="200px" title={field7} />
+             <GridColumn field="extra_field8" width="200px" title={field8} />
+             <GridColumn field="extra_field9" width="200px" title={field9} />
+             <GridColumn field="extra_field10" width="200px" title={field10} /> */}
+
+                  {!!field1 && field1 != "세부코드명1" && (
+                    <GridColumn
+                      field="extra_field1"
+                      width="200px"
+                      title={field1}
+                    />
+                  )}
+                  {!!field2 && field2 != "세부코드명2" && (
+                    <GridColumn
+                      field="extra_field2"
+                      width="200px"
+                      title={field2}
+                    />
+                  )}
+                  {!!field3 && field3 != "세부코드명3" && (
+                    <GridColumn
+                      field="extra_field3"
+                      width="200px"
+                      title={field3}
+                    />
+                  )}
+                  {!!field4 && field4 != "세부코드명4" && (
+                    <GridColumn
+                      field="extra_field4"
+                      width="200px"
+                      title={field4}
+                    />
+                  )}
+                  {!!field5 && field5 != "세부코드명5" && (
+                    <GridColumn
+                      field="extra_field5"
+                      width="200px"
+                      title={field5}
+                    />
+                  )}
+                  {!!field6 && field6 != "세부코드명6" && (
+                    <GridColumn
+                      field="extra_field6"
+                      width="200px"
+                      title={field6}
+                    />
+                  )}
+                  {!!field7 && field7 != "세부코드명7" && (
+                    <GridColumn
+                      field="extra_field7"
+                      width="200px"
+                      title={field7}
+                    />
+                  )}
+                  {!!field8 && field8 != "세부코드명8" && (
+                    <GridColumn
+                      field="extra_field8"
+                      width="200px"
+                      title={field8}
+                    />
+                  )}
+                  {!!field9 && field9 != "세부코드명9" && (
+                    <GridColumn
+                      field="extra_field9"
+                      width="200px"
+                      title={field9}
+                    />
+                  )}
+                  {!!field10 && field10 != "세부코드명10" && (
+                    <GridColumn
+                      field="extra_field10"
+                      width="200px"
+                      title={field10}
+                    />
+                  )}
+
+                  {!!num1 && num1 != "숫자참조1" && (
+                    <GridColumn
+                      field="numref1"
+                      width="200px"
+                      title={num1}
+                      cell={NumberCell}
+                    />
+                  )}
+                  {!!num2 && num2 != "숫자참조2" && (
+                    <GridColumn
+                      field="numref2"
+                      width="200px"
+                      title={num2}
+                      cell={NumberCell}
+                    />
+                  )}
+                  {!!num3 && num3 != "숫자참조3" && (
+                    <GridColumn
+                      field="numref3"
+                      width="200px"
+                      title={num3}
+                      cell={NumberCell}
+                    />
+                  )}
+                  {!!num4 && num4 != "숫자참조4" && (
+                    <GridColumn
+                      field="numref4"
+                      width="200px"
+                      title={num4}
+                      cell={NumberCell}
+                    />
+                  )}
+                  {!!num5 && num5 != "숫자참조5" && (
+                    <GridColumn
+                      field="numref5"
+                      width="200px"
+                      title={num5}
+                      cell={NumberCell}
+                    />
+                  )}
+
+                  <GridColumn field="memo" width="120px" title="메모" />
+                  {/* <GridColumn
+               field="numref1"
+               width="200px"
+               title={num1}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref2"
+               width="200px"
+               title={num2}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref3"
+               width="200px"
+               title={num3}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref4"
+               width="200px"
+               title={num4}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref5"
+               width="200px"
+               title={num5}
+               cell={NumberCell}
+             /> */}
+                  <GridColumn
+                    field="insert_userid"
+                    width="120px"
+                    title="등록자"
+                  />
+                  <GridColumn field="insert_pc" width="120px" title="등록PC" />
+                  <GridColumn
+                    field="insert_time"
+                    width="120px"
+                    title="등록일자"
+                  />
+                  <GridColumn
+                    field="update_userid"
+                    width="120px"
+                    title="수정자"
+                  />
+                  <GridColumn field="update_pc" width="120px" title="수정PC" />
+                  <GridColumn
+                    field="update_time"
+                    width="120px"
+                    title="수정일자"
+                  />
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <GridContainerWrap>
+          <GridContainer width={`30%`}>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="공통코드정보"
+            >
+              <Grid
+                style={{ height: "76.5vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[listIdGetter(row)],
+                  })),
+                  mainDataState
                 )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(70% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export2 = exporter)}
-            data={detailDataResult.data}
-            fileName="공통코드정보"
-          >
-            <Grid
-              style={{ height: "76.9vh" }}
-              data={process(
-                detailDataResult.data.map((row) => ({
-                  ...row,
-                  insert_userid: userListData.find(
-                    (items: any) => items.user_id == row.insert_userid
-                  )?.user_name,
-                  update_userid: userListData.find(
-                    (items: any) => items.user_id == row.update_userid
-                  )?.user_name,
-                  [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
-                })),
-                detailDataState
-              )}
-              {...detailDataState}
-              onDataStateChange={onDetailDataStateChange}
-              dataItemKey={DETAIL_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onDetailSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={detailDataResult.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onDetailSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataTotal}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //그룹기능
+              >
+                <GridColumn cell={CommandCell} width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdHeaderList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+          <GridContainer width={`calc(70% - ${GAP}px)`}>
+            <GridTitleContainer>
+              <GridTitle>상세정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              ref={(exporter) => (_export2 = exporter)}
+              data={detailDataResult.data}
+              fileName="공통코드정보"
             >
-              <GridColumn
-                field="sub_code"
-                width="120px"
-                title="세부코드"
-                footerCell={detailTotalFooterCell}
-              />
-              <GridColumn field="code_name" width="200px" title="세부코드명" />
-              <GridColumn
-                field="system_yn"
-                width="120px"
-                title="시스템코드"
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field="sort_seq"
-                width="120px"
-                title="정렬순서"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="use_yn"
-                width="95px"
-                title="사용"
-                cell={CheckBoxCell}
-              />
-              {/* <GridColumn field="extra_field1" width="200px" title={field1} />
-            <GridColumn field="extra_field2" width="200px" title={field2} />
-            <GridColumn field="extra_field3" width="200px" title={field3} />
-            <GridColumn field="extra_field4" width="200px" title={field4} />
-            <GridColumn field="extra_field5" width="200px" title={field5} />
-            <GridColumn field="extra_field6" width="200px" title={field6} />
-            <GridColumn field="extra_field7" width="200px" title={field7} />
-            <GridColumn field="extra_field8" width="200px" title={field8} />
-            <GridColumn field="extra_field9" width="200px" title={field9} />
-            <GridColumn field="extra_field10" width="200px" title={field10} /> */}
+              <Grid
+                style={{ height: "76.9vh" }}
+                data={process(
+                  detailDataResult.data.map((row) => ({
+                    ...row,
+                    insert_userid: userListData.find(
+                      (items: any) => items.user_id == row.insert_userid
+                    )?.user_name,
+                    update_userid: userListData.find(
+                      (items: any) => items.user_id == row.update_userid
+                    )?.user_name,
+                    [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
+                  })),
+                  detailDataState
+                )}
+                {...detailDataState}
+                onDataStateChange={onDetailDataStateChange}
+                dataItemKey={DETAIL_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onDetailSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={detailDataResult.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                ref={gridRef2}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="sub_code"
+                  width="120px"
+                  title="세부코드"
+                  footerCell={detailTotalFooterCell}
+                />
+                <GridColumn
+                  field="code_name"
+                  width="200px"
+                  title="세부코드명"
+                />
+                <GridColumn
+                  field="system_yn"
+                  width="120px"
+                  title="시스템코드"
+                  cell={CheckBoxCell}
+                />
+                <GridColumn
+                  field="sort_seq"
+                  width="120px"
+                  title="정렬순서"
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="use_yn"
+                  width="95px"
+                  title="사용"
+                  cell={CheckBoxCell}
+                />
+                {/* <GridColumn field="extra_field1" width="200px" title={field1} />
+             <GridColumn field="extra_field2" width="200px" title={field2} />
+             <GridColumn field="extra_field3" width="200px" title={field3} />
+             <GridColumn field="extra_field4" width="200px" title={field4} />
+             <GridColumn field="extra_field5" width="200px" title={field5} />
+             <GridColumn field="extra_field6" width="200px" title={field6} />
+             <GridColumn field="extra_field7" width="200px" title={field7} />
+             <GridColumn field="extra_field8" width="200px" title={field8} />
+             <GridColumn field="extra_field9" width="200px" title={field9} />
+             <GridColumn field="extra_field10" width="200px" title={field10} /> */}
 
-              {!!field1 && field1 != "세부코드명1" && (
-                <GridColumn field="extra_field1" width="200px" title={field1} />
-              )}
-              {!!field2 && field2 != "세부코드명2" && (
-                <GridColumn field="extra_field2" width="200px" title={field2} />
-              )}
-              {!!field3 && field3 != "세부코드명3" && (
-                <GridColumn field="extra_field3" width="200px" title={field3} />
-              )}
-              {!!field4 && field4 != "세부코드명4" && (
-                <GridColumn field="extra_field4" width="200px" title={field4} />
-              )}
-              {!!field5 && field5 != "세부코드명5" && (
-                <GridColumn field="extra_field5" width="200px" title={field5} />
-              )}
-              {!!field6 && field6 != "세부코드명6" && (
-                <GridColumn field="extra_field6" width="200px" title={field6} />
-              )}
-              {!!field7 && field7 != "세부코드명7" && (
-                <GridColumn field="extra_field7" width="200px" title={field7} />
-              )}
-              {!!field8 && field8 != "세부코드명8" && (
-                <GridColumn field="extra_field8" width="200px" title={field8} />
-              )}
-              {!!field9 && field9 != "세부코드명9" && (
-                <GridColumn field="extra_field9" width="200px" title={field9} />
-              )}
-              {!!field10 && field10 != "세부코드명10" && (
-                <GridColumn
-                  field="extra_field10"
-                  width="200px"
-                  title={field10}
-                />
-              )}
+                {!!field1 && field1 != "세부코드명1" && (
+                  <GridColumn
+                    field="extra_field1"
+                    width="200px"
+                    title={field1}
+                  />
+                )}
+                {!!field2 && field2 != "세부코드명2" && (
+                  <GridColumn
+                    field="extra_field2"
+                    width="200px"
+                    title={field2}
+                  />
+                )}
+                {!!field3 && field3 != "세부코드명3" && (
+                  <GridColumn
+                    field="extra_field3"
+                    width="200px"
+                    title={field3}
+                  />
+                )}
+                {!!field4 && field4 != "세부코드명4" && (
+                  <GridColumn
+                    field="extra_field4"
+                    width="200px"
+                    title={field4}
+                  />
+                )}
+                {!!field5 && field5 != "세부코드명5" && (
+                  <GridColumn
+                    field="extra_field5"
+                    width="200px"
+                    title={field5}
+                  />
+                )}
+                {!!field6 && field6 != "세부코드명6" && (
+                  <GridColumn
+                    field="extra_field6"
+                    width="200px"
+                    title={field6}
+                  />
+                )}
+                {!!field7 && field7 != "세부코드명7" && (
+                  <GridColumn
+                    field="extra_field7"
+                    width="200px"
+                    title={field7}
+                  />
+                )}
+                {!!field8 && field8 != "세부코드명8" && (
+                  <GridColumn
+                    field="extra_field8"
+                    width="200px"
+                    title={field8}
+                  />
+                )}
+                {!!field9 && field9 != "세부코드명9" && (
+                  <GridColumn
+                    field="extra_field9"
+                    width="200px"
+                    title={field9}
+                  />
+                )}
+                {!!field10 && field10 != "세부코드명10" && (
+                  <GridColumn
+                    field="extra_field10"
+                    width="200px"
+                    title={field10}
+                  />
+                )}
 
-              {!!num1 && num1 != "숫자참조1" && (
-                <GridColumn
-                  field="numref1"
-                  width="200px"
-                  title={num1}
-                  cell={NumberCell}
-                />
-              )}
-              {!!num2 && num2 != "숫자참조2" && (
-                <GridColumn
-                  field="numref2"
-                  width="200px"
-                  title={num2}
-                  cell={NumberCell}
-                />
-              )}
-              {!!num3 && num3 != "숫자참조3" && (
-                <GridColumn
-                  field="numref3"
-                  width="200px"
-                  title={num3}
-                  cell={NumberCell}
-                />
-              )}
-              {!!num4 && num4 != "숫자참조4" && (
-                <GridColumn
-                  field="numref4"
-                  width="200px"
-                  title={num4}
-                  cell={NumberCell}
-                />
-              )}
-              {!!num5 && num5 != "숫자참조5" && (
-                <GridColumn
-                  field="numref5"
-                  width="200px"
-                  title={num5}
-                  cell={NumberCell}
-                />
-              )}
+                {!!num1 && num1 != "숫자참조1" && (
+                  <GridColumn
+                    field="numref1"
+                    width="200px"
+                    title={num1}
+                    cell={NumberCell}
+                  />
+                )}
+                {!!num2 && num2 != "숫자참조2" && (
+                  <GridColumn
+                    field="numref2"
+                    width="200px"
+                    title={num2}
+                    cell={NumberCell}
+                  />
+                )}
+                {!!num3 && num3 != "숫자참조3" && (
+                  <GridColumn
+                    field="numref3"
+                    width="200px"
+                    title={num3}
+                    cell={NumberCell}
+                  />
+                )}
+                {!!num4 && num4 != "숫자참조4" && (
+                  <GridColumn
+                    field="numref4"
+                    width="200px"
+                    title={num4}
+                    cell={NumberCell}
+                  />
+                )}
+                {!!num5 && num5 != "숫자참조5" && (
+                  <GridColumn
+                    field="numref5"
+                    width="200px"
+                    title={num5}
+                    cell={NumberCell}
+                  />
+                )}
 
-              <GridColumn field="memo" width="120px" title="메모" />
-              {/* <GridColumn
-              field="numref1"
-              width="200px"
-              title={num1}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="numref2"
-              width="200px"
-              title={num2}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="numref3"
-              width="200px"
-              title={num3}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="numref4"
-              width="200px"
-              title={num4}
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="numref5"
-              width="200px"
-              title={num5}
-              cell={NumberCell}
-            /> */}
-              <GridColumn field="insert_userid" width="120px" title="등록자" />
-              <GridColumn field="insert_pc" width="120px" title="등록PC" />
-              <GridColumn field="insert_time" width="120px" title="등록일자" />
-              <GridColumn field="update_userid" width="120px" title="수정자" />
-              <GridColumn field="update_pc" width="120px" title="수정PC" />
-              <GridColumn field="update_time" width="120px" title="수정일자" />
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
+                <GridColumn field="memo" width="120px" title="메모" />
+                {/* <GridColumn
+               field="numref1"
+               width="200px"
+               title={num1}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref2"
+               width="200px"
+               title={num2}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref3"
+               width="200px"
+               title={num3}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref4"
+               width="200px"
+               title={num4}
+               cell={NumberCell}
+             />
+             <GridColumn
+               field="numref5"
+               width="200px"
+               title={num5}
+               cell={NumberCell}
+             /> */}
+                <GridColumn
+                  field="insert_userid"
+                  width="120px"
+                  title="등록자"
+                />
+                <GridColumn field="insert_pc" width="120px" title="등록PC" />
+                <GridColumn
+                  field="insert_time"
+                  width="120px"
+                  title="등록일자"
+                />
+                <GridColumn
+                  field="update_userid"
+                  width="120px"
+                  title="수정자"
+                />
+                <GridColumn field="update_pc" width="120px" title="수정PC" />
+                <GridColumn
+                  field="update_time"
+                  width="120px"
+                  title="수정일자"
+                />
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </GridContainerWrap>
+      )}
+
       {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}

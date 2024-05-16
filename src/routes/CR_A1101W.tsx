@@ -14,7 +14,7 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   FilterBox,
   GridContainer,
@@ -32,7 +32,7 @@ import {
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 let deviceWidth = window.innerWidth;
@@ -48,7 +48,7 @@ const CR_A1101W: React.FC = () => {
   UseParaPc(setPc);
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CR_A1101W", setMessagesData);
@@ -384,426 +384,844 @@ const CR_A1101W: React.FC = () => {
   return (
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
-        <GridContainerWrap>
-          <GridContainer
-            style={{
-              width: isMobile ? "100%" : "45%",
-              height: isMobile ? "45%" : "86vh",
-            }}
-          >
-            <GridContainer
-              style={{
-                display: "flex",
-                backgroundColor: "#f5b901",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "45vh",
-                marginTop: "10px",
-              }}
-            >
-              <img
-                src={`/logo_ddgd.png`}
-                alt=""
-                width={isMobile ? "200px" : "400px"}
-                height={isMobile ? "200px" : "400px"}
-                style={{
-                  borderRadius: "70%",
-                  overflow: "hidden",
-                  backgroundColor: "white",
-                }}
-              />
-            </GridContainer>
-            <GridContainer>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  marginLeft: "5px",
-                }}
-              >
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody className="PR_A3000W">
-                    <tr>
-                      <td>
-                        <Input
-                          name="mobile_no"
-                          type="text"
-                          onChange={filterInputChange}
-                          value={inputValue}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-                <Button
-                  onClick={search}
-                  style={{
-                    marginLeft: "10px",
-                    backgroundColor: "#F7E8CF",
-                    width: "280px",
-                    height: "85px",
-                    fontSize: "30px",
-                  }}
-                >
-                  조회
-                </Button>
-              </div>
-            </GridContainer>
-            <GridContainer
-              style={{
-                height: "38vh",
-              }}
-            >
-              <NumberKeypad style={{ height: "100%" }}>
-                <NumberKeypadRow style={{ height: "25%" }}>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    1
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    2
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    3
-                  </NumberKeypadCell>
-                </NumberKeypadRow>
-                <NumberKeypadRow style={{ height: "25%" }}>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    4
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    5
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    6
-                  </NumberKeypadCell>
-                </NumberKeypadRow>
-                <NumberKeypadRow style={{ height: "25%" }}>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    7
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    8
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    9
-                  </NumberKeypadCell>
-                </NumberKeypadRow>
-                <NumberKeypadRow style={{ height: "25%" }}>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    <span className={"k-icon k-i-x"}></span>
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    0
-                  </NumberKeypadCell>
-                  <NumberKeypadCell
-                    style={{
-                      fontSize: "35px",
-                      userSelect: "none",
-                      backgroundColor: "#f5b901",
-                    }}
-                    onClick={enterNumber}
-                  >
-                    Del
-                  </NumberKeypadCell>
-                </NumberKeypadRow>
-              </NumberKeypad>
-            </GridContainer>
-          </GridContainer>
-          <GridContainer
-            style={{
-              width: isMobile ? "100%" : `calc(55% - ${GAP}px)`,
-              height: isMobile ? `calc(55% - ${GAP}px)` : "97vh",
-            }}
-          >
-            <GridContainer
-              style={{
-                height: "15%",
-                marginTop: isMobile ? "50px" : "10px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  fontSize: "40px",
-                  marginBottom: "40px",
-                  backgroundColor: "#f5b901",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                체크인독 출석체크
-              </div>
-            </GridContainer>
-            <GridContainer
-              style={{
-                height: `calc(75% - ${GAP}px)`,
-                overflowY: "scroll",
-                maxHeight: `calc(70% - ${GAP}px)`,
-                marginTop: isMobile ? "20px" : "",
-              }}
-            >
-              <Grid container spacing={2}>
-                {subDataResult.data.map((item) => (
-                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Card
-                      style={{
-                        width: "100%",
-                        marginRight: "15px",
-                        borderRadius: "10px",
-                        backgroundColor: item.color,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      onClick={() => onSaveClick(item.custcd, item.custnm)}
-                    >
-                      <Box
-                        style={{
-                          width: "30%",
-                          marginLeft: isMobile ? "10px" : "20px",
-                        }}
-                      >
-                        <CardHeader
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "black",
-                                  fontSize: isMobile ? "10px" : "20px",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                }}
-                              >
-                                {item.class}
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <CardContent style={{ display: "flex" }}>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: isMobile ? "20px" : "40px",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                          >
-                            {item.custnm}
-                          </Typography>
-                        </CardContent>
-                      </Box>
-                      <Box style={{ width: "40%" }}>
-                        <CardHeader
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "black",
-                                  fontSize: isMobile ? "10px" : "20px",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                }}
-                              >
-                                유효기간
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <CardContent style={{ display: "flex" }}>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: isMobile ? "20px" : "40px",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                          >
-                            {item.enddt}
-                          </Typography>
-                        </CardContent>
-                      </Box>
-                      <Box style={{ width: "20%" }}>
-                        <CardHeader
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "black",
-                                  fontSize: isMobile ? "10px" : "20px",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                }}
-                              >
-                                잔여횟수
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <CardContent style={{ display: "flex" }}>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: isMobile ? "20px" : "40px",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                          >
-                            {item.useqty}회
-                          </Typography>
-                        </CardContent>
-                      </Box>
-                      <Box style={{ width: "30%" }}>
-                        <CardHeader
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "black",
-                                  fontSize: isMobile ? "10px" : "20px",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                }}
-                              >
-                                포인트
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <CardContent style={{ display: "flex" }}>
-                          <Typography
-                            style={{
-                              color: "black",
-                              fontSize: isMobile ? "20px" : "40px",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              fontFamily: "TheJamsil5Bold",
-                            }}
-                          >
-                            {item.point}점
-                          </Typography>
-                        </CardContent>
-                      </Box>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </GridContainer>
+        {isMobile ? (
+          <>
             <GridContainer
               style={{
                 width: "100%",
-                height: "10%",
-                color: "#373737",
-                fontSize: isMobile ? "20px" : "30px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: isMobile ? "30px" : "",
+                height: deviceHeight,
+                overflowY: "scroll",
               }}
             >
-              <div>({count})초 뒤 새로고침 됩니다.</div>
+              <GridContainer
+                style={{
+                  display: "flex",
+                  backgroundColor: "#f5b901",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "45vh",
+                  marginTop: "10px",
+                }}
+              >
+                <img
+                  src={`/logo_ddgd.png`}
+                  alt=""
+                  width={"200px"}
+                  height={"200px"}
+                  style={{
+                    borderRadius: "70%",
+                    overflow: "hidden",
+                    backgroundColor: "white",
+                  }}
+                />
+              </GridContainer>
+              <GridContainer>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody className="PR_A3000W">
+                      <tr>
+                        <td>
+                          <Input
+                            name="mobile_no"
+                            type="text"
+                            onChange={filterInputChange}
+                            value={inputValue}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                  <Button
+                    onClick={search}
+                    style={{
+                      marginLeft: "10px",
+                      backgroundColor: "#F7E8CF",
+                      width: "280px",
+                      height: "85px",
+                      fontSize: "30px",
+                    }}
+                  >
+                    조회
+                  </Button>
+                </div>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  height: "38vh",
+                }}
+              >
+                <NumberKeypad style={{ height: "100%" }}>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      1
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      2
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      3
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      4
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      5
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      6
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      7
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      8
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      9
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      <span className={"k-icon k-i-x"}></span>
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      0
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      Del
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                </NumberKeypad>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  height: "15%",
+                  marginTop: "50px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    fontSize: "40px",
+                    marginBottom: "40px",
+                    backgroundColor: "#f5b901",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  체크인독 출석체크
+                </div>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  height: `calc(75% - ${GAP}px)`,
+                  overflowY: "scroll",
+                  maxHeight: `calc(70% - ${GAP}px)`,
+                  marginTop: "20px",
+                }}
+              >
+                <Grid container spacing={2}>
+                  {subDataResult.data.map((item) => (
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: item.color,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        onClick={() => onSaveClick(item.custcd, item.custnm)}
+                      >
+                        <Box
+                          style={{
+                            width: "30%",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  {item.class}
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "20px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.custnm}
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "40%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  유효기간
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "20px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.enddt}
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "20%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  잔여횟수
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "20px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.useqty}회
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "30%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  포인트
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "20px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.point}점
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  width: "100%",
+                  height: "10%",
+                  color: "#373737",
+                  fontSize: "20px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "30px",
+                }}
+              >
+                <div>({count})초 뒤 새로고침 됩니다.</div>
+              </GridContainer>
             </GridContainer>
-          </GridContainer>
-        </GridContainerWrap>
+          </>
+        ) : (
+          <GridContainerWrap>
+            <GridContainer
+              style={{
+                width: "45%",
+                height: "86vh",
+              }}
+            >
+              <GridContainer
+                style={{
+                  display: "flex",
+                  backgroundColor: "#f5b901",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "45vh",
+                  marginTop: "10px",
+                }}
+              >
+                <img
+                  src={`/logo_ddgd.png`}
+                  alt=""
+                  width={"400px"}
+                  height={"400px"}
+                  style={{
+                    borderRadius: "70%",
+                    overflow: "hidden",
+                    backgroundColor: "white",
+                  }}
+                />
+              </GridContainer>
+              <GridContainer>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                    marginLeft: "5px",
+                  }}
+                >
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody className="PR_A3000W">
+                      <tr>
+                        <td>
+                          <Input
+                            name="mobile_no"
+                            type="text"
+                            onChange={filterInputChange}
+                            value={inputValue}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                  <Button
+                    onClick={search}
+                    style={{
+                      marginLeft: "10px",
+                      backgroundColor: "#F7E8CF",
+                      width: "280px",
+                      height: "85px",
+                      fontSize: "30px",
+                    }}
+                  >
+                    조회
+                  </Button>
+                </div>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  height: "38vh",
+                }}
+              >
+                <NumberKeypad style={{ height: "100%" }}>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      1
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      2
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      3
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      4
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      5
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      6
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      7
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      8
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      9
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                  <NumberKeypadRow style={{ height: "25%" }}>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      <span className={"k-icon k-i-x"}></span>
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      0
+                    </NumberKeypadCell>
+                    <NumberKeypadCell
+                      style={{
+                        fontSize: "35px",
+                        userSelect: "none",
+                        backgroundColor: "#f5b901",
+                      }}
+                      onClick={enterNumber}
+                    >
+                      Del
+                    </NumberKeypadCell>
+                  </NumberKeypadRow>
+                </NumberKeypad>
+              </GridContainer>
+            </GridContainer>
+            <GridContainer
+              style={{
+                width: `calc(55% - ${GAP}px)`,
+                height: "97vh",
+              }}
+            >
+              <GridContainer
+                style={{
+                  height: "15%",
+                  marginTop: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    fontSize: "40px",
+                    marginBottom: "40px",
+                    backgroundColor: "#f5b901",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  체크인독 출석체크
+                </div>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  height: `calc(75% - ${GAP}px)`,
+                  overflowY: "scroll",
+                  maxHeight: `calc(70% - ${GAP}px)`,
+                }}
+              >
+                <Grid container spacing={2}>
+                  {subDataResult.data.map((item) => (
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          marginRight: "15px",
+                          borderRadius: "10px",
+                          backgroundColor: item.color,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        onClick={() => onSaveClick(item.custcd, item.custnm)}
+                      >
+                        <Box
+                          style={{
+                            width: "30%",
+                            marginLeft: "20px",
+                          }}
+                        >
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "20px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  {item.class}
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "40px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.custnm}
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "40%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "20px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  유효기간
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "40px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.enddt}
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "20%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "20px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  잔여횟수
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "40px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.useqty}회
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                        <Box style={{ width: "30%" }}>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    color: "black",
+                                    fontSize: "20px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  포인트
+                                </Typography>
+                              </>
+                            }
+                          />
+                          <CardContent style={{ display: "flex" }}>
+                            <Typography
+                              style={{
+                                color: "black",
+                                fontSize: "40px",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.point}점
+                            </Typography>
+                          </CardContent>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  width: "100%",
+                  height: "10%",
+                  color: "#373737",
+                  fontSize: "30px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div>({count})초 뒤 새로고침 됩니다.</div>
+              </GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        )}
       </div>
     </>
   );
