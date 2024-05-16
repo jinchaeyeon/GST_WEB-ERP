@@ -894,6 +894,28 @@ const SA_A1001_603W: React.FC = () => {
       <td></td>
     );
   };
+  
+
+  
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
+    );
+
+    var parts = sum.toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
+
 
   const search = () => {
     try {
@@ -2020,7 +2042,7 @@ const SA_A1001_603W: React.FC = () => {
                             item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell
+                              ? gridSumQtyFooterCell2
                               : undefined
                           }
                         />

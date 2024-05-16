@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -42,7 +42,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -58,8 +58,20 @@ let targetRowIndex2: null | number = null;
 
 const HU_B3220W: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
 
   const [swiper, setSwiper] = useState<SwiperCore>();
   const processApi = useApi();
@@ -826,104 +838,85 @@ const HU_B3220W: React.FC = () => {
 
       {isMobile ? (
         <>
-          <GridContainerWrap>
-            <Swiper
-              className="leading_Swiper"
-              onSwiper={(swiper) => {
-                setSwiper(swiper);
-              }}
-              onActiveIndexChange={(swiper) => {
-                index = swiper.activeIndex;
-              }}
-            >
-              <SwiperSlide key={0} className="leading_PDA_custom">
-                <GridContainer
-                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
-                >
-                  {" "}
-                  <GridTitleContainer>
-                    <GridTitle>기본정보</GridTitle>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult.data}
-                    ref={(exporter) => {
-                      _export = exporter;
-                    }}
-                    fileName="사회보험현황집계표"
-                  >
-                    <Grid
-                      style={{
-                        height: isMobile ? `${deviceHeight * 0.72}px` : "39vh",
-                      }}
-                      data={process(
-                        mainDataResult.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState[idGetter(row)],
-                        })),
-                        mainDataState
-                      )}
-                      {...mainDataState}
-                      onDataStateChange={onMainDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult.total}
-                      skip={page.skip}
-                      take={page.take}
-                      pageable={true}
-                      onPageChange={pageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      <GridColumn
-                        field={"payyrmm"}
-                        title={"기준년월"}
-                        width="120px"
-                        cell={CenterCell}
-                        footerCell={mainTotalFooterCell}
-                      />
-                      <GridColumn title="건강보험">{createColumn()}</GridColumn>
-                      <GridColumn title="고용보혐">
-                        {createColumn2()}
-                      </GridColumn>
-                      <GridColumn title="국민연금">
-                        {createColumn3()}
-                      </GridColumn>
-                      <GridColumn title="산재보험">
-                        {createColumn4()}
-                      </GridColumn>
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide
-                key={1}
-                className="leading_PDA_custom"
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                    marginBottom: "5px",
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>기본정보</GridTitle>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
                   }}
+                  fileName="사회보험현황집계표"
                 >
+                  <Grid
+                    style={{
+                      height: isMobile ? deviceHeight - height : "39vh",
+                    }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field={"payyrmm"}
+                      title={"기준년월"}
+                      width="120px"
+                      cell={CenterCell}
+                      footerCell={mainTotalFooterCell}
+                    />
+                    <GridColumn title="건강보험">{createColumn()}</GridColumn>
+                    <GridColumn title="고용보혐">{createColumn2()}</GridColumn>
+                    <GridColumn title="국민연금">{createColumn3()}</GridColumn>
+                    <GridColumn title="산재보험">{createColumn4()}</GridColumn>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainerWrap>
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>상세정보</GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
                       if (swiper) {
@@ -934,106 +927,91 @@ const HU_B3220W: React.FC = () => {
                   >
                     이전
                   </Button>
-                </div>
-                <GridContainer
-                  style={{
-                    width: `${deviceWidth - 30}px`,
-                    overflow: "auto",
+                </ButtonContainer>
+              </GridTitleContainer>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <ExcelExport
+                  data={detailDataResult.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
                   }}
+                  fileName="사회보험현황집계표"
                 >
-                  <GridTitleContainer>
-                    <GridTitle>상세정보</GridTitle>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={detailDataResult.data}
-                    ref={(exporter) => {
-                      _export2 = exporter;
+                  <Grid
+                    style={{
+                      height: isMobile ? deviceHeight - height2 : "38vh",
                     }}
-                    fileName="사회보험현황집계표"
+                    data={process(
+                      detailDataResult.data.map((row) => ({
+                        ...row,
+                        dptcd: dptcdListData.find(
+                          (item: any) => item.dptcd == row.dptcd
+                        )?.dptnm,
+                        [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
+                      })),
+                      detailDataState
+                    )}
+                    {...detailDataState}
+                    onDataStateChange={onDetailDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onDetailSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={detailDataResult.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onDetailSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
                   >
-                    <Grid
-                      style={{
-                        height: isMobile ? `${deviceHeight * 0.65}px` : "38vh",
-                      }}
-                      data={process(
-                        detailDataResult.data.map((row) => ({
-                          ...row,
-                          dptcd: dptcdListData.find(
-                            (item: any) => item.dptcd == row.dptcd
-                          )?.dptnm,
-                          [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
-                        })),
-                        detailDataState
-                      )}
-                      {...detailDataState}
-                      onDataStateChange={onDetailDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY2}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onDetailSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={detailDataResult.total}
-                      skip={page2.skip}
-                      take={page2.take}
-                      pageable={true}
-                      onPageChange={pageChange2}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef2}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onDetailSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                    >
-                      <GridColumn
-                        field={"prsnnm"}
-                        title={"성명"}
-                        width="120px"
-                        footerCell={detailTotalFooterCell}
-                      />
-                      <GridColumn
-                        field={"rtrdt"}
-                        title={"퇴사일"}
-                        width="120px"
-                        cell={DateCell}
-                      />
-                      <GridColumn title="국민연금">
-                        {createColumn5()}
-                      </GridColumn>
-                      <GridColumn title="고용보혐">
-                        {createColumn6()}
-                      </GridColumn>
-                      <GridColumn
-                        field={"dptcd"}
-                        title={"부서명"}
-                        width="120px"
-                      />
-                      <GridColumn
-                        field={"regorgdt"}
-                        title={"입사일"}
-                        width="120px"
-                        cell={DateCell}
-                      />
-                      <GridColumn title="건강보험">
-                        {createColumn7()}
-                      </GridColumn>
-                      <GridColumn title="산재보험">
-                        {createColumn8()}
-                      </GridColumn>
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-            </Swiper>
-          </GridContainerWrap>
+                    <GridColumn
+                      field={"prsnnm"}
+                      title={"성명"}
+                      width="120px"
+                      footerCell={detailTotalFooterCell}
+                    />
+                    <GridColumn
+                      field={"rtrdt"}
+                      title={"퇴사일"}
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn title="국민연금">{createColumn5()}</GridColumn>
+                    <GridColumn title="고용보혐">{createColumn6()}</GridColumn>
+                    <GridColumn
+                      field={"dptcd"}
+                      title={"부서명"}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field={"regorgdt"}
+                      title={"입사일"}
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn title="건강보험">{createColumn7()}</GridColumn>
+                    <GridColumn title="산재보험">{createColumn8()}</GridColumn>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              </GridContainerWrap>
+            </SwiperSlide>
+          </Swiper>
         </>
       ) : (
         <>
