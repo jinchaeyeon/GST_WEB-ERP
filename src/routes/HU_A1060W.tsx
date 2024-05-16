@@ -50,7 +50,7 @@ import {
   dateformat,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -232,7 +232,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const HU_A1060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
- let deviceWidth = window.innerWidth;
+  let deviceWidth = window.innerWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
@@ -247,7 +247,6 @@ const HU_A1060W: React.FC = () => {
   if (container2?.clientHeight != undefined) {
     height2 = container2 == undefined ? 0 : container2.clientHeight;
   }
-
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -323,6 +322,9 @@ const HU_A1060W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if(swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   //엑셀 내보내기
@@ -1147,179 +1149,388 @@ const HU_A1060W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <Splitter panes={horizontalPanes} onChange={onHorizontalChange}>
-        <GridContainer>
-          <FormContext.Provider
-            value={{
-              prsnnum,
-              prsnnm,
-              dptcd,
-              postcd,
-              setPrsnnum,
-              setPrsnnm,
-              setDptcd,
-              setPostcd,
-              mainDataState,
-              setMainDataState,
-              // fetchGrid,
+      {isMobile ? (
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
             }}
           >
-            <GridTitleContainer>
-              <GridTitle>문서 리스트</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                {" "}
+                <FormContext.Provider
+                  value={{
+                    prsnnum,
+                    prsnnm,
+                    dptcd,
+                    postcd,
+                    setPrsnnum,
+                    setPrsnnm,
+                    setDptcd,
+                    setPostcd,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
                 >
-                  결재문서접기/펼치기
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="증명서발급"
-            >
-              <Grid
-                style={{ height: "80vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    pubdt: row.pubdt
-                      ? new Date(dateformat(row.pubdt))
-                      : new Date(dateformat("99991231")),
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="50px"
-                  editable={false}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            customComboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : commandField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </FormContext.Provider>
-        </GridContainer>
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>출력물</GridTitle>
-          </GridTitleContainer>
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th style={{ width: "15%" }}>주민등록번호 구분</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="radType"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>문서 리스트</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        결재문서접기/펼치기
+                      </Button>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="증명서발급"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height }}
+                      data={process(
+                        mainDataResult.data.map((row) => ({
+                          ...row,
+                          pubdt: row.pubdt
+                            ? new Date(dateformat(row.pubdt))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        mainDataState
+                      )}
+                      {...mainDataState}
+                      onDataStateChange={onMainDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn
+                        field="rowstatus"
+                        title=" "
+                        width="50px"
+                        editable={false}
                       />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    customComboField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : commandField.includes(item.fieldName)
+                                      ? ColumnCommandCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </FormContext.Provider>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <GridTitleContainer className="ButtonContainer2">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      style={{ marginRight: "5px" }}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
+                  <GridTitle>출력물</GridTitle>
+                  <FormBoxWrap>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>주민등록번호 구분</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionRadioGroup
+                                name="radType"
+                                customOptionData={customOptionData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridTitleContainer>
+                <div
+                  style={{
+                    height: deviceHeight - height2,
+                    marginBottom: "10px",
+                  }}
+                >
+                  {url != "" ? <FileViewers fileUrl={url} /> : ""}
+                </div>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <Splitter panes={horizontalPanes} onChange={onHorizontalChange}>
+            <GridContainer>
+              <FormContext.Provider
+                value={{
+                  prsnnum,
+                  prsnnm,
+                  dptcd,
+                  postcd,
+                  setPrsnnum,
+                  setPrsnnm,
+                  setDptcd,
+                  setPostcd,
+                  mainDataState,
+                  setMainDataState,
+                  // fetchGrid,
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>문서 리스트</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      결재문서접기/펼치기
+                    </Button>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="증명서발급"
+                >
+                  <Grid
+                    style={{ height: "80vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        pubdt: row.pubdt
+                          ? new Date(dateformat(row.pubdt))
+                          : new Date(dateformat("99991231")),
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
                     )}
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-          <div
-            style={{
-              height: "72.5vh",
-              marginBottom: "10px",
-            }}
-          >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
-          </div>
-        </GridContainer>
-      </Splitter>
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="50px"
+                      editable={false}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  customComboField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : commandField.includes(item.fieldName)
+                                    ? ColumnCommandCell
+                                    : undefined
+                                }
+                                headerCell={
+                                  requiredField.includes(item.fieldName)
+                                    ? RequiredHeader
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </FormContext.Provider>
+            </GridContainer>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>출력물</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th style={{ width: "15%" }}>주민등록번호 구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionRadioGroup
+                            name="radType"
+                            customOptionData={customOptionData}
+                            changeData={filterRadioChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <div
+                style={{
+                  height: "72.5vh",
+                  marginBottom: "10px",
+                }}
+              >
+                {url != "" ? <FileViewers fileUrl={url} /> : ""}
+              </div>
+            </GridContainer>
+          </Splitter>
+        </>
+      )}
       {userWindowVisible && (
         <UserWindow
           setVisible={setuserWindowVisible}

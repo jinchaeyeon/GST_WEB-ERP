@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -56,7 +56,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -174,6 +174,17 @@ const CustomColorCell = (props: GridCellProps) => {
 };
 
 const HU_A2000W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [pc, setPc] = useState("");
@@ -1015,7 +1026,7 @@ const HU_A2000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
@@ -1047,7 +1058,7 @@ const HU_A2000W: React.FC = () => {
           fileName="워크캘린더"
         >
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "80vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1097,31 +1108,33 @@ const HU_A2000W: React.FC = () => {
               editable={false}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        comboField.includes(item.fieldName)
-                          ? CustomComboBoxCell
-                          : dateField.includes(item.fieldName)
-                          ? CustomDateCell
-                          : numberField.includes(item.fieldName)
-                          ? CustomNumberCell
-                          : radioField.includes(item.fieldName)
-                          ? CustomRadioCell
-                          : CustomColorCell
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          comboField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : dateField.includes(item.fieldName)
+                            ? CustomDateCell
+                            : numberField.includes(item.fieldName)
+                            ? CustomNumberCell
+                            : radioField.includes(item.fieldName)
+                            ? CustomRadioCell
+                            : CustomColorCell
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

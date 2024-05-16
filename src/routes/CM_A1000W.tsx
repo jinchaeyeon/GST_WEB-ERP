@@ -1537,11 +1537,12 @@ const CM_A1000W: React.FC = () => {
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
-                  <Calendar
-                    focusedDate={filters.todt}
-                    value={filters.todt}
-                    onChange={filterInputChange}
-                  />
+                    <Calendar
+                      focusedDate={filters.todt}
+                      value={filters.todt}
+                      onChange={filterInputChange}
+                      mobileMode={true}
+                    />
                 </GridTitleContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1560,8 +1561,8 @@ const CM_A1000W: React.FC = () => {
                   name="memo"
                   rows={27}
                   onChange={InputChange}
-                  style={{ height: deviceHeight - height - height2 }}
                 />
+                <div style={{ height: "20px" }} />
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>

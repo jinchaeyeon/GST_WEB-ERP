@@ -142,17 +142,27 @@ const CM_A8210W: React.FC = () => {
   var height = 0;
   var height1 = 0;
   var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
   var container = document.querySelector(".k-tabstrip-items-wrapper");
   var container1 = document.querySelector(".ButtonContainer");
   var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
   }
   if (container1?.clientHeight != undefined) {
-    height1 = container == undefined ? 0 : container1.clientHeight;
+    height1 = container1 == undefined ? 0 : container1.clientHeight;
   }
   if (container2?.clientHeight != undefined) {
     height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
   }
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -1486,8 +1496,6 @@ const CM_A8210W: React.FC = () => {
                                 className="required"
                               />
                             </td>
-                            <th></th>
-                            <td></td>
                           </tr>
                         </tbody>
                       </FilterBox>
@@ -1966,7 +1974,7 @@ const CM_A8210W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer">
+                  <GridTitleContainer className="ButtonContainer3">
                     <FilterContainer>
                       <FilterBox
                         onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -2030,7 +2038,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1,
+                        height: deviceHeight - height - 70,
                       }}
                       data={process(
                         subDataResult.data.map((row) => ({
@@ -2084,7 +2092,7 @@ const CM_A8210W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer2">
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>상세정보</GridTitle>
                     <ButtonContainer
                       style={{ justifyContent: "space-between" }}
@@ -2155,7 +2163,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height2,
+                        height: deviceHeight - height - height4,
                         overflow: "auto",
                       }}
                       data={process(
