@@ -26,7 +26,7 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -63,7 +63,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -90,9 +90,30 @@ let targetRowIndex5: null | number = null;
 const HU_B4010W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
 
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+  var container4 = document.querySelector(".ButtonContainer4");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
   const setLoading = useSetRecoilState(isLoading);
 
   const processApi = useApi();
@@ -1496,10 +1517,7 @@ const HU_B4010W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-
-          <GridContainerWrap>
             <Swiper
-              className="leading_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}
@@ -1507,15 +1525,8 @@ const HU_B4010W: React.FC = () => {
                 index = swiper.activeIndex;
               }}
             >
-              <SwiperSlide key={0} className="leading_PDA_custom">
-                <GridContainer
-                  style={{
-                    width: `${deviceWidth - 30}px`,
-                  }}
-                >
-                  <GridTitleContainer>
-                    <GridTitle>사원목록</GridTitle>
-                  </GridTitleContainer>
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1524,7 +1535,7 @@ const HU_B4010W: React.FC = () => {
                     fileName="인사고과 모니터링"
                   >
                     <Grid
-                      style={{ height: `${deviceHeight * 0.73}px` }}
+                      style={{ height: deviceHeight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1585,20 +1596,13 @@ const HU_B4010W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide
                 key={1}
-                className="leading_PDA_custom"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
               >
                 <GridContainer
                   style={{
                     width: `${deviceWidth - 30}px`,
-                    height: "73vh",
-                    overflow: "scroll",
                   }}
                 >
-                  <GridContainer>
+                  <GridContainer  className="ButtonContainer">
                     <div
                       style={{
                         display: "flex",
@@ -1700,18 +1704,10 @@ const HU_B4010W: React.FC = () => {
                   </GridContainer>
                 </GridContainer>
               </SwiperSlide>
-              <SwiperSlide
-                key={2}
-                className="leading_PDA_custom"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+              <SwiperSlide key={2}>
                 <GridContainer
                   style={{
                     width: `${deviceWidth - 30}px`,
-                    height: "73vh",
                     overflow: "scroll",
                   }}
                 >
@@ -2308,7 +2304,6 @@ const HU_B4010W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
             </Swiper>
-          </GridContainerWrap>
         </>
       ) : (
         <>

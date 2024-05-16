@@ -16,7 +16,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -54,7 +54,11 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import DetailWindow from "../components/Windows/CM_A0000W_Window";
 import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A0000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -77,6 +81,14 @@ const CM_A0000W: React.FC = () => {
   UseParaPc(setPc);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -116,9 +128,8 @@ const CM_A0000W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        cbocategory: defaultOption.find(
-          (item: any) => item.id == "cbocategory"
-        )?.valueCode,
+        cbocategory: defaultOption.find((item: any) => item.id == "cbocategory")
+          ?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
           ?.valueCode,
         radPublish_yn: defaultOption.find(
@@ -783,8 +794,10 @@ const CM_A0000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
-        <GridTitleContainer>
+      <GridContainer
+        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+      >
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
@@ -808,7 +821,9 @@ const CM_A0000W: React.FC = () => {
           fileName="공지사항"
         >
           <Grid
-            style={{ height: "76vh" }}
+            style={{
+              height: isMobile ? deviceHeight - height : "76vh",
+            }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -83,7 +83,6 @@ const numberField: string[] = [
 const SA_B3101W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -161,6 +160,7 @@ const SA_B3101W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+    setSelectedState(newSelectedState);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -235,6 +235,16 @@ const SA_B3101W: React.FC = () => {
         ]);
         Object.values(categories);
         Object.values(series);
+
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.itemacnt == filters.find_row_value);
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       } else if (workType == "LIST") {
         setGridDataResult((prev) => {
           return {
@@ -250,7 +260,7 @@ const SA_B3101W: React.FC = () => {
     }));
     setLoading(false);
   };
-
+  
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
@@ -699,6 +709,9 @@ const SA_B3101W: React.FC = () => {
               </ChartSeries>
               <ChartTitle text={chartTitle} />
             </Chart>
+            <GridTitleContainer>
+              <GridTitle>상세정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={gridDataResult.data}
               ref={(exporter) => {
@@ -706,10 +719,16 @@ const SA_B3101W: React.FC = () => {
               }}
               fileName="매입매출현황"
             >
-              <GridTitle>상세정보</GridTitle>
               <Grid
                 style={{ height: "38.5vh" }}
-                data={gridDataResult.data}
+                // data={gridDataResult.data}
+                data={process(
+                  gridDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  gridDataState
+                )}
                 {...gridDataState}
                 onDataStateChange={onGridDataStateChange}
                 //선택 기능
