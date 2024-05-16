@@ -597,7 +597,19 @@ const CopyWindow = ({
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "yn_ex") {
+    if (name == "testperiod_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        experiment_week_base: Math.floor(Number(value) / 7),
+      }));
+    } else if (name == "testperiod_ex") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        experiment_week_ex: Math.floor(Number(value) / 7),
+      }));
+    } else if (name == "yn_ex") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
@@ -765,7 +777,9 @@ const CopyWindow = ({
     dataArr.virusqty_s.push(Information.virusqty_base.toString());
     dataArr.runtime_s.push(Information.runtime_base.toString());
     dataArr.gunqty_s.push(Information.gunqty_base.toString());
-    dataArr.concentrationcnt_s.push(Information.concentrationcnt_base.toString());
+    dataArr.concentrationcnt_s.push(
+      Information.concentrationcnt_base.toString()
+    );
     dataArr.one_week_s.push("0");
     dataArr.two_week_s.push("0");
     dataArr.one_twoweek_s.push("0");

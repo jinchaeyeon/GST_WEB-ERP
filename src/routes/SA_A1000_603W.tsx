@@ -642,8 +642,6 @@ const SA_A1000_603W: React.FC = () => {
           )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
             ?.valueCode,
-          frdt: setDefaultDate(customOptionData, "frdt"),
-          todt: setDefaultDate(customOptionData, "todt"),
           infrdt: setDefaultDate(customOptionData, "infrdt"),
           intodt: setDefaultDate(customOptionData, "intodt"),
           find_row_value: queryParams.get("go") as string,
@@ -657,8 +655,6 @@ const SA_A1000_603W: React.FC = () => {
           )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
             ?.valueCode,
-          frdt: setDefaultDate(customOptionData, "frdt"),
-          todt: setDefaultDate(customOptionData, "todt"),
           infrdt: setDefaultDate(customOptionData, "infrdt"),
           intodt: setDefaultDate(customOptionData, "intodt"),
           isSearch: true,
@@ -1617,7 +1613,7 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   //조회조건 초기값
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     workType: "LIST",
     orgdiv: sessionOrgdiv,
@@ -1634,8 +1630,8 @@ const SA_A1000_603W: React.FC = () => {
     extra_field2: "",
     smperson: "",
     smpersonnm: "",
-    frdt: new Date(),
-    todt: new Date(),
+    frdt: null,
+    todt: null,
     infrdt: new Date(),
     intodt: new Date(),
     yn: "",

@@ -2057,7 +2057,6 @@ const BA_A0020_603: React.FC = () => {
                               name="custnm"
                               type="text"
                               value={Information.custnm}
-                              className="readonly"
                             />
                             <ButtonInInput>
                               <Button
