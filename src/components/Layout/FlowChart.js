@@ -1198,7 +1198,7 @@ const FlowChart = (props) => {
                             alignItems: "center",
                           }}
                         >
-                          <DeleteIcon />{" "}
+                          <DeleteIcon />
                           {/* 이 아이콘을 프로젝트에 맞게 변경해주세요 */}
                           <Typography variant="caption">노드 삭제</Typography>
                         </div>

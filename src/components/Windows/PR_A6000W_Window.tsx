@@ -75,12 +75,13 @@ const CopyWindow = ({
 }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 350,
+    height: isMobile == true ? deviceHeight : 350,
   });
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");

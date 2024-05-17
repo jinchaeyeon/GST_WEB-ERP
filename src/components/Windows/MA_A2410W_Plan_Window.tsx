@@ -74,12 +74,13 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
@@ -573,7 +574,7 @@ const CopyWindow = ({
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {mainDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -587,7 +588,7 @@ const CopyWindow = ({
     var parts = detailDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {detailDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -601,7 +602,7 @@ const CopyWindow = ({
     var parts = subDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {subDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +

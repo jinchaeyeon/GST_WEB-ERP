@@ -620,12 +620,13 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 900,
+    height: isMobile == true ? deviceWidth : 900,
   });
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

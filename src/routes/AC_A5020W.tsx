@@ -463,7 +463,7 @@ const AC_A5020W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -904,7 +904,7 @@ const AC_A5020W: React.FC = () => {
               세금계산서저장
             </Button>
           </ButtonContainer>
-        </GridTitleContainer>{" "}
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {

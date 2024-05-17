@@ -116,7 +116,7 @@ const StatusCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ textAlign: "left", display: "flex", alignItems: "center" }}
     >
-      <StatusIcon status={dataItem[field]} />{" "}
+      <StatusIcon status={dataItem[field]} />
       {dataItem[field] == "001"
         ? "컨설팅 요청"
         : dataItem[field] == "002"
@@ -1251,7 +1251,7 @@ const CM_A5000W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건

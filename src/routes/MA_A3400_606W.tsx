@@ -1508,7 +1508,7 @@ const MA_A3400_606W: React.FC = () => {
         </>
       ) : (
         <>
-          {" "}
+          
           {isVisibleDetail && (
             <>
               <GridContainer>

@@ -69,13 +69,14 @@ const KendoWindow = ({
   permission,
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
   const [attachmentNumber, setAttachmentNumber] = useState(para);
 

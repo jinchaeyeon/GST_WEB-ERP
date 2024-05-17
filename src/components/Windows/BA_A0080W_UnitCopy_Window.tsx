@@ -88,12 +88,13 @@ const CustomNumberCell = (props: GridCellProps) => {
 let targetRowIndex: null | number = null;
 const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 570,
+    height: isMobile == true ? deviceHeight : 570,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

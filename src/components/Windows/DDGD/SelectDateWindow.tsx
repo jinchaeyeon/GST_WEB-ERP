@@ -38,6 +38,7 @@ const KendoWindow = ({
   show2,
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [shows, setShows] = useState(show);
   const [shows2, setShows2] = useState(show2);
@@ -45,7 +46,7 @@ const KendoWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 400,
-    height: 600,
+    height: isMobile == true ? deviceWidth : 600,
   });
   const onClose = () => {
     setVisible(false);

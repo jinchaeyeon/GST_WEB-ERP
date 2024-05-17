@@ -590,7 +590,7 @@ const AC_B2080W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -602,7 +602,7 @@ const AC_B2080W: React.FC = () => {
     var parts = mainDataResult2.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -1001,7 +1001,7 @@ const AC_B2080W: React.FC = () => {
               </td>
               {tabSelected == 0 ? (
                 <>
-                  {" "}
+                  
                   <th>년도표기</th>
                   <td>
                     {customOptionData !== null && (
@@ -1396,7 +1396,7 @@ const AC_B2080W: React.FC = () => {
               </Chart>
             </GridContainer>
             <GridContainer>
-              {" "}
+              
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
@@ -1573,7 +1573,7 @@ const AC_B2080W: React.FC = () => {
               </Chart>
             </GridContainer>
             <GridContainer>
-              {" "}
+              
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>

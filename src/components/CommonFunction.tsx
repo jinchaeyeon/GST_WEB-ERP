@@ -16,6 +16,14 @@ import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 import BScroll from '@better-scroll/core';
 
 
+export const getHeight = (className : string) => {
+  var container = document.querySelector(className);
+  if (container?.clientHeight != undefined) {
+    return container == undefined ? 0 : container.clientHeight;
+  } else {
+    return 0
+  }
+}
 
 //소수점3자리에서 반올림
 export const ThreeNumberceil = (number: number) => {

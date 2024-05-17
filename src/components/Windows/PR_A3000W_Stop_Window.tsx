@@ -40,12 +40,14 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState({
     left: 300,
     top: 100,
-    width: 500,
-    height: 320,
+    width: isMobile == true ? deviceWidth : 500,
+    height: isMobile == true ? deviceHeight : 320,
   });
   // 세션 아이템
   const [sessionItem] = useRecoilState(sessionItemState);

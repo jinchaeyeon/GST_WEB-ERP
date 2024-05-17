@@ -484,7 +484,7 @@ const SA_B3101W: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                     >
-                      {" "}
+                      
                       <ChartValueAxisTitle text={unitTitle} />
                     </ChartValueAxisItem>
                   </ChartValueAxis>
@@ -685,7 +685,7 @@ const SA_B3101W: React.FC = () => {
                     content: (e) => numberWithCommas(e.value) + "",
                   }}
                 >
-                  {" "}
+                  
                   <ChartValueAxisTitle text={unitTitle} />
                 </ChartValueAxisItem>
               </ChartValueAxis>

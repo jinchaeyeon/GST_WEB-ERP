@@ -99,12 +99,13 @@ const AdjustApprovalWindow = ({
   UseParaPc(setPc);
 
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 600,
+    height: isMobile == true ? deviceWidth : 600,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

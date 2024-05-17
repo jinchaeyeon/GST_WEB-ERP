@@ -149,6 +149,7 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const [tabSelected, setTabSelected] = useState(0);
@@ -159,7 +160,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 580,
+    height: isMobile == true ? deviceHeight : 580,
   });
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);

@@ -108,13 +108,14 @@ const KendoWindow = ({
   // UseBizComponent("L_sysUserMaster_001, L_BA000", setBizComponentData);
 
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: isMobile == true ? 600 : 400,
+    height: isMobile == true ? deviceHeight : 400,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

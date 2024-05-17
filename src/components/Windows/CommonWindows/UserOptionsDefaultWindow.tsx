@@ -485,11 +485,14 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const { option_id, option_name } = para;
   const pathname: string = window.location.pathname.replace("/", "");
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeight : 800,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

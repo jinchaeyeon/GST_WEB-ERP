@@ -29,12 +29,13 @@ function PaperComponent(props: PaperProps) {
 
 const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 500,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 800,
-    height: 800,
+    height: isMobile == true ? deviceWidth : 800,
   });
   const processApi = useApi();
   const [pc, setPc] = useState("");

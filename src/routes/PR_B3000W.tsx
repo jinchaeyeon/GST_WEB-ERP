@@ -594,7 +594,7 @@ const PR_B3000W: React.FC = () => {
 
       <GridContainer>
         <GridTitleContainer>
-          <GridTitle>작업 리스트</GridTitle>{" "}
+          <GridTitle>작업 리스트</GridTitle>
           {permissions && (
             <ButtonContainer>
               <Button

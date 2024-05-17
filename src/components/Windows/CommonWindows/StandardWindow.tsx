@@ -56,12 +56,13 @@ const StandardWindow = ({
   modal = false,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 800,
-    height: 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
   const DATA_ITEM_KEY = "item1";
   const idGetter = getter(DATA_ITEM_KEY);

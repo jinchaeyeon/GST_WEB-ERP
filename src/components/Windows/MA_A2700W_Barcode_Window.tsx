@@ -24,12 +24,13 @@ type IWindow = {
 
 const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 800,
-    height: 470,
+    height: isMobile == true ? deviceHeight : 470,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

@@ -905,7 +905,7 @@ const HU_B4001W: React.FC = () => {
                               <>
                                 <div style={{ display: "flex" }}>
                                   <th style={{ minWidth: "30%", width: "30%" }}>
-                                    사번{" "}
+                                    사번
                                   </th>
                                   <td>
                                     <Input

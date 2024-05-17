@@ -42,12 +42,13 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 700,
-    height: 300,
+    height: isMobile == true ? deviceHeight : 300,
   });
 
   //커스텀 옵션 조회

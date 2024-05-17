@@ -1798,7 +1798,7 @@ const QC_A3000: React.FC = () => {
 
   const createColumn = () => {
     const array = [];
-    array.push(<GridColumn field={"rowstatus"} title={" "} width="50px" />);
+    array.push(<GridColumn field={"rowstatus"} title={""} width="50px" />);
     array.push(
       <GridColumn
         field={"qc_sort"}

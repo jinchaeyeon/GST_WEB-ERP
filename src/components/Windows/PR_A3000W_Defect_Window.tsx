@@ -395,6 +395,9 @@ const KendoWindow = ({
   setData,
   pathname,
 }: TKendoWindow) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -405,8 +408,8 @@ const KendoWindow = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 800,
-    height: 600,
+    width: isMobile == true ? deviceWidth : 800,
+    height: isMobile == true ? deviceHeight : 600,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

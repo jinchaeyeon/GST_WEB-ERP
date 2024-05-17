@@ -77,16 +77,16 @@ const numberField2 = [
   "inamt",
 ];
 let targetRowIndex: null | number = null;
-let deviceWidth = document.documentElement.clientWidth;
-
-let isMobile = deviceWidth <= 1200;
 
 const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 550,
+    height: isMobile == true ? deviceHeight : 550,
   });
 
   const setLoading = useSetRecoilState(isLoading);

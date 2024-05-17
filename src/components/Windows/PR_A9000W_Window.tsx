@@ -70,12 +70,13 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 730,
+    height: isMobile == true ? deviceHeight : 730,
   });
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
@@ -417,7 +418,7 @@ const CopyWindow = ({
         style={props.style}
         {...{ [GRID_COL_INDEX_ATTRIBUTE]: 2 }}
       >
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건

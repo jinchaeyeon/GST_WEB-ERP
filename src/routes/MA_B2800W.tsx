@@ -523,7 +523,7 @@ const MA_B2800W: React.FC = () => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건

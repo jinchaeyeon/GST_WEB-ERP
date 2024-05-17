@@ -308,6 +308,7 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -316,7 +317,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 600,
+    height: isMobile == true ? deviceWidth : 600,
   });
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

@@ -18,11 +18,14 @@ const ZipCodeWindow = ({
   para,
   modal = false,
 }: IWindow) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 600,
-    height: 510,
+    width: isMobile == true ? deviceWidth : 600,
+    height: isMobile == true ? deviceHeight : 510,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

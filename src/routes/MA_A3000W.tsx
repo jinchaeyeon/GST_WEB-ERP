@@ -769,7 +769,7 @@ const MA_A3000W: React.FC = () => {
         style={props.style}
         {...{ [GRID_COL_INDEX_ATTRIBUTE]: 2 }}
       >
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건

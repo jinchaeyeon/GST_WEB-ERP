@@ -45,12 +45,13 @@ const DATA_ITEM_KEY = "prsnnum";
 
 const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 600,
+    height: isMobile == true ? deviceHeight : 600,
   });
 
   const setLoading = useSetRecoilState(isLoading);

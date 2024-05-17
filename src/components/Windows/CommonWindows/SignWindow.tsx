@@ -55,12 +55,13 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const isAdmin = role == "ADMIN";
 
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1050,
-    height: 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);

@@ -28,6 +28,7 @@ const SA_A1000_603W_Window = ({
   modal = false,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
   const [loginResult] = useRecoilState(loginResultState);
@@ -38,7 +39,7 @@ const SA_A1000_603W_Window = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
 

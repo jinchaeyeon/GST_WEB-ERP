@@ -43,6 +43,7 @@ const KendoWindow = ({
   pathname,
 }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -79,7 +80,7 @@ const KendoWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 400,
-    height: 330,
+    height: isMobile == true ? deviceHeight : 330,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

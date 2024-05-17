@@ -67,12 +67,13 @@ const CopyWindow = ({
   const location = UseGetValueFromSessionItem("location");
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -458,7 +459,7 @@ const CopyWindow = ({
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {mainDataResult.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +

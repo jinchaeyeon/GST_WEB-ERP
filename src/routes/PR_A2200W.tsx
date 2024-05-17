@@ -1421,7 +1421,7 @@ const PR_A2200W: React.FC = () => {
                         onClick={() => getPromise()}
                       >
                         사진모드
-                      </Button>{" "}
+                      </Button>
                       <Button
                         id={"button2"}
                         themeColor={"primary"}

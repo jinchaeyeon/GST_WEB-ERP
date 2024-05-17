@@ -16,7 +16,7 @@ const CurrentTime = () => {
 
   return (
     <p>
-      {time.toLocaleDateString("ko-KR")}{" "}
+      {time.toLocaleDateString("ko-KR")}
       {["일", "월", "화", "수", "목", "금", "토"][time.getDay()]} <br />
       <span>{time.toLocaleTimeString("ko-KR")}</span>
     </p>

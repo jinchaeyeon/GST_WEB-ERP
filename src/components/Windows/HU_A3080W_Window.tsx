@@ -71,13 +71,14 @@ let temp = 0;
 
 const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 830,
-    height: 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
 
   const setLoading = useSetRecoilState(isLoading);

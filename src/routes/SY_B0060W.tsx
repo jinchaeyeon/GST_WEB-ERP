@@ -585,7 +585,7 @@ const SY_B0060W: React.FC = () => {
                 <>
                   <MainWorkStartEndContainer>
                     <TextContainer theme={"#2289c3"}>
-                      {workTimeDataResult.strtime} -{" "}
+                      {workTimeDataResult.strtime} -
                       {workTimeDataResult.endtime}
                     </TextContainer>
                     <Button

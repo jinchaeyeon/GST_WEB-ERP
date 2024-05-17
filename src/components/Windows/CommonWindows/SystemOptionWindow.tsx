@@ -23,11 +23,14 @@ type TKendoWindow = {
 };
 
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 350,
-    height: 520,
+    width: isMobile == true ? deviceWidth : 350,
+    height: isMobile == true ? deviceHeight : 520,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

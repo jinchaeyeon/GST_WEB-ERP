@@ -84,6 +84,7 @@ const KendoWindow = ({
   modal = false,
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -96,7 +97,7 @@ const KendoWindow = ({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 750,
+    height: isMobile == true ? deviceHeight : 750,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

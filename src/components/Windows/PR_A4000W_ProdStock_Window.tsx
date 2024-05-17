@@ -70,6 +70,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const processApi = useApi();
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -78,7 +79,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1400,
-    height: 880,
+    height: isMobile == true ? deviceHeight : 880,
   });
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -498,7 +499,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
@@ -510,7 +511,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     var parts = keepingDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
+        총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
