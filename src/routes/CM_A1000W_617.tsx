@@ -560,7 +560,46 @@ const CM_A1000W_617: React.FC = () => {
         <>
           <TitleContainer style={{ textAlign: "center" }}>
             <Title>업무일지</Title>
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="CM_A1000W_617"
+                />
+              )}
+            </ButtonContainer>
           </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>작성일</th>
+                  <td>
+                    <DatePicker
+                      name="recdt"
+                      value={filters.recdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                      placeholder=""
+                    />
+                  </td>
+                  <th>제목/내용</th>
+                  <td>
+                    <Input
+                      name="title"
+                      type="text"
+                      value={filters.title}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+
           <Swiper
             onSwiper={(swiper) => {
               setSwiper(swiper);
@@ -572,14 +611,6 @@ const CM_A1000W_617: React.FC = () => {
               >
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>
-                    <Button
-                      onClick={() => setIsVisableDetail((prev) => !prev)}
-                      icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
-                      themeColor={"secondary"}
-                      fillMode={"flat"}
-                    >
-                      조회조건
-                    </Button>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
@@ -595,131 +626,80 @@ const CM_A1000W_617: React.FC = () => {
                     >
                       삭제
                     </Button>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                      themeColor={"primary"}
-                      fillMode="outline"
-                      icon="arrow-right"
-                    >
-                      다음
-                    </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                {isVisibleDetail ? (
-                  <FormBoxWrap border={true}>
-                    <GridTitleContainer>
-                      <GridTitle></GridTitle>
-                      <ButtonContainer>
-                        <Button
-                          onClick={search}
-                          icon="search"
-                          themeColor={"primary"}
-                        >
-                          조회
-                        </Button>
-                      </ButtonContainer>
-                    </GridTitleContainer>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>작성일</th>
-                          <td>
-                            <DatePicker
-                              name="recdt"
-                              value={filters.recdt}
-                              format="yyyy-MM-dd"
-                              onChange={filterInputChange}
-                              className="required"
-                              placeholder=""
-                            />
-                          </td>
-                          <th>제목/내용</th>
-                          <td>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={filters.title}
-                              onChange={filterInputChange}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                ) : (
-                  ""
-                )}
-
-                <Grid
-                  style={{
-                    height: isVisibleDetail
-                      ? deviceHeight - height - 220
-                      : deviceHeight - height,
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
                   }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    })),
-                    mainDataState
-                  )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="업무일지"
                 >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      ?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
+                  <Grid
+                    style={{
+                      height: deviceHeight - height,
+                    }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
