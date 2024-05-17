@@ -33,13 +33,14 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 780,
+    height: isMobile == true ? deviceHeight : 780,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

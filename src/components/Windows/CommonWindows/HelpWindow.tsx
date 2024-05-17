@@ -160,8 +160,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -181,7 +181,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 830,
-    height: 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
 
