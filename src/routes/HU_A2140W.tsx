@@ -56,6 +56,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -226,11 +227,7 @@ const HU_A2140W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);

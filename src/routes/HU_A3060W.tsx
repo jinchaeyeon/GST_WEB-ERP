@@ -48,6 +48,7 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -177,23 +178,10 @@ const HU_A3060W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".k-tabstrip-items-wrapper");
 
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
-
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
