@@ -27,6 +27,9 @@ import React, {
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -95,9 +98,6 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -763,6 +763,9 @@ const CM_A7010W: React.FC = () => {
           setDeletedName(unsavedName);
         }
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -1145,58 +1148,58 @@ const CM_A7010W: React.FC = () => {
           {isMobile ? (
             <>
               <GridContainer style={{ width: "100%" }}>
-                <GridTitleContainer className="ButtonContainer">
-                  <FilterContainer>
-                    <FilterBox
-                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                    >
-                      <tbody>
-                        <tr>
-                          <th>회의일</th>
-                          <td>
-                            <CommonDateRangePicker
-                              value={{
-                                start: filters.frdt,
-                                end: filters.todt,
-                              }}
-                              onChange={(e: {
-                                value: { start: any; end: any };
-                              }) =>
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  frdt: e.value.start,
-                                  todt: e.value.end,
-                                }))
-                              }
-                              className="required"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>고객사</th>
-                          <td>
-                            <Input
-                              name="custnm"
-                              type="text"
-                              value={filters.custnm}
-                              onChange={filterInputChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>제목 및 내용</th>
-                          <td>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={filters.title}
-                              onChange={filterInputChange}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FilterBox>
-                  </FilterContainer>
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>회의일</th>
+                        <td>
+                          <CommonDateRangePicker
+                            value={{
+                              start: filters.frdt,
+                              end: filters.todt,
+                            }}
+                            onChange={(e: {
+                              value: { start: any; end: any };
+                            }) =>
+                              setFilters((prev) => ({
+                                ...prev,
+                                frdt: e.value.start,
+                                todt: e.value.end,
+                              }))
+                            }
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>고객사</th>
+                        <td>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={filters.custnm}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>제목 및 내용</th>
+                        <td>
+                          <Input
+                            name="title"
+                            type="text"
+                            value={filters.title}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
+                <GridTitleContainer className="ButtonContainer1">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick}

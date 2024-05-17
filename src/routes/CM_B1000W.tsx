@@ -672,9 +672,9 @@ const CM_B1000W: React.FC = () => {
         setPage2(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-      }
-      if (swiper && isMobile) {
-        swiper.slideTo(0);
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);

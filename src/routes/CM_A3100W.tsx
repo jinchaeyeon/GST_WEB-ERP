@@ -361,8 +361,8 @@ const CM_A3100W: React.FC = () => {
       pgNum: 1,
     }));
     if (swiper && isMobile) {
-      swiper.slideTo(1);
-		}
+      swiper.slideTo(0);
+    }
   };
 
   //조회조건 초기값

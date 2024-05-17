@@ -1921,6 +1921,9 @@ const CM_A1600: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
         }
       } else {
         setTodoFilter((prev) => ({
@@ -1940,6 +1943,9 @@ const CM_A1600: React.FC = () => {
           number2: number2,
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
