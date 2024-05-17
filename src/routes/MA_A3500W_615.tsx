@@ -1,10 +1,17 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Alert, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
+import {
+  Alert,
+  Card,
+  CardContent,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import "swiper/css";
 import {
   AdminQuestionBox,
@@ -23,11 +30,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseParaPc,
+  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
@@ -36,7 +44,12 @@ let timestamp = 0;
 
 const MA_A3500W_615: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
@@ -332,7 +345,7 @@ const MA_A3500W_615: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      alert("저장되었습니다.")
+      alert("저장되었습니다.");
       resetAll();
       setParaData({
         workType: "",
@@ -431,7 +444,10 @@ const MA_A3500W_615: React.FC = () => {
         )}
         {isMobile ? (
           <>
-            <TitleContainer style={{ marginBottom: "15px" }}>
+            <TitleContainer
+              style={{ marginBottom: "15px" }}
+              className="ButtonContainer"
+            >
               <Title style={{ textAlign: "center" }}>생산투입</Title>
               <ButtonContainer>
                 <Button
@@ -472,7 +488,7 @@ const MA_A3500W_615: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </TitleContainer>
-            <GridContainer className="leading_PDA_container">
+            <GridContainer className="ButtonContainer2">
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
@@ -542,7 +558,7 @@ const MA_A3500W_615: React.FC = () => {
             </GridContainer>
             <GridContainer
               style={{
-                height: "45vh",
+                height: deviceHeight - height - height2 - height3,
                 overflowY: "scroll",
                 marginBottom: "10px",
                 width: "100%",
@@ -586,7 +602,7 @@ const MA_A3500W_615: React.FC = () => {
                 ))}
               </Grid>
             </GridContainer>
-            <GridContainer className="leading_PDA_container">
+            <GridContainer className="ButtonContainer3">
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>

@@ -11,7 +11,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -30,12 +30,13 @@ import {
 import {
   UseGetValueFromSessionItem,
   UseParaPc,
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var index = 0;
@@ -46,6 +47,11 @@ let interval: any;
 const SA_A5000W_615: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".ButtonContainer4");
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
@@ -605,7 +611,6 @@ const SA_A5000W_615: React.FC = () => {
         {isMobile ? (
           <>
             <Swiper
-              className="leading_PDA_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}
@@ -614,231 +619,48 @@ const SA_A5000W_615: React.FC = () => {
                 events();
               }}
             >
-              <SwiperSlide key={0} className="leading_PDA">
-                <TitleContainer style={{ marginBottom: "15px" }}>
-                  <Title style={{ textAlign: "center" }}>판매처리</Title>
-                  <ButtonContainer>
-                    <Button
-                      themeColor={"primary"}
-                      fillMode={"solid"}
-                      onClick={() => {
-                        resetAll();
-                        events();
-                      }}
-                      icon="reset"
-                    >
-                      ALLReset
-                    </Button>
-                    <Button onClick={() => onSaveClick()} icon="save">
-                      저장
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          if (mainDataResult.total > 0) {
-                            swiper.slideTo(1);
-                          } else {
-                            setTitle("데이터가 없습니다.");
-                            setOpen(true);
-                          }
-                        }
-                      }}
-                      icon="arrow-right"
-                    >
-                      다음
-                    </Button>
-                  </ButtonContainer>
-                </TitleContainer>
-                <GridContainer className="leading_PDA_container">
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <th style={{ width: "5%", minWidth: "80px" }}>
-                            스캔번호
-                          </th>
-                          <td>
-                            <Input
-                              name="str"
-                              type="text"
-                              ref={hiddeninput}
-                              value={Information.str}
-                              style={{ width: "100%" }}
-                              onChange={InputChange}
-                            />
-                            <ButtonInInput>
-                              <Button
-                                id="search"
-                                onClick={() => {
-                                  setInformation((prev) => ({
-                                    ...prev,
-                                    isSearch: true,
-                                  }));
-                                  events();
-                                }}
-                                icon="search"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <th style={{ width: "5%", minWidth: "80px" }}>
-                            수주번호
-                          </th>
-                          <td>
-                            <Input
-                              name="ordbarcode"
-                              type="text"
-                              value={Information.ordbarcode}
-                              style={{ width: "100%" }}
-                              className="readonly"
-                              disabled={true}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                </GridContainer>
+              <SwiperSlide key={0}>
                 <GridContainer
-                  style={{
-                    height: "55vh",
-                    overflowY: "scroll",
-                    marginBottom: "10px",
-                    width: "100%",
-                  }}
+                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
                 >
-                  <Grid container spacing={2}>
-                    {mainDataResult.data.map((item, idx) => (
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <AdminQuestionBox key={idx}>
-                          <Card
-                            style={{
-                              width: "100%",
-                              cursor: "pointer",
-                              backgroundColor:
-                                item.chk == true ? "#d6d8f9" : "white",
-                            }}
-                          >
-                            <CardContent
-                              style={{ textAlign: "left", padding: "8px" }}
-                              onClick={() => onCheckItem(item)}
-                            >
-                              <Typography
-                                gutterBottom
-                                variant="h6"
-                                component="div"
-                              >
-                                {item.itemnm}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {item.insiz}
-                              </Typography>
-                              <p
-                                style={{
-                                  fontSize: "0.875rem",
-                                  fontWeight: "400",
-                                  letterSpacing: "0.01071em",
-                                  display: "flex",
-                                }}
-                              >
-                                <p style={{ color: "blue" }}>{item.qty}</p>/
-                                <p style={{ color: "red" }}>{item.outqty}</p>(
-                                {item.cnt})
-                              </p>
-                            </CardContent>
-                          </Card>
-                        </AdminQuestionBox>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </GridContainer>
-                <GridContainer className="leading_PDA_container">
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <th style={{ width: "5%", minWidth: "80px" }}>
-                            스캔건수
-                          </th>
-                          <td>
-                            <Input
-                              name="total"
-                              type="text"
-                              style={{
-                                textAlign: "right",
-                              }}
-                              className="readonly"
-                              value={mainDataResult.total}
-                              onClick={() => events()}
-                            />
-                          </td>
-                          <th style={{ width: "5%", minWidth: "80px" }}>
-                            총중량
-                          </th>
-                          <td>
-                            <Input
-                              name="total"
-                              type="text"
-                              style={{
-                                textAlign: "right",
-                              }}
-                              className="readonly"
-                              value={getWgt(mainDataResult.data)}
-                              onClick={() => events()}
-                            />
-                          </td>
-                        </tr>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <th style={{ width: "5%", minWidth: "80px" }}>
-                            거래처
-                          </th>
-                          <td>
-                            <Input
-                              name="custnm"
-                              type="text"
-                              value={Information.custnm}
-                              style={{ width: "100%" }}
-                              className="readonly"
-                              onClick={() => events()}
-                            />
-                            <ButtonInInput>
-                              <Button
-                                onClick={onCustWndClick}
-                                icon="more-horizontal"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                </GridContainer>
-              </SwiperSlide>
-              {Information.ordnum != "" ? (
-                <SwiperSlide key={1} className="leading_PDA">
-                  <TitleContainer style={{ marginBottom: "15px" }}>
+                  <TitleContainer
+                    style={{ marginBottom: "15px" }}
+                    className="ButtonContainer"
+                  >
                     <Title style={{ textAlign: "center" }}>판매처리</Title>
                     <ButtonContainer>
                       <Button
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => {
+                          resetAll();
+                          events();
+                        }}
+                        icon="reset"
+                      >
+                        ALLReset
+                      </Button>
+                      <Button onClick={() => onSaveClick()} icon="save">
+                        저장
+                      </Button>
+                      <Button
                         onClick={() => {
                           if (swiper) {
-                            swiper.slideTo(0);
-                            events();
+                            if (mainDataResult.total > 0) {
+                              swiper.slideTo(1);
+                            } else {
+                              setTitle("데이터가 없습니다.");
+                              setOpen(true);
+                            }
                           }
                         }}
-                        icon="arrow-left"
+                        icon="arrow-right"
                       >
-                        이전
+                        다음
                       </Button>
                     </ButtonContainer>
                   </TitleContainer>
-                  <GridContainer className="leading_PDA_container">
+                  <GridContainer className="ButtonContainer2">
                     <FormBoxWrap border={true}>
                       <FormBox>
                         <tbody>
@@ -850,7 +672,7 @@ const SA_A5000W_615: React.FC = () => {
                               <Input
                                 name="str"
                                 type="text"
-                                ref={hiddeninput2}
+                                ref={hiddeninput}
                                 value={Information.str}
                                 style={{ width: "100%" }}
                                 onChange={InputChange}
@@ -873,31 +695,16 @@ const SA_A5000W_615: React.FC = () => {
                           </tr>
                           <tr style={{ display: "flex", flexDirection: "row" }}>
                             <th style={{ width: "5%", minWidth: "80px" }}>
-                              제품바코드
+                              수주번호
                             </th>
                             <td>
                               <Input
-                                name="itembarcode"
+                                name="ordbarcode"
                                 type="text"
-                                value={Information.itembarcode}
+                                value={Information.ordbarcode}
                                 style={{ width: "100%" }}
                                 className="readonly"
                                 disabled={true}
-                              />
-                            </td>
-                          </tr>
-                          <tr style={{ display: "flex", flexDirection: "row" }}>
-                            <th style={{ width: "5%", minWidth: "80px" }}>
-                              품목명
-                            </th>
-                            <td>
-                              <Input
-                                name="itemnm"
-                                type="text"
-                                value={Information.itemnm}
-                                style={{ width: "100%" }}
-                                className="readonly"
-                                onClick={() => events()}
                               />
                             </td>
                           </tr>
@@ -907,44 +714,262 @@ const SA_A5000W_615: React.FC = () => {
                   </GridContainer>
                   <GridContainer
                     style={{
-                      height: "60vh",
+                      height: deviceHeight - height - height2 - height3,
                       overflowY: "scroll",
                       marginBottom: "10px",
                       width: "100%",
                     }}
                   >
                     <Grid container spacing={2}>
-                      {tempDataResult.data.map((item, idx) => (
+                      {mainDataResult.data.map((item, idx) => (
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                           <AdminQuestionBox key={idx}>
                             <Card
                               style={{
                                 width: "100%",
                                 cursor: "pointer",
-                                backgroundColor: "#d6d8f9",
+                                backgroundColor:
+                                  item.chk == true ? "#d6d8f9" : "white",
                               }}
                             >
                               <CardContent
                                 style={{ textAlign: "left", padding: "8px" }}
+                                onClick={() => onCheckItem(item)}
                               >
                                 <Typography
                                   gutterBottom
                                   variant="h6"
                                   component="div"
+                                >
+                                  {item.itemnm}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  {item.insiz}
+                                </Typography>
+                                <p
                                   style={{
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden",
+                                    fontSize: "0.875rem",
+                                    fontWeight: "400",
+                                    letterSpacing: "0.01071em",
+                                    display: "flex",
                                   }}
                                 >
-                                  {item.itembarcode}
-                                </Typography>
+                                  <p style={{ color: "blue" }}>{item.qty}</p>/
+                                  <p style={{ color: "red" }}>{item.outqty}</p>(
+                                  {item.cnt})
+                                </p>
                               </CardContent>
                             </Card>
                           </AdminQuestionBox>
                         </Grid>
                       ))}
                     </Grid>
+                  </GridContainer>
+                  <GridContainer className="ButtonContainer3">
+                    <FormBoxWrap border={true}>
+                      <FormBox>
+                        <tbody>
+                          <tr style={{ display: "flex", flexDirection: "row" }}>
+                            <th style={{ width: "5%", minWidth: "80px" }}>
+                              스캔건수
+                            </th>
+                            <td>
+                              <Input
+                                name="total"
+                                type="text"
+                                style={{
+                                  textAlign: "right",
+                                }}
+                                className="readonly"
+                                value={mainDataResult.total}
+                                onClick={() => events()}
+                              />
+                            </td>
+                            <th style={{ width: "5%", minWidth: "80px" }}>
+                              총중량
+                            </th>
+                            <td>
+                              <Input
+                                name="total"
+                                type="text"
+                                style={{
+                                  textAlign: "right",
+                                }}
+                                className="readonly"
+                                value={getWgt(mainDataResult.data)}
+                                onClick={() => events()}
+                              />
+                            </td>
+                          </tr>
+                          <tr style={{ display: "flex", flexDirection: "row" }}>
+                            <th style={{ width: "5%", minWidth: "80px" }}>
+                              거래처
+                            </th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={Information.custnm}
+                                style={{ width: "100%" }}
+                                className="readonly"
+                                onClick={() => events()}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </GridContainer>
+              </SwiperSlide>
+              {Information.ordnum != "" ? (
+                <SwiperSlide key={1}>
+                  <GridContainer
+                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  >
+                    <TitleContainer
+                      style={{ marginBottom: "15px" }}
+                      className="ButtonContainer"
+                    >
+                      <Title style={{ textAlign: "center" }}>판매처리</Title>
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                              events();
+                            }
+                          }}
+                          icon="arrow-left"
+                        >
+                          이전
+                        </Button>
+                      </ButtonContainer>
+                    </TitleContainer>
+                    <GridContainer className="ButtonContainer4">
+                      <FormBoxWrap border={true}>
+                        <FormBox>
+                          <tbody>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <th style={{ width: "5%", minWidth: "80px" }}>
+                                스캔번호
+                              </th>
+                              <td>
+                                <Input
+                                  name="str"
+                                  type="text"
+                                  ref={hiddeninput2}
+                                  value={Information.str}
+                                  style={{ width: "100%" }}
+                                  onChange={InputChange}
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    id="search"
+                                    onClick={() => {
+                                      setInformation((prev) => ({
+                                        ...prev,
+                                        isSearch: true,
+                                      }));
+                                      events();
+                                    }}
+                                    icon="search"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <th style={{ width: "5%", minWidth: "80px" }}>
+                                제품바코드
+                              </th>
+                              <td>
+                                <Input
+                                  name="itembarcode"
+                                  type="text"
+                                  value={Information.itembarcode}
+                                  style={{ width: "100%" }}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              </td>
+                            </tr>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <th style={{ width: "5%", minWidth: "80px" }}>
+                                품목명
+                              </th>
+                              <td>
+                                <Input
+                                  name="itemnm"
+                                  type="text"
+                                  value={Information.itemnm}
+                                  style={{ width: "100%" }}
+                                  className="readonly"
+                                  onClick={() => events()}
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    </GridContainer>
+                    <GridContainer
+                      style={{
+                        height: deviceHeight - height - height4,
+                        overflowY: "scroll",
+                        marginBottom: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      <Grid container spacing={2}>
+                        {tempDataResult.data.map((item, idx) => (
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <AdminQuestionBox key={idx}>
+                              <Card
+                                style={{
+                                  width: "100%",
+                                  cursor: "pointer",
+                                  backgroundColor: "#d6d8f9",
+                                }}
+                              >
+                                <CardContent
+                                  style={{ textAlign: "left", padding: "8px" }}
+                                >
+                                  <Typography
+                                    gutterBottom
+                                    variant="h6"
+                                    component="div"
+                                    style={{
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    {item.itembarcode}
+                                  </Typography>
+                                </CardContent>
+                              </Card>
+                            </AdminQuestionBox>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </GridContainer>
                   </GridContainer>
                 </SwiperSlide>
               ) : (
@@ -996,7 +1021,7 @@ const SA_A5000W_615: React.FC = () => {
                     </Button>
                   </ButtonContainer>
                 </TitleContainer>
-                <GridContainer className="leading_PDA_container">
+                <GridContainer style={{width: "100%"}}>
                   <GridTitleContainer>
                     <GridTitle>바코드스캔</GridTitle>
                   </GridTitleContainer>

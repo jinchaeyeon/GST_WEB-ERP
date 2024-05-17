@@ -4,7 +4,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input, Switch, TextArea } from "@progress/kendo-react-inputs";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Carousel from "react-material-ui-carousel";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -25,10 +25,11 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
@@ -41,6 +42,13 @@ const PR_A2200W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".ButtonContainer4");
+  var height5 = getHeight(".ButtonContainer5");
+  var height6 = getHeight(".ButtonContainer6");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [step, setStep] = useState(0);
@@ -800,7 +808,6 @@ const PR_A2200W: React.FC = () => {
     <>
       {isMobile ? (
         <Swiper
-          className="leading_PDA_Swiper"
           onSwiper={(swiper) => {
             setSwiper(swiper);
           }}
@@ -808,366 +815,397 @@ const PR_A2200W: React.FC = () => {
             index = swiper.activeIndex;
           }}
         >
-          <SwiperSlide key={0} className="leading_PDA">
-            <TitleContainer style={{ marginBottom: "15px" }}>
-              <Title>프로젝트 선택</Title>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  fillMode={"solid"}
-                  onClick={() => search()}
-                  icon="search"
-                >
-                  조회
-                </Button>
-              </ButtonContainer>
-            </TitleContainer>
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>업체명</th>
-                    <td>
-                      <Input
-                        name="custnm"
-                        type="text"
-                        value={filters.custnm}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
+          <SwiperSlide key={0}>
             <GridContainer
-              style={{
-                height: "70%",
-                overflowY: "scroll",
-                width: "100%",
-              }}
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
-              {mainDataResult.data.map((item, idx) => (
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <AdminQuestionBox key={idx}>
-                    <Card
-                      style={{
-                        width: "100%",
-                        cursor: "pointer",
-                        backgroundColor:
-                          item.devmngnum == information.devmngnum
-                            ? "#d6d8f9"
-                            : "white",
-                        height: "80px",
-                      }}
-                    >
-                      <CardContent
-                        onClick={() => onCheckClick(item)}
-                        style={{ textAlign: "left", padding: "8px" }}
-                      >
-                        <div style={{ height: "40px" }}>
-                          <Typography variant="h6">{item.custnm}</Typography>
-                        </div>
-
-                        <Typography variant="body2" color="text.secondary">
-                          {item.project}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </AdminQuestionBox>
-                </Grid>
-              ))}
-            </GridContainer>
-            <BottomContainer>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  fillMode={"solid"}
-                  onClick={() => {
-                    resetInformation();
-                    deletedMainRows = [];
-                    setFilters2((prev) => ({
-                      ...prev,
-                      devmngnum: "",
-                      setup_hw_name: "",
-                      setup_location: "",
-                      isSearch: true,
-                    }));
-                    if (swiper) {
-                      swiper.slideTo(1);
-                    }
-                  }}
-                  style={{ width: "100%" }}
-                >
-                  프로젝트 미선택
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </SwiperSlide>
-          <SwiperSlide key={1} className="leading_PDA">
-            <TitleContainer style={{ marginBottom: "15px" }}>
-              <Title>장비 선택</Title>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  fillMode={"solid"}
-                  onClick={() => search2()}
-                  icon="search"
-                >
-                  조회
-                </Button>
-              </ButtonContainer>
-            </TitleContainer>
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>장비명</th>
-                    <td>
-                      <Input
-                        name="setup_hw_name"
-                        type="text"
-                        value={filters2.setup_hw_name}
-                        onChange={filterInputChange2}
-                      />
-                    </td>
-                    <th>설치위치</th>
-                    <td>
-                      <Input
-                        name="setup_location"
-                        type="text"
-                        value={filters2.setup_location}
-                        onChange={filterInputChange2}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-            <GridContainer
-              style={{
-                height: "100%",
-                overflowY: "scroll",
-                width: "100%",
-              }}
-            >
-              {mainDataResult2.data.map((item, idx) => (
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <AdminQuestionBox key={idx}>
-                    <Card
-                      style={{
-                        width: "100%",
-                        cursor: "pointer",
-                        backgroundColor:
-                          item.setup_hw_num == information.setup_hw_num
-                            ? "#d6d8f9"
-                            : "white",
-                        height: "80px",
-                      }}
-                    >
-                      <CardContent
-                        onClick={() => onCheckClick2(item)}
+              <TitleContainer
+                style={{ marginBottom: "15px" }}
+                className="ButtonContainer"
+              >
+                <Title>프로젝트 선택</Title>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => search()}
+                    icon="search"
+                  >
+                    조회
+                  </Button>
+                </ButtonContainer>
+              </TitleContainer>
+              <FormBoxWrap border={true} className="ButtonContainer2">
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={filters.custnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer
+                style={{
+                  height: deviceHeight - height - height2 - height3,
+                  overflowY: "scroll",
+                  width: "100%",
+                }}
+              >
+                {mainDataResult.data.map((item, idx) => (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <AdminQuestionBox key={idx}>
+                      <Card
                         style={{
-                          textAlign: "left",
-                          padding: "8px",
-                          height: "100%",
+                          width: "100%",
+                          cursor: "pointer",
+                          backgroundColor:
+                            item.devmngnum == information.devmngnum
+                              ? "#d6d8f9"
+                              : "white",
+                          height: "80px",
                         }}
                       >
-                        <div style={{ height: "40px" }}>
-                          <Typography variant="h6">
-                            {item.setup_hw_name}
-                          </Typography>
-                        </div>
+                        <CardContent
+                          onClick={() => onCheckClick(item)}
+                          style={{ textAlign: "left", padding: "8px" }}
+                        >
+                          <div style={{ height: "40px" }}>
+                            <Typography variant="h6">{item.custnm}</Typography>
+                          </div>
 
-                        <Typography variant="body2" color="text.secondary">
-                          {item.setup_location}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </AdminQuestionBox>
-                </Grid>
-              ))}
+                          <Typography variant="body2" color="text.secondary">
+                            {item.project}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </AdminQuestionBox>
+                  </Grid>
+                ))}
+              </GridContainer>
+              <BottomContainer className="ButtonContainer3">
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => {
+                      resetInformation();
+                      deletedMainRows = [];
+                      setFilters2((prev) => ({
+                        ...prev,
+                        devmngnum: "",
+                        setup_hw_name: "",
+                        setup_location: "",
+                        isSearch: true,
+                      }));
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    style={{ width: "100%" }}
+                  >
+                    프로젝트 미선택
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <TitleContainer
+                style={{ marginBottom: "15px" }}
+                className="ButtonContainer"
+              >
+                <Title>장비 선택</Title>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => search2()}
+                    icon="search"
+                  >
+                    조회
+                  </Button>
+                </ButtonContainer>
+              </TitleContainer>
+              <FormBoxWrap border={true} className="ButtonContainer4">
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>장비명</th>
+                      <td>
+                        <Input
+                          name="setup_hw_name"
+                          type="text"
+                          value={filters2.setup_hw_name}
+                          onChange={filterInputChange2}
+                        />
+                      </td>
+                      <th>설치위치</th>
+                      <td>
+                        <Input
+                          name="setup_location"
+                          type="text"
+                          value={filters2.setup_location}
+                          onChange={filterInputChange2}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer
+                style={{
+                  height: deviceHeight - height - height4,
+                  overflowY: "scroll",
+                  width: "100%",
+                }}
+              >
+                {mainDataResult2.data.map((item, idx) => (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <AdminQuestionBox key={idx}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          cursor: "pointer",
+                          backgroundColor:
+                            item.setup_hw_num == information.setup_hw_num
+                              ? "#d6d8f9"
+                              : "white",
+                          height: "80px",
+                        }}
+                      >
+                        <CardContent
+                          onClick={() => onCheckClick2(item)}
+                          style={{
+                            textAlign: "left",
+                            padding: "8px",
+                            height: "100%",
+                          }}
+                        >
+                          <div style={{ height: "40px" }}>
+                            <Typography variant="h6">
+                              {item.setup_hw_name}
+                            </Typography>
+                          </div>
+
+                          <Typography variant="body2" color="text.secondary">
+                            {item.setup_location}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </AdminQuestionBox>
+                  </Grid>
+                ))}
+              </GridContainer>
             </GridContainer>
           </SwiperSlide>
           {information.setup_hw_num == "" ? (
             ""
           ) : (
-            <SwiperSlide key={2} className="leading_PDA">
-              <TitleContainer style={{ marginBottom: "15px" }}>
-                <Title>사진 및 코멘트</Title>
-                <ButtonContainer>
-                  <Switch
-                    onChange={(event: any) => {
-                      setInformation((prev) => ({
-                        ...prev,
-                        finyn: event.target.value,
-                      }));
-                    }}
-                    onLabel={"작업완료"}
-                    offLabel={"작업중"}
-                    checked={information.finyn}
-                    className="PDA_Switch"
-                  />
-                </ButtonContainer>
-              </TitleContainer>
+            <SwiperSlide key={2}>
               <GridContainer
-                style={{
-                  height: "100%",
-                  overflowY: "auto",
-                  width: "100%",
-                }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                {isCaptured ? (
-                  <>
-                    <video
-                      ref={videoRef}
-                      playsInline
-                      muted
-                      autoPlay
-                      style={{ height: "88%", width: "100%" }}
-                    ></video>
-                    <FormBoxWrap>
+                <TitleContainer
+                  style={{ marginBottom: "15px" }}
+                  className="ButtonContainer5"
+                >
+                  <Title>사진 및 코멘트</Title>
+                  <ButtonContainer>
+                    <Switch
+                      onChange={(event: any) => {
+                        setInformation((prev) => ({
+                          ...prev,
+                          finyn: event.target.value,
+                        }));
+                      }}
+                      onLabel={"작업완료"}
+                      offLabel={"작업중"}
+                      checked={information.finyn}
+                      className="PDA_Switch"
+                    />
+                  </ButtonContainer>
+                </TitleContainer>
+                <GridContainer
+                  style={{
+                    height: "100%",
+                    overflowY: "auto",
+                    width: "100%",
+                  }}
+                >
+                  {isCaptured ? (
+                    <>
+                      <video
+                        ref={videoRef}
+                        playsInline
+                        muted
+                        autoPlay
+                        style={{
+                          height: deviceHeight - height5 - height6,
+                          width: "100%",
+                        }}
+                      ></video>
+                      <FormBoxWrap>
+                        <FormBox>
+                          <tbody>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <td>
+                                <Button
+                                  id={"button"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={() => getPromise()}
+                                  style={{ width: "100%" }}
+                                >
+                                  사진모드
+                                </Button>
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button2"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={() => onCapture()}
+                                  style={{ width: "100%" }}
+                                >
+                                  촬영
+                                </Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    </>
+                  ) : mainDataResult3.total > 0 ? (
+                    <Carousel
+                      cycleNavigation={true}
+                      navButtonsAlwaysVisible={true}
+                      autoPlay={false}
+                      onChange={handleChange}
+                      index={pictureindex}
+                    >
+                      {mainDataResult3.data[0].image.map((content: any) => (
+                        <>
+                          <div
+                            style={{
+                              width: "100%",
+                              height: deviceHeight - height5 - height6,
+                            }}
+                          >
+                            <img
+                              src={content.url}
+                              style={{
+                                objectFit: "contain",
+                                height: "100%",
+                                width: "100%",
+                              }}
+                            />
+                          </div>
+                        </>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <div style={{ width: "100%", height: "55%" }}></div>
+                  )}
+
+                  {isCaptured ? (
+                    ""
+                  ) : (
+                    <FormBoxWrap className="ButtonContainer6">
                       <FormBox>
                         <tbody>
                           <tr style={{ display: "flex", flexDirection: "row" }}>
                             <td>
                               <Button
-                                id={"button"}
+                                id={"button1"}
                                 themeColor={"primary"}
                                 fillMode={"outline"}
-                                onClick={() => getPromise()}
+                                onClick={upload}
                                 style={{ width: "100%" }}
                               >
-                                사진모드
+                                첨부파일
+                              </Button>
+                              <input
+                                id="uploadAttachment"
+                                style={{ display: "none" }}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                ref={excelInput}
+                                onChange={(
+                                  event: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  handleFileUpload(event.target.files);
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <Button
+                                id={"button3"}
+                                themeColor={"primary"}
+                                fillMode={"outline"}
+                                onClick={() => getPromise2()}
+                                style={{ width: "100%" }}
+                              >
+                                촬영모드
+                              </Button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colSpan={2}>
+                              <TextArea
+                                value={information.comment}
+                                name="comment"
+                                rows={50}
+                                style={{
+                                  maxHeight: "20vh",
+                                  overflowY: "auto",
+                                  background: "#d6d8f9",
+                                }}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr style={{ display: "flex", flexDirection: "row" }}>
+                            <td>
+                              <Button
+                                themeColor={"primary"}
+                                fillMode={"solid"}
+                                onClick={() => onDeletePicture()}
+                                style={{ width: "100%" }}
+                              >
+                                사진 삭제
                               </Button>
                             </td>
                             <td>
                               <Button
-                                id={"button2"}
+                                id={"button5"}
                                 themeColor={"primary"}
-                                fillMode={"outline"}
-                                onClick={() => onCapture()}
+                                fillMode={"solid"}
+                                onClick={() => onSaveClick()}
                                 style={{ width: "100%" }}
                               >
-                                촬영
+                                저장
                               </Button>
                             </td>
                           </tr>
                         </tbody>
                       </FormBox>
                     </FormBoxWrap>
-                  </>
-                ) : mainDataResult3.total > 0 ? (
-                  <Carousel
-                    cycleNavigation={true}
-                    navButtonsAlwaysVisible={true}
-                    autoPlay={false}
-                    onChange={handleChange}
-                    index={pictureindex}
-                  >
-                    {mainDataResult3.data[0].image.map((content: any) => (
-                      <>
-                        <div style={{ width: "100%", height: "40vh" }}>
-                          <img
-                            src={content.url}
-                            style={{
-                              objectFit: "contain",
-                              height: "100%",
-                              width: "100%",
-                            }}
-                          />
-                        </div>
-                      </>
-                    ))}
-                  </Carousel>
-                ) : (
-                  <div style={{ width: "100%", height: "55%" }}></div>
-                )}
-
-                {isCaptured ? (
-                  ""
-                ) : (
-                  <FormBoxWrap>
-                    <FormBox>
-                      <tbody>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <td>
-                            <Button
-                              id={"button1"}
-                              themeColor={"primary"}
-                              fillMode={"outline"}
-                              onClick={upload}
-                              style={{ width: "100%" }}
-                            >
-                              첨부파일
-                            </Button>
-                            <input
-                              id="uploadAttachment"
-                              style={{ display: "none" }}
-                              type="file"
-                              accept="image/*"
-                              multiple
-                              ref={excelInput}
-                              onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                handleFileUpload(event.target.files);
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <Button
-                              id={"button3"}
-                              themeColor={"primary"}
-                              fillMode={"outline"}
-                              onClick={() => getPromise2()}
-                              style={{ width: "100%" }}
-                            >
-                              촬영모드
-                            </Button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colSpan={2}>
-                            <TextArea
-                              value={information.comment}
-                              name="comment"
-                              rows={50}
-                              style={{
-                                maxHeight: "20vh",
-                                overflowY: "auto",
-                                background: "#d6d8f9",
-                              }}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr style={{ display: "flex", flexDirection: "row" }}>
-                          <td>
-                            <Button
-                              themeColor={"primary"}
-                              fillMode={"solid"}
-                              onClick={() => onDeletePicture()}
-                              style={{ width: "100%" }}
-                            >
-                              사진 삭제
-                            </Button>
-                          </td>
-                          <td>
-                            <Button
-                              id={"button5"}
-                              themeColor={"primary"}
-                              fillMode={"solid"}
-                              onClick={() => onSaveClick()}
-                              style={{ width: "100%" }}
-                            >
-                              저장
-                            </Button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                )}
+                  )}
+                </GridContainer>
               </GridContainer>
             </SwiperSlide>
           )}
