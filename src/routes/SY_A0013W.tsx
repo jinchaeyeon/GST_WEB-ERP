@@ -55,6 +55,7 @@ import {
   UseParaPc,
   UsePermissions,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   getYn,
   handleKeyPressSearch,
@@ -229,26 +230,10 @@ const Page: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  var container4 = document.querySelector(".ButtonContainer4");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".ButtonContainer4");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
