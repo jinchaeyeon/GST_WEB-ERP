@@ -622,9 +622,9 @@ const CM_A8250W: React.FC = () => {
           isSearch: true,
           pgNum: 1,
         }));
-      }
-      if (swiper && isMobile) {
-        swiper.slideTo(0);
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
