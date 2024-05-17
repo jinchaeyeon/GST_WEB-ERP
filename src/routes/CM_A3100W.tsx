@@ -50,8 +50,16 @@ import {
 import { PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading, loginResultState } from "../store/atoms";
+import {
+  OSState,
+  heightstate,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 let temp = 0;
 const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
@@ -71,6 +79,14 @@ const CM_A3100W: React.FC = () => {
   UseMessages("CM_A3100W", setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var container = document.querySelector(".ButtonContainer");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -344,6 +360,9 @@ const CM_A3100W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+		}
   };
 
   //조회조건 초기값
@@ -633,120 +652,123 @@ const CM_A3100W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <GridContainerWrap>
-        <GridContainer
-          width="355px"
-          style={{
-            height: isMobile ? "100%" : "88vh",
-            marginTop: "5px",
-            paddingRight: "10px",
+
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
           }}
         >
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>달력</GridTitle>
-            </GridTitleContainer>
-            <Calendar
-              id="CM_A3100W_CALENDAR"
-              focusedDate={filters.todt}
-              value={filters.todt}
-              onChange={filterInputChange}
-            />
-          </GridContainer>
-          <GridContainer style={{ marginTop: "5px" }}>
-            <GridTitleContainer>
-              <GridTitle>자원</GridTitle>
-            </GridTitleContainer>
-            {resultState.length > 0
-              ? resultState.map((item: any, index: any) => {
-                  return (
-                    <Accordion defaultExpanded={true}>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1-content"
-                        id="panel1-header"
-                        style={{ backgroundColor: "#edf4fb" }}
-                      >
-                        <Typography>{item.text}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails
-                        style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-                      >
-                        <List>
-                          {item.items != undefined
-                            ? item.items.length > 0 &&
-                              item.items.map((items: any) => {
-                                return (
-                                  <ListItem disablePadding>
-                                    <ListItemButton
-                                      onClick={() => {
-                                        setFilters2((prev) => ({
-                                          ...prev,
-                                          isSearch: true,
-                                          group: items.group,
-                                          resource: items.office_resource_num,
-                                        }));
-                                        setFilters3((prev) => ({
-                                          ...prev,
-                                          isSearch: true,
-                                          group: items.group,
-                                          resource: items.office_resource_num,
-                                        }));
-                                      }}
-                                    >
-                                      <ListItemText
-                                        primary={items.resource_name}
-                                      />
-                                    </ListItemButton>
-                                  </ListItem>
-                                );
-                              })
-                            : ""}
-                        </List>
-                      </AccordionDetails>
-                    </Accordion>
-                  );
-                })
-              : ""}
-          </GridContainer>
-        </GridContainer>
-        <GridContainer
-          style={{
-            height: isMobile ? "100%" : "88vh",
-            paddingRight: "10px",
-          }}
-          width={`calc(100% - 370px)`}
-        >
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle></GridTitle>
-              <ButtonContainer>
-                <Button
-                  //onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
+          <SwiperSlide key={0}>
+          <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto", height: deviceHeight }}
+            >
+              {resultState.length > 0
+                ? resultState.map((item: any, index: any) => {
+                    return (
+                      <Accordion defaultExpanded={true}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1-content"
+                          id="panel1-header"
+                          style={{ backgroundColor: "#edf4fb" }}
+                        >
+                          <Typography>{item.text}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails
+                          style={{
+                            borderTop: "1px solid rgba(0, 0, 0, .125)",
+                          }}
+                        >
+                          <List>
+                            {item.items != undefined
+                              ? item.items.length > 0 &&
+                                item.items.map((items: any) => {
+                                  return (
+                                    <ListItem disablePadding>
+                                      <ListItemButton
+                                        onClick={() => {
+                                          setFilters2((prev) => ({
+                                            ...prev,
+                                            isSearch: true,
+                                            group: items.group,
+                                            resource: items.office_resource_num,
+                                          }));
+                                          setFilters3((prev) => ({
+                                            ...prev,
+                                            isSearch: true,
+                                            group: items.group,
+                                            resource: items.office_resource_num,
+                                          }));
+                                          if (swiper && isMobile) {
+                                            swiper.slideTo(1);
+                                          }
+                                        }}
+                                      >
+                                        <ListItemText
+                                          primary={items.resource_name}
+                                        />
+                                      </ListItemButton>
+                                    </ListItem>
+                                  );
+                                })
+                              : ""}
+                          </List>
+                        </AccordionDetails>
+                      </Accordion>
+                    );
+                  })
+                : ""}
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+          <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle></GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <Button
+                    //onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              {osstate == true ? (
+                <div
+                  style={{
+                    backgroundColor: "#ccc",
+                    height: deviceHeight - height,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  저장
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            {osstate == true ? (
-              <div
-                style={{
-                  backgroundColor: "#ccc",
-                  height: "100%",
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                현재 OS에서는 지원이 불가능합니다.
-              </div>
-            ) : (
-              <Scheduler
-                id="CM_A3100W_SCHEDULER"
+                  현재 OS에서는 지원이 불가능합니다.
+                </div>
+              ) : (
+                <Scheduler
+                // id="CM_A3100W_SCHEDULER"
                 data={data}
                 onDataChange={handleDataChange}
                 view={view}
@@ -758,30 +780,187 @@ const CM_A3100W: React.FC = () => {
                 footer={(props) => <React.Fragment />}
                 group={{
                   resources: ["전체"],
-                  orientation,
-                }}
-                resources={[
-                  {
-                    name: "전체",
-                    data: list,
-                    field: "resource",
-                    valueField: "value",
-                    textField: "text",
-                  },
-                ]}
-                form={FormWithCustomEditor}
-              >
-                <TimelineView showWorkHours={false} />
-                <DayView showWorkHours={false} />
-                <WeekView showWorkHours={false} />
-                <MonthView />
-                <AgendaView />
-              </Scheduler>
-            )}
-          </GridContainer>
-          <GridContainer style={{ marginTop: "10px" }}></GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+                    orientation,
+                  }}
+                  resources={[
+                    {
+                      name: "전체",
+                      data: list,
+                      field: "resource",
+                      valueField: "value",
+                      textField: "text",
+                    },
+                  ]}
+                  form={FormWithCustomEditor}                  
+                  height={deviceHeight - height}
+                >
+                  <TimelineView showWorkHours={false} />
+                  <DayView showWorkHours={false} />
+                  <WeekView showWorkHours={false} />
+                  <MonthView />
+                  <AgendaView />
+                </Scheduler>
+              )}
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer
+              width="355px"
+              style={{
+                height: isMobile ? "100%" : "88vh",
+                marginTop: "5px",
+                paddingRight: "10px",
+              }}
+            >
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>달력</GridTitle>
+                </GridTitleContainer>
+                <Calendar
+                  id="CM_A3100W_CALENDAR"
+                  focusedDate={filters.todt}
+                  value={filters.todt}
+                  onChange={filterInputChange}
+                />
+              </GridContainer>
+              <GridContainer style={{ marginTop: "5px" }}>
+                <GridTitleContainer>
+                  <GridTitle>자원</GridTitle>
+                </GridTitleContainer>
+                {resultState.length > 0
+                  ? resultState.map((item: any, index: any) => {
+                      return (
+                        <Accordion defaultExpanded={true}>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1-content"
+                            id="panel1-header"
+                            style={{ backgroundColor: "#edf4fb" }}
+                          >
+                            <Typography>{item.text}</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails
+                            style={{
+                              borderTop: "1px solid rgba(0, 0, 0, .125)",
+                            }}
+                          >
+                            <List>
+                              {item.items != undefined
+                                ? item.items.length > 0 &&
+                                  item.items.map((items: any) => {
+                                    return (
+                                      <ListItem disablePadding>
+                                        <ListItemButton
+                                          onClick={() => {
+                                            setFilters2((prev) => ({
+                                              ...prev,
+                                              isSearch: true,
+                                              group: items.group,
+                                              resource:
+                                                items.office_resource_num,
+                                            }));
+                                            setFilters3((prev) => ({
+                                              ...prev,
+                                              isSearch: true,
+                                              group: items.group,
+                                              resource:
+                                                items.office_resource_num,
+                                            }));
+                                          }}
+                                        >
+                                          <ListItemText
+                                            primary={items.resource_name}
+                                          />
+                                        </ListItemButton>
+                                      </ListItem>
+                                    );
+                                  })
+                                : ""}
+                            </List>
+                          </AccordionDetails>
+                        </Accordion>
+                      );
+                    })
+                  : ""}
+              </GridContainer>
+            </GridContainer>
+            <GridContainer
+              style={{
+                height: isMobile ? "100%" : "88vh",
+                paddingRight: "10px",
+              }}
+              width={`calc(100% - 370px)`}
+            >
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle></GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      //onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                {osstate == true ? (
+                  <div
+                    style={{
+                      backgroundColor: "#ccc",
+                      height: "100%",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    현재 OS에서는 지원이 불가능합니다.
+                  </div>
+                ) : (
+                  <Scheduler
+                    id="CM_A3100W_SCHEDULER"
+                    data={data}
+                    onDataChange={handleDataChange}
+                    view={view}
+                    onViewChange={handleViewChange}
+                    date={date}
+                    onDateChange={handleDateChange}
+                    editable={true}
+                    defaultDate={filters.todt}
+                    footer={(props) => <React.Fragment />}
+                    group={{
+                      resources: ["전체"],
+                      orientation,
+                    }}
+                    resources={[
+                      {
+                        name: "전체",
+                        data: list,
+                        field: "resource",
+                        valueField: "value",
+                        textField: "text",
+                      },
+                    ]}
+                    form={FormWithCustomEditor}
+                  >
+                    <TimelineView showWorkHours={false} />
+                    <DayView showWorkHours={false} />
+                    <WeekView showWorkHours={false} />
+                    <MonthView />
+                    <AgendaView />
+                  </Scheduler>
+                )}
+              </GridContainer>
+              <GridContainer style={{ marginTop: "10px" }}></GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
     </>
   );
 };
