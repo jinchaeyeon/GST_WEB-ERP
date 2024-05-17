@@ -224,7 +224,7 @@ const PanelBarNavContainer = (props: any) => {
       window.removeEventListener("unload", handleUnload);
       setIsFilterheightstates(0);
       setIsFilterHideStates(false);
-      setDeviceHeight(document.documentElement.clientHeight - 130);
+      setDeviceHeight(document.documentElement.clientHeight - 170);
     };
   }, [
     unsavedAttadatnums,
