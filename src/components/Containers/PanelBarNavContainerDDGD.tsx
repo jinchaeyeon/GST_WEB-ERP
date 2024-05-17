@@ -160,7 +160,7 @@ const PanelBarNavContainer = (props: any) => {
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
       setIsFilterheightstates(0);
-      setIsFilterHideStates(false);
+      setIsFilterHideStates(true);
       setDeviceHeight(document.documentElement.clientHeight - 170);
     };
   }, [
@@ -367,12 +367,19 @@ const PanelBarNavContainer = (props: any) => {
     useState<boolean>(false);
   const [systemOptionWindowWindowVisible, setSystemOptionWindowVisible] =
     useState<boolean>(false);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const onSelect = (event: PanelBarSelectEventArguments) => {
     const { route, className = "" } = event.target.props;
+
     props.history.push(route);
 
     if (route) {
+      if (isMobile) {
+        setIsFilterheightstates(0);
+        setIsFilterHideStates(true);
+        setDeviceHeight(document.documentElement.clientHeight - 170);
+      }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);
       setSystemOptionWindowVisible(false);
