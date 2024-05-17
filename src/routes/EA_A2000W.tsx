@@ -16,7 +16,7 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -64,9 +64,12 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import WordText from "../components/WordText";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -76,6 +79,19 @@ const dateField = ["recdt", "time"];
 const EA_A2000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -698,6 +714,9 @@ const EA_A2000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -792,6 +811,10 @@ const EA_A2000W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -1174,452 +1197,1040 @@ const EA_A2000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width="65%">
-          <GridContainer>
-            {filters.appgb == "B" ? (
-              <GridTitleContainer>
-                <GridTitle>미결함</GridTitle>
-                {permissions && (
+
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              {filters.appgb == "B" ? (
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>미결함</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APP");
+                        }}
+                        icon="check"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          processApproval("RETURN");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        반려
+                      </Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+              ) : filters.appgb == "C" ? (
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>기결함</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APPCANCEL");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인취소
+                      </Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+              ) : filters.appgb == "A" ? (
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>개인결재현황</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => onDeleteClick()}
+                      icon="delete"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+              ) : filters.appgb == "F" ? (
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>참조자확인</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+              ) : (
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>미결함</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APP");
+                        }}
+                        icon="check"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          processApproval("RETURN");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        반려
+                      </Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+              )}
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="결재관리"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      person: personListData.find(
+                        (item: any) => item.code == row.person
+                      )?.name,
+                      appyn: appynListData.find(
+                        (item: any) => item.code == row.appyn
+                      )?.name,
+                      pgmgb: pgmgbListData.find(
+                        (item: any) => item.sub_code == row.pgmgb
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  // 선택기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  {filters.appgb == "B" ? (
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                  ) : (
+                    ""
+                  )}
+
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                              locked={
+                                item.fixed == "None" || isMobile ? false : true
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        processApproval("APP");
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
                       }}
-                      icon="check"
+                      icon="chevron-left"
                       themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      승인
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        processApproval("RETURN");
-                      }}
-                      icon="x"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      반려
-                    </Button>
+                      fillMode={"flat"}
+                    ></Button>
+                    <GridTitle>결재자</GridTitle>
                   </ButtonContainer>
-                )}
-              </GridTitleContainer>
-            ) : filters.appgb == "C" ? (
-              <GridTitleContainer>
-                <GridTitle>기결함</GridTitle>
-                {permissions && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={() => {
-                        processApproval("APPCANCEL");
-                      }}
-                      icon="x"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      승인취소
-                    </Button>
-                  </ButtonContainer>
-                )}
-              </GridTitleContainer>
-            ) : filters.appgb == "A" ? (
-              <GridTitleContainer>
-                <GridTitle>개인결재현황</GridTitle>
-                <ButtonContainer>
                   <Button
-                    onClick={() => onDeleteClick()}
-                    icon="delete"
-                    fillMode="outline"
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(2);
+                      }
+                    }}
+                    icon="chevron-right"
                     themeColor={"primary"}
-                  >
-                    삭제
-                  </Button>
+                    fillMode={"flat"}
+                  ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-            ) : filters.appgb == "F" ? (
-              <GridTitleContainer>
-                <GridTitle>참조자확인</GridTitle>
-              </GridTitleContainer>
-            ) : (
-              <GridTitleContainer>
-                <GridTitle>미결함</GridTitle>
-                {permissions && (
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                fileName="결재관리"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height2 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      resno: personListData.find(
+                        (item: any) => item.code == row.resno
+                      )?.name,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      appline: applineListData.find(
+                        (item: any) => item.sub_code == row.appline
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  // 선택기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : item.fieldName == "appyn" ||
+                                    item.fieldName == "arbitragb"
+                                  ? CheckBoxReadOnlyCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        processApproval("APP");
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
                       }}
-                      icon="check"
+                      icon="chevron-left"
                       themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      승인
-                    </Button>
+                      fillMode={"flat"}
+                    ></Button>
+                    <GridTitle>참조자</GridTitle>
+                  </ButtonContainer>
+                  <ButtonContainer>
                     <Button
                       onClick={() => {
-                        processApproval("RETURN");
+                        if (swiper) {
+                          swiper.slideTo(3);
+                        }
                       }}
-                      icon="x"
-                      fillMode="outline"
+                      icon="chevron-right"
                       themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      반려
-                    </Button>
+                      fillMode={"flat"}
+                    ></Button>
                   </ButtonContainer>
-                )}
+                </ButtonContainer>
               </GridTitleContainer>
-            )}
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="결재관리"
-            >
-              <Grid
-                style={{ height: "27svh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    person: personListData.find(
-                      (item: any) => item.code == row.person
-                    )?.name,
-                    appyn: appynListData.find(
-                      (item: any) => item.code == row.appyn
-                    )?.name,
-                    pgmgb: pgmgbListData.find(
-                      (item: any) => item.sub_code == row.pgmgb
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                // 선택기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
+                fileName="결재관리"
               >
-                {filters.appgb == "B" ? (
-                  <GridColumn
-                    field="chk"
-                    title=" "
-                    width="45px"
-                    headerCell={CustomCheckBoxCell2}
-                    cell={CheckBoxCell}
-                  />
-                ) : (
-                  ""
-                )}
-
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]
-                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    ?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                            locked={
-                              item.fixed == "None" || isMobile ? false : true
-                            }
-                          />
-                        )
-                    )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-          <GridContainerWrap>
-            <GridContainer width="60%">
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>결재자</GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult2.data}
-                  ref={(exporter) => {
-                    _export2 = exporter;
+                <Grid
+                  style={{ height: deviceHeight - height2 }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      resno: personListData.find(
+                        (item: any) => item.code == row.resno
+                      )?.name,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      appgb: appgbListData.find(
+                        (item: any) => item.sub_code == row.appgb
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
+                  )}
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  // 선택기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
                   }}
-                  fileName="결재관리"
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
                 >
-                  <Grid
-                    style={{ height: "22vh" }}
-                    data={process(
-                      mainDataResult2.data.map((row) => ({
-                        ...row,
-                        resno: personListData.find(
-                          (item: any) => item.code == row.resno
-                        )?.name,
-                        postcd: postcdListData.find(
-                          (item: any) => item.sub_code == row.postcd
-                        )?.code_name,
-                        appline: applineListData.find(
-                          (item: any) => item.sub_code == row.appline
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                      })),
-                      mainDataState2
-                    )}
-                    {...mainDataState2}
-                    onDataStateChange={onMainDataStateChange2}
-                    // 선택기능
-                    dataItemKey={DATA_ITEM_KEY2}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange2}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult2.total}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={pageChange2}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef2}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange2}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]
-                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                        ?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : item.fieldName == "appyn" ||
-                                      item.fieldName == "arbitragb"
-                                    ? CheckBoxReadOnlyCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell2
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>참조자</GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult3.data}
-                  ref={(exporter) => {
-                    _export3 = exporter;
-                  }}
-                  fileName="결재관리"
-                >
-                  <Grid
-                    style={{ height: "22vh" }}
-                    data={process(
-                      mainDataResult3.data.map((row) => ({
-                        ...row,
-                        resno: personListData.find(
-                          (item: any) => item.code == row.resno
-                        )?.name,
-                        postcd: postcdListData.find(
-                          (item: any) => item.sub_code == row.postcd
-                        )?.code_name,
-                        appgb: appgbListData.find(
-                          (item: any) => item.sub_code == row.appgb
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                      })),
-                      mainDataState3
-                    )}
-                    {...mainDataState3}
-                    onDataStateChange={onMainDataStateChange3}
-                    // 선택기능
-                    dataItemKey={DATA_ITEM_KEY3}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange3}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult3.total}
-                    skip={page3.skip}
-                    take={page3.take}
-                    pageable={true}
-                    onPageChange={pageChange3}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef3}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange3}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"]
-                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                        ?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell3
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell3
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
-            <GridContainer width={`calc(40% - ${GAP}px)`}>
+          </SwiperSlide>
+          <SwiperSlide key={3}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
               <CommentsGrid
                 ref_key={filters2.appnum}
                 form_id={"EA_A2000W"}
                 table_id={"EA100T"}
-                style={{ height: "47.7vh" }}
+                style={{ height: `${deviceHeight - height}px` }}
               ></CommentsGrid>
             </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={4}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer>
+                <GridTitle>
+                  <WordText
+                    wordInfoData={wordInfoData}
+                    controlName="grtlPreview"
+                    altText="결재문서 미리보기"
+                  />
+                </GridTitle>
+              </GridTitleContainer>
+              <GridContainer
+                style={{
+                  height: deviceHeight - height2,
+                  overflow: "auto",
+                  border: "solid 1px #e6e6e6",
+                  margin: "5px 0",
+                }}
+              >
+                {filters2.pgmgb == "지출결의서" ||
+                filters2.pgmgb == "X" ||
+                filters2.pgmgb == "Z" ? (
+                  <CashDisbursementVoucher
+                    data={
+                      mainDataResult.data.filter(
+                        (item) =>
+                          item[DATA_ITEM_KEY] ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0]
+                    }
+                  />
+                ) : filters2.pgmgb == "근태허가신청" ||
+                  filters2.pgmgb == "W" ? (
+                  <AbsenceRequest
+                    data={
+                      mainDataResult.data.filter(
+                        (item) =>
+                          item[DATA_ITEM_KEY] ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0]
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+              </GridContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width="65%">
+              <GridContainer>
+                {filters.appgb == "B" ? (
+                  <GridTitleContainer>
+                    <GridTitle>미결함</GridTitle>
+                    {permissions && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            processApproval("APP");
+                          }}
+                          icon="check"
+                          themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
+                        >
+                          승인
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            processApproval("RETURN");
+                          }}
+                          icon="x"
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
+                        >
+                          반려
+                        </Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+                ) : filters.appgb == "C" ? (
+                  <GridTitleContainer>
+                    <GridTitle>기결함</GridTitle>
+                    {permissions && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            processApproval("APPCANCEL");
+                          }}
+                          icon="x"
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
+                        >
+                          승인취소
+                        </Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+                ) : filters.appgb == "A" ? (
+                  <GridTitleContainer>
+                    <GridTitle>개인결재현황</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => onDeleteClick()}
+                        icon="delete"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        삭제
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                ) : filters.appgb == "F" ? (
+                  <GridTitleContainer>
+                    <GridTitle>참조자확인</GridTitle>
+                  </GridTitleContainer>
+                ) : (
+                  <GridTitleContainer>
+                    <GridTitle>미결함</GridTitle>
+                    {permissions && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            processApproval("APP");
+                          }}
+                          icon="check"
+                          themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
+                        >
+                          승인
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            processApproval("RETURN");
+                          }}
+                          icon="x"
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
+                        >
+                          반려
+                        </Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+                )}
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="결재관리"
+                >
+                  <Grid
+                    style={{ height: "27svh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        person: personListData.find(
+                          (item: any) => item.code == row.person
+                        )?.name,
+                        appyn: appynListData.find(
+                          (item: any) => item.code == row.appyn
+                        )?.name,
+                        pgmgb: pgmgbListData.find(
+                          (item: any) => item.sub_code == row.pgmgb
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    // 선택기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    {filters.appgb == "B" ? (
+                      <GridColumn
+                        field="chk"
+                        title=" "
+                        width="45px"
+                        headerCell={CustomCheckBoxCell2}
+                        cell={CheckBoxCell}
+                      />
+                    ) : (
+                      ""
+                    )}
+
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                                locked={
+                                  item.fixed == "None" || isMobile
+                                    ? false
+                                    : true
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <GridContainerWrap>
+                <GridContainer width="60%">
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>결재자</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="결재관리"
+                    >
+                      <Grid
+                        style={{ height: "22vh" }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            resno: personListData.find(
+                              (item: any) => item.code == row.resno
+                            )?.name,
+                            postcd: postcdListData.find(
+                              (item: any) => item.sub_code == row.postcd
+                            )?.code_name,
+                            appline: applineListData.find(
+                              (item: any) => item.sub_code == row.appline
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        // 선택기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : item.fieldName == "appyn" ||
+                                          item.fieldName == "arbitragb"
+                                        ? CheckBoxReadOnlyCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>참조자</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="결재관리"
+                    >
+                      <Grid
+                        style={{ height: "22vh" }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            resno: personListData.find(
+                              (item: any) => item.code == row.resno
+                            )?.name,
+                            postcd: postcdListData.find(
+                              (item: any) => item.sub_code == row.postcd
+                            )?.code_name,
+                            appgb: appgbListData.find(
+                              (item: any) => item.sub_code == row.appgb
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        // 선택기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef3}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </GridContainer>
+                <GridContainer width={`calc(40% - ${GAP}px)`}>
+                  <CommentsGrid
+                    ref_key={filters2.appnum}
+                    form_id={"EA_A2000W"}
+                    table_id={"EA100T"}
+                    style={{ height: "47.7vh" }}
+                  ></CommentsGrid>
+                </GridContainer>
+              </GridContainerWrap>
+            </GridContainer>
+            <GridContainer
+              className="preview-grid-container"
+              width={`calc(35% - ${GAP}px)`}
+            >
+              <GridTitleContainer>
+                <GridTitle>
+                  <WordText
+                    wordInfoData={wordInfoData}
+                    controlName="grtlPreview"
+                    altText="결재문서 미리보기"
+                  />
+                </GridTitle>
+              </GridTitleContainer>
+              <GridContainer
+                style={{
+                  height: "79vh",
+                  overflow: "auto",
+                  border: "solid 1px #e6e6e6",
+                  margin: "5px 0",
+                }}
+              >
+                {filters2.pgmgb == "지출결의서" ||
+                filters2.pgmgb == "X" ||
+                filters2.pgmgb == "Z" ? (
+                  <CashDisbursementVoucher
+                    data={
+                      mainDataResult.data.filter(
+                        (item) =>
+                          item[DATA_ITEM_KEY] ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0]
+                    }
+                  />
+                ) : filters2.pgmgb == "근태허가신청" ||
+                  filters2.pgmgb == "W" ? (
+                  <AbsenceRequest
+                    data={
+                      mainDataResult.data.filter(
+                        (item) =>
+                          item[DATA_ITEM_KEY] ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0]
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+              </GridContainer>
+            </GridContainer>
           </GridContainerWrap>
-        </GridContainer>
-        <GridContainer
-          className="preview-grid-container"
-          width={`calc(35% - ${GAP}px)`}
-        >
-          <GridTitleContainer>
-            <GridTitle>
-              <WordText
-                wordInfoData={wordInfoData}
-                controlName="grtlPreview"
-                altText="결재문서 미리보기"
-              />
-            </GridTitle>
-          </GridTitleContainer>
-          <GridContainer
-            style={{
-              height: "79vh",
-              overflow: "auto",
-              border: "solid 1px #e6e6e6",
-              margin: "5px 0",
-            }}
-          >
-            {filters2.pgmgb == "지출결의서" ||
-            filters2.pgmgb == "X" ||
-            filters2.pgmgb == "Z" ? (
-              <CashDisbursementVoucher
-                data={
-                  mainDataResult.data.filter(
-                    (item) =>
-                      item[DATA_ITEM_KEY] ==
-                      Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined
-                    ? ""
-                    : mainDataResult.data.filter(
-                        (item) =>
-                          item[DATA_ITEM_KEY] ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0]
-                }
-              />
-            ) : filters2.pgmgb == "근태허가신청" || filters2.pgmgb == "W" ? (
-              <AbsenceRequest
-                data={
-                  mainDataResult.data.filter(
-                    (item) =>
-                      item[DATA_ITEM_KEY] ==
-                      Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined
-                    ? ""
-                    : mainDataResult.data.filter(
-                        (item) =>
-                          item[DATA_ITEM_KEY] ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0]
-                }
-              />
-            ) : (
-              ""
-            )}
-          </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+        </>
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
