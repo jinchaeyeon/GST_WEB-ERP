@@ -1003,7 +1003,7 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [tabSelected, setTabSelected] = useState(0);
   const idGetter = getter(DATA_ITEM_KEY);

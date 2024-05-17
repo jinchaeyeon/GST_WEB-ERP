@@ -88,7 +88,7 @@ const SA_B2410: React.FC = () => {
   const detailId2Getter = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   var index2 = 0;

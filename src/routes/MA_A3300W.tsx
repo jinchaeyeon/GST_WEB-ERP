@@ -92,7 +92,7 @@ const DETAIL_DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let deviceHeight = window.innerHeight - 50;
 let isMobile = deviceWidth <= 1200;
 var index = 0;

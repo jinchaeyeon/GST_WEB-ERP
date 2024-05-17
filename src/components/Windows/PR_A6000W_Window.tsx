@@ -74,7 +74,7 @@ const CopyWindow = ({
   pathname,
 }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

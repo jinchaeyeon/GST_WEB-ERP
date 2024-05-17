@@ -140,7 +140,7 @@ type TdataArr2 = {
   pubperson_s: string[];
   advanceinfo_s: string[];
 };
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let isMobile = deviceWidth <= 1200;
 var index = 0;
 

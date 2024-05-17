@@ -2481,7 +2481,7 @@ const SA_A1100_603W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%", paddingBottom: window.innerWidth <= 1200 ? "50px" : "" }}
+        style={{ width: "100%", paddingBottom: document.documentElement.clientWidth <= 1200 ? "50px" : "" }}
       >
         <TabStripTab title="요약정보">
           <FilterContainer>

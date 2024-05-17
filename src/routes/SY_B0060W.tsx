@@ -48,7 +48,7 @@ const DATA_ITEM_KEY = "datnum";
 const SY_B0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = window.innerHeight;
 
   let isMobile = deviceWidth <= 1200;

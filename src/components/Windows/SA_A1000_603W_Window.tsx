@@ -27,7 +27,7 @@ const SA_A1000_603W_Window = ({
   quorev,
   modal = false,
 }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   const [loginResult] = useRecoilState(loginResultState);

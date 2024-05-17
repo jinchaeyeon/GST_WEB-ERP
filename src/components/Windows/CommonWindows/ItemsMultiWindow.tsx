@@ -42,7 +42,7 @@ let targetRowIndex: null | number = null;
 let temp = 0;
 
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

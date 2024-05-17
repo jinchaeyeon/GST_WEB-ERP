@@ -7,7 +7,7 @@ interface FloatingToolbarExampleProps {
 }
 
 const FileViewers: React.FC<FloatingToolbarExampleProps> = ({ fileUrl }) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   if (isMobile) {

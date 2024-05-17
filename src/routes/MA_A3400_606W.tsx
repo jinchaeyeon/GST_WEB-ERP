@@ -99,7 +99,7 @@ const MA_A3400_606W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

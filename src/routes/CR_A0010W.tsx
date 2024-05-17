@@ -428,7 +428,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const CR_A0010W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");

@@ -65,6 +65,8 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
+  isFilterHideState,
   isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
@@ -74,7 +76,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -148,7 +150,9 @@ const PanelBarNavContainer = (props: any) => {
   const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
-
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
@@ -218,6 +222,9 @@ const PanelBarNavContainer = (props: any) => {
       unlisten();
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
+      setIsFilterheightstates(0);
+      setIsFilterHideStates(false);
+      setDeviceHeight(document.documentElement.clientHeight - 130);
     };
   }, [
     unsavedAttadatnums,
@@ -324,14 +331,6 @@ const PanelBarNavContainer = (props: any) => {
     });
   }, []);
 
-  window.addEventListener('beforeunload', (event) => {
-    // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
-    event.preventDefault();
-    setIsFilterheightstates(0);
-    // 대표적으로 Chrome에서는 returnValue 설정이 필요합니다.
-    event.returnValue = '';
-  });
- 
   const fetchToDeletedName = useCallback(async (saved_name: string[]) => {
     let data: any;
 
@@ -883,7 +882,7 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv
             isMobileMenuOpend={isMobileMenuOpend}
             theme={"#2289c3"}
-            style={{ paddingBottom: window.innerWidth <= 1200 ? "100px" : "" }}
+            style={{ paddingBottom: document.documentElement.clientWidth <= 1200 ? "100px" : "" }}
           >
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               {companyCode == "2302BA03" ? (

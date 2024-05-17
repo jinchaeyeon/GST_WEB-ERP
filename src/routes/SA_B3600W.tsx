@@ -80,7 +80,7 @@ const SA_B3600W: React.FC = () => {
       function handleResize() {
         // Set window width/height to state
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

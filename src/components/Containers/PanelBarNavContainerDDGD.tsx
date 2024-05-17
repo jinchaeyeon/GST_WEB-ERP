@@ -31,6 +31,8 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
+  isFilterHideState,
   isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
@@ -39,7 +41,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
@@ -85,6 +87,9 @@ const PanelBarNavContainer = (props: any) => {
   const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
@@ -129,14 +134,6 @@ const PanelBarNavContainer = (props: any) => {
   //   };
   // }, []);
 
-  window.addEventListener('beforeunload', (event) => {
-    // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
-    event.preventDefault();
-    setIsFilterheightstates(0);
-    // 대표적으로 Chrome에서는 returnValue 설정이 필요합니다.
-    event.returnValue = '';
-  });
-  
   // 새로고침하거나 Path 변경 시
   useEffect(() => {
     const handleTabClose = (event: BeforeUnloadEvent) => {
@@ -162,6 +159,9 @@ const PanelBarNavContainer = (props: any) => {
       unlisten();
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
+      setIsFilterheightstates(0);
+      setIsFilterHideStates(false);
+      setDeviceHeight(document.documentElement.clientHeight - 130);
     };
   }, [
     unsavedAttadatnums,

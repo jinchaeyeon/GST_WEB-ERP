@@ -73,7 +73,7 @@ const CR_A0000W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [changeDate, setChangeDate] = useState<string>("");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const size: Tsize = useWindowSize();
   const [adjnumber, setAdjnumber] = useState<number>(0);
@@ -90,7 +90,7 @@ const CR_A0000W: React.FC = () => {
       function handleResize() {
         // Set window width/height to state
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

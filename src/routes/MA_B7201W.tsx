@@ -93,7 +93,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let deviceHeight = window.innerHeight - 50;
 let isMobile = deviceWidth <= 1200;
 var index = 0;

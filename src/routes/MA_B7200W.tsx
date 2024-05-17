@@ -111,7 +111,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const MA_B7200W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   var height = 0;

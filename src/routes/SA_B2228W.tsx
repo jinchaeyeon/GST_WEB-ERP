@@ -33,7 +33,7 @@ import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
 
 const SA_B2228W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);

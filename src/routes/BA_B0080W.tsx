@@ -49,7 +49,7 @@ let list: any[] = [];
 const DATA_ITEM_KEY = "num";
 
 const BA_B0080W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   let isMobile = deviceWidth <= 1200;

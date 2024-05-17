@@ -383,7 +383,7 @@ const BA_A0080: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

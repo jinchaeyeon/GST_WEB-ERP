@@ -77,7 +77,7 @@ const DATA_ITEM_KEY = "num";
 var index = 0;
 
 const QC_A0120: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");

@@ -67,7 +67,7 @@ const CM_A2000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var height = 0;
   var container = document.querySelector(".ButtonContainer");

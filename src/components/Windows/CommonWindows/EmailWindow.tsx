@@ -32,7 +32,7 @@ const KendoWindow = ({
   modal = false,
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({

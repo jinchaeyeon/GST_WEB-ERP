@@ -404,7 +404,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let isMobile = deviceWidth <= 1200;
 
 const MA_A7000W: React.FC = () => {

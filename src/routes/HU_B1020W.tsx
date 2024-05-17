@@ -51,7 +51,7 @@ const DATA_ITEM_KEY = "num";
 const dateField = ["birdt", "regorgdt", "rtrdt"];
 
 const HU_B1020W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);

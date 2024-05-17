@@ -95,7 +95,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   };
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [state, setState] = useState("1");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);

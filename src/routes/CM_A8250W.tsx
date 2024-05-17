@@ -106,7 +106,7 @@ const CM_A8250W: React.FC = () => {
   UseParaPc(setPc);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

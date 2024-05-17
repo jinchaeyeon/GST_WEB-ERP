@@ -658,7 +658,7 @@ const SA_B2200W_603: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ paddingBottom: window.innerWidth <= 1200 ? "50px" : "" }}
+        style={{ paddingBottom: document.documentElement.clientWidth <= 1200 ? "50px" : "" }}
       >
         <ExcelExport
           data={mainDataResult.data}

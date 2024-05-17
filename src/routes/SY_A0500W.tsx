@@ -92,9 +92,9 @@ const boardStyle: CSSProperties = {
   flexWrap: "wrap",
 };
 const containerStyle: CSSProperties = {
-  width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
+  width: document.documentElement.clientWidth <= 1200 ? `${document.documentElement.clientWidth - 30}px` : "100%",
   height:
-    window.innerWidth <= 1200
+    document.documentElement.clientWidth <= 1200
       ? `${(window.innerHeight - 100) * 0.6}px`
       : "80vh",
   border: "1px solid gray",
@@ -110,7 +110,7 @@ const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
     const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");
