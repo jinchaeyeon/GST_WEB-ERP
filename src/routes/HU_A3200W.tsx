@@ -21,7 +21,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -64,7 +64,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -212,6 +212,17 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const HU_A3200W: React.FC = () => {
+  
+ let deviceWidth = window.innerWidth;
+ const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+ let isMobile = deviceWidth <= 1200;
+ var height = 0;
+
+ var container = document.querySelector(".ButtonContainer");
+
+ if (container?.clientHeight != undefined) {
+   height = container == undefined ? 0 : container.clientHeight;
+ }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1009,8 +1020,8 @@ const HU_A3200W: React.FC = () => {
           // fetchGrid,
         }}
       >
-        <GridContainer>
-          <GridTitleContainer>
+        <GridContainer style={{ width: "100%" }}>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
@@ -1043,7 +1054,7 @@ const HU_A3200W: React.FC = () => {
             fileName="사회보험고지내역"
           >
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: isMobile ? deviceHeight - height : "80vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

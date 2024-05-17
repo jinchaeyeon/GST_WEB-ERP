@@ -1634,7 +1634,7 @@ const HU_B4010W: React.FC = () => {
                   </ButtonContainer>
                   <GridTitle>업무효율 및 능률</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart style={{ height: (deviceHeight - height)/3 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1656,7 +1656,7 @@ const HU_B4010W: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>인사고과 - 기본항목</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart style={{ height: (deviceHeight - height)/3 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1678,7 +1678,7 @@ const HU_B4010W: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart style={{ height: (deviceHeight - height)/3 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1710,7 +1710,7 @@ const HU_B4010W: React.FC = () => {
                     <Button
                       onClick={() => {
                         if (swiper) {
-                          swiper.slideTo(0);
+                          swiper.slideTo(1);
                         }
                       }}
                       icon="arrow-left"
