@@ -624,22 +624,21 @@ type TdataArr = {
 };
 
 const HU_A3080W: React.FC = () => {
-  
- let deviceWidth = window.innerWidth;
- const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
- let isMobile = deviceWidth <= 1200;
- var height = 0;
- var height2 = 0;
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
 
- var container = document.querySelector(".ButtonContainer");
- var container2 = document.querySelector(".k-tabstrip-items-wrapper");
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".k-tabstrip-items-wrapper");
 
- if (container?.clientHeight != undefined) {
-   height = container == undefined ? 0 : container.clientHeight;
- }
- if (container2?.clientHeight != undefined) {
-  height2 = container2 == undefined ? 0 : container2.clientHeight;
-}
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
@@ -4405,6 +4404,125 @@ const HU_A3080W: React.FC = () => {
     }
     setLoading(false);
   };
+  const renderFilterContainer = () => (
+    <FilterContainer>
+      <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+        <tbody>
+          <tr>
+            <th>급여년월</th>
+            <td>
+              {tabSelected === 0 ? (
+                <DatePicker
+                  name="payyrmm"
+                  value={filters.payyrmm}
+                  format="yyyy-MM"
+                  className="readonly"
+                  placeholder=""
+                  calendar={MonthCalendar}
+                />
+              ) : (
+                <DatePicker
+                  name="payyrmm"
+                  value={filters.payyrmm}
+                  format="yyyy-MM"
+                  onChange={filterInputChange}
+                  className="required"
+                  placeholder=""
+                  calendar={MonthCalendar}
+                />
+              )}
+            </td>
+            <th>수당구분</th>
+            <td>
+              {customOptionData && (
+                <CustomOptionRadioGroup
+                  name="paydeductdiv"
+                  customOptionData={customOptionData}
+                  changeData={filterRadioChange}
+                />
+              )}
+            </td>
+            <th>재직여부</th>
+            <td>
+              {customOptionData && (
+                <CustomOptionRadioGroup
+                  name="rtrchk"
+                  customOptionData={customOptionData}
+                  changeData={filterRadioChange}
+                />
+              )}
+            </td>
+          </tr>
+          <tr>
+            <th>급여유형</th>
+            <td>
+              {tabSelected === 3
+                ? customOptionData && (
+                    <CustomOptionComboBox
+                      name="paytype"
+                      value={filters.paytype}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      disabled={true}
+                      className="readonly"
+                    />
+                  )
+                : customOptionData && (
+                    <CustomOptionComboBox
+                      name="paytype"
+                      value={filters.paytype}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+            </td>
+            <th>사번</th>
+            <td>
+              <Input
+                name="prsnnum"
+                type="text"
+                value={filters.prsnnum}
+                onChange={filterInputChange}
+              />
+              <ButtonInInput>
+                <Button
+                  onClick={onUserWndClick}
+                  icon="more-horizontal"
+                  fillMode="flat"
+                />
+              </ButtonInInput>
+            </td>
+            <th>성명</th>
+            <td>
+              <Input
+                name="prsnnm"
+                type="text"
+                value={filters.prsnnm}
+                onChange={filterInputChange}
+              />
+            </td>
+            {tabSelected === 4 && filters5.paydeductdiv === "1" ? null : (
+              <>
+                <th>지급항목코드</th>
+                <td>
+                  {customOptionData && (
+                    <CustomOptionComboBox
+                      name="payitemcd"
+                      value={filters.payitemcd}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      textField="payitemnm"
+                      valueField="payitemcd"
+                    />
+                  )}
+                </td>
+              </>
+            )}
+          </tr>
+        </tbody>
+      </FilterBox>
+    </FilterContainer>
+  );
 
   return (
     <>
@@ -4421,125 +4539,7 @@ const HU_A3080W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>급여년월</th>
-              <td>
-                {tabSelected == 0 ? (
-                  <DatePicker
-                    name="payyrmm"
-                    value={filters.payyrmm}
-                    format="yyyy-MM"
-                    className="readonly"
-                    placeholder=""
-                    calendar={MonthCalendar}
-                  />
-                ) : (
-                  <DatePicker
-                    name="payyrmm"
-                    value={filters.payyrmm}
-                    format="yyyy-MM"
-                    onChange={filterInputChange}
-                    className="required"
-                    placeholder=""
-                    calendar={MonthCalendar}
-                  />
-                )}
-              </td>
-              <th>수당구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="paydeductdiv"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-              <th>재직여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="rtrchk"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>급여유형</th>
-              <td>
-                {tabSelected == 3
-                  ? customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="paytype"
-                        value={filters.paytype}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        disabled={true}
-                        className="readonly"
-                      />
-                    )
-                  : customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="paytype"
-                        value={filters.paytype}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-              </td>
-              <th>사번</th>
-              <td>
-                <Input
-                  name="prsnnum"
-                  type="text"
-                  value={filters.prsnnum}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onUserWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>성명</th>
-              <td>
-                <Input
-                  name="prsnnm"
-                  type="text"
-                  value={filters.prsnnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              {tabSelected == 4 && filters5.paydeductdiv == "1" ? (
-                ""
-              ) : (
-                <>
-                  <th>지급항목코드</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="payitemcd"
-                        value={filters.payitemcd}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        textField="payitemnm"
-                        valueField="payitemcd"
-                      />
-                    )}
-                  </td>
-                </>
-              )}
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+      {isMobile ? <></> : <>{renderFilterContainer()}</>}
       <TabStrip
         style={{ width: "100%" }}
         selected={tabSelected}
@@ -4560,8 +4560,8 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+              {isMobile ? <>{renderFilterContainer()}</> : <></>}
+              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -4600,7 +4600,9 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                  }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -4649,40 +4651,42 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : radioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : radioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -4703,8 +4707,8 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+              {isMobile ? <>{renderFilterContainer()}</> : <></>}
+              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -4750,7 +4754,9 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                  }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -4802,42 +4808,44 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : radioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell2
-                                : dateField.includes(item.fieldName)
-                                ? MonthDateCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField2.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell2
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : radioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell2
+                                  : dateField.includes(item.fieldName)
+                                  ? MonthDateCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField2.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -4858,8 +4866,8 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+              {isMobile ? <>{renderFilterContainer()}</> : <></>}
+              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -4905,7 +4913,9 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                  }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -4957,42 +4967,44 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : radioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell3
-                                : dateField.includes(item.fieldName)
-                                ? MonthDateCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField2.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell3
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell3
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList3"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : radioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell3
+                                  : dateField.includes(item.fieldName)
+                                  ? MonthDateCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField2.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell3
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell3
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -5013,8 +5025,8 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+              {isMobile ? <>{renderFilterContainer()}</> : <></>}
+              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -5053,7 +5065,9 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                  }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,
@@ -5105,42 +5119,44 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : radioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell4
-                                : dateField.includes(item.fieldName)
-                                ? MonthDateCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField2.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell4
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell4
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList4"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : radioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell4
+                                  : dateField.includes(item.fieldName)
+                                  ? MonthDateCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField2.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell4
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell4
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -5161,8 +5177,8 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+              {isMobile ? <>{renderFilterContainer()}</> : <></>}
+              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -5201,7 +5217,9 @@ const HU_A3080W: React.FC = () => {
                 fileName="지급공제처리"
               >
                 <Grid
-                  style={{ height: isMobile ? deviceHeight - height - height2 : "70vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                  }}
                   data={process(
                     mainDataResult5.data.map((row) => ({
                       ...row,
@@ -5253,42 +5271,44 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList5"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : radioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell5
-                                : dateField.includes(item.fieldName)
-                                ? MonthDateCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField2.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell5
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell5
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList5"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : radioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell5
+                                  : dateField.includes(item.fieldName)
+                                  ? MonthDateCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField2.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell5
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell5
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>

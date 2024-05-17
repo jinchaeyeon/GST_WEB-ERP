@@ -25,13 +25,14 @@ function PaperComponent(props: PaperProps) {
 }
 
 const KendoWindow = ({ setVisible }: IKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? window.innerHeight : 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
 
   const onClose = () => {

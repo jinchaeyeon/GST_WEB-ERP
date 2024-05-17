@@ -94,7 +94,7 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

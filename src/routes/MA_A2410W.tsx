@@ -91,7 +91,7 @@ var index = 0;
 
 const MA_A2410W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var height = 0;
   var height2 = 0;

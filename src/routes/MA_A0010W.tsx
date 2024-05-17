@@ -69,7 +69,7 @@ const requiredfield = ["sub_code"];
 let temp = 0;
 let deletedMainRows: object[] = [];
 let targetRowIndex: null | number = null;
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let isMobile = deviceWidth <= 1200;
 
 const MA_A0010W: React.FC = () => {

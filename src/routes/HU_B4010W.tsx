@@ -6,6 +6,7 @@ import {
   styled,
 } from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import {
   Chart,
   ChartCategoryAxis,
@@ -33,6 +34,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -43,7 +47,6 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
 import DateCell from "../components/Cells/DateCell";
@@ -68,15 +71,11 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { log } from "console";
-import { Button } from "@progress/kendo-react-buttons";
 var index = 0;
 
 const dateField = ["baddt", "reqdt"];
@@ -95,18 +94,21 @@ let targetRowIndex5: null | number = null;
 
 const HU_B4010W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
   var height2 = 0;
   var height3 = 0;
   var height4 = 0;
-
+  var height5 = 0;
+  var height6 = 0;
   var container = document.querySelector(".ButtonContainer");
   var container2 = document.querySelector(".ButtonContainer2");
   var container3 = document.querySelector(".k-tabstrip-items-wrapper");
   var container4 = document.querySelector(".ButtonContainer4");
+  var container5 = document.querySelector(".ButtonContainer5");
+  var container6 = document.querySelector(".ButtonContainer6");
 
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
@@ -119,6 +121,12 @@ const HU_B4010W: React.FC = () => {
   }
   if (container4?.clientHeight != undefined) {
     height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
+  if (container5?.clientHeight != undefined) {
+    height5 = container5 == undefined ? 0 : container5.clientHeight;
+  }
+  if (container6?.clientHeight != undefined) {
+    height6 = container6 == undefined ? 0 : container6.clientHeight;
   }
   const setLoading = useSetRecoilState(isLoading);
 
@@ -1054,7 +1062,7 @@ const HU_B4010W: React.FC = () => {
         setDate10(new Date(year, month - 9, day));
         setDate11(new Date(year, month - 10, day));
         setDate12(new Date(year, month - 11, day));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -1634,7 +1642,11 @@ const HU_B4010W: React.FC = () => {
                   </ButtonContainer>
                   <GridTitle>업무효율 및 능률</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart
+                  style={{
+                    height: (deviceHeight - height - height5 - height6) / 3,
+                  }}
+                >
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1653,10 +1665,14 @@ const HU_B4010W: React.FC = () => {
                   </ChartCategoryAxis>
                   <ChartSeries>{Barchart()}</ChartSeries>
                 </Chart>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer5">
                   <GridTitle>인사고과 - 기본항목</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart
+                  style={{
+                    height: (deviceHeight - height - height5 - height6) / 3,
+                  }}
+                >
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1675,10 +1691,14 @@ const HU_B4010W: React.FC = () => {
                   </ChartCategoryAxis>
                   <ChartSeries>{Barchart2()}</ChartSeries>
                 </Chart>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer6">
                   <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "22vh" }}>
+                <Chart
+                  style={{
+                    height: (deviceHeight - height - height5 - height6) / 3,
+                  }}
+                >
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -1710,7 +1730,7 @@ const HU_B4010W: React.FC = () => {
                     <Button
                       onClick={() => {
                         if (swiper) {
-                          swiper.slideTo(0);
+                          swiper.slideTo(1);
                         }
                       }}
                       icon="arrow-left"
@@ -1988,7 +2008,9 @@ const HU_B4010W: React.FC = () => {
                       fileName="인사고과 모니터링"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 - height4 }}
+                        style={{
+                          height: deviceHeight - height2 - height3 - height4,
+                        }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2102,7 +2124,9 @@ const HU_B4010W: React.FC = () => {
                       fileName="인사고과 모니터링"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 - height4 }}
+                        style={{
+                          height: deviceHeight - height2 - height3 - height4,
+                        }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,

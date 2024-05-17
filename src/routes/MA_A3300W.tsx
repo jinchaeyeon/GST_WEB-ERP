@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -66,9 +69,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DateField = ["recdt", "enddt"];
 
@@ -92,12 +92,11 @@ const DETAIL_DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_A3300W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;
@@ -1074,7 +1073,7 @@ const MA_A3300W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -1286,8 +1285,8 @@ const MA_A3300W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} >
-              <GridContainer style={{ width: "100%"  }}>
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
@@ -1371,65 +1370,67 @@ const MA_A3300W: React.FC = () => {
                   >
                     <GridColumn cell={CommandCell} width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : NumberField2.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  DateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : NumberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
 
-            <SwiperSlide key={1} >
+            <SwiperSlide key={1}>
               <GridContainer style={{ width: "100%" }}>
-              <GridTitleContainer className="ButtonContainer2">
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    width: "100%",
-                  }}
-                >
-                  <ButtonContainer>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                    >
-                      이전
-                    </Button>
-                  </ButtonContainer>
-                </div>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitleContainer>
+                    <GridTitle>상세정보</GridTitle>
+                  </GridTitleContainer>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      width: "100%",
+                    }}
+                  >
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                    </ButtonContainer>
+                  </div>
                 </GridTitleContainer>
                 <ExcelExport
                   data={detailDataResult.data}
@@ -1484,32 +1485,34 @@ const MA_A3300W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 1
-                                  ? detailTotalFooterCell
-                                  : NumberField2.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell2
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : DateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 1
+                                    ? detailTotalFooterCell
+                                    : NumberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -1600,32 +1603,34 @@ const MA_A3300W: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : NumberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : NumberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -1683,32 +1688,34 @@ const MA_A3300W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : DateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 1
-                              ? detailTotalFooterCell
-                              : NumberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList2"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : DateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 1
+                                ? detailTotalFooterCell
+                                : NumberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

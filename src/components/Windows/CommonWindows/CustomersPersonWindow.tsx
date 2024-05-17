@@ -51,13 +51,14 @@ const KendoWindow = ({
   custcd,
   modal = false,
 }: IKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 750,
+    height: isMobile == true ? deviceHeight : 750,
   });
 
   const setLoading = useSetRecoilState(isLoading);

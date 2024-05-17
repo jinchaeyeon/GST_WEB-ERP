@@ -109,7 +109,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");

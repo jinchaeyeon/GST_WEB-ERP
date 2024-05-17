@@ -72,7 +72,7 @@ const YearDateField = ["yyyymm"];
 const CenterField = ["insert_time"];
 
 const HU_B4001W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

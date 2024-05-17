@@ -223,7 +223,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
 const HU_B4000W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
@@ -1391,6 +1391,9 @@ const HU_B4000W: React.FC = () => {
           setPage2(initialPageState);
           setPage3(initialPageState);
           setPage4(initialPageState);
+          if(swiper) {
+            swiper.slideTo(0);
+          }
         }
       } catch (e) {
         alert(e);
@@ -1404,6 +1407,9 @@ const HU_B4000W: React.FC = () => {
           resetAllGrid2();
           setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
           setPage5(initialPageState); // 페이지 초기화
+          if(swiper) {
+            swiper.slideTo(0);
+          }
         }
       } catch (e) {
         alert(e);

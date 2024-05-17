@@ -66,7 +66,7 @@ const CM_A1000W_617: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;

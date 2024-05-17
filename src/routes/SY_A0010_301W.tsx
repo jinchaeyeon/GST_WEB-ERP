@@ -105,7 +105,7 @@ const Page: React.FC = () => {
   const [num4, setNum4] = useState("숫자참조4");
   const [num5, setNum5] = useState("숫자참조5");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

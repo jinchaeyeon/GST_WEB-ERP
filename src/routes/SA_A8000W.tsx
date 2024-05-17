@@ -111,7 +111,7 @@ const SA_A8000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;

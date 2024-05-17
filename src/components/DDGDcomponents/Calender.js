@@ -11,7 +11,7 @@ import {
 } from "../CommonFunction";
 
 function App(props) {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const data =
     props.data == undefined

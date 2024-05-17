@@ -188,7 +188,7 @@ const PAGE_SIZE = 10000;
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const HU_A1000W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

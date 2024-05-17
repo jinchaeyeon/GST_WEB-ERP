@@ -132,7 +132,7 @@ const MA_A3500W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const processApi = useApi();
   const [pc, setPc] = useState("");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   let isMobile = deviceWidth <= 1200;

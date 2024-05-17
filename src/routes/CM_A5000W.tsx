@@ -146,7 +146,7 @@ const CM_A5000W: React.FC = () => {
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const docEditorRef = useRef<TEditorHandle>(null);
   const docEditorRef1 = useRef<TEditorHandle>(null);

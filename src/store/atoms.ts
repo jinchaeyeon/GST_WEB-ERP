@@ -156,7 +156,7 @@ export const OSState = atom<boolean>({
 
 export const heightstate = atom<number>({
   key: "heightstate",
-  default: window.innerHeight - 130,
+  default: document.documentElement.clientHeight - 170,
 });
 
 export const isFilterheightstate = atom<number>({
@@ -166,5 +166,5 @@ export const isFilterheightstate = atom<number>({
 
 export const isFilterHideState = atom<boolean>({
   key: "isFilterHideState",
-  default: false,
+  default: document.documentElement.clientWidth <= 1200,
 });

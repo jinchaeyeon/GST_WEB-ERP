@@ -64,13 +64,14 @@ TKendoWindow) => {
   // 비즈니스 컴포넌트 조회
   const idGetter = getter(SUB_DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 460,
-    height: 700,
+    height: isMobile == true ? deviceHeight : 700,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

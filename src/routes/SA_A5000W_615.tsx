@@ -44,7 +44,7 @@ var barcode = "";
 let interval: any;
 
 const SA_A5000W_615: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");

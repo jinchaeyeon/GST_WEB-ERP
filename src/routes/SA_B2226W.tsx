@@ -42,13 +42,8 @@ interface TList {
   totcnt?: number;
 }
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 const SA_B2226W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -70,34 +65,6 @@ const SA_B2226W: React.FC = () => {
       },
     },
   });
-  const size: Tsize = useWindowSize();
-
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -198,10 +165,10 @@ const SA_B2226W: React.FC = () => {
     }
 
     if (data2.isSuccess == true) {
-      const rows2 = data2.tables[0].Rows.map((item: any)=> ({
+      const rows2 = data2.tables[0].Rows.map((item: any) => ({
         ...item,
         value: Math.ceil(item.value),
-      }))
+      }));
 
       setChartList(rows2);
       let array = rows2
@@ -241,7 +208,7 @@ const SA_B2226W: React.FC = () => {
         past_year: Math.ceil(item.past_year),
         current_year: Math.ceil(item.current_year),
         cnt: Math.ceil(item.cnt),
-      }))
+      }));
 
       setItemList(rows3);
       let array3 = rows3.map(
@@ -353,11 +320,14 @@ const SA_B2226W: React.FC = () => {
         (
           parseInt(convertDateToStr(filters.frdt).substring(0, 4)) - 1
         ).toString() + "년 변경계약금액",
-      data: AllPanel.change_amt_past != null ? Math.ceil(AllPanel.change_amt_past) : 0,
+      data:
+        AllPanel.change_amt_past != null
+          ? Math.ceil(AllPanel.change_amt_past)
+          : 0,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약금액",
-      data: AllPanel.change_amt != null ?Math.ceil(AllPanel.change_amt) : 0,
+      data: AllPanel.change_amt != null ? Math.ceil(AllPanel.change_amt) : 0,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 최종계약금액",

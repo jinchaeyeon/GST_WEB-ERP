@@ -91,14 +91,7 @@ const boardStyle: CSSProperties = {
   display: "flex",
   flexWrap: "wrap",
 };
-const containerStyle: CSSProperties = {
-  width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
-  height:
-    window.innerWidth <= 1200
-      ? `${(window.innerHeight - 100) * 0.6}px`
-      : "80vh",
-  border: "1px solid gray",
-};
+
 /** Styling properties applied to each square element */
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -110,15 +103,25 @@ const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  let deviceWidth = window.innerWidth;
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
   }
   let isMobile = deviceWidth <= 1200;
-
+  const containerStyle: CSSProperties = {
+    width:
+      document.documentElement.clientWidth <= 1200
+        ? `${document.documentElement.clientWidth - 30}px`
+        : "100%",
+    height:
+      document.documentElement.clientWidth <= 1200
+        ? deviceHeight - height
+        : "80vh",
+    border: "1px solid gray",
+  };
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -745,7 +748,7 @@ const SY_A0500W: React.FC = () => {
       resetAllGrid();
       setXY([-1, -1]);
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-      if(swiper) {
+      if (swiper) {
         swiper.slideTo(0);
       }
     } catch (e) {
@@ -1315,23 +1318,25 @@ const SY_A0500W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -1438,23 +1443,25 @@ const SY_A0500W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>

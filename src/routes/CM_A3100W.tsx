@@ -77,7 +77,7 @@ const CM_A3100W: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A3100W", setMessagesData);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();

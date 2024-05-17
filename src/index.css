@@ -240,10 +240,6 @@ input.readonly {
   height: 100%;
 }
 
-:root {
-  --vh: 100%;
-}
-
 /*Prime table css*/
 .incell-input {
   height: 70% !important;
@@ -334,20 +330,6 @@ input.readonly {
   overflow: scroll;
 }
 
-.leading_PDA_custom {
-  text-align: center !important;
-  font-size: 18px !important;
-  background: #fff !important;
-
-  /* Center slide text vertically */
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  flex-direction: column !important;
-  height: fit-content;
-}
-
-
 .leading_PDA_container {
   width: 100% !important;
 }
@@ -355,10 +337,6 @@ input.readonly {
 .leading_PDA_Swiper {
   width: 100% !important;
   height: 90vh !important;
-}
-.leading_Swiper {
-  width: 100% !important;
-  height: 80% !important;
 }
 
 .swiper-slide {

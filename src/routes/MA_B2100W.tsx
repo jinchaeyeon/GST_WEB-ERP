@@ -74,7 +74,7 @@ const MA_B2100W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_B2100W", setMessagesData);
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
 

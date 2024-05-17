@@ -79,12 +79,11 @@ const checkField = ["finyn"];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
-let deviceWidth = window.innerWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_A1000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

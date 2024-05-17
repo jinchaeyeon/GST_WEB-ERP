@@ -232,7 +232,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const HU_A1060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
@@ -1180,13 +1180,6 @@ const HU_A1060W: React.FC = () => {
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>문서 리스트</GridTitle>
                     <ButtonContainer>
-                      <Button
-                        onClick={onClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                      >
-                        결재문서접기/펼치기
-                      </Button>
                       <Button
                         onClick={onAddClick}
                         themeColor={"primary"}

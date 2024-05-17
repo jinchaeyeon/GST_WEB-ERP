@@ -61,7 +61,7 @@ const numberField = ["temperature", "humidity"];
 const centerField = ["insert_date", "insert_time", "defrost"];
 
 const QC_B9020_615W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let gridRef: any = useRef(null);

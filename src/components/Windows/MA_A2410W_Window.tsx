@@ -141,7 +141,7 @@ const DetailWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);

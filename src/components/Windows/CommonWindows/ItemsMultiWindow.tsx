@@ -42,13 +42,14 @@ let targetRowIndex: null | number = null;
 let temp = 0;
 
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

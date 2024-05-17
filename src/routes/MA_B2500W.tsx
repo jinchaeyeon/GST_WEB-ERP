@@ -60,7 +60,7 @@ const dateField = ["indt"];
 const numberField = ["qty", "amt", "wonamt", "taxamt", "totamt"];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let isMobile = deviceWidth <= 1200;
 
 const MA_B2500W: React.FC = () => {

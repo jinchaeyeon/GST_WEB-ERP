@@ -58,7 +58,7 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const SY_A0120: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   let isMobile = deviceWidth <= 1200;

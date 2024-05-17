@@ -102,7 +102,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 
 const MA_A8000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var height = 0;
   var height2 = 0;

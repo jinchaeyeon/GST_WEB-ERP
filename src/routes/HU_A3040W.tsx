@@ -61,7 +61,7 @@ import {
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isFilterHideState, isFilterheightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -394,18 +394,19 @@ let temp6 = 0;
 
 const HU_A3040W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isVisibleDetail, setIsVisableDetail] = useState(false);
-  let deviceWidth = window.innerWidth;
+  
+  
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
   var height2 = 0;
   var height3 = 0;
-
+  
   var container = document.querySelector(".ButtonContainer");
   var container2 = document.querySelector(".ButtonContainer2");
   var container3 = document.querySelector(".k-tabstrip-items-wrapper");
-
+  
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
   }
@@ -415,6 +416,21 @@ const HU_A3040W: React.FC = () => {
   if (container3?.clientHeight != undefined) {
     height3 = container3 == undefined ? 0 : container3.clientHeight;
   }
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+    const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate);
+
+    useEffect(() => {
+    var height = 0;
+    var container = document.querySelector(".filterBox");
+    if (container?.clientHeight != undefined) {
+      height = container == undefined ? 0 : container.clientHeight;
+      setIsFilterheightstates(height);
+    } else {
+      setIsFilterheightstates(0);
+    }
+    }, [isFilterHideStates]);
 
   const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
@@ -3771,17 +3787,17 @@ const HU_A3040W: React.FC = () => {
           <ButtonContainer style={{ justifyContent: "flex-end" }}>
             <Button
               onClick={() => {
-                setIsVisableDetail((prev) => !prev);
+                setIsFilterHideStates((prev) => !prev);
               }}
-              icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
+              icon={isFilterHideStates ? "chevron-up" : "chevron-down"}
               fillMode={"flat"}
               themeColor={"secondary"}
             >
-              조회조건
+              계산조건
             </Button>
           </ButtonContainer>
-          {isVisibleDetail && (
-            <FormBoxWrap border={true}>
+          {!isFilterHideStates && (
+            <FormBoxWrap border={true} className="filterBox">
               <FormBox>
                 <tbody>
                   <tr>

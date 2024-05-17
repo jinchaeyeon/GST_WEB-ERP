@@ -38,11 +38,14 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "acntsrtnum";
 
 const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 570,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 570,
+    height: isMobile == true ? deviceHeight : 800,
   });
 
   const setLoading = useSetRecoilState(isLoading);

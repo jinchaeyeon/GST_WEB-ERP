@@ -73,36 +73,11 @@ const CR_A0000W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [changeDate, setChangeDate] = useState<string>("");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  const size: Tsize = useWindowSize();
-  const [adjnumber, setAdjnumber] = useState<number>(0);
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
 
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
+  const [adjnumber, setAdjnumber] = useState<number>(0);
+
   useEffect(() => {
     if (sessionUserId == "") fetchSessionItem();
     // if (token && sessionUserId == "") fetchSessionItem();
@@ -472,7 +447,7 @@ const CR_A0000W: React.FC = () => {
                 height="100%"
                 style={{
                   overflowY: "scroll",
-                  maxHeight: window.innerHeight - 100,
+                  maxHeight: -100,
                 }}
               >
                 <GridTitleContainer>
@@ -501,7 +476,7 @@ const CR_A0000W: React.FC = () => {
                         change={item.adjqty}
                         backgroundColor={item.color}
                         day={getDayOfWeeks(item.dayofweek)}
-                        fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                        fontsize={deviceWidth < 600 ? "1.8rem" : "3.3rem"}
                         propFunction={(code: string) => changeColor(code)}
                         Click={() => setSelectedState(item[DATA_ITEM_KEY])}
                       />
@@ -571,7 +546,7 @@ const CR_A0000W: React.FC = () => {
                         change={item.adjqty}
                         backgroundColor={item.color}
                         day={getDayOfWeeks(item.dayofweek)}
-                        fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                        fontsize={deviceWidth < 600 ? "1.8rem" : "3.3rem"}
                         propFunction={(code: string) => changeColor(code)}
                         Click={() => {
                           setSelectedState(item[DATA_ITEM_KEY]);

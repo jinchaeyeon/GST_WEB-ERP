@@ -74,7 +74,7 @@ const KendoWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({

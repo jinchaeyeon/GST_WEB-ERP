@@ -20,13 +20,8 @@ import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 const SA_B2220W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -49,34 +44,7 @@ const SA_B2220W: React.FC = () => {
       },
     },
   });
-  const size: Tsize = useWindowSize();
 
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({

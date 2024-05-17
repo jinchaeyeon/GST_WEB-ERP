@@ -49,7 +49,12 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
-import { OSState, loginResultState, sessionItemState } from "../store/atoms";
+import {
+  OSState,
+  heightstate,
+  loginResultState,
+  sessionItemState,
+} from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
@@ -753,25 +758,51 @@ const Main: React.FC = () => {
     return valid;
   }
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight - 50;
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+  var height4 = 0;
+  var height5 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
+  var container4 = document.querySelector(".ButtonContainer4");
+  var container5 = document.querySelector(".k-tabstrip-items-wrapper");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+  if (container4?.clientHeight != undefined) {
+    height4 = container4 == undefined ? 0 : container4.clientHeight;
+  }
+  if (container5?.clientHeight != undefined) {
+    height5 = container5 == undefined ? 0 : container5.clientHeight;
+  }
 
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
-          <Swiper
-            className="leading_PDA_container"
-            onSwiper={(swiper) => {
-              setSwiper(swiper);
-            }}
-            onActiveIndexChange={(swiper) => {
-              index = swiper.activeIndex;
-            }}
-          >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <MainTopContainer>
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+            <GridContainer style={{ flexDirection: "column" }}>
+              <MainTopContainer className="ButtonContainer">
                 <ButtonContainer>
                   <Button
                     icon={"home"}
@@ -794,7 +825,7 @@ const Main: React.FC = () => {
                     <GridContainer
                       style={{
                         overflow: "auto",
-                        height: `${deviceHeight * 0.6}px`,
+                        height: deviceHeight - height - height5,
                       }}
                     >
                       {osstate == true ? (
@@ -846,7 +877,7 @@ const Main: React.FC = () => {
                     <TabStrip
                       style={{
                         width: "100%",
-                        height: `${deviceHeight * 0.6}px`,
+                        height: deviceHeight - height - height5,
                       }}
                       selected={tabSelected2}
                       onSelect={handleSelectTab2}
@@ -856,122 +887,126 @@ const Main: React.FC = () => {
                   </TabStripTab>
                 </TabStrip>
               </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide
-              key={1}
-              className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column" }}
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide
+            key={1}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                width: "100%",
+              }}
+              className="ButtonContainer2"
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
+              <Button
+                onClick={() => {
+                  if (swiper) {
+                    swiper.slideTo(0);
+                  }
                 }}
+                icon="arrow-left"
               >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
+                이전
+              </Button>
+            </div>
+            <GridContainer width={`calc(35% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer3">
+                  <GridTitle>공지사항</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{
+                    height: (deviceHeight - height2 - height3 - height4) / 2,
                   }}
-                  icon="arrow-left"
+                  data={process(
+                    noticeDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                    })),
+                    noticeDataState
+                  )}
+                  {...noticeDataState}
+                  onDataStateChange={onNoticeDataStateChange}
+                  //선택기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onNoticeSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={noticeDataResult.total}
+                  onScroll={onNoticeScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
                 >
-                  이전
-                </Button>
-              </div>
-              <GridContainer width={`calc(35% - ${GAP}px)`}>
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>공지사항</GridTitle>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: `${deviceHeight * 0.37}px` }}
-                    data={process(
-                      noticeDataResult.data.map((row) => ({
-                        ...row,
-                        [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
-                      })),
-                      noticeDataState
-                    )}
-                    {...noticeDataState}
-                    onDataStateChange={onNoticeDataStateChange}
-                    //선택기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onNoticeSortChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={noticeDataResult.total}
-                    onScroll={onNoticeScrollHandler}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    <GridColumn
-                      field="recdt_week"
-                      title="작성일"
-                      cell={CenterCell}
-                      footerCell={noticeTotalFooterCell}
-                      width="140px"
-                    />
-                    <GridColumn
-                      field="person"
-                      title="작성자"
-                      cell={CenterCell}
-                      width="120px"
-                    />
-                    <GridColumn field="title" title="제목" />
-                  </Grid>
-                </GridContainer>
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>업무지시요청</GridTitle>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: `${deviceHeight * 0.42}px` }}
-                    data={process(workOrderDataResult.data, workOrderDataState)}
-                    {...workOrderDataState}
-                    onDataStateChange={onWorkOrderDataStateChange}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onWorkOrderSortChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={workOrderDataResult.total}
-                    onScroll={onWorkOrderScrollHandler}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    <GridColumn
-                      field="recdt_week"
-                      title="작성일"
-                      cell={CenterCell}
-                      footerCell={workOrderTotalFooterCell}
-                      width="140px"
-                    />
-                    <GridColumn
-                      field="user_name"
-                      title="작성자"
-                      cell={CenterCell}
-                      width="120px"
-                    />
-                    <GridColumn field="title" title="제목" />
-                  </Grid>
-                </GridContainer>
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={noticeTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="person"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
               </GridContainer>
-            </SwiperSlide>
-          </Swiper>
-        </GridContainerWrap>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer4">
+                  <GridTitle>업무지시요청</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{
+                    height: (deviceHeight - height2 - height3 - height4) / 2,
+                  }}
+                  data={process(workOrderDataResult.data, workOrderDataState)}
+                  {...workOrderDataState}
+                  onDataStateChange={onWorkOrderDataStateChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onWorkOrderSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={workOrderDataResult.total}
+                  onScroll={onWorkOrderScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={workOrderTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="user_name"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
+              </GridContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
       ) : (
         <>
           <MainTopContainer>

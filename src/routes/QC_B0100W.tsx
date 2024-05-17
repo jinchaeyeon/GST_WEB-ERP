@@ -48,11 +48,6 @@ interface TList {
   yrmm12: number;
 }
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 const QC_B0100W: React.FC = () => {
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
@@ -75,30 +70,7 @@ const QC_B0100W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
-  const size: Tsize = useWindowSize();
-
-  function useWindowSize() {
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      function handleResize() {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
-
-      window.addEventListener("resize", handleResize);
-
-      handleResize();
-
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-    return windowSize;
-  }
+  let deviceWidth = document.documentElement.clientWidth;
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -566,7 +538,9 @@ const QC_B0100W: React.FC = () => {
                     data={item.data}
                     backgroundColor={item.backgroundColor}
                     fontsize={
-                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
+                      deviceWidth > 600 && deviceWidth < 900
+                        ? "1.2rem"
+                        : "1.5rem"
                     }
                     form={"QC_B0100W"}
                     Click={() => selectCard(item.title)}

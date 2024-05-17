@@ -68,7 +68,7 @@ const SA_A2300_PDA: React.FC = () => {
   });
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 850;
 

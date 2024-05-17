@@ -103,7 +103,7 @@ const MA_A2400W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   var height = 0;
   var height2 = 0;
   var height3 = 0;

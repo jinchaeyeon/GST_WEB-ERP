@@ -33,7 +33,7 @@ import {
 import { GAP } from "../components/CommonString";
 
 const EA_A3000W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   return (
