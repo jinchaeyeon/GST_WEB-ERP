@@ -83,13 +83,18 @@ const CM_B1000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;
+  var height3 = 0;
   var container = document.querySelector(".ButtonContainer");
   var container2 = document.querySelector(".ButtonContainer2");
+  var container3 = document.querySelector(".ButtonContainer3");
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
   }
   if (container2?.clientHeight != undefined) {
     height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
   }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -668,6 +673,9 @@ const CM_B1000W: React.FC = () => {
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } catch (e) {
       alert(e);
     }
@@ -879,6 +887,20 @@ const CM_B1000W: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
+                <ButtonContainer className="ButtonContainer3">
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="arrow-right"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    다음
+                  </Button>
+                </ButtonContainer>
                 <ExcelExport
                   data={subDataResult.data}
                   ref={(exporter) => {
@@ -887,7 +909,7 @@ const CM_B1000W: React.FC = () => {
                   fileName="일정조회"
                 >
                   <Grid
-                    style={{ height: deviceHeight }}
+                    style={{ height: deviceHeight - height3 }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
