@@ -694,7 +694,7 @@ const MA_B7000_606W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -980,7 +980,11 @@ const MA_B7000_606W: React.FC = () => {
                                     ? gridSumQtyFooterCell
                                     : undefined
                                 }
-                                locked={item.fixed == "None" ? false : true}
+                                locked={
+                                  item.fixed == "None" || isMobile
+                                    ? false
+                                    : true
+                                }
                               ></GridColumn>
                             )
                         )}
@@ -1078,7 +1082,11 @@ const MA_B7000_606W: React.FC = () => {
                                     ? gridSumQtyFooterCell2
                                     : undefined
                                 }
-                                locked={item.fixed == "None" ? false : true}
+                                locked={
+                                  item.fixed == "None" || isMobile
+                                    ? false
+                                    : true
+                                }
                               />
                             )
                         )}
@@ -1175,7 +1183,9 @@ const MA_B7000_606W: React.FC = () => {
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }
-                            locked={item.fixed == "None" ? false : true}
+                            locked={
+                              item.fixed == "None" || isMobile ? false : true
+                            }
                           ></GridColumn>
                         )
                     )}
@@ -1255,7 +1265,9 @@ const MA_B7000_606W: React.FC = () => {
                                 ? gridSumQtyFooterCell2
                                 : undefined
                             }
-                            locked={item.fixed == "None" ? false : true}
+                            locked={
+                              item.fixed == "None" || isMobile ? false : true
+                            }
                           />
                         )
                     )}

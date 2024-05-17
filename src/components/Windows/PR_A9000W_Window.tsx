@@ -758,32 +758,32 @@ const CopyWindow = ({
               title=" "
               width="45px"
               cell={CustomCheckBoxCell}
-              locked={true}
+              locked={isMobile ? false : true}
             />
             <GridColumn
               field="div"
               title="구분"
               footerCell={mainTotalFooterCell}
               width="100px"
-              locked={true}
+              locked={isMobile ? false : true}
             />
             <GridColumn
               field="itemcd"
               title="품목코드"
               width="150px"
-              locked={true}
+              locked={isMobile ? false : true}
             />
             <GridColumn
               field="itemnm"
               title="품목명"
               width="150px"
-              locked={true}
+              locked={isMobile ? false : true}
             />
             <GridColumn
               field="lotnum"
               title="LOT NO"
               width="150px"
-              locked={true}
+              locked={isMobile ? false : true}
             />
             <GridColumn field="insiz" title="규격" width="150px" />
             <GridColumn field="proccd" title="공정" width="120px" />

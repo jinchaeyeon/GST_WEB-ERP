@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -41,7 +41,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -49,13 +49,15 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const AC_B6060W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -1961,7 +1963,7 @@ const AC_B6060W: React.FC = () => {
                   field="dd"
                   title="일자"
                   width="120px"
-                  locked={true}
+                  locked={isMobile ? false : true}
                   footerCell={mainTotalFooterCell2}
                 />
                 <GridColumn title={dates}>{createColumn7()}</GridColumn>
@@ -2021,7 +2023,7 @@ const AC_B6060W: React.FC = () => {
                   field="dd"
                   title="일자"
                   width="120px"
-                  locked={true}
+                  locked={isMobile ? false : true}
                   footerCell={mainTotalFooterCell3}
                 />
                 <GridColumn title={dates}>{createColumn10()}</GridColumn>
@@ -2084,7 +2086,7 @@ const AC_B6060W: React.FC = () => {
                   field="dd"
                   title="일자"
                   width="120px"
-                  locked={true}
+                  locked={isMobile ? false : true}
                   footerCell={mainTotalFooterCell4}
                 />
                 <GridColumn title={dates7}>{createColumn16()}</GridColumn>

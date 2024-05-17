@@ -31,6 +31,9 @@ import React, {
   useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -93,9 +96,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 let targetRowIndex: null | number = null;
@@ -6324,7 +6324,8 @@ const HU_A4000W: React.FC = () => {
                                         title={item.caption}
                                         width={item.width}
                                         locked={
-                                          lockField.includes(item.fieldName)
+                                          lockField.includes(item.fieldName) &&
+                                          !isMobile
                                             ? true
                                             : false
                                         }
@@ -7784,7 +7785,8 @@ const HU_A4000W: React.FC = () => {
                                         title={item.caption}
                                         width={item.width}
                                         locked={
-                                          lockField.includes(item.fieldName)
+                                          lockField.includes(item.fieldName) &&
+                                          !isMobile
                                             ? true
                                             : false
                                         }

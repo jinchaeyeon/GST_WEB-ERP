@@ -20,7 +20,7 @@ import {
   FilterBox,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -780,43 +780,43 @@ const BA_B0080W: React.FC = () => {
                 field="품목코드"
                 title="품목코드"
                 width="120px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="품목명"
                 title="품목명"
                 width="150px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="품목계정"
                 title="품목계정"
                 width="120px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="규격"
                 title="규격"
                 width="140px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="대분류"
                 title="대분류"
                 width="120px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="중분류"
                 title="중분류"
                 width="120px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               <GridColumn
                 field="소분류"
                 title="소분류"
                 width="120px"
-                locked={true}
+                locked={isMobile ? false : true}
               />
               {createColumn()}
             </Grid>
