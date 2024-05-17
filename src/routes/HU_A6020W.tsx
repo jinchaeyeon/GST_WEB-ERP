@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -74,9 +74,13 @@ import FileViewers from "../components/Viewer/FileViewers";
 import LaborerMultiWindow from "../components/Windows/CommonWindows/LaborerMultiWindow";
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+var index = 0;
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -363,6 +367,28 @@ const defaultPrsnInfo = {
 };
 
 const HU_A6020W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var height2 = 0;
+  var height3 = 0;
+
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".k-tabstrip-items-wrapper");
+  var container3 = document.querySelector(".ButtonContainer3");
+
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
+  if (container3?.clientHeight != undefined) {
+    height3 = container3 == undefined ? 0 : container3.clientHeight;
+  }
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -639,6 +665,9 @@ const HU_A6020W: React.FC = () => {
             ...prev,
             isSearch: true,
           }));
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
         }
       } catch (e) {
         alert(e);
@@ -929,7 +958,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl(URL.createObjectURL(blob) );
+          setUrl(URL.createObjectURL(blob));
         } else {
           setUrl("");
         }
@@ -1057,7 +1086,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl2(URL.createObjectURL(blob) );
+          setUrl2(URL.createObjectURL(blob));
         } else {
           setUrl2("");
         }
@@ -1191,6 +1220,9 @@ const HU_A6020W: React.FC = () => {
       prsnnum: selectedRowData.prsnnum,
       isSearch: true,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -2807,7 +2839,7 @@ FROM HU072T WHERE paycd = '4'`;
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>일용직 일근태</GridTitle>
               <ButtonContainer>
                 <Button
@@ -2853,7 +2885,9 @@ FROM HU072T WHERE paycd = '4'`;
                 fileName="일용직 일근태"
               >
                 <Grid
-                  style={{ height: "68vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height2 : "68vh",
+                  }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -2907,38 +2941,40 @@ FROM HU072T WHERE paycd = '4'`;
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : CommandField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : CommandField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </FormContext.Provider>
@@ -2990,7 +3026,7 @@ FROM HU072T WHERE paycd = '4'`;
           </FilterContainer>
           <div
             style={{
-              height: "75vh",
+              height: isMobile ? deviceHeight - height2 : "75vh",
               marginBottom: "10px",
             }}
           >
@@ -3054,72 +3090,179 @@ FROM HU072T WHERE paycd = '4'`;
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainerWrap>
-            <GridContainer width="20%">
-              <Grid
-                style={{ height: "75vh" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+          {isMobile ? (
+            <>
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
                 }}
-                onSelectionChange={onMainSelectionChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell3
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </GridContainer>
-            <GridContainer width={`calc(80% - ${GAP}px)`}>
-              <div
-                style={{
-                  height: "75vh",
-                  marginBottom: "10px",
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
                 }}
               >
-                {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
-              </div>
-            </GridContainer>
-          </GridContainerWrap>
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                    <Grid
+                      style={{
+                        height: deviceHeight - height2,
+                      }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMainSelectionChange3}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList3"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell3
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                <GridTitleContainer className="ButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      style={{ marginRight: "5px" }}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                    <div
+                      style={{
+                        height: deviceHeight - height2 - height3,
+                        marginBottom: "10px",
+                      }}
+                    >
+                      {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
+                    </div>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <GridContainer width="20%">
+                  <Grid
+                    style={{
+                      height: "75vh",
+                    }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList3"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell3
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </GridContainer>
+                <GridContainer width={`calc(80% - ${GAP}px)`}>
+                  <div
+                    style={{
+                      height: "75vh",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
+                  </div>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
       {laborerWindowVisible && (
