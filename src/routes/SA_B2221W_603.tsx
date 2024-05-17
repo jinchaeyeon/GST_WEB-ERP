@@ -105,7 +105,7 @@ const SA_B2221: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

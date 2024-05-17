@@ -84,7 +84,7 @@ const PR_B1104W: React.FC = () => {
     useEffect(() => {
       function handleResize() {
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

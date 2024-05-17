@@ -69,7 +69,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const App: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
 
   let isMobile = deviceWidth <= 1200;
 

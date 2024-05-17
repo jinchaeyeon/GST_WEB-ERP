@@ -149,7 +149,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 let deviceHeight = window.innerHeight - 50;
 let isMobile = deviceWidth <= 1200;
 

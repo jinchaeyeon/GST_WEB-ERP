@@ -65,7 +65,7 @@ const SA_B2410: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;

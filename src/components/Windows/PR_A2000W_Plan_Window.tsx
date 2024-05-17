@@ -65,7 +65,7 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);

@@ -152,7 +152,7 @@ const SA_A1200_603W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   interface ICustData {

@@ -24,7 +24,7 @@ const nodeTypes = {
 };
 
 const FlowChartReadOnly = (props) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
   const [bizComponentData, setBizComponentData] = useState(null);

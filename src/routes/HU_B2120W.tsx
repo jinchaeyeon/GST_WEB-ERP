@@ -76,7 +76,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const HU_B2120W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

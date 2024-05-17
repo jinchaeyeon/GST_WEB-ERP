@@ -68,13 +68,13 @@ const boardStyle: CSSProperties = {
 };
 const containerStyle: CSSProperties = {
   width: "100%",
-  height: window.innerWidth <= 1200 ? "50vh" : "73vh",
+  height: document.documentElement.clientWidth <= 1200 ? "50vh" : "73vh",
 };
 
 const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 

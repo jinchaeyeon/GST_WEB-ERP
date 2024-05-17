@@ -85,7 +85,7 @@ const monthField = [
 ];
 
 const CM_B8100W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   let isMobile = deviceWidth <= 1200;

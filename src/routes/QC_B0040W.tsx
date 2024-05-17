@@ -95,7 +95,7 @@ const QC_B0040W: React.FC = () => {
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

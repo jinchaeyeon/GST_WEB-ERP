@@ -929,7 +929,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl(URL.createObjectURL(blob) + "#view=fit");
+          setUrl(URL.createObjectURL(blob) );
         } else {
           setUrl("");
         }
@@ -1057,7 +1057,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl2(URL.createObjectURL(blob) + "#view=fit");
+          setUrl2(URL.createObjectURL(blob) );
         } else {
           setUrl2("");
         }

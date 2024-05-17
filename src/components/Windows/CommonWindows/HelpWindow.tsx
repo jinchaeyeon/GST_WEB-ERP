@@ -159,7 +159,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -379,7 +379,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob) + "#view=fit");
+      setUrl(URL.createObjectURL(blob) );
     } else {
       //데이터 없을 경우
       setUrl("");

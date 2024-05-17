@@ -77,7 +77,7 @@ const numberField2 = [
   "inamt",
 ];
 let targetRowIndex: null | number = null;
-let deviceWidth = window.innerWidth;
+let deviceWidth = document.documentElement.clientWidth;
 
 let isMobile = deviceWidth <= 1200;
 

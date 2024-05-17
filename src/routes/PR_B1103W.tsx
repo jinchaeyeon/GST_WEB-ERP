@@ -74,7 +74,7 @@ const PR_B1103W: React.FC = () => {
       function handleResize() {
         // Set window width/height to state
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

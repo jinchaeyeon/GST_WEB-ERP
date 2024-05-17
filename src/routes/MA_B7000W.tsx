@@ -93,7 +93,7 @@ let targetRowIndex3: null | number = null;
 
 const MA_B7000: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

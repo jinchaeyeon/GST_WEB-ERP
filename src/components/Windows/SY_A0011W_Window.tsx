@@ -44,7 +44,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({

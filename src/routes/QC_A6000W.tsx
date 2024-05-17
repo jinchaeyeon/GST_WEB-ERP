@@ -211,7 +211,7 @@ const QC_A6000: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var container = document.querySelector(".ButtonContainer");

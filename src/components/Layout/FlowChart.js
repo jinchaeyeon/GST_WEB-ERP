@@ -72,7 +72,7 @@ let id = 0;
 const getId = () => `${++id}`;
 
 const FlowChart = (props) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
 
   let isMobile = deviceWidth <= 1200;
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

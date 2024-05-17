@@ -96,7 +96,7 @@ const QC_A0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

@@ -54,7 +54,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role == "ADMIN";
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

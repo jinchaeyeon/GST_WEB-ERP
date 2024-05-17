@@ -146,7 +146,7 @@ const AC_A3001W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) + "#view=fit");
+        setUrl(URL.createObjectURL(blob) );
       } else {
         setUrl("");
       }

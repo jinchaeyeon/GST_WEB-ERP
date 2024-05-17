@@ -103,7 +103,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 const BA_A0100W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

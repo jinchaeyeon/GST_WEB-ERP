@@ -35,7 +35,7 @@ let interval: any;
 let timestamp = 0;
 
 const MA_A3500W_615: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);

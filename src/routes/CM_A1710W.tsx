@@ -92,7 +92,7 @@ const CM_A1710W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;

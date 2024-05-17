@@ -154,7 +154,7 @@ const requiredField2 = [
 ];
 
 const CM_A1600W_603: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
 

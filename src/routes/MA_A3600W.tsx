@@ -302,7 +302,7 @@ const dateField = ["outdt", "indt"];
 const numberField = ["qty", "cnt", "now_qty"];
 const numberField2 = ["qty"];
 const MA_A3600W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;

@@ -112,7 +112,7 @@ const SA_B3000W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;

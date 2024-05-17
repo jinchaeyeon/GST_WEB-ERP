@@ -136,7 +136,7 @@ const CM_A3000W: React.FC = () => {
   const dptcd = UseGetValueFromSessionItem("dptcd");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();

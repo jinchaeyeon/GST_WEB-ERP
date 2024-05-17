@@ -37,7 +37,7 @@ const KendoWindow = ({
   show,
   show2,
 }: IKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [shows, setShows] = useState(show);
   const [shows2, setShows2] = useState(show2);

@@ -66,7 +66,7 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const AC_A0000W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

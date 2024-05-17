@@ -346,7 +346,7 @@ const BA_A0020: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = 0;
   var height2 = 0;

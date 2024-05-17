@@ -42,7 +42,7 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const orgdiv = UseGetValueFromSessionItem("orgdiv");

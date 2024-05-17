@@ -86,7 +86,7 @@ const QC_B0100W: React.FC = () => {
     useEffect(() => {
       function handleResize() {
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

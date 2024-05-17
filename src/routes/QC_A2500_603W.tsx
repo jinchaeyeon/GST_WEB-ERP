@@ -108,7 +108,7 @@ const BA_A0020_603: React.FC = () => {
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";

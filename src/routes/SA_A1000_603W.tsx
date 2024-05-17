@@ -532,7 +532,7 @@ const SA_A1000_603W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const idGetter7 = getter(DATA_ITEM_KEY7);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
   const [pc, setPc] = useState("");

@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -51,7 +51,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1000W_617_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -66,8 +66,19 @@ const CM_A1000W_617: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = 0;
+  var height2 = 0;
+  var container = document.querySelector(".ButtonContainer");
+  var container2 = document.querySelector(".ButtonContainer2");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  if (container2?.clientHeight != undefined) {
+    height2 = container2 == undefined ? 0 : container2.clientHeight;
+  }
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [pc, setPc] = useState("");
@@ -114,6 +125,9 @@ const CM_A1000W_617: React.FC = () => {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        if (swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -376,6 +390,9 @@ const CM_A1000W_617: React.FC = () => {
       title: selectedRowData.title,
       contents: selectedRowData.contents,
     });
+    if (swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -540,255 +557,266 @@ const CM_A1000W_617: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <Swiper
-          className="leading_PDA_Swiper"
-          onSwiper={(swiper) => {
-            setSwiper(swiper);
-          }}
-        >
-          <SwiperSlide key={0} className="leading_PDA">
-            <TitleContainer>
-              <Title>업무일지</Title>
-              <ButtonContainer>
-                <Button
-                  onClick={() => setIsVisableDetail((prev) => !prev)}
-                  icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
-                  themeColor={"primary"}
-                >
-                  조회조건
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="file-add"
-                >
-                  신규
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="delete"
-                >
-                  삭제
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(1);
-                    }
-                  }}
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="arrow-right"
-                >
-                  다음
-                </Button>
-              </ButtonContainer>
-            </TitleContainer>
-            {isVisibleDetail ? (
-              <FormBoxWrap border={true}>
-                <GridTitleContainer>
-                  <GridTitle></GridTitle>
+        <>
+          <TitleContainer style={{ textAlign: "center" }}>
+            <Title>업무일지</Title>
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="CM_A1000W_617"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>작성일</th>
+                  <td>
+                    <DatePicker
+                      name="recdt"
+                      value={filters.recdt}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                      placeholder=""
+                    />
+                  </td>
+                  <th>제목/내용</th>
+                  <td>
+                    <Input
+                      name="title"
+                      type="text"
+                      value={filters.title}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>
                     <Button
-                      onClick={search}
-                      icon="search"
+                      onClick={onAddClick}
                       themeColor={"primary"}
+                      icon="file-add"
                     >
-                      조회
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>작성일</th>
-                      <td>
-                        <DatePicker
-                          name="recdt"
-                          value={filters.recdt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          className="required"
-                          placeholder=""
-                        />
-                      </td>
-                      <th>제목/내용</th>
-                      <td>
-                        <Input
-                          name="title"
-                          type="text"
-                          value={filters.title}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            ) : (
-              ""
-            )}
-            <GridContainer className="leading_PDA_container">
-              <Grid
-                style={{
-                  height: isVisibleDetail
-                    ? `calc(100vh - 420px)`
-                    : `calc(100vh - 200px)`,
-                }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        ></GridColumn>
-                      )
-                  )}
-              </Grid>
-            </GridContainer>
-          </SwiperSlide>
-          <SwiperSlide key={1} className="leading_PDA">
-            <TitleContainer>
-              <Title>업무일지</Title>
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="save"
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="업무일지"
                 >
-                  저장
-                </Button>
-              </ButtonContainer>
-            </TitleContainer>
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>작성일</th>
-                    <td>
-                      <DatePicker
-                        name="recdt"
-                        value={information.recdt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        className="required"
-                        placeholder=""
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>업체코드</th>
-                    <td>
-                      <Input
-                        name="custcd"
-                        type="text"
-                        value={information.custcd}
-                        onChange={InputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onCustWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>업체명</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="custnm"
-                          value={information.custnm}
-                          type="new"
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          valueField="custcd"
-                          textField="custnm"
-                        />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>제목</th>
-                    <td>
-                      <Input
-                        name="title"
-                        type="text"
-                        value={information.title}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>내용</th>
-                    <td>
-                      <TextArea
-                        value={information.contents}
-                        name="contents"
-                        style={{ height: `calc(100vh - 550px)` }}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-          </SwiperSlide>
-        </Swiper>
+                  <Grid
+                    style={{
+                      height: deviceHeight - height,
+                    }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <ButtonContainer
+                  className="ButtonContainer2"
+                  style={{ justifyContent: "space-between" }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <Button
+                    onClick={onSaveClick}
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                </ButtonContainer>
+                <FormBoxWrap
+                  style={{
+                    height: deviceHeight - height2,
+                    overflow: "auto",
+                  }}
+                  border={true}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>작성일</th>
+                        <td>
+                          <DatePicker
+                            name="recdt"
+                            value={information.recdt}
+                            format="yyyy-MM-dd"
+                            onChange={InputChange}
+                            className="required"
+                            placeholder=""
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>업체코드</th>
+                        <td>
+                          <Input
+                            name="custcd"
+                            type="text"
+                            value={information.custcd}
+                            onChange={InputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              onClick={onCustWndClick}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>업체명</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="custnm"
+                              value={information.custnm}
+                              type="new"
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              valueField="custcd"
+                              textField="custnm"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>제목</th>
+                        <td>
+                          <Input
+                            name="title"
+                            type="text"
+                            value={information.title}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>내용</th>
+                        <td>
+                          <TextArea
+                            value={information.contents}
+                            name="contents"
+                            style={{ height: `calc(100vh - 550px)` }}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
       ) : (
         <>
           <TitleContainer>
@@ -907,27 +935,29 @@ const CM_A1000W_617: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        ></GridColumn>
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              dateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          ></GridColumn>
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

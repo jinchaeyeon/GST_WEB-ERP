@@ -8,17 +8,13 @@ type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
-  const [isFilterHide, setIsFilterHide] = useState(isMobile);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
   const toggleFilterHide = () => {
-    setIsFilterHideStates(!isFilterHide);
-    setIsFilterHide((prev) => !prev);
+    setIsFilterHideStates((prev) => !prev);
   };
 
   useEffect(() => {
@@ -30,17 +26,17 @@ const FilterContainer = ({ children }: TChildren) => {
     } else {
       setIsFilterheightstates(0);
     }
-  }, [isFilterHide]);
+  }, [isFilterHideStates]);
 
   return (
     <>
       <div className="visible-mobile-only" style={{ textAlign: "right" }}>
         <FilterHideToggleButton
-          isFilterHide={isFilterHide}
+          isFilterHide={isFilterHideStates}
           toggleFilterHide={toggleFilterHide}
         />
       </div>
-      {!isFilterHide && (
+      {!isFilterHideStates && (
         <div className="filterBox">
           <FilterBoxWrap>{children}</FilterBoxWrap>
         </div>

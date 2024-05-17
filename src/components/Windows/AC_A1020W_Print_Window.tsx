@@ -15,7 +15,7 @@ type IWindow = {
 };
 
 const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -74,7 +74,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
       const blob = new Blob([byteArray], {
         type: "application/pdf",
       });
-      setUrl(URL.createObjectURL(blob) + "#view=fit");
+      setUrl(URL.createObjectURL(blob) );
     } else {
       setUrl("");
     }

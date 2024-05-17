@@ -240,10 +240,6 @@ input.readonly {
   height: 100%;
 }
 
-:root {
-  --vh: 100%;
-}
-
 /*Prime table css*/
 .incell-input {
   height: 70% !important;
@@ -355,10 +351,6 @@ input.readonly {
 .leading_PDA_Swiper {
   width: 100% !important;
   height: 90vh !important;
-}
-.leading_Swiper {
-  width: 100% !important;
-  height: 80% !important;
 }
 
 .swiper-slide {

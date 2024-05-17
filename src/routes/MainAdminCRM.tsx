@@ -113,7 +113,7 @@ const Main: React.FC = () => {
     }
   }, []);
 
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [cardOptionState, setCardOptionState] = useState<State>({

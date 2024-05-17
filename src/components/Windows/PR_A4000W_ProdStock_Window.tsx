@@ -69,7 +69,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
   const processApi = useApi();
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

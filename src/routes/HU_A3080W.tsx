@@ -625,7 +625,7 @@ type TdataArr = {
 
 const HU_A3080W: React.FC = () => {
   
- let deviceWidth = window.innerWidth;
+ let deviceWidth = document.documentElement.clientWidth;
  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
  let isMobile = deviceWidth <= 1200;
  var height = 0;

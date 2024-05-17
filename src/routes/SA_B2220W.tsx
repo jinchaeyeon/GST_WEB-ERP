@@ -26,7 +26,7 @@ interface Tsize {
 }
 
 const SA_B2220W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -64,7 +64,7 @@ const SA_B2220W: React.FC = () => {
       function handleResize() {
         // Set window width/height to state
         setWindowSize({
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
         });
       }

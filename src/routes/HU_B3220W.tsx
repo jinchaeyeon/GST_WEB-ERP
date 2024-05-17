@@ -57,7 +57,7 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
 const HU_B3220W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = 0;
