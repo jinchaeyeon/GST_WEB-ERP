@@ -31,10 +31,8 @@ import {
   ButtonInInput,
   FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
@@ -149,11 +147,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-let deviceWidth = document.documentElement.clientWidth;
-let deviceHeight = window.innerHeight - 50;
-let isMobile = deviceWidth <= 1200;
-
 const MA_B2800W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   const setLoading = useSetRecoilState(isLoading);

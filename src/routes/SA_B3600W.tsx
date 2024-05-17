@@ -39,11 +39,6 @@ interface TList {
   totcnt?: number;
 }
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 const SA_B3600W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -65,34 +60,6 @@ const SA_B3600W: React.FC = () => {
       },
     },
   });
-  const size: Tsize = useWindowSize();
-
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: document.documentElement.clientWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -350,6 +317,7 @@ const SA_B3600W: React.FC = () => {
       );
     }
   };
+  let deviceWidth = document.documentElement.clientWidth;
 
   useEffect(() => {
     if (filters.isSearch && customOptionData != null) {
@@ -510,7 +478,7 @@ const SA_B3600W: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                    fontsize={deviceWidth < 600 ? "1.8rem" : "3.3rem"}
                     form={"SA_B3600W"}
                   />
                 </Grid>

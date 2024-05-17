@@ -35,11 +35,6 @@ interface TList {
   planno: string;
 }
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 interface TimelineEvent {
   proccd?: string;
   proccdnm?: string;
@@ -73,30 +68,7 @@ const PR_B1104W: React.FC = () => {
       },
     },
   });
-  const size: Tsize = useWindowSize();
-
-  function useWindowSize() {
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      function handleResize() {
-        setWindowSize({
-          width: document.documentElement.clientWidth,
-          height: window.innerHeight,
-        });
-      }
-
-      window.addEventListener("resize", handleResize);
-
-      handleResize();
-
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-    return windowSize;
-  }
+  let deviceWidth = document.documentElement.clientWidth;
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -509,7 +481,9 @@ const PR_B1104W: React.FC = () => {
                     data={item.data}
                     backgroundColor={item.backgroundColor}
                     fontsize={
-                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
+                      deviceWidth > 600 && deviceWidth < 900
+                        ? "1.2rem"
+                        : "1.5rem"
                     }
                     form={"PR_B1104W"}
                   />

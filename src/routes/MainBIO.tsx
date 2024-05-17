@@ -29,11 +29,6 @@ import { useApi } from "../hooks/api";
 import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 type TSchedulerDataResult = {
   id: number;
   title: string;
@@ -339,39 +334,14 @@ const Main: React.FC = () => {
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
-      data: AllPanel.total > 0 ? Math.ceil(AllPanel.data[0].year_amt) + "억" : 0 + "원",
+      data:
+        AllPanel.total > 0
+          ? Math.ceil(AllPanel.data[0].year_amt) + "억"
+          : 0 + "원",
       backgroundColor: "#bbdefb",
     },
   ];
 
-  const size: Tsize = useWindowSize();
-
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: document.documentElement.clientWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
   const displayDate: Date = new Date();
 
   const CustomItem = (props: SchedulerItemProps) => {
@@ -411,6 +381,8 @@ const Main: React.FC = () => {
     );
   };
 
+  let deviceWidth = document.documentElement.clientWidth;
+
   return (
     <>
       <GridContainerWrap>
@@ -423,7 +395,7 @@ const Main: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "2.2rem" : "3rem"}
+                    fontsize={deviceWidth < 600 ? "2.2rem" : "3rem"}
                     height={"140px"}
                   />
                 </GridMui>
