@@ -60,6 +60,7 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
@@ -97,37 +98,13 @@ const HU_B4010W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var height5 = 0;
-  var height6 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
-  var container4 = document.querySelector(".ButtonContainer4");
-  var container5 = document.querySelector(".ButtonContainer5");
-  var container6 = document.querySelector(".ButtonContainer6");
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".k-tabstrip-items-wrapper");
+  var height4 = getHeight(".ButtonContainer4");
+  var height5 = getHeight(".ButtonContainer5");
+  var height6 = getHeight(".ButtonContainer6");
 
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
-  if (container5?.clientHeight != undefined) {
-    height5 = container5 == undefined ? 0 : container5.clientHeight;
-  }
-  if (container6?.clientHeight != undefined) {
-    height6 = container6 == undefined ? 0 : container6.clientHeight;
-  }
   const setLoading = useSetRecoilState(isLoading);
 
   const processApi = useApi();

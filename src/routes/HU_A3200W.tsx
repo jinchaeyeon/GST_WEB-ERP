@@ -50,6 +50,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -216,13 +217,8 @@ const HU_A3200W: React.FC = () => {
  let deviceWidth = window.innerWidth;
  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
  let isMobile = deviceWidth <= 1200;
- var height = 0;
+ var height = getHeight(".ButtonContainer");
 
- var container = document.querySelector(".ButtonContainer");
-
- if (container?.clientHeight != undefined) {
-   height = container == undefined ? 0 : container.clientHeight;
- }
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);

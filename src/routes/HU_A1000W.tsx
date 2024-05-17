@@ -41,6 +41,7 @@ import {
   UseMessages,
   UseParaPc,
   UsePermissions,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   useSysMessage,
@@ -191,11 +192,8 @@ const HU_A1000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회

@@ -43,6 +43,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -79,13 +80,7 @@ const HU_B2120W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-
-  var container = document.querySelector(".k-tabstrip-items-wrapper");
-
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".k-tabstrip-items-wrapper");
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
