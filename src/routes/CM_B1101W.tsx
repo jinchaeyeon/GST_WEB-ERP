@@ -38,6 +38,7 @@ import {
   findMessage,
   handleKeyPressSearch,
   setDefaultDate,
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -103,21 +104,9 @@ const CM_B1101W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var container = document.querySelector(".k-tabstrip-items-wrapper");
-  var container2 = document.querySelector(".ButtonContainer");
-  var container3 = document.querySelector(".ButtonContainer2");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height2 = getHeight(".ButtonContainer");
+  var height3 = getHeight(".ButtonContainer2");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);

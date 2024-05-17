@@ -44,6 +44,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
+  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -69,11 +70,7 @@ const CM_A2000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

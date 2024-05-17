@@ -41,6 +41,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -68,11 +69,7 @@ const SA_B2410: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

@@ -69,6 +69,7 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -234,26 +235,10 @@ const CM_A4100W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var container = document.querySelector(".k-tabstrip-items-wrapper");
-  var container2 = document.querySelector(".ButtonContainer");
-  var container3 = document.querySelector(".ButtonContainer2");
-  var container4 = document.querySelector(".ButtonContainer3");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  } 
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height2 = getHeight(".ButtonContainer");
+  var height3 = getHeight(".ButtonContainer2");
+  var height4 = getHeight(".ButtonContainer3");
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

@@ -42,6 +42,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -77,11 +78,7 @@ const QC_B0300W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   let isMobile = deviceWidth <= 1200;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

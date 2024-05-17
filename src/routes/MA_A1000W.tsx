@@ -45,6 +45,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -85,17 +86,8 @@ const MA_A1000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);

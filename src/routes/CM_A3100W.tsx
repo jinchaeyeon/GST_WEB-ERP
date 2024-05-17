@@ -46,6 +46,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime,
   findMessage,
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
@@ -82,11 +83,7 @@ const CM_A3100W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

@@ -45,6 +45,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
+  getHeight
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -94,11 +95,7 @@ const PS_A0060_301W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

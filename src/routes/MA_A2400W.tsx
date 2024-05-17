@@ -48,6 +48,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
+  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -97,6 +98,7 @@ const MA_A2400W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -104,22 +106,9 @@ const MA_A2400W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
   let deviceWidth = document.documentElement.clientWidth;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();

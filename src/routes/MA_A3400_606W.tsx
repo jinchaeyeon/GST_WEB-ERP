@@ -51,6 +51,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -102,21 +103,9 @@ const MA_A3400_606W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {

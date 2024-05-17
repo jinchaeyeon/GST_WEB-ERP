@@ -50,6 +50,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -146,11 +147,7 @@ const BA_A0041W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);

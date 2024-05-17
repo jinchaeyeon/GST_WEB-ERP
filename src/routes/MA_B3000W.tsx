@@ -64,6 +64,7 @@ import {
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   CLIENT_WIDTH,
@@ -107,17 +108,8 @@ const MA_B3000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var height2 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".k-tabstrip-items-wrapper");
-
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".k-tabstrip-items-wrapper");
   const [swiper, setSwiper] = useState<SwiperCore>();
   const MAX_CHARACTERS = 6;
 

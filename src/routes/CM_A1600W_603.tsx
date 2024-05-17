@@ -61,6 +61,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -167,26 +168,10 @@ const CM_A1600W_603: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height1 = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var container = document.querySelector(".k-tabstrip-items-wrapper");
-  var container1 = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container1?.clientHeight != undefined) {
-    height1 = container1 == undefined ? 0 : container1.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
