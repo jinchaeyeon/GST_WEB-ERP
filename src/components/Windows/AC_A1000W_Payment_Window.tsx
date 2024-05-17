@@ -803,7 +803,7 @@ const CopyWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap>
           <FormBox>
             <tbody>
               <tr>

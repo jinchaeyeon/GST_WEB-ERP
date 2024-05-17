@@ -36,6 +36,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -87,7 +88,7 @@ const monthField = [
 const CM_B8100W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-
+  var height = getHeight(".ButtonContainer");
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -438,10 +439,8 @@ const CM_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer
-        style={{ width: "100%" }}
-      >
-        <GridTitleContainer>
+      <GridContainer style={{ width: "100%" }}>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>기본정보</GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -453,7 +452,7 @@ const CM_B8100W: React.FC = () => {
         >
           <Grid
             style={{
-              height: isMobile ? deviceHeight : "81.6vh",
+              height: isMobile ? deviceHeight - height : "81.6vh",
             }}
             data={process(
               mainDataResult.data.map((row) => ({
@@ -491,26 +490,28 @@ const CM_B8100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        monthField.includes(item.fieldName)
-                          ? cellWithBackGround
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          monthField.includes(item.fieldName)
+                            ? cellWithBackGround
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

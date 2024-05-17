@@ -108,7 +108,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
         onClose={onClose}
         modal={modal}
       >
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap>
           <FormBox>
             <tbody>
               <tr>

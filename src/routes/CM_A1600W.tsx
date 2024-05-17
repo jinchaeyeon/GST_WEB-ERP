@@ -61,10 +61,10 @@ import {
   dateformat2,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -2237,7 +2237,7 @@ const CM_A1600: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <FilterContainer>
                       <FilterBox
                         onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -2311,7 +2311,7 @@ const CM_A1600: React.FC = () => {
 
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <FilterContainer>
                       <FilterBox
                         onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -2942,7 +2942,7 @@ const CM_A1600: React.FC = () => {
             </FilterContainer>
           </GridTitleContainer>
           <GridContainer width="100%">
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer3">
               <GridTitle>개인 스케줄(표)</GridTitle>
 
               {permissions && (

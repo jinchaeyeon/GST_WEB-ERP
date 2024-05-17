@@ -1216,6 +1216,9 @@ const CM_A1000W: React.FC = () => {
       usetime: "",
       total_usetime: "",
     }));
+    if (swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSaveClick = () => {

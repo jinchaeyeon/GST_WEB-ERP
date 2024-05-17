@@ -515,7 +515,7 @@ const App: React.FC = () => {
 
   const CusomizedGrid = () => {
     return (
-      <GridContainer width="100%" inTab={true}>
+      <GridContainer width="100%">
         <ExcelExport
           data={newData}
           ref={(exporter) => {
