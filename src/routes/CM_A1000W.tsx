@@ -1536,61 +1536,9 @@ const CM_A1000W: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <GridTitleContainer className="ButtonContainer">
-                    <Calendar
-                      focusedDate={filters.todt}
-                      value={filters.todt}
-                      onChange={filterInputChange}
-                      mobileMode={true}
-                    />
-                </GridTitleContainer>
-                <GridTitleContainer className="ButtonContainer2">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <GridTitle>메모(월 기준)</GridTitle>
-                    <Button
-                      onClick={onMemoSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <TextArea
-                  value={infomation.memo}
-                  name="memo"
-                  rows={27}
-                  onChange={InputChange}
-                />
-                <div style={{ height: "20px" }} />
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
-              >
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>요약정보</GridTitle>
-                  <ButtonContainer
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gridGap: "5px",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                    >
-                      이전
-                    </Button>
+                  <ButtonContainer>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
@@ -1710,25 +1658,25 @@ const CM_A1000W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={2}>
+            <SwiperSlide key={1}>
               <GridContainer style={{ width: "100%" }}>
-                <ButtonContainer
-                  className="ButtonContainer4"
-                  style={{ justifyContent: "space-between" }}
-                >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
-                </ButtonContainer>
+                <GridTitleContainer className="ButtonContainer4">
+                  <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <FormBoxWrap
                   style={{
                     height: deviceHeight - height4,
@@ -1977,6 +1925,48 @@ const CM_A1000W: React.FC = () => {
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>메모(월 기준)</GridTitle>
+                  <ButtonContainer
+                    style={{
+                      justifyContent: "space-between",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={onMemoSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <TextArea
+                  value={infomation.memo}
+                  name="memo"
+                  rows={27}
+                  onChange={InputChange}
+                  style={{ height: deviceHeight - height2 }}
+                />
               </GridContainer>
             </SwiperSlide>
           </Swiper>
