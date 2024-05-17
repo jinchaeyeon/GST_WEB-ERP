@@ -31,7 +31,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? window.innerHeight : 800,
+    height: 800,
   });
 
   const onClose = () => {

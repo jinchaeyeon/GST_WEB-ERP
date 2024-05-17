@@ -25,11 +25,6 @@ import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
 
-interface Tsize {
-  width: number;
-  height: number;
-}
-
 const SA_B2216W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
@@ -76,34 +71,7 @@ const SA_B2216W: React.FC = () => {
       },
     },
   });
-  const size: Tsize = useWindowSize();
 
-  function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 0,
-      height: 0,
-    });
-
-    useEffect(() => {
-      // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: document.documentElement.clientWidth,
-          height: window.innerHeight,
-        });
-      }
-      // Add event listener
-      window.addEventListener("resize", handleResize);
-      // Call handler right away so state gets updated with initial window size
-      handleResize();
-      // Remove event listener on cleanup
-      return () => window.removeEventListener("resize", handleResize);
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -165,8 +133,8 @@ const SA_B2216W: React.FC = () => {
     if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil((item.value))
-      }))
+        value: Math.ceil(item.value),
+      }));
 
       setChartList(rows);
 
@@ -205,8 +173,8 @@ const SA_B2216W: React.FC = () => {
     if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil((item.value))
-      }))
+        value: Math.ceil(item.value),
+      }));
 
       setBarData(rows2);
       let array = rows2
