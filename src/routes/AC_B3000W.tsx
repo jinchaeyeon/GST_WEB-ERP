@@ -371,7 +371,7 @@ const AC_B3000W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>품목별 표준원가 분석표</Title>
+        <Title>년감가상각명세</Title>
 
         <ButtonContainer>
           {permissions && (
