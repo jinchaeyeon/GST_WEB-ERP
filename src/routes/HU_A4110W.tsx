@@ -1001,10 +1001,10 @@ const HU_A4110W: React.FC = () => {
                   <FormBox>
                     <tbody>
                       <tr style={{ display: "flax", flexDirection: "row" }}>
-                        <th style={{ width: "10%", minWidth: "100px" }}>
+                        <th style={{ width: "30%", minWidth: "100px" }}>
                           지급포인트
                         </th>
-                        <td style={{ width: "20%" }}>
+                        <td style={{ width: "70%" }}>
                           <Input
                             name="amt"
                             type="text"
@@ -1015,10 +1015,12 @@ const HU_A4110W: React.FC = () => {
                             className="readonly"
                           />
                         </td>
-                        <th style={{ width: "10%", minWidth: "100px" }}>
+                        </tr>
+                        <tr style={{ display: "flax", flexDirection: "row" }}>
+                        <th style={{ width: "30%", minWidth: "100px" }}>
                           잔여포인트
                         </th>
-                        <td style={{ width: "20%" }}>
+                        <td style={{ width: "70%" }}>
                           <Input
                             name="janamt"
                             type="text"

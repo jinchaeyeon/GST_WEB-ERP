@@ -15,7 +15,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -39,6 +39,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -51,7 +52,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/TO_B0011W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -60,6 +61,10 @@ const numberField = ["stockqty"];
 let targetRowIndex: null | number = null;
 
 const TO_B0011W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -655,7 +660,7 @@ const TO_B0011W: React.FC = () => {
           fileName="목형재고조회"
         >
           <Grid
-            style={{ height: "77.5vh" }}
+            style={{ height: isMobile ? deviceHeight : "77.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
