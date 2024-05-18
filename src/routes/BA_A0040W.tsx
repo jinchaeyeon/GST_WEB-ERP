@@ -182,6 +182,7 @@ const BA_A0040: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1504,6 +1505,32 @@ const BA_A0040: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    
+    if(e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }))
+    } else if(e.selected == 1) {
+      setsubFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }))
+    }  else if(e.selected == 2) {
+      setsubFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }))
+    }
     setTabSelected(e.selected);
   };
 
@@ -2840,12 +2867,7 @@ const BA_A0040: React.FC = () => {
                   </GridContainer>
                 </TabStripTab>
                 <TabStripTab title="단가">
-                  <GridContainer
-                    style={{
-                      width: `${deviceWidth - 30}px`,
-                      overflow: "scroll",
-                    }}
-                  >
+                  <GridContainer>
                     <GridTitleContainer className="ButtonContainer2">
                       <ButtonContainer>
                         <Button
@@ -2879,6 +2901,7 @@ const BA_A0040: React.FC = () => {
                     >
                       <Grid
                         style={{
+                          width: "100%",
                           height: deviceHeight - height2 - height3,
                         }}
                         data={process(
@@ -3293,7 +3316,7 @@ const BA_A0040: React.FC = () => {
               style={{ width: "100%" }}
             >
               <TabStripTab title="상세정보">
-                <GridContainer style={{ height: isMobile ? "100%" : "28vh" }}>
+                <GridContainer style={{ height: "28vh" }}>
                   <FormBoxWrap>
                     <FormBox>
                       <tbody>
@@ -3580,7 +3603,7 @@ const BA_A0040: React.FC = () => {
                 </GridContainer>
               </TabStripTab>
               <TabStripTab title="단가">
-                <GridContainer style={{ height: isMobile ? "45vh" : "28vh" }}>
+                <GridContainer style={{ height: "28vh" }}>
                   <GridTitleContainer>
                     <GridTitle>단가정보</GridTitle>
                     <ButtonContainer>
@@ -3614,7 +3637,7 @@ const BA_A0040: React.FC = () => {
                     fileName="품목관리"
                   >
                     <Grid
-                      style={{ height: isMobile ? "32vh" : "24vh" }}
+                      style={{ height: "24vh" }}
                       data={process(
                         subData2Result.data.map((row) => ({
                           ...row,
