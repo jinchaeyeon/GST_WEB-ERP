@@ -20,6 +20,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -67,9 +70,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 const DATA_ITEM_KEY = "num";
@@ -100,7 +100,7 @@ const HU_B3120W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");
-
+  var height4 = getHeight(".ButtonContainer3");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -844,6 +844,9 @@ const HU_B3120W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if (swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const search2 = () => {
@@ -1225,12 +1228,12 @@ const HU_B3120W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px`}}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
                 <FormBoxWrap border={true} className="ButtonContainer2">
                   <FormBox>
-                    <tbody >
-                      <tr style={{ display: "flax", flexDirection : "row" }}>
-                        <th style={{ width: "10%", minWidth:"60px" }}>사번</th>
+                    <tbody>
+                      <tr style={{ display: "flax", flexDirection: "row" }}>
+                        <th style={{ width: "10%", minWidth: "60px" }}>사번</th>
                         <td style={{ width: "30%" }}>
                           <Input
                             name="prsnnum"
@@ -1239,7 +1242,7 @@ const HU_B3120W: React.FC = () => {
                             className="readonly"
                           />
                         </td>
-                        <th style={{ width: "10%", minWidth:"60px" }}>성명</th>
+                        <th style={{ width: "10%", minWidth: "60px" }}>성명</th>
                         <td style={{ width: "30%" }}>
                           <Input
                             name="prsnnm"
@@ -1308,7 +1311,9 @@ const HU_B3120W: React.FC = () => {
                         fileName="개인별 명세"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 - height3 }}
+                          style={{
+                            height: deviceHeight - height2 - height3 - height4,
+                          }}
                           data={process(
                             mainDataResult2.data.map((row) => ({
                               ...row,
