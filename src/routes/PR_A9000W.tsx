@@ -54,6 +54,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -74,9 +75,12 @@ import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWind
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/PR_A9000W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -580,6 +584,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 };
 
 const PR_A9000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -2707,7 +2716,7 @@ const PR_A9000W: React.FC = () => {
               }}
             >
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>재공기타입출고내역</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -2747,7 +2756,7 @@ const PR_A9000W: React.FC = () => {
                   fileName="재공품 기타입출고"
                 >
                   <Grid
-                    style={{ height: "66vh" }}
+                    style={{ height: isMobile? deviceHeight - height - height1 : "68vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2840,7 +2849,7 @@ const PR_A9000W: React.FC = () => {
             }}
           >
             <GridContainer width="100%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>재공기타입출고내역</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -2880,7 +2889,7 @@ const PR_A9000W: React.FC = () => {
                 fileName="재공품 기타입출고"
               >
                 <Grid
-                  style={{ height: "66vh" }}
+                  style={{ height: isMobile? deviceHeight - height - height1 : "68vh" }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
