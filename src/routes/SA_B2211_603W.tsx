@@ -29,7 +29,7 @@ import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutC
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import ScrollTable from "../components/KPIcomponents/Table/ScrollTable";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, isLoading } from "../store/atoms";
+import { colors, colorsName, isLoading, heightstate } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const SA_B2211_603W: React.FC = () => {
@@ -73,6 +73,7 @@ const SA_B2211_603W: React.FC = () => {
     },
   });
   let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
@@ -521,7 +522,13 @@ const SA_B2211_603W: React.FC = () => {
 
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold", marginBottom: "50px" }}>
+      <div
+        style={{
+          fontFamily: "TheJamsil5Bold",
+          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>고객사별 실적 집계</Title>

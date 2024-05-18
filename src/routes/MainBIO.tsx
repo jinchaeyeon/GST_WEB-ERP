@@ -26,7 +26,12 @@ import { GAP, PAGE_SIZE } from "../components/CommonString";
 import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import { useApi } from "../hooks/api";
-import { OSState, loginResultState, sessionItemState } from "../store/atoms";
+import {
+  OSState,
+  heightstate,
+  loginResultState,
+  sessionItemState,
+} from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 type TSchedulerDataResult = {
@@ -382,11 +387,124 @@ const Main: React.FC = () => {
   };
 
   let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   return (
     <>
-      <GridContainerWrap>
-        <GridContainer width="55%">
+      {!isMobile ? (
+        <GridContainerWrap>
+          <GridContainer width="55%">
+            <GridContainer style={{ marginTop: "20px" }}>
+              <GridMui container spacing={2}>
+                {cardOption.map((item) => (
+                  <GridMui item xs={12} sm={6} md={6} lg={6} xl={6}>
+                    <Card
+                      title={item.title}
+                      data={item.data}
+                      backgroundColor={item.backgroundColor}
+                      fontsize={deviceWidth < 600 ? "2.2rem" : "3rem"}
+                      height={"140px"}
+                    />
+                  </GridMui>
+                ))}
+              </GridMui>
+            </GridContainer>
+            <GridContainer style={{ marginTop: "20px" }}>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected}
+                onSelect={handleSelectTab}
+              >
+                <TabStripTab title="업무 달력">
+                  <GridContainer>
+                    {osstate == true ? (
+                      <div
+                        style={{
+                          backgroundColor: "#ccc",
+                          height: "600px",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        현재 OS에서는 지원이 불가능합니다.
+                      </div>
+                    ) : (
+                      <Scheduler
+                        height={"600px"}
+                        data={schedulerDataResult}
+                        defaultDate={displayDate}
+                        item={CustomItem}
+                      >
+                        <MonthView />
+                        <DayView />
+                        <WeekView />
+                      </Scheduler>
+                    )}
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
+            </GridContainer>
+          </GridContainer>
+          <GridContainer width={`calc(45% - ${GAP}px)`}>
+            <GridContainer style={{ marginTop: "20px" }}>
+              <GridMui container spacing={2}>
+                <GridMui item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <PaginatorTable
+                    value={waitList.data}
+                    column={{
+                      projectNo: "PJT NO",
+                      status: "상태",
+                      consts: "계약여부",
+                      custnm: "업체명",
+                      chkperson: "영업담당자",
+                    }}
+                    title={"프로젝트 관리"}
+                    width={[150, 120, 100, 120, 120]}
+                    key="num"
+                    selection={selected}
+                    onSelectionChange={(e: any) => {
+                      setSelected(e.value);
+                    }}
+                    height={"300px"}
+                    filters={false}
+                  />
+                </GridMui>
+                <GridMui item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <PaginatorTable
+                    value={consultList.data}
+                    column={{
+                      projectNo: "PJT NO",
+                      custnm: "업체명",
+                      title: "제목",
+                      answeryn: "답변여부",
+                    }}
+                    title={"컨설팅 요청 및 답변"}
+                    width={[150, 120, 150, 150]}
+                    key="num"
+                    selection={selected2}
+                    onSelectionChange={(e: any) => {
+                      setSelected2(e.value);
+                    }}
+                    height={"300px"}
+                    filters={false}
+                    customCell={[["answeryn", answerynBodyTemplate]]}
+                  />
+                </GridMui>
+              </GridMui>
+            </GridContainer>
+          </GridContainer>
+        </GridContainerWrap>
+      ) : (
+        <div
+          style={{
+            fontFamily: "TheJamsil5Bold",
+            height: `calc(${deviceHeight + 120}px)`,
+            overflow: "auto",
+          }}
+        >
           <GridContainer style={{ marginTop: "20px" }}>
             <GridMui container spacing={2}>
               {cardOption.map((item) => (
@@ -439,8 +557,6 @@ const Main: React.FC = () => {
               </TabStripTab>
             </TabStrip>
           </GridContainer>
-        </GridContainer>
-        <GridContainer width={`calc(45% - ${GAP}px)`}>
           <GridContainer style={{ marginTop: "20px" }}>
             <GridMui container spacing={2}>
               <GridMui item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -487,8 +603,8 @@ const Main: React.FC = () => {
               </GridMui>
             </GridMui>
           </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+        </div>
+      )}
     </>
   );
 };

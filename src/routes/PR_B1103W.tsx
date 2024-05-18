@@ -31,7 +31,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, isLoading } from "../store/atoms";
+import { colors, heightstate, isLoading } from "../store/atoms";
 
 const PR_B1103W: React.FC = () => {
   const processApi = useApi();
@@ -55,6 +55,8 @@ const PR_B1103W: React.FC = () => {
     },
   });
   let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -540,7 +542,13 @@ const PR_B1103W: React.FC = () => {
 
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+    <div
+        style={{
+          fontFamily: "TheJamsil5Bold",
+          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Toast ref={toast} position="top-center" />
