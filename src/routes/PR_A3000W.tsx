@@ -11,6 +11,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
   GridTitle,
   GridTitleContainer,
@@ -571,76 +573,78 @@ const PR_A3000W: React.FC = () => {
                     </ButtonContainer>
                   </GridTitle>
                 </GridTitleContainer>
-                <FilterBox
-                  onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  style={{ height: deviceHeight - height }}
+                <FormBoxWrap
+                  style={{ height: deviceHeight, overflow: "auto" }}
+                  border={true}
                 >
-                  <tbody>
-                    <tr>
-                      <th>작업지시번호</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="plankey"
-                          type="text"
-                          value={filters.plankey}
-                          onChange={filterInputChange}
-                          onBlur={search}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      {/* <th>작업일자</th>
+                  <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                    <tbody>
+                      <tr>
+                        <th>작업지시번호</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="plankey"
+                            type="text"
+                            value={filters.plankey}
+                            onChange={filterInputChange}
+                            onBlur={search}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* <th>작업일자</th>
     <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
-                      <th>작업자</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="prodemp"
-                            value={filtersSaved.prodemp}
-                            bizComponentId="L_sysUserMaster_001"
-                            bizComponentData={bizComponentData}
-                            changeData={filterComboBoxChange}
-                            valueField="user_id"
-                            textField="user_name"
-                          />
-                        )}
-                      </td>
-                      <th>설비</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="prodmac"
-                            value={filtersSaved.prodmac}
-                            bizComponentId="L_fxcode"
-                            bizComponentData={bizComponentData}
-                            changeData={filterComboBoxChange}
-                            valueField="fxcode"
-                            textField="fxfull"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>공정</th>
-                      <td>
-                        {proccdListData
-                          ? proccdListData.find(
-                              (item: any) =>
-                                item.sub_code == mainDataResult.proccd
-                            )?.code_name
-                          : ""}
-                      </td>
-                      <th>계획수량</th>
-                      <td>{mainDataResult.qty}</td>
-                    </tr>
-                    <tr>
-                      <th>품목</th>
-                      <td>{mainDataResult.itemnm}</td>
-                      <th>누적수량</th>
-                      <td>{mainDataResult.prodqty}</td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
+                        <th>작업자</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="prodemp"
+                              value={filtersSaved.prodemp}
+                              bizComponentId="L_sysUserMaster_001"
+                              bizComponentData={bizComponentData}
+                              changeData={filterComboBoxChange}
+                              valueField="user_id"
+                              textField="user_name"
+                            />
+                          )}
+                        </td>
+                        <th>설비</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="prodmac"
+                              value={filtersSaved.prodmac}
+                              bizComponentId="L_fxcode"
+                              bizComponentData={bizComponentData}
+                              changeData={filterComboBoxChange}
+                              valueField="fxcode"
+                              textField="fxfull"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>공정</th>
+                        <td>
+                          {proccdListData
+                            ? proccdListData.find(
+                                (item: any) =>
+                                  item.sub_code == mainDataResult.proccd
+                              )?.code_name
+                            : ""}
+                        </td>
+                        <th>계획수량</th>
+                        <td>{mainDataResult.qty}</td>
+                      </tr>
+                      <tr>
+                        <th>품목</th>
+                        <td>{mainDataResult.itemnm}</td>
+                        <th>누적수량</th>
+                        <td>{mainDataResult.prodqty}</td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
@@ -667,51 +671,53 @@ const PR_A3000W: React.FC = () => {
                     </ButtonContainer>
                   </GridTitle>
                 </GridTitleContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>생산시작시간</th>
-                      <td colSpan={3}>
-                        {startOrEnd == "end"
-                          ? convertDateToStrWithTime2(
-                              new Date(masterDataResult.strtime)
-                            ) +
-                            " (경과시간 : " +
-                            duration +
-                            ")"
-                          : "00:00:00"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>수량</th>
-                      <td>
-                        <NumericTextBox
-                          name="qty"
-                          value={filtersSaved.qty}
-                          onChange={filterNumericTextBoxChange}
-                        />
-                      </td>
-                      <th>불량수량</th>
-                      <td>
-                        <NumericTextBox
-                          name="badqty"
-                          value={filtersSaved.badqty}
-                          onChange={filterNumericTextBoxChange}
-                        />
-                      </td>
-                    </tr>
-                    {stopStartOrEnd == "end" && stopStartTime ? (
+                <FormBoxWrap border={true}>
+                  <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                    <tbody>
                       <tr>
-                        <th>비가동시작시간</th>
+                        <th>생산시작시간</th>
                         <td colSpan={3}>
-                          {convertDateToStrWithTime2(new Date(stopStartTime))}
+                          {startOrEnd == "end"
+                            ? convertDateToStrWithTime2(
+                                new Date(masterDataResult.strtime)
+                              ) +
+                              " (경과시간 : " +
+                              duration +
+                              ")"
+                            : "00:00:00"}
                         </td>
                       </tr>
-                    ) : (
-                      ""
-                    )}
-                  </tbody>
-                </FilterBox>
+                      <tr>
+                        <th>수량</th>
+                        <td>
+                          <NumericTextBox
+                            name="qty"
+                            value={filtersSaved.qty}
+                            onChange={filterNumericTextBoxChange}
+                          />
+                        </td>
+                        <th>불량수량</th>
+                        <td>
+                          <NumericTextBox
+                            name="badqty"
+                            value={filtersSaved.badqty}
+                            onChange={filterNumericTextBoxChange}
+                          />
+                        </td>
+                      </tr>
+                      {stopStartOrEnd == "end" && stopStartTime ? (
+                        <tr>
+                          <th>비가동시작시간</th>
+                          <td colSpan={3}>
+                            {convertDateToStrWithTime2(new Date(stopStartTime))}
+                          </td>
+                        </tr>
+                      ) : (
+                        ""
+                      )}
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
                 <ButtonContainer style={{ justifyContent: "center" }}>
                   {permissions && (
                     <>
@@ -775,9 +781,6 @@ const PR_A3000W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
-            <Title className="iot-title">생산실적</Title>
-          </TitleContainer>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody className="PR_A3000W">
