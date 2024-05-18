@@ -56,6 +56,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
@@ -74,7 +75,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -142,6 +143,10 @@ type TdataArr2 = {
 };
 
 const PR_A4100W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -1293,7 +1298,7 @@ const PR_A4100W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
             <Button
@@ -1327,7 +1332,7 @@ const PR_A4100W: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: "70vh" }}
+            style={{ height: isMobile? deviceHeight - height : "72vh" }}
             data={newData.map((item: { items: any[] }) => ({
               ...item,
               items: item.items.map((row: any) => ({

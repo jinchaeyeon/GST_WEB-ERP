@@ -11,6 +11,11 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -22,6 +27,7 @@ import {
   UsePermissions,
   convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -30,8 +36,11 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -41,6 +50,12 @@ const PR_A3000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
 
   const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
@@ -472,6 +487,9 @@ const PR_A3000W: React.FC = () => {
     //검증 처리
     if (filters.plankey == "") {
       alert("작업지시번호를 확인해주세요.");
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
       return;
     }
 
@@ -494,6 +512,9 @@ const PR_A3000W: React.FC = () => {
       //비가동시작
       if (filtersSaved.prodmac == "") {
         alert("설비를 선택해주세요.");
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
         return;
       }
       setStopWindowVisible(true);
@@ -514,167 +535,410 @@ const PR_A3000W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title className="iot-title">생산실적</Title>
-      </TitleContainer>
-
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody className="PR_A3000W">
-            <tr>
-              <th>작업지시번호</th>
-              <td colSpan={3}>
-                <Input
-                  name="plankey"
-                  type="text"
-                  value={filters.plankey}
-                  onChange={filterInputChange}
-                  onBlur={search}
-                />
-              </td>
-            </tr>
-            <tr>
-              {/* <th>작업일자</th>
-              <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
-              <th>작업자</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="prodemp"
-                    value={filtersSaved.prodemp}
-                    bizComponentId="L_sysUserMaster_001"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                    valueField="user_id"
-                    textField="user_name"
-                  />
-                )}
-              </td>
-              <th>설비</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="prodmac"
-                    value={filtersSaved.prodmac}
-                    bizComponentId="L_fxcode"
-                    bizComponentData={bizComponentData}
-                    changeData={filterComboBoxChange}
-                    valueField="fxcode"
-                    textField="fxfull"
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>공정</th>
-              <td>
-                {proccdListData
-                  ? proccdListData.find(
-                      (item: any) => item.sub_code == mainDataResult.proccd
-                    )?.code_name
-                  : ""}
-              </td>
-              <th>계획수량</th>
-              <td>{mainDataResult.qty}</td>
-            </tr>
-            <tr>
-              <th>품목</th>
-              <td>{mainDataResult.itemnm}</td>
-              <th>누적수량</th>
-              <td>{mainDataResult.prodqty}</td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody className="PR_A3000W">
-            <tr>
-              <th>생산시작시간</th>
-              <td colSpan={3}>
-                {startOrEnd == "end"
-                  ? convertDateToStrWithTime2(
-                      new Date(masterDataResult.strtime)
-                    ) +
-                    " (경과시간 : " +
-                    duration +
-                    ")"
-                  : "00:00:00"}
-              </td>
-            </tr>
-            <tr>
-              <th>수량</th>
-              <td>
-                <NumericTextBox
-                  name="qty"
-                  value={filtersSaved.qty}
-                  onChange={filterNumericTextBoxChange}
-                />
-              </td>
-              <th>불량수량</th>
-              <td>
-                <NumericTextBox
-                  name="badqty"
-                  value={filtersSaved.badqty}
-                  onChange={filterNumericTextBoxChange}
-                />
-              </td>
-            </tr>
-            {stopStartOrEnd == "end" && stopStartTime ? (
-              <tr>
-                <th>비가동시작시간</th>
-                <td colSpan={3}>
-                  {convertDateToStrWithTime2(new Date(stopStartTime))}
-                </td>
-              </tr>
-            ) : (
-              ""
-            )}
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-
-      <ButtonContainer>
-        {permissions && (
-          <>
-            <Button
-              onClick={onClickWork}
-              icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
-              themeColor={"primary"}
-              disabled={
-                permissions.save && stopStartOrEnd == "start" ? false : true
-              }
-              className="iot-btn green"
-            >
-              {startOrEnd == "start" ? "시작" : "종료"}
-            </Button>
-            <Button
-              onClick={onClickDefect}
-              icon="exclamation-circle"
-              themeColor={"primary"}
-              disabled={
-                permissions.save &&
-                startOrEnd == "end" &&
-                stopStartOrEnd == "start"
-                  ? false
-                  : true
-              }
-              className="iot-btn red"
-            >
-              불량입력
-            </Button>
-            <Button
-              onClick={onClickStop}
-              icon="pencil"
-              themeColor={"primary"}
-              disabled={permissions.save ? false : true}
-              className="iot-btn gray"
-            >
-              {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
-            </Button>
-          </>
+        {isMobile ? (
+          <Title>생산실적</Title>
+        ) : (
+          <Title className="iot-title">생산실적</Title>
         )}
-      </ButtonContainer>
+      </TitleContainer>
+      {isMobile ? (
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="arrow-right"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        다음
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  style={{ height: deviceHeight, overflow: "auto" }}
+                  border={true}
+                >
+                  <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                    <tbody>
+                      <tr>
+                        <th>작업지시번호</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="plankey"
+                            type="text"
+                            value={filters.plankey}
+                            onChange={filterInputChange}
+                            onBlur={search}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* <th>작업일자</th>
+    <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
+                        <th>작업자</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="prodemp"
+                              value={filtersSaved.prodemp}
+                              bizComponentId="L_sysUserMaster_001"
+                              bizComponentData={bizComponentData}
+                              changeData={filterComboBoxChange}
+                              valueField="user_id"
+                              textField="user_name"
+                            />
+                          )}
+                        </td>
+                        <th>설비</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="prodmac"
+                              value={filtersSaved.prodmac}
+                              bizComponentId="L_fxcode"
+                              bizComponentData={bizComponentData}
+                              changeData={filterComboBoxChange}
+                              valueField="fxcode"
+                              textField="fxfull"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>공정</th>
+                        <td>
+                          {proccdListData
+                            ? proccdListData.find(
+                                (item: any) =>
+                                  item.sub_code == mainDataResult.proccd
+                              )?.code_name
+                            : ""}
+                        </td>
+                        <th>계획수량</th>
+                        <td>{mainDataResult.qty}</td>
+                      </tr>
+                      <tr>
+                        <th>품목</th>
+                        <td>{mainDataResult.itemnm}</td>
+                        <th>누적수량</th>
+                        <td>{mainDataResult.prodqty}</td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap border={true}>
+                  <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                    <tbody>
+                      <tr>
+                        <th>생산시작시간</th>
+                        <td colSpan={3}>
+                          {startOrEnd == "end"
+                            ? convertDateToStrWithTime2(
+                                new Date(masterDataResult.strtime)
+                              ) +
+                              " (경과시간 : " +
+                              duration +
+                              ")"
+                            : "00:00:00"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>수량</th>
+                        <td>
+                          <NumericTextBox
+                            name="qty"
+                            value={filtersSaved.qty}
+                            onChange={filterNumericTextBoxChange}
+                          />
+                        </td>
+                        <th>불량수량</th>
+                        <td>
+                          <NumericTextBox
+                            name="badqty"
+                            value={filtersSaved.badqty}
+                            onChange={filterNumericTextBoxChange}
+                          />
+                        </td>
+                      </tr>
+                      {stopStartOrEnd == "end" && stopStartTime ? (
+                        <tr>
+                          <th>비가동시작시간</th>
+                          <td colSpan={3}>
+                            {convertDateToStrWithTime2(new Date(stopStartTime))}
+                          </td>
+                        </tr>
+                      ) : (
+                        ""
+                      )}
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+                <ButtonContainer style={{ justifyContent: "center" }}>
+                  {permissions && (
+                    <>
+                      <Button
+                        onClick={onClickWork}
+                        themeColor={"primary"}
+                        disabled={
+                          permissions.save && stopStartOrEnd == "start"
+                            ? false
+                            : true
+                        }
+                        className="iot-btn green"
+                        style={{
+                          width: "90px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {startOrEnd == "start" ? "시작" : "종료"}
+                      </Button>
+                      <Button
+                        onClick={onClickDefect}
+                        themeColor={"primary"}
+                        disabled={
+                          permissions.save &&
+                          startOrEnd == "end" &&
+                          stopStartOrEnd == "start"
+                            ? false
+                            : true
+                        }
+                        className="iot-btn red"
+                        style={{
+                          width: "95px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        불량입력
+                      </Button>
+                      <Button
+                        onClick={onClickStop}
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                        className="iot-btn gray"
+                        style={{
+                          width: "100px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {stopStartOrEnd == "start"
+                          ? "비가동입력"
+                          : "비가동종료"}
+                      </Button>
+                    </>
+                  )}
+                </ButtonContainer>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody className="PR_A3000W">
+                <tr>
+                  <th>작업지시번호</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="plankey"
+                      type="text"
+                      value={filters.plankey}
+                      onChange={filterInputChange}
+                      onBlur={search}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  {/* <th>작업일자</th>
+    <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
+                  <th>작업자</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="prodemp"
+                        value={filtersSaved.prodemp}
+                        bizComponentId="L_sysUserMaster_001"
+                        bizComponentData={bizComponentData}
+                        changeData={filterComboBoxChange}
+                        valueField="user_id"
+                        textField="user_name"
+                      />
+                    )}
+                  </td>
+                  <th>설비</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="prodmac"
+                        value={filtersSaved.prodmac}
+                        bizComponentId="L_fxcode"
+                        bizComponentData={bizComponentData}
+                        changeData={filterComboBoxChange}
+                        valueField="fxcode"
+                        textField="fxfull"
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>공정</th>
+                  <td>
+                    {proccdListData
+                      ? proccdListData.find(
+                          (item: any) => item.sub_code == mainDataResult.proccd
+                        )?.code_name
+                      : ""}
+                  </td>
+                  <th>계획수량</th>
+                  <td>{mainDataResult.qty}</td>
+                </tr>
+                <tr>
+                  <th>품목</th>
+                  <td>{mainDataResult.itemnm}</td>
+                  <th>누적수량</th>
+                  <td>{mainDataResult.prodqty}</td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody className="PR_A3000W">
+                <tr>
+                  <th>생산시작시간</th>
+                  <td colSpan={3}>
+                    {startOrEnd == "end"
+                      ? convertDateToStrWithTime2(
+                          new Date(masterDataResult.strtime)
+                        ) +
+                        " (경과시간 : " +
+                        duration +
+                        ")"
+                      : "00:00:00"}
+                  </td>
+                </tr>
+                <tr>
+                  <th>수량</th>
+                  <td>
+                    <NumericTextBox
+                      name="qty"
+                      value={filtersSaved.qty}
+                      onChange={filterNumericTextBoxChange}
+                    />
+                  </td>
+                  <th>불량수량</th>
+                  <td>
+                    <NumericTextBox
+                      name="badqty"
+                      value={filtersSaved.badqty}
+                      onChange={filterNumericTextBoxChange}
+                    />
+                  </td>
+                </tr>
+                {stopStartOrEnd == "end" && stopStartTime ? (
+                  <tr>
+                    <th>비가동시작시간</th>
+                    <td colSpan={3}>
+                      {convertDateToStrWithTime2(new Date(stopStartTime))}
+                    </td>
+                  </tr>
+                ) : (
+                  ""
+                )}
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <ButtonContainer>
+            {permissions && (
+              <>
+                <Button
+                  onClick={onClickWork}
+                  icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
+                  themeColor={"primary"}
+                  disabled={
+                    permissions.save && stopStartOrEnd == "start" ? false : true
+                  }
+                  className="iot-btn green"
+                >
+                  {startOrEnd == "start" ? "시작" : "종료"}
+                </Button>
+                <Button
+                  onClick={onClickDefect}
+                  icon="exclamation-circle"
+                  themeColor={"primary"}
+                  disabled={
+                    permissions.save &&
+                    startOrEnd == "end" &&
+                    stopStartOrEnd == "start"
+                      ? false
+                      : true
+                  }
+                  className="iot-btn red"
+                >
+                  불량입력
+                </Button>
+                <Button
+                  onClick={onClickStop}
+                  icon="pencil"
+                  themeColor={"primary"}
+                  disabled={permissions.save ? false : true}
+                  className="iot-btn gray"
+                >
+                  {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
+                </Button>
+              </>
+            )}
+          </ButtonContainer>
+        </>
+      )}
 
       {stopWindowVisible && (
         <StopWindow

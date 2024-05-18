@@ -39,6 +39,7 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -54,7 +55,7 @@ import WorkDailyReport from "../components/Prints/WorkDailyReport";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -68,7 +69,10 @@ const centerField = ["proddt", "strtime", "endtime"];
 const PR_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer")
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -593,7 +597,7 @@ const PR_B3000W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>작업 리스트</GridTitle>
           {permissions && (
             <ButtonContainer>
@@ -617,7 +621,7 @@ const PR_B3000W: React.FC = () => {
           fileName="작업일보"
         >
           <Grid
-            style={{ height: "74.5vh" }}
+            style={{ height: isMobile? deviceHeight - height : "76vh" }}
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,

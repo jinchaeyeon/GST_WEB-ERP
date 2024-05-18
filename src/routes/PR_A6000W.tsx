@@ -27,7 +27,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -53,6 +53,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -68,9 +69,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import DetailWindow from "../components/Windows/PR_A6000W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -91,6 +95,13 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const PR_A6000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -786,6 +797,9 @@ const PR_A6000W: React.FC = () => {
       pgNum: 1,
       find_row_value: "",
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -1126,6 +1140,9 @@ const PR_A6000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -1254,260 +1271,596 @@ const PR_A6000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width={`48%`}>
-          <GridTitleContainer>
-            <GridTitle>설비별비가동시간</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="비가동관리"
-          >
-            <Grid
-              style={{ height: "36vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]
-                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  ?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(52% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>일자별비가동시간</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={newData}
-            ref={(exporter) => {
-              _export2 = exporter;
-            }}
-            group={group}
-            fileName="비가동관리"
-          >
-            <Grid
-              style={{ height: "36vh" }}
-              data={newData.map((item: { items: any[] }) => ({
-                ...item,
-                items: item.items.map((row: any) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                })),
-              }))}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              //그룹기능
-              group={group}
-              groupable={true}
-              onExpandChange={onExpandChange}
-              expandField="expanded"
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              //페이지네이션
-              total={total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"]
-                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  ?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? detail2TotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>비가동상세</GridTitle>
-          <ButtonContainer>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
-              비가동내역생성
-            </Button>
-            <Button
-              onClick={onDeleteClick}
-              icon="delete"
-              fillMode="outline"
-              themeColor={"primary"}
-            >
-              비가동내역삭제
-            </Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <ExcelExport
-          data={newData2}
-          ref={(exporter) => {
-            _export3 = exporter;
+
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
           }}
-          group={group2}
-          fileName="비가동관리"
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
         >
-          <Grid
-            style={{ height: "35vh" }}
-            data={newData2.map((item: { items: any[] }) => ({
-              ...item,
-              items: item.items.map((row: any) => ({
-                ...row,
-                prodmac: prodmacListData.find(
-                  (item: any) => item.fxcode == row.prodmac
-                )?.fxfull,
-                stopcd: stopcdListData.find(
-                  (item: any) => item.sub_code == row.stopcd
-                )?.code_name,
-                prodemp: usersListData.find(
-                  (item: any) => item.user_id == row.prodemp
-                )?.user_name,
-                [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-              })),
-            }))}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            //그룹기능
-            group={group2}
-            groupable={true}
-            onExpandChange={onExpandChange2}
-            expandField="expanded"
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY3}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange3}
-            //페이지네이션
-            total={total2}
-            skip={page3.skip}
-            take={page3.take}
-            pageable={true}
-            onPageChange={pageChange3}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef3}
-            rowHeight={30}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            <GridColumn cell={CommandCell} width="50px" />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList3"]
-                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                ?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? CenterCell
-                            : undefined
+          <SwiperSlide key={0}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <GridTitle>설비별비가동시간</GridTitle>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="비가동관리"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
                         }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? detailTotalFooterCell
-                            : undefined
-                        }
-                      />
-                    )
-                )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <GridTitle>일자별비가동시간</GridTitle>
+                  </ButtonContainer>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(2);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={newData}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                group={group}
+                fileName="비가동관리"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={newData.map((item: { items: any[] }) => ({
+                    ...item,
+                    items: item.items.map((row: any) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                  }))}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  //그룹기능
+                  group={group}
+                  groupable={true}
+                  onExpandChange={onExpandChange}
+                  expandField="expanded"
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  //페이지네이션
+                  total={total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? detail2TotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer
+              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            >
+              <GridTitleContainer className="ButtonContainer2">
+              <ButtonContainer style={{ justifyContent: "left" }}>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(1);
+                    }
+                  }}
+                  icon="chevron-left"
+                  themeColor={"primary"}
+                  fillMode={"flat"}
+                ></Button>
+                <GridTitle>비가동상세</GridTitle>
+                </ButtonContainer>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    비가동내역생성
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    비가동내역삭제
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={newData2}
+                ref={(exporter) => {
+                  _export3 = exporter;
+                }}
+                group={group2}
+                fileName="비가동관리"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height2 }}
+                  data={newData2.map((item: { items: any[] }) => ({
+                    ...item,
+                    items: item.items.map((row: any) => ({
+                      ...row,
+                      prodmac: prodmacListData.find(
+                        (item: any) => item.fxcode == row.prodmac
+                      )?.fxfull,
+                      stopcd: stopcdListData.find(
+                        (item: any) => item.sub_code == row.stopcd
+                      )?.code_name,
+                      prodemp: usersListData.find(
+                        (item: any) => item.user_id == row.prodemp
+                      )?.user_name,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                  }))}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  //그룹기능
+                  group={group2}
+                  groupable={true}
+                  onExpandChange={onExpandChange2}
+                  expandField="expanded"
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //페이지네이션
+                  total={total2}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn cell={CommandCell} width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? detailTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width={`48%`}>
+              <GridTitleContainer>
+                <GridTitle>설비별비가동시간</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="비가동관리"
+              >
+                <Grid
+                  style={{ height: "36vh" }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(52% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>일자별비가동시간</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={newData}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                group={group}
+                fileName="비가동관리"
+              >
+                <Grid
+                  style={{ height: "36vh" }}
+                  data={newData.map((item: { items: any[] }) => ({
+                    ...item,
+                    items: item.items.map((row: any) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                  }))}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  //그룹기능
+                  group={group}
+                  groupable={true}
+                  onExpandChange={onExpandChange}
+                  expandField="expanded"
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  //페이지네이션
+                  total={total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? detail2TotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </GridContainerWrap>
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>비가동상세</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  비가동내역생성
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  icon="delete"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  비가동내역삭제
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <ExcelExport
+              data={newData2}
+              ref={(exporter) => {
+                _export3 = exporter;
+              }}
+              group={group2}
+              fileName="비가동관리"
+            >
+              <Grid
+                style={{ height: "36vh" }}
+                data={newData2.map((item: { items: any[] }) => ({
+                  ...item,
+                  items: item.items.map((row: any) => ({
+                    ...row,
+                    prodmac: prodmacListData.find(
+                      (item: any) => item.fxcode == row.prodmac
+                    )?.fxfull,
+                    stopcd: stopcdListData.find(
+                      (item: any) => item.sub_code == row.stopcd
+                    )?.code_name,
+                    prodemp: usersListData.find(
+                      (item: any) => item.user_id == row.prodemp
+                    )?.user_name,
+                    [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                  })),
+                }))}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                //그룹기능
+                group={group2}
+                groupable={true}
+                onExpandChange={onExpandChange2}
+                expandField="expanded"
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY3}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange3}
+                //페이지네이션
+                total={total2}
+                skip={page3.skip}
+                take={page3.take}
+                pageable={true}
+                onPageChange={pageChange3}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef3}
+                rowHeight={30}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn cell={CommandCell} width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList3"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? CenterCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? detailTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </>
+      )}
+
       {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}

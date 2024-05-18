@@ -465,6 +465,7 @@ const HU_A4100W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
+        yyyy : row.yyyy + "0101",
       }));
 
       if (filters.find_row_value !== "") {
