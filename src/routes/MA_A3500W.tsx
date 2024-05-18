@@ -56,6 +56,7 @@ import {
   numberWithCommas,
   setDefaultDate,
   useSysMessage,
+  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -147,23 +148,10 @@ const MA_A3500W: React.FC = () => {
   const [isVisibleDetail2, setIsVisableDetail2] = useState(false);
   const [isVisibleDetail3, setIsVisableDetail3] = useState(false);
 
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".k-tabstrip-items-wrapper");
 
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
-
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);

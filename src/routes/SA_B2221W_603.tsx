@@ -31,6 +31,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -38,6 +41,7 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitleContainer,
   Title,
   TitleContainer,
   WebErpcolorList,
@@ -57,6 +61,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -68,7 +73,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import SA_B2221W_603_Window from "../components/Windows/SA_B2221W_603_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2221W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -105,8 +110,13 @@ const SA_B2221: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
+  const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".k-tabstrip-items-wrapper");
+  var index = 0;
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B2221W_603", setMessagesData);
@@ -643,617 +653,1471 @@ const SA_B2221: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
-        <Title>
-          {companyCode == "2302BA03" ? "제품별 실적 집계" : "수주집계(품목)"}
-        </Title>
+      {isMobile ? (
+        <>
+          <TitleContainer>
+            <Title>
+              {companyCode == "2302BA03"
+                ? "제품별 실적 집계"
+                : "수주집계(품목)"}
+            </Title>
 
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="SA_B2221W_603"
-            />
-          )}
-        </ButtonContainer>
-      </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th data-control-name="lblYyyy">기준년도</th>
-              <td>
-                <DatePicker
-                  name="yyyy"
-                  value={filters.yyyy}
-                  format="yyyy"
-                  onChange={filterInputChange}
-                  calendar={YearCalendar}
-                  className="required"
-                  placeholder=""
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_B2221W_603"
                 />
-              </td>
-              <th data-control-name="lblImcd">품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onItemWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-
-              <th data-control-name="lblItemnm">품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>시험유형</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="itemlvl2"
-                    value={filters.itemlvl2}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>품목계정</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="itemacnt"
-                    value={filters.itemacnt}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th data-control-name="lblAmtdiv">단위</th>
-              <td>
-                {customOptionData !== null && (
-                  <CommonRadioGroup
-                    name="rdoAmtunit"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-              <th data-control-name="lblAmtgb">금액구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CommonRadioGroup
-                    name="rdoAmtgb"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-      <TabStrip
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-        style={{ height: "80vh", width: "100%", paddingBottom: "20px" }}
-      >
-        <TabStripTab title="전체">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer height="35vh">
-              <Chart
-                seriesColors={
-                  window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                    ? DDGDcolorList
-                    : WebErpcolorList
-                }
-                style={{ height: "100%" }}
-              >
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies.map((name) =>
-                      isMobile && name.length > MAX_CHARACTERS
-                        ? name.slice(0, MAX_CHARACTERS) + "..."
-                        : name
-                    )}
-                  >
-                    <ChartCategoryAxisTitle text="품목" />
-                  </ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="bar"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer width={"100%"}>
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName="수주집계(품목)"
-              >
-                <Grid
-                  style={{ height: "32.5vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAllList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="월별">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer width={"100%"}>
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export2 = exporter;
-                }}
-                fileName="수주집계(품목)"
-              >
-                <Grid
-                  style={{ height: "32vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onMonthGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions[
-                      "grdMonthList"
-                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName.replace("qty", "amt")}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
-              <GridContainer width={"70%"}>
-                <Chart style={{ height: !isMobile ? "100%" : "" }}>
-                  <ChartValueAxis>
-                    <ChartValueAxisItem
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th data-control-name="lblYyyy">기준년도</th>
+                  <td>
+                    <DatePicker
+                      name="yyyy"
+                      value={filters.yyyy}
+                      format="yyyy"
+                      onChange={filterInputChange}
+                      calendar={YearCalendar}
+                      className="required"
+                      placeholder=""
                     />
-                  </ChartValueAxis>
-                  <ChartCategoryAxis>
-                    <ChartCategoryAxisItem
-                      categories={chartDataResult.map((item: any) => item.mm)}
-                    ></ChartCategoryAxisItem>
-                  </ChartCategoryAxis>
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
-                      type="line"
-                      data={chartDataResult.map((item: any) =>
-                        Math.round(item.qty)
-                      )}
+                  </td>
+                  <th data-control-name="lblImcd">품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
                     />
-                    <ChartSeriesItem
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
-                      type="bar"
-                      data={chartDataResult.map((item: any) =>
-                        Math.round(item.amt)
-                      )}
-                    />
-                  </ChartSeries>
-                </Chart>
-              </GridContainer>
-              <GridContainer width="30%">
-                <Chart style={{ height: !isMobile ? "100%" : "" }}>
-                  <ChartTitle text="월별 매출 금액 비율(%)" />
-                  <ChartTooltip render={quarterDonutRenderTooltip2} />
-                  <ChartLegend visible={false} position="bottom" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      //autoFit={true}
-                      type="donut"
-                      data={chartDataResult}
-                      field="amt"
-                      categoryField="mm"
-                      startAngle={150}
-                    >
-                      <ChartSeriesLabels
-                        position="outsideEnd"
-                        background="none"
-                        content={labelContent}
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
                       />
-                    </ChartSeriesItem>
-                  </ChartSeries>
-                </Chart>
-              </GridContainer>
-            </GridContainerWrap>
-          </GridContainerWrap>
-        </TabStripTab>
-        <TabStripTab title="분기별">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer width={"100%"}>
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export3 = exporter;
-                }}
-                fileName="수주집계(품목)"
-              >
-                <Grid
-                  style={{ height: "32vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onMonthGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page3.skip}
-                  take={page3.take}
-                  pageable={true}
-                  onPageChange={pageChange3}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef3}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions[
-                      "grdQuarterList"
-                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 &&
-                        (item.fieldName !== "sub_code" &&
-                        item.fieldName !== "code_name" ? (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? gridTotalFooterCell
-                                : undefined
-                            }
-                            width={item.width}
-                          >
-                            <GridColumn
-                              title={"1/4분기"}
-                              cell={NumberCell}
-                              field={item.caption == "전기" ? "jm1" : "dm1"}
-                              footerCell={gridSumQtyFooterCell}
-                              width={item.width}
-                            />
-                            <GridColumn
-                              title={"2/4분기"}
-                              cell={NumberCell}
-                              field={item.caption == "전기" ? "jm2" : "dm2"}
-                              footerCell={gridSumQtyFooterCell}
-                              width={item.width}
-                            />
-                            <GridColumn
-                              title={"3/4분기"}
-                              cell={NumberCell}
-                              field={item.caption == "전기" ? "jm3" : "dm3"}
-                              footerCell={gridSumQtyFooterCell}
-                              width={item.width}
-                            />
-                            <GridColumn
-                              title={"4/4분기"}
-                              cell={NumberCell}
-                              field={item.caption == "전기" ? "jm4" : "dm4"}
-                              footerCell={gridSumQtyFooterCell}
-                              width={item.width}
-                            />
-                            <GridColumn
-                              title={"합계"}
-                              cell={NumberCell}
-                              field={
-                                item.caption == "전기" ? "jtotal" : "dtotal"
-                              }
-                              footerCell={gridSumQtyFooterCell}
-                              width={item.width}
-                            />
-                          </GridColumn>
-                        ) : (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? gridTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
-                                : undefined
-                            }
-                            width={item.width}
-                          />
-                        ))
+                    </ButtonInInput>
+                  </td>
+
+                  <th data-control-name="lblItemnm">품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>시험유형</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemlvl2"
+                        value={filters.itemlvl2}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
                     )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
-              <GridContainer width={"60%"}>
-                <Chart style={{ height: !isMobile ? "100%" : "" }}>
-                  <ChartValueAxis>
-                    <ChartValueAxisItem
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
+                  </td>
+                </tr>
+                <tr>
+                  <th>품목계정</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemacnt"
+                        value={filters.itemacnt}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th data-control-name="lblAmtdiv">단위</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="rdoAmtunit"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th data-control-name="lblAmtgb">금액구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="rdoAmtgb"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            style={{
+              width: "100%",
+            }}
+          >
+            <TabStripTab title="전체">
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          테이블 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Chart
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
                       }}
-                    />
-                  </ChartValueAxis>
-                  <ChartCategoryAxis>
-                    <ChartCategoryAxisItem
-                      categories={chartDataResult
-                        .filter((item: any) => item.series == "당기")
-                        .map((item: any) => item.mm)}
-                    ></ChartCategoryAxisItem>
-                  </ChartCategoryAxis>
+                    >
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={allChartDataResult.companies.map((name) =>
+                            isMobile && name.length > MAX_CHARACTERS
+                              ? name.slice(0, MAX_CHARACTERS) + "..."
+                              : name
+                          )}
+                        >
+                          <ChartCategoryAxisTitle text="품목" />
+                        </ChartCategoryAxisItem>
+                      </ChartCategoryAxis>
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          data={allChartDataResult.series}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={gridDataResult.data}
+                      ref={(exporter) => {
+                        _export = exporter;
+                      }}
+                      fileName="수주집계(품목)"
+                    >
+                      <Grid
+                        style={{
+                          width: "100%",
+                          height: deviceHeight - height - height2,
+                        }}
+                        data={process(
+                          gridDataResult.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          gridDataState
+                        )}
+                        {...gridDataState}
+                        onDataStateChange={onGridDataStateChange}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onGridSelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={gridDataResult.total}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable={true}
+                        onPageChange={pageChange}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onGridSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdAllList"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </TabStripTab>
+            <TabStripTab title="월별">
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={gridDataResult.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="수주집계(품목)"
+                    >
+                      <Grid
+                        style={{
+                          width: "100%",
+                          height: deviceHeight - height - height2,
+                        }}
+                        data={process(
+                          gridDataResult.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          gridDataState
+                        )}
+                        {...gridDataState}
+                        onDataStateChange={onGridDataStateChange}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onMonthGridSelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={gridDataResult.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onGridSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdMonthList"
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName.replace("qty", "amt")}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                        >
+                          테이블 보기
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                        >
+                          도넛차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Chart
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
+                      }}
+                    >
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={chartDataResult.map(
+                            (item: any) => item.mm
+                          )}
+                        ></ChartCategoryAxisItem>
+                      </ChartCategoryAxis>
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult.map((item: any) =>
+                            Math.round(item.qty)
+                          )}
+                        />
+                        <ChartSeriesItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          data={chartDataResult.map((item: any) =>
+                            Math.round(item.amt)
+                          )}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={2}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "left",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Chart
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
+                      }}
+                    >
+                      <ChartTitle text="월별 매출 금액 비율(%)" />
+                      <ChartTooltip render={quarterDonutRenderTooltip2} />
+                      <ChartLegend visible={false} position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          //autoFit={true}
+                          type="donut"
+                          data={chartDataResult}
+                          field="amt"
+                          categoryField="mm"
+                          startAngle={150}
+                        >
+                          <ChartSeriesLabels
+                            position="outsideEnd"
+                            background="none"
+                            content={labelContent}
+                          />
+                        </ChartSeriesItem>
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </TabStripTab>
+            <TabStripTab title="분기별">
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={gridDataResult.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="수주집계(품목)"
+                    >
+                      <Grid
+                        style={{
+                          width: "100%",
+                          height: deviceHeight - height - height2,
+                        }}
+                        data={process(
+                          gridDataResult.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          gridDataState
+                        )}
+                        {...gridDataState}
+                        onDataStateChange={onGridDataStateChange}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onMonthGridSelectionChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={gridDataResult.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef3}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onGridSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdQuarterList"
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 &&
+                                (item.fieldName !== "itemcd" &&
+                                item.fieldName !== "itemnm" ? (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : undefined
+                                    }
+                                    width={item.width}
+                                  >
+                                    <GridColumn
+                                      title={"1/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm1" : "dm1"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"2/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm2" : "dm2"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"3/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm3" : "dm3"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"4/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm4" : "dm4"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"합계"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기"
+                                          ? "jtotal"
+                                          : "dtotal"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                  </GridColumn>
+                                ) : (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                    width={item.width}
+                                  />
+                                ))
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                        >
+                          테이블 보기
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                        >
+                          도넛차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Chart
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
+                      }}
+                    >
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => item.mm)}
+                        ></ChartCategoryAxisItem>
+                      </ChartCategoryAxis>
 
-                  <ChartLegend position="bottom" orientation="horizontal" />
-                  <ChartSeries>
-                    <ChartSeriesItem
-                      name="당기수량"
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
+                      <ChartLegend position="bottom" orientation="horizontal" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          name="당기수량"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => Math.round(item.qty1))}
+                        />
+                        <ChartSeriesItem
+                          name="전기수량"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "전기")
+                            .map((item: any) => Math.round(item.qty2))}
+                        />
+                        <ChartSeriesItem
+                          name="당기"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          // gap={2}
+                          // spacing={0.25}
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => Math.round(item.amt))}
+                        />
+                        <ChartSeriesItem
+                          name="전기"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "전기")
+                            .map((item: any) => Math.round(item.amt))}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={2}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer
+                        style={{
+                          justifyContent: "left",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Chart
+                      style={{
+                        width: "100%",
+                        height: deviceHeight - height - height2,
                       }}
-                      type="line"
-                      data={chartDataResult
-                        .filter((item: any) => item.series == "당기")
-                        .map((item: any) => Math.round(item.qty1))}
-                    />
-                    <ChartSeriesItem
-                      name="전기수량"
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
-                      type="line"
-                      data={chartDataResult
-                        .filter((item: any) => item.series == "전기")
-                        .map((item: any) => Math.round(item.qty2))}
-                    />
-                    <ChartSeriesItem
-                      name="당기"
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
-                      type="bar"
-                      // gap={2}
-                      // spacing={0.25}
-                      data={chartDataResult
-                        .filter((item: any) => item.series == "당기")
-                        .map((item: any) => Math.round(item.amt))}
-                    />
-                    <ChartSeriesItem
-                      name="전기"
-                      labels={{
-                        visible: true,
-                        content: (e) => numberWithCommas(e.value) + "",
-                      }}
-                      type="bar"
-                      data={chartDataResult
-                        .filter((item: any) => item.series == "전기")
-                        .map((item: any) => Math.round(item.amt))}
-                    />
-                  </ChartSeries>
-                </Chart>
-              </GridContainer>
-              <GridContainer width={"40%"}>
-                <Chart style={{ height: !isMobile ? "100%" : "" }}>
-                  <ChartTitle text="분기별 매출 금액 비율(%)" />
+                    >
+                      <ChartTitle text="분기별 매출 금액 비율(%)" />
 
-                  <ChartTooltip render={quarterDonutRenderTooltip} />
-                  <ChartLegend visible={false} position="bottom" />
-                  <ChartSeries>
+                      <ChartTooltip render={quarterDonutRenderTooltip} />
+                      <ChartLegend visible={false} position="bottom" />
+                      <ChartSeries>
+                        <ChartSeries>
+                          <ChartSeriesItem
+                            type="donut"
+                            startAngle={150}
+                            name={"전기"}
+                            data={chartDataResult
+                              .filter((item: any) => item.series == "전기")
+                              .map((item: any) => item)}
+                            field="amt"
+                            categoryField="mm"
+                            colorField="color"
+                          ></ChartSeriesItem>
+                          <ChartSeriesItem
+                            type="donut"
+                            startAngle={150}
+                            name={"당기"}
+                            data={chartDataResult
+                              .filter((item: any) => item.series == "당기")
+                              .map((item: any) => item)}
+                            field="amt"
+                            categoryField="mm"
+                            colorField="color"
+                          >
+                            <ChartSeriesLabels
+                              position="outsideEnd"
+                              background="none"
+                              content={labelContent}
+                            />
+                          </ChartSeriesItem>
+                        </ChartSeries>
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      ) : (
+        <>
+          <TitleContainer>
+            <Title>
+              {companyCode == "2302BA03"
+                ? "제품별 실적 집계"
+                : "수주집계(품목)"}
+            </Title>
+
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_B2221W_603"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th data-control-name="lblYyyy">기준년도</th>
+                  <td>
+                    <DatePicker
+                      name="yyyy"
+                      value={filters.yyyy}
+                      format="yyyy"
+                      onChange={filterInputChange}
+                      calendar={YearCalendar}
+                      className="required"
+                      placeholder=""
+                    />
+                  </td>
+                  <th data-control-name="lblImcd">품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+
+                  <th data-control-name="lblItemnm">품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>품목계정</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemacnt"
+                        value={filters.itemacnt}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th data-control-name="lblAmtdiv">단위</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="rdoAmtunit"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th data-control-name="lblAmtgb">금액구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="rdoAmtgb"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            style={{ height: "80vh", width: "100%", paddingBottom: "20px" }}
+          >
+            <TabStripTab title="전체">
+              <GridContainerWrap flexDirection="column">
+                <GridContainer height="35vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      >
+                        <ChartCategoryAxisTitle text="품목" />
+                      </ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
                     <ChartSeries>
                       <ChartSeriesItem
-                        type="donut"
-                        startAngle={150}
-                        name={"전기"}
-                        data={chartDataResult
-                          .filter((item: any) => item.series == "전기")
-                          .map((item: any) => item)}
-                        field="amt"
-                        categoryField="mm"
-                        colorField="color"
-                      ></ChartSeriesItem>
-                      <ChartSeriesItem
-                        type="donut"
-                        startAngle={150}
-                        name={"당기"}
-                        data={chartDataResult
-                          .filter((item: any) => item.series == "당기")
-                          .map((item: any) => item)}
-                        field="amt"
-                        categoryField="mm"
-                        colorField="color"
-                      >
-                        <ChartSeriesLabels
-                          position="outsideEnd"
-                          background="none"
-                          content={labelContent}
-                        />
-                      </ChartSeriesItem>
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="bar"
+                        data={allChartDataResult.series}
+                      />
                     </ChartSeries>
-                  </ChartSeries>
-                </Chart>
-              </GridContainer>
-            </GridContainerWrap>
-          </GridContainerWrap>
-        </TabStripTab>
-      </TabStrip>
+                  </Chart>
+                </GridContainer>
+
+                <GridContainer width={"100%"}>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="수주집계(품목)"
+                  >
+                    <Grid
+                      style={{ height: "32.5vh" }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdAllList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    numberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </GridContainerWrap>
+            </TabStripTab>
+            <TabStripTab title="월별">
+              <GridContainerWrap flexDirection="column">
+                <GridContainer width={"100%"}>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="수주집계(품목)"
+                  >
+                    <Grid
+                      style={{ height: "32vh" }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMonthGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef2}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdMonthList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName.replace("qty", "amt")}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    numberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
+                  <GridContainer width={"70%"}>
+                    <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={chartDataResult.map(
+                            (item: any) => item.mm
+                          )}
+                        ></ChartCategoryAxisItem>
+                      </ChartCategoryAxis>
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult.map((item: any) =>
+                            Math.round(item.qty)
+                          )}
+                        />
+                        <ChartSeriesItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          data={chartDataResult.map((item: any) =>
+                            Math.round(item.amt)
+                          )}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                  <GridContainer width="30%">
+                    <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                      <ChartTitle text="월별 매출 금액 비율(%)" />
+                      <ChartTooltip render={quarterDonutRenderTooltip2} />
+                      <ChartLegend visible={false} position="bottom" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          //autoFit={true}
+                          type="donut"
+                          data={chartDataResult}
+                          field="amt"
+                          categoryField="mm"
+                          startAngle={150}
+                        >
+                          <ChartSeriesLabels
+                            position="outsideEnd"
+                            background="none"
+                            content={labelContent}
+                          />
+                        </ChartSeriesItem>
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </GridContainerWrap>
+              </GridContainerWrap>
+            </TabStripTab>
+            <TabStripTab title="분기별">
+              <GridContainerWrap flexDirection="column">
+                <GridContainer width={"100%"}>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="수주집계(품목)"
+                  >
+                    <Grid
+                      style={{ height: "32vh" }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMonthGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef3}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdQuarterList"
+                        ]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 &&
+                              (item.fieldName !== "itemcd" &&
+                              item.fieldName !== "itemnm" ? (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : undefined
+                                  }
+                                  width={item.width}
+                                >
+                                  <GridColumn
+                                    title={"1/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm1" : "dm1"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"2/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm2" : "dm2"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"3/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm3" : "dm3"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"4/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm4" : "dm4"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"합계"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기"
+                                        ? "jtotal"
+                                        : "dtotal"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+                              ) : (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                  width={item.width}
+                                />
+                              ))
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+                <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
+                  <GridContainer width={"60%"}>
+                    <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                      <ChartValueAxis>
+                        <ChartValueAxisItem
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                        />
+                      </ChartValueAxis>
+                      <ChartCategoryAxis>
+                        <ChartCategoryAxisItem
+                          categories={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => item.mm)}
+                        ></ChartCategoryAxisItem>
+                      </ChartCategoryAxis>
+
+                      <ChartLegend position="bottom" orientation="horizontal" />
+                      <ChartSeries>
+                        <ChartSeriesItem
+                          name="당기수량"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => Math.round(item.qty1))}
+                        />
+                        <ChartSeriesItem
+                          name="전기수량"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="line"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "전기")
+                            .map((item: any) => Math.round(item.qty2))}
+                        />
+                        <ChartSeriesItem
+                          name="당기"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          // gap={2}
+                          // spacing={0.25}
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "당기")
+                            .map((item: any) => Math.round(item.amt))}
+                        />
+                        <ChartSeriesItem
+                          name="전기"
+                          labels={{
+                            visible: true,
+                            content: (e) => numberWithCommas(e.value) + "",
+                          }}
+                          type="bar"
+                          data={chartDataResult
+                            .filter((item: any) => item.series == "전기")
+                            .map((item: any) => Math.round(item.amt))}
+                        />
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                  <GridContainer width={"40%"}>
+                    <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                      <ChartTitle text="분기별 매출 금액 비율(%)" />
+
+                      <ChartTooltip render={quarterDonutRenderTooltip} />
+                      <ChartLegend visible={false} position="bottom" />
+                      <ChartSeries>
+                        <ChartSeries>
+                          <ChartSeriesItem
+                            type="donut"
+                            startAngle={150}
+                            name={"전기"}
+                            data={chartDataResult
+                              .filter((item: any) => item.series == "전기")
+                              .map((item: any) => item)}
+                            field="amt"
+                            categoryField="mm"
+                            colorField="color"
+                          ></ChartSeriesItem>
+                          <ChartSeriesItem
+                            type="donut"
+                            startAngle={150}
+                            name={"당기"}
+                            data={chartDataResult
+                              .filter((item: any) => item.series == "당기")
+                              .map((item: any) => item)}
+                            field="amt"
+                            categoryField="mm"
+                            colorField="color"
+                          >
+                            <ChartSeriesLabels
+                              position="outsideEnd"
+                              background="none"
+                              content={labelContent}
+                            />
+                          </ChartSeriesItem>
+                        </ChartSeries>
+                      </ChartSeries>
+                    </Chart>
+                  </GridContainer>
+                </GridContainerWrap>
+              </GridContainerWrap>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

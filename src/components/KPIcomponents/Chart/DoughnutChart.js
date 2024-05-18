@@ -75,7 +75,6 @@ export default function DoughnutChart(props) {
         <div
           style={{
             position: "absolute",
-            width: "100%",
             top: "50%",
             left: "30%",
           }}

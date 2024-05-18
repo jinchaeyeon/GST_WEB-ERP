@@ -44,6 +44,7 @@ import {
   convertDateToStr,
   getQueryFromBizComponent,
   useGeoLocation,
+  getHeight
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
@@ -761,33 +762,11 @@ const Main: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var height5 = 0;
-
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  var container4 = document.querySelector(".ButtonContainer4");
-  var container5 = document.querySelector(".k-tabstrip-items-wrapper");
-
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
-  if (container5?.clientHeight != undefined) {
-    height5 = container5 == undefined ? 0 : container5.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".ButtonContainer4");
+  var height5 = getHeight(".k-tabstrip-items-wrapper");
 
   return (
     <>

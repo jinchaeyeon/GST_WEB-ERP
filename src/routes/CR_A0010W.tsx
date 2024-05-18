@@ -56,6 +56,7 @@ import {
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -430,11 +431,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 const CR_A0010W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

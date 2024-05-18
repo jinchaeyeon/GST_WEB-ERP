@@ -36,6 +36,7 @@ import {
   UsePermissions,
   getGridItemChangedData,
   handleKeyPressSearch,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -74,11 +75,7 @@ let isMobile = deviceWidth <= 1200;
 
 const MA_A0010W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();

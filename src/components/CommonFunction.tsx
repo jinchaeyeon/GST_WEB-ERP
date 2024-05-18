@@ -1,9 +1,10 @@
+import BScroll from "@better-scroll/core";
 import { DataResult, getter } from "@progress/kendo-data-query";
 import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import calculateSize from "calculate-size";
 import { detect } from "detect-browser";
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
@@ -13,17 +14,19 @@ import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
-import BScroll from '@better-scroll/core';
 
-
-export const getHeight = (className : string) => {
+export const getHeight = (className: string) => {
   var container = document.querySelector(className);
   if (container?.clientHeight != undefined) {
-    return container == undefined ? 0 : container.clientHeight;
+    return container == undefined
+      ? 0
+      : className == ".k-tabstrip-items-wrapper"
+      ? container.clientHeight + 32
+      : container.clientHeight;
   } else {
-    return 0
+    return 0;
   }
-}
+};
 
 //소수점3자리에서 반올림
 export const ThreeNumberceil = (number: number) => {
@@ -1133,13 +1136,13 @@ export const useBetterScroll = () => {
             top: true,
             bottom: true,
             left: true,
-            right: true
-          }
+            right: true,
+          },
         });
-  
+
         return () => scroll.destroy();
       }
-    }, 50); 
+    }, 50);
   }, []);
   return scrollContainerRef;
 };

@@ -17,7 +17,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
 
 const SA_B2227W: React.FC = () => {
   const [color, setColor] = useRecoilState(colors);
@@ -202,12 +202,17 @@ const SA_B2227W: React.FC = () => {
     return array;
   }
 
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
   return (
     <>
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          marginBottom: "50px",
+          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          overflow: isMobile ? "auto" : undefined,
         }}
       >
         <ThemeProvider theme={theme}>

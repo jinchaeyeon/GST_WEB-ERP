@@ -46,6 +46,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -89,11 +90,7 @@ const App: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);
     const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".k-tabstrip-items-wrapper");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".k-tabstrip-items-wrapper");
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -518,7 +515,7 @@ const App: React.FC = () => {
 
   const CusomizedGrid = () => {
     return (
-      <GridContainer width="100%" inTab={true}>
+      <GridContainer width="100%">
         <ExcelExport
           data={newData}
           ref={(exporter) => {

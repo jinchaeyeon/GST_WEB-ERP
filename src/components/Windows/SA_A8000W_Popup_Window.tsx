@@ -556,7 +556,7 @@ const CopyWindow = ({
         onClose={onClose}
         modal={modal}
       >
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap>
           <GridTitleContainer>
             <GridTitle></GridTitle>
             <ButtonContainer>

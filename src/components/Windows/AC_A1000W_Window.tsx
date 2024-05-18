@@ -3351,7 +3351,7 @@ const CopyWindow = ({
         onClose={onClose}
         modal={modal}
       >
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap>
           <FormBox>
             <tbody>
               <tr>
@@ -3605,7 +3605,7 @@ const CopyWindow = ({
             </FormContext3.Provider>
           </FormContext2.Provider>
         </FormContext.Provider>
-        <FormBoxWrap style={{ paddingRight: "50px" }}>
+        <FormBoxWrap>
           <FormBox>
             <tbody>
               <tr>

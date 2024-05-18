@@ -61,6 +61,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -115,16 +116,8 @@ const SA_B3000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".k-tabstrip-items-wrapper");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".k-tabstrip-items-wrapper");
 
   const MAX_CHARACTERS = 6;
   //메시지 조회
@@ -668,7 +661,7 @@ const SA_B3000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -936,33 +929,35 @@ const SA_B3000W: React.FC = () => {
                         resizable={true}
                       >
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdAllList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    numberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdAllList"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -981,6 +976,19 @@ const SA_B3000W: React.FC = () => {
               >
                 <SwiperSlide key={0}>
                   <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        >
+                          차트 보기
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <ExcelExport
                       data={gridDataResult.data}
                       ref={(exporter) => {
@@ -988,19 +996,6 @@ const SA_B3000W: React.FC = () => {
                       }}
                       fileName="매출집계(업체)"
                     >
-                      <GridTitleContainer className="ButtonContainer">
-                        <ButtonContainer>
-                          <Button
-                            onClick={() => {
-                              if (swiper) {
-                                swiper.slideTo(1);
-                              }
-                            }}
-                          >
-                            차트 보기
-                          </Button>
-                        </ButtonContainer>
-                      </GridTitleContainer>
                       <Grid
                         style={{
                           height: deviceHeight - height - height2,
@@ -1046,53 +1041,60 @@ const SA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdMonthList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 &&
-                              (numberField.includes(item.fieldName) ? (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                >
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 &&
+                                (numberField.includes(item.fieldName) ? (
                                   <GridColumn
-                                    title={"수량"}
-                                    cell={NumberCell}
+                                    key={idx}
                                     field={item.fieldName}
-                                    footerCell={gridSumQtyFooterCell}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : undefined
+                                    }
                                     width={item.width}
-                                  />
+                                  >
+                                    <GridColumn
+                                      title={"수량"}
+                                      cell={NumberCell}
+                                      field={item.fieldName}
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
 
+                                    <GridColumn
+                                      title={"금액"}
+                                      cell={NumberCell}
+                                      field={item.fieldName.replace(
+                                        "qty",
+                                        "amt"
+                                      )}
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                  </GridColumn>
+                                ) : (
                                   <GridColumn
-                                    title={"금액"}
-                                    cell={NumberCell}
-                                    field={item.fieldName.replace("qty", "amt")}
-                                    footerCell={gridSumQtyFooterCell}
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
                                     width={item.width}
                                   />
-                                </GridColumn>
-                              ) : (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                />
-                              ))
-                          )}
+                                ))
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -1187,7 +1189,11 @@ const SA_B3000W: React.FC = () => {
                         </Button>
                       </ButtonContainer>
                     </GridTitleContainer>
-                    <Chart>
+                    <Chart
+                      style={{
+                        height: deviceHeight - height - height2,
+                      }}
+                    >
                       <ChartTitle text="월별 매출 금액 비율(%)" />
                       <ChartTooltip render={quarterDonutRenderTooltip2} />
                       <ChartLegend visible={false} position="bottom" />
@@ -1288,135 +1294,139 @@ const SA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdQuarterList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 &&
-                              (item.fieldName !== "custcd" &&
-                              item.fieldName !== "custnm" ? (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                >
-                                  <GridColumn title={"1/4분기"}>
-                                    <GridColumn
-                                      title={"수량"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "q1" : "q11"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-
-                                    <GridColumn
-                                      title={"금액"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "jm1" : "dm1"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-                                  </GridColumn>
-                                  <GridColumn title={"2/4분기"}>
-                                    <GridColumn
-                                      title={"수량"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "q2" : "q22"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-
-                                    <GridColumn
-                                      title={"금액"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "jm2" : "dm2"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-                                  </GridColumn>
-                                  <GridColumn title={"3/4분기"}>
-                                    <GridColumn
-                                      title={"수량"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "q3" : "q33"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-
-                                    <GridColumn
-                                      title={"금액"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "jm3" : "dm3"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-                                  </GridColumn>
-                                  <GridColumn title={"4/4분기"}>
-                                    <GridColumn
-                                      title={"수량"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "q4" : "q44"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-
-                                    <GridColumn
-                                      title={"금액"}
-                                      cell={NumberCell}
-                                      field={
-                                        item.caption == "전기" ? "jm4" : "dm4"
-                                      }
-                                      footerCell={gridSumQtyFooterCell}
-                                      width={item.width}
-                                    />
-                                  </GridColumn>
-
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 &&
+                                (item.fieldName !== "custcd" &&
+                                item.fieldName !== "custnm" ? (
                                   <GridColumn
-                                    title={"합계"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기"
-                                        ? "jtotal"
-                                        : "dtotal"
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : undefined
                                     }
-                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  >
+                                    <GridColumn title={"1/4분기"}>
+                                      <GridColumn
+                                        title={"수량"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "q1" : "q11"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+
+                                      <GridColumn
+                                        title={"금액"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "jm1" : "dm1"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+                                    </GridColumn>
+                                    <GridColumn title={"2/4분기"}>
+                                      <GridColumn
+                                        title={"수량"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "q2" : "q22"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+
+                                      <GridColumn
+                                        title={"금액"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "jm2" : "dm2"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+                                    </GridColumn>
+                                    <GridColumn title={"3/4분기"}>
+                                      <GridColumn
+                                        title={"수량"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "q3" : "q33"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+
+                                      <GridColumn
+                                        title={"금액"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "jm3" : "dm3"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+                                    </GridColumn>
+                                    <GridColumn title={"4/4분기"}>
+                                      <GridColumn
+                                        title={"수량"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "q4" : "q44"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+
+                                      <GridColumn
+                                        title={"금액"}
+                                        cell={NumberCell}
+                                        field={
+                                          item.caption == "전기" ? "jm4" : "dm4"
+                                        }
+                                        footerCell={gridSumQtyFooterCell}
+                                        width={item.width}
+                                      />
+                                    </GridColumn>
+
+                                    <GridColumn
+                                      title={"합계"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기"
+                                          ? "jtotal"
+                                          : "dtotal"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                  </GridColumn>
+                                ) : (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
                                     width={item.width}
                                   />
-                                </GridColumn>
-                              ) : (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                />
-                              ))
-                          )}
+                                ))
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -1658,211 +1668,216 @@ const SA_B3000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grd5YearList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 &&
-                              (item.fieldName !== "custcd" &&
-                              item.fieldName !== "custnm" ? (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  //title={item.caption}
-                                  title={
-                                    yearTitle[
-                                      Number(item.id.replace("col_5year", "")) -
-                                        1
-                                    ]
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                >
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 &&
+                                (item.fieldName !== "custcd" &&
+                                item.fieldName !== "custnm" ? (
                                   <GridColumn
-                                    title={"(1-6)분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      "amt" +
-                                      (item.caption ==
-                                      parseInt(yearTitle[0]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                        ? "01"
-                                        : item.caption ==
-                                          parseInt(yearTitle[1]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "21"
-                                        : item.caption ==
-                                          parseInt(yearTitle[2]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "31"
-                                        : item.caption ==
-                                          parseInt(yearTitle[3]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "41"
-                                        : item.caption ==
-                                          parseInt(yearTitle[4]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "51"
-                                        : "")
+                                    key={idx}
+                                    field={item.fieldName}
+                                    //title={item.caption}
+                                    title={
+                                      yearTitle[
+                                        Number(
+                                          item.id.replace("col_5year", "")
+                                        ) - 1
+                                      ]
                                     }
-                                    footerCell={gridSumQtyFooterCell}
-                                    width={item.width}
-                                  />
-                                  <GridColumn
-                                    title={"(7-12)분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      "amt" +
-                                      (item.caption ==
-                                      parseInt(yearTitle[0]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                        ? "02"
-                                        : item.caption ==
-                                          parseInt(yearTitle[1]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "22"
-                                        : item.caption ==
-                                          parseInt(yearTitle[2]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "32"
-                                        : item.caption ==
-                                          parseInt(yearTitle[3]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "42"
-                                        : item.caption ==
-                                          parseInt(yearTitle[4]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "52"
-                                        : "")
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : undefined
                                     }
-                                    footerCell={gridSumQtyFooterCell}
                                     width={item.width}
-                                  />
+                                  >
+                                    <GridColumn
+                                      title={"(1-6)분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        "amt" +
+                                        (item.caption ==
+                                        parseInt(yearTitle[0]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                          ? "01"
+                                          : item.caption ==
+                                            parseInt(yearTitle[1]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "21"
+                                          : item.caption ==
+                                            parseInt(yearTitle[2]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "31"
+                                          : item.caption ==
+                                            parseInt(yearTitle[3]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "41"
+                                          : item.caption ==
+                                            parseInt(yearTitle[4]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "51"
+                                          : "")
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"(7-12)분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        "amt" +
+                                        (item.caption ==
+                                        parseInt(yearTitle[0]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                          ? "02"
+                                          : item.caption ==
+                                            parseInt(yearTitle[1]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "22"
+                                          : item.caption ==
+                                            parseInt(yearTitle[2]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "32"
+                                          : item.caption ==
+                                            parseInt(yearTitle[3]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "42"
+                                          : item.caption ==
+                                            parseInt(yearTitle[4]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "52"
+                                          : "")
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
 
+                                    <GridColumn
+                                      title={"합계"}
+                                      cell={NumberCell}
+                                      field={
+                                        "tamt" +
+                                        (item.caption ==
+                                        parseInt(yearTitle[0]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                          ? "01"
+                                          : item.caption ==
+                                            parseInt(yearTitle[1]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "02"
+                                          : item.caption ==
+                                            parseInt(yearTitle[2]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "03"
+                                          : item.caption ==
+                                            parseInt(yearTitle[3]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "04"
+                                          : item.caption ==
+                                            parseInt(yearTitle[4]) +
+                                              (2023 -
+                                                parseInt(
+                                                  convertDateToStr(
+                                                    filters.yyyy
+                                                  ).substr(0, 4)
+                                                ))
+                                          ? "05"
+                                          : "")
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                  </GridColumn>
+                                ) : (
                                   <GridColumn
-                                    title={"합계"}
-                                    cell={NumberCell}
-                                    field={
-                                      "tamt" +
-                                      (item.caption ==
-                                      parseInt(yearTitle[0]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                        ? "01"
-                                        : item.caption ==
-                                          parseInt(yearTitle[1]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "02"
-                                        : item.caption ==
-                                          parseInt(yearTitle[2]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "03"
-                                        : item.caption ==
-                                          parseInt(yearTitle[3]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "04"
-                                        : item.caption ==
-                                          parseInt(yearTitle[4]) +
-                                            (2023 -
-                                              parseInt(
-                                                convertDateToStr(
-                                                  filters.yyyy
-                                                ).substr(0, 4)
-                                              ))
-                                        ? "05"
-                                        : "")
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
                                     }
-                                    footerCell={gridSumQtyFooterCell}
                                     width={item.width}
                                   />
-                                </GridColumn>
-                              ) : (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                />
-                              ))
-                          )}
+                                ))
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2145,33 +2160,33 @@ const SA_B3000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdAllList"
-                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdAllList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -2228,55 +2243,55 @@ const SA_B3000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdMonthList"
-                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 &&
-                          (numberField.includes(item.fieldName) ? (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            >
+                      customOptionData.menuCustomColumnOptions["grdMonthList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 &&
+                            (numberField.includes(item.fieldName) ? (
                               <GridColumn
-                                title={"수량"}
-                                cell={NumberCell}
+                                key={idx}
                                 field={item.fieldName}
-                                footerCell={gridSumQtyFooterCell}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : undefined
+                                }
                                 width={item.width}
-                              />
+                              >
+                                <GridColumn
+                                  title={"수량"}
+                                  cell={NumberCell}
+                                  field={item.fieldName}
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
 
+                                <GridColumn
+                                  title={"금액"}
+                                  cell={NumberCell}
+                                  field={item.fieldName.replace("qty", "amt")}
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                              </GridColumn>
+                            ) : (
                               <GridColumn
-                                title={"금액"}
-                                cell={NumberCell}
-                                field={item.fieldName.replace("qty", "amt")}
-                                footerCell={gridSumQtyFooterCell}
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
                                 width={item.width}
                               />
-                            </GridColumn>
-                          ) : (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            />
-                          ))
-                      )}
+                            ))
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -2395,119 +2410,135 @@ const SA_B3000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdQuarterList"
-                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 &&
-                          (item.fieldName !== "custcd" &&
-                          item.fieldName !== "custnm" ? (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            >
-                              <GridColumn title={"1/4분기"}>
-                                <GridColumn
-                                  title={"수량"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "q1" : "q11"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-
-                                <GridColumn
-                                  title={"금액"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm1" : "dm1"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                              </GridColumn>
-                              <GridColumn title={"2/4분기"}>
-                                <GridColumn
-                                  title={"수량"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "q2" : "q22"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-
-                                <GridColumn
-                                  title={"금액"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm2" : "dm2"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                              </GridColumn>
-                              <GridColumn title={"3/4분기"}>
-                                <GridColumn
-                                  title={"수량"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "q3" : "q33"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-
-                                <GridColumn
-                                  title={"금액"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm3" : "dm3"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                              </GridColumn>
-                              <GridColumn title={"4/4분기"}>
-                                <GridColumn
-                                  title={"수량"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "q4" : "q44"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-
-                                <GridColumn
-                                  title={"금액"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm4" : "dm4"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                              </GridColumn>
-
+                      customOptionData.menuCustomColumnOptions["grdQuarterList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 &&
+                            (item.fieldName !== "custcd" &&
+                            item.fieldName !== "custnm" ? (
                               <GridColumn
-                                title={"합계"}
-                                cell={NumberCell}
-                                field={
-                                  item.caption == "전기" ? "jtotal" : "dtotal"
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : undefined
                                 }
-                                footerCell={gridSumQtyFooterCell}
+                                width={item.width}
+                              >
+                                <GridColumn title={"1/4분기"}>
+                                  <GridColumn
+                                    title={"수량"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "q1" : "q11"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+
+                                  <GridColumn
+                                    title={"금액"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm1" : "dm1"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+                                <GridColumn title={"2/4분기"}>
+                                  <GridColumn
+                                    title={"수량"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "q2" : "q22"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+
+                                  <GridColumn
+                                    title={"금액"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm2" : "dm2"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+                                <GridColumn title={"3/4분기"}>
+                                  <GridColumn
+                                    title={"수량"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "q3" : "q33"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+
+                                  <GridColumn
+                                    title={"금액"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm3" : "dm3"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+                                <GridColumn title={"4/4분기"}>
+                                  <GridColumn
+                                    title={"수량"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "q4" : "q44"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+
+                                  <GridColumn
+                                    title={"금액"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm4" : "dm4"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+
+                                <GridColumn
+                                  title={"합계"}
+                                  cell={NumberCell}
+                                  field={
+                                    item.caption == "전기" ? "jtotal" : "dtotal"
+                                  }
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                              </GridColumn>
+                            ) : (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
                                 width={item.width}
                               />
-                            </GridColumn>
-                          ) : (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            />
-                          ))
-                      )}
+                            ))
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -2674,215 +2705,215 @@ const SA_B3000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grd5YearList"
-                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 &&
-                          (item.fieldName !== "custcd" &&
-                          item.fieldName !== "custnm" ? (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              //title={item.caption}
-                              title={
-                                yearTitle[
-                                  Number(item.id.replace("col_5year", "")) - 1
-                                ]
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            >
+                      customOptionData.menuCustomColumnOptions["grd5YearList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 &&
+                            (item.fieldName !== "custcd" &&
+                            item.fieldName !== "custnm" ? (
                               <GridColumn
-                                title={"(1-6)분기"}
-                                cell={NumberCell}
-                                field={
-                                  "amt" +
-                                  (item.caption ==
-                                  parseInt(yearTitle[0]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                    ? "01"
-                                    : item.caption ==
-                                      parseInt(yearTitle[1]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "21"
-                                    : item.caption ==
-                                      parseInt(yearTitle[2]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "31"
-                                    : item.caption ==
-                                      parseInt(yearTitle[3]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "41"
-                                    : item.caption ==
-                                      parseInt(yearTitle[4]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "51"
-                                    : "")
+                                key={idx}
+                                field={item.fieldName}
+                                //title={item.caption}
+                                title={
+                                  yearTitle[
+                                    Number(item.id.replace("col_5year", "")) - 1
+                                  ]
                                 }
-                                footerCell={gridSumQtyFooterCell}
-                                width={item.width}
-                              />
-                              <GridColumn
-                                title={"(7-12)분기"}
-                                cell={NumberCell}
-                                field={
-                                  "amt" +
-                                  (item.caption ==
-                                  parseInt(yearTitle[0]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                    ? "02"
-                                    : item.caption ==
-                                      parseInt(yearTitle[1]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "22"
-                                    : item.caption ==
-                                      parseInt(yearTitle[2]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "32"
-                                    : item.caption ==
-                                      parseInt(yearTitle[3]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "42"
-                                    : item.caption ==
-                                      parseInt(yearTitle[4]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "52"
-                                    : "")
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : undefined
                                 }
-                                footerCell={gridSumQtyFooterCell}
                                 width={item.width}
-                              />
+                              >
+                                <GridColumn
+                                  title={"(1-6)분기"}
+                                  cell={NumberCell}
+                                  field={
+                                    "amt" +
+                                    (item.caption ==
+                                    parseInt(yearTitle[0]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                      ? "01"
+                                      : item.caption ==
+                                        parseInt(yearTitle[1]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "21"
+                                      : item.caption ==
+                                        parseInt(yearTitle[2]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "31"
+                                      : item.caption ==
+                                        parseInt(yearTitle[3]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "41"
+                                      : item.caption ==
+                                        parseInt(yearTitle[4]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "51"
+                                      : "")
+                                  }
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                                <GridColumn
+                                  title={"(7-12)분기"}
+                                  cell={NumberCell}
+                                  field={
+                                    "amt" +
+                                    (item.caption ==
+                                    parseInt(yearTitle[0]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                      ? "02"
+                                      : item.caption ==
+                                        parseInt(yearTitle[1]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "22"
+                                      : item.caption ==
+                                        parseInt(yearTitle[2]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "32"
+                                      : item.caption ==
+                                        parseInt(yearTitle[3]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "42"
+                                      : item.caption ==
+                                        parseInt(yearTitle[4]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "52"
+                                      : "")
+                                  }
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
 
+                                <GridColumn
+                                  title={"합계"}
+                                  cell={NumberCell}
+                                  field={
+                                    "tamt" +
+                                    (item.caption ==
+                                    parseInt(yearTitle[0]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                      ? "01"
+                                      : item.caption ==
+                                        parseInt(yearTitle[1]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "02"
+                                      : item.caption ==
+                                        parseInt(yearTitle[2]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "03"
+                                      : item.caption ==
+                                        parseInt(yearTitle[3]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "04"
+                                      : item.caption ==
+                                        parseInt(yearTitle[4]) +
+                                          (2023 -
+                                            parseInt(
+                                              convertDateToStr(
+                                                filters.yyyy
+                                              ).substr(0, 4)
+                                            ))
+                                      ? "05"
+                                      : "")
+                                  }
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                              </GridColumn>
+                            ) : (
                               <GridColumn
-                                title={"합계"}
-                                cell={NumberCell}
-                                field={
-                                  "tamt" +
-                                  (item.caption ==
-                                  parseInt(yearTitle[0]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                    ? "01"
-                                    : item.caption ==
-                                      parseInt(yearTitle[1]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "02"
-                                    : item.caption ==
-                                      parseInt(yearTitle[2]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "03"
-                                    : item.caption ==
-                                      parseInt(yearTitle[3]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "04"
-                                    : item.caption ==
-                                      parseInt(yearTitle[4]) +
-                                        (2023 -
-                                          parseInt(
-                                            convertDateToStr(
-                                              filters.yyyy
-                                            ).substr(0, 4)
-                                          ))
-                                    ? "05"
-                                    : "")
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
                                 }
-                                footerCell={gridSumQtyFooterCell}
                                 width={item.width}
                               />
-                            </GridColumn>
-                          ) : (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                              width={item.width}
-                            />
-                          ))
-                      )}
+                            ))
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>

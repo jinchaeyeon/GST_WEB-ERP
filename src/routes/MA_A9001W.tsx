@@ -55,6 +55,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
@@ -146,23 +147,12 @@ var index = 0;
 
 const MA_A9001W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
 
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".k-tabstrip-items-wrapper");
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".k-tabstrip-items-wrapper");
 
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -1944,7 +1934,7 @@ const MA_A9001W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -2737,35 +2727,37 @@ const MA_A9001W: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : checkBoxField.includes(item.fieldName)
-                                  ? CheckBoxReadOnlyCell
-                                  : centerField.includes(item.fieldName)
-                                  ? CenterCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : numberField2.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : checkBoxField.includes(item.fieldName)
+                                    ? CheckBoxReadOnlyCell
+                                    : centerField.includes(item.fieldName)
+                                    ? CenterCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : numberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -3078,6 +3070,7 @@ const MA_A9001W: React.FC = () => {
                     width: "100%",
                     marginBottom: "5px",
                   }}
+                  className="ButtonContainer3"
                 >
                   <ButtonContainer>
                     <Button
@@ -3110,7 +3103,9 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: deviceHeight - height3 }}
+                            style={{
+                              height: deviceHeight - height3 - height4,
+                            }}
                             data={process(
                               subDataResult.data.map((row) => ({
                                 ...row,
@@ -3150,31 +3145,35 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList2"
-                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      width={item.width}
-                                      cell={
-                                        numberField.includes(item.fieldName)
-                                          ? NumberCell
-                                          : undefined
-                                      }
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? subTotalFooterCell
-                                          : numberField2.includes(
-                                              item.fieldName
-                                            )
-                                          ? gridSumQtyFooterCell2
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? subTotalFooterCell
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell2
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
                           </Grid>
                         </ExcelExport>
                       </GridContainer>
@@ -3191,7 +3190,9 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: deviceHeight - height3 }}
+                            style={{
+                              height: deviceHeight - height3 - height4,
+                            }}
                             data={process(
                               subDataResult2.data.map((row) => ({
                                 ...row,
@@ -3234,31 +3235,35 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList3"
-                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      width={item.width}
-                                      cell={
-                                        numberField.includes(item.fieldName)
-                                          ? NumberCell
-                                          : undefined
-                                      }
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? subTotalFooterCell2
-                                          : numberField2.includes(
-                                              item.fieldName
-                                            )
-                                          ? gridSumQtyFooterCell3
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? subTotalFooterCell2
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell3
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
                           </Grid>
                         </ExcelExport>
                       </GridContainer>
@@ -3275,7 +3280,9 @@ const MA_A9001W: React.FC = () => {
                           fileName="매입 E-TAX(전표)"
                         >
                           <Grid
-                            style={{ height: deviceHeight - height3 }}
+                            style={{
+                              height: deviceHeight - height3 - height4,
+                            }}
                             data={process(
                               subDataResult3.data.map((row) => ({
                                 ...row,
@@ -3315,31 +3322,35 @@ const MA_A9001W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList4"
-                              ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      width={item.width}
-                                      cell={
-                                        numberField.includes(item.fieldName)
-                                          ? NumberCell
-                                          : undefined
-                                      }
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? subTotalFooterCell3
-                                          : numberField2.includes(
-                                              item.fieldName
-                                            )
-                                          ? gridSumQtyFooterCell4
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? subTotalFooterCell3
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell4
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
                           </Grid>
                         </ExcelExport>
                       </GridContainer>
@@ -3483,35 +3494,37 @@ const MA_A9001W: React.FC = () => {
                   cell={CheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : checkBoxField.includes(item.fieldName)
-                              ? CheckBoxReadOnlyCell
-                              : centerField.includes(item.fieldName)
-                              ? CenterCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : numberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : checkBoxField.includes(item.fieldName)
+                                ? CheckBoxReadOnlyCell
+                                : centerField.includes(item.fieldName)
+                                ? CenterCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : numberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -3825,31 +3838,35 @@ const MA_A9001W: React.FC = () => {
                           resizable={true}
                         >
                           {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList2"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <GridColumn
-                                    key={idx}
-                                    field={item.fieldName}
-                                    title={item.caption}
-                                    width={item.width}
-                                    cell={
-                                      numberField.includes(item.fieldName)
-                                        ? NumberCell
-                                        : undefined
-                                    }
-                                    footerCell={
-                                      item.sortOrder == 0
-                                        ? subTotalFooterCell
-                                        : numberField2.includes(item.fieldName)
-                                        ? gridSumQtyFooterCell2
-                                        : undefined
-                                    }
-                                  />
-                                )
-                            )}
+                            customOptionData.menuCustomColumnOptions["grdList2"]
+                              ?.sort(
+                                (a: any, b: any) => a.sortOrder - b.sortOrder
+                              )
+                              ?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell2
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
@@ -3907,31 +3924,35 @@ const MA_A9001W: React.FC = () => {
                           resizable={true}
                         >
                           {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList3"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <GridColumn
-                                    key={idx}
-                                    field={item.fieldName}
-                                    title={item.caption}
-                                    width={item.width}
-                                    cell={
-                                      numberField.includes(item.fieldName)
-                                        ? NumberCell
-                                        : undefined
-                                    }
-                                    footerCell={
-                                      item.sortOrder == 0
-                                        ? subTotalFooterCell2
-                                        : numberField2.includes(item.fieldName)
-                                        ? gridSumQtyFooterCell3
-                                        : undefined
-                                    }
-                                  />
-                                )
-                            )}
+                            customOptionData.menuCustomColumnOptions["grdList3"]
+                              ?.sort(
+                                (a: any, b: any) => a.sortOrder - b.sortOrder
+                              )
+                              ?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell2
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell3
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
@@ -3986,31 +4007,35 @@ const MA_A9001W: React.FC = () => {
                           resizable={true}
                         >
                           {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList4"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <GridColumn
-                                    key={idx}
-                                    field={item.fieldName}
-                                    title={item.caption}
-                                    width={item.width}
-                                    cell={
-                                      numberField.includes(item.fieldName)
-                                        ? NumberCell
-                                        : undefined
-                                    }
-                                    footerCell={
-                                      item.sortOrder == 0
-                                        ? subTotalFooterCell3
-                                        : numberField2.includes(item.fieldName)
-                                        ? gridSumQtyFooterCell4
-                                        : undefined
-                                    }
-                                  />
-                                )
-                            )}
+                            customOptionData.menuCustomColumnOptions["grdList4"]
+                              ?.sort(
+                                (a: any, b: any) => a.sortOrder - b.sortOrder
+                              )
+                              ?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell3
+                                          : numberField2.includes(
+                                              item.fieldName
+                                            )
+                                          ? gridSumQtyFooterCell4
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
                         </Grid>
                       </ExcelExport>
                     </GridContainer>

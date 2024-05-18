@@ -317,28 +317,6 @@ input.readonly {
   }
 }
 
-.leading_PDA {
-  text-align: center !important;
-  font-size: 18px !important;
-  background: #fff !important;
-
-  /* Center slide text vertically */
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  flex-direction: column !important;
-  overflow: scroll;
-}
-
-.leading_PDA_container {
-  width: 100% !important;
-}
-
-.leading_PDA_Swiper {
-  width: 100% !important;
-  height: 90vh !important;
-}
-
 .swiper-slide {
   text-align: center!important;
   font-size: 18px!important;

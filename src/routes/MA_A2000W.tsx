@@ -47,6 +47,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -111,17 +112,9 @@ const MA_A2000W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   UseParaPc(setPc);
   let deviceWidth = document.documentElement.clientWidth;
-  var height = 0;
-  var height2 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

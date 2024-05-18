@@ -54,6 +54,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -79,11 +80,8 @@ var index = 0;
 const QC_A0120: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".k-tabstrip-items-wrapper");
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -569,7 +567,7 @@ const QC_A0120: React.FC = () => {
         >
           <Grid
             style={{
-              height: !isMobile ? "67vh" : deviceHeight - height,
+              height: !isMobile ? "67vh" : deviceHeight - height - height2,
             }}
             data={process(
               detail1DataResult.data.map((row) => ({
@@ -691,7 +689,7 @@ const QC_A0120: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -849,7 +847,7 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -876,7 +874,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={1}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -903,7 +901,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={2}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -930,7 +928,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={3}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -979,7 +977,7 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       onSeriesClick={onChartSeriesClick}
                       className={"QC_A0120_TAB2"}
                     >
@@ -1000,7 +998,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={1}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       onSeriesClick={onChartSeriesClick}
                       className={"QC_A0120_TAB2"}
                     >
@@ -1022,7 +1020,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={2}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       onSeriesClick={onChartSeriesClick}
                       className={"QC_A0120_TAB2"}
                     >
@@ -1043,7 +1041,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={3}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       onSeriesClick={onChartSeriesClick}
                       className={"QC_A0120_TAB2"}
                     >
@@ -1086,7 +1084,7 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight }}
+                      style={{ width: "100%", height: deviceHeight - height2 }}
                       onSeriesClick={onChartSeriesClick}
                       className={"QC_A0120_TAB3"}
                     >
@@ -1148,7 +1146,7 @@ const QC_A0120: React.FC = () => {
                 <GridContainer
                   style={{
                     width: "60%",
-                    height: deviceHeight,
+                    height: deviceHeight - height2,
                   }}
                 >
                   <GridContainerWrap>

@@ -27,7 +27,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
 
 interface TList {
   badcnt?: number;
@@ -318,6 +318,8 @@ const SA_B3600W: React.FC = () => {
     }
   };
   let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
 
   useEffect(() => {
     if (filters.isSearch && customOptionData != null) {
@@ -451,7 +453,13 @@ const SA_B3600W: React.FC = () => {
 
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+    <div
+        style={{
+          fontFamily: "TheJamsil5Bold",
+          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>납기준수율</Title>

@@ -18,10 +18,11 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
 
 const SA_B2220W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -594,7 +595,13 @@ const SA_B2220W: React.FC = () => {
 
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+    <div
+        style={{
+          fontFamily: "TheJamsil5Bold",
+          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          overflow: isMobile ? "auto" : undefined,
+        }}
+      >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>DASHBOARD(담당자별)</Title>

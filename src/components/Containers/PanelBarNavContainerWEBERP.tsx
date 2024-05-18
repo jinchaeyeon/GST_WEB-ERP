@@ -223,7 +223,7 @@ const PanelBarNavContainer = (props: any) => {
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
       setIsFilterheightstates(0);
-      setIsFilterHideStates(false);
+      setIsFilterHideStates(true);
       setDeviceHeight(document.documentElement.clientHeight - 170);
     };
   }, [
@@ -447,12 +447,19 @@ const PanelBarNavContainer = (props: any) => {
     useState<boolean>(false);
   const [systemOptionWindowWindowVisible, setSystemOptionWindowVisible] =
     useState<boolean>(false);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const onSelect = (event: PanelBarSelectEventArguments) => {
     const { route, className = "" } = event.target.props;
+
     props.history.push(route);
 
     if (route) {
+      if (isMobile) {
+        setIsFilterheightstates(0);
+        setIsFilterHideStates(true);
+        setDeviceHeight(document.documentElement.clientHeight - 170);
+      }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);
       setSystemOptionWindowVisible(false);
@@ -882,7 +889,10 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv
             isMobileMenuOpend={isMobileMenuOpend}
             theme={"#2289c3"}
-            style={{ paddingBottom: document.documentElement.clientWidth <= 1200 ? "100px" : "" }}
+            style={{
+              paddingBottom:
+                document.documentElement.clientWidth <= 1200 ? "100px" : "",
+            }}
           >
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               {companyCode == "2302BA03" ? (

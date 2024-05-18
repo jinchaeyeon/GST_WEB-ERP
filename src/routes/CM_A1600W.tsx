@@ -61,6 +61,7 @@ import {
   dateformat2,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -147,26 +148,10 @@ const CM_A1600: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var height2 = 0;
-  var height3 = 0;
-  var height4 = 0;
-  var container = document.querySelector(".ButtonContainer");
-  var container2 = document.querySelector(".ButtonContainer2");
-  var container3 = document.querySelector(".ButtonContainer3");
-  var container4 = document.querySelector(".k-tabstrip-items-wrapper");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
-  if (container2?.clientHeight != undefined) {
-    height2 = container2 == undefined ? 0 : container2.clientHeight;
-  }
-  if (container3?.clientHeight != undefined) {
-    height3 = container3 == undefined ? 0 : container3.clientHeight;
-  }
-  if (container4?.clientHeight != undefined) {
-    height4 = container4 == undefined ? 0 : container4.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".k-tabstrip-items-wrapper");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -2252,7 +2237,7 @@ const CM_A1600: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <FilterContainer>
                       <FilterBox
                         onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -2326,7 +2311,7 @@ const CM_A1600: React.FC = () => {
 
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <FilterContainer>
                       <FilterBox
                         onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -2957,7 +2942,7 @@ const CM_A1600: React.FC = () => {
             </FilterContainer>
           </GridTitleContainer>
           <GridContainer width="100%">
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer3">
               <GridTitle>개인 스케줄(표)</GridTitle>
 
               {permissions && (

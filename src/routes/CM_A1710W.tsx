@@ -40,6 +40,7 @@ import {
   dateformat,
   getGridItemChangedData,
   handleKeyPressSearch,
+  getHeight
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -95,11 +96,7 @@ const CM_A1710W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = 0;
-  var container = document.querySelector(".ButtonContainer");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
+  var height = getHeight(".ButtonContainer");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {

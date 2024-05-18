@@ -937,7 +937,9 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
+        <GridContainer
+          height={isMobile ? "400px" : `calc(50% - ${leftOverHeight}px)`}
+        >
           <Grid
             style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값
             data={process(
@@ -1033,7 +1035,9 @@ const CopyWindow = ({
             />
           </Grid>
         </GridContainer>
-        <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
+        <GridContainer
+          height={isMobile ? "400px" : `calc(50% - ${leftOverHeight}px)`}
+        >
           <Grid
             style={{ height: "calc(100% - 5px)" }}
             data={process(
@@ -1120,48 +1124,96 @@ const CopyWindow = ({
             />
           </Grid>
         </GridContainer>
-        <BottomContainer>
-          <ButtonContainer>
-            <FormBoxWrap
-              border={true}
-              style={{ width: "800px", marginRight: "70px" }}
-            >
+        {isMobile ? (
+          <>
+            <FormBoxWrap border={true}>
               <FormBox>
                 <tbody>
-                  <th>공급가액</th>
-                  <td>
-                    <Input
-                      name="splyamt"
-                      type="number"
-                      value={filters.splyamt}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>소수점</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="decdiv"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
+                  <tr>
+                    <th>공급가액</th>
+                    <td>
+                      <Input
+                        name="splyamt"
+                        type="number"
+                        value={filters.splyamt}
+                        className="readonly"
                       />
-                    )}
-                  </td>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>소수점</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionRadioGroup
+                          name="decdiv"
+                          customOptionData={customOptionData}
+                          changeData={filterRadioChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
                 </tbody>
               </FormBox>
             </FormBoxWrap>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+            <BottomContainer>
+              <ButtonContainer>
+                <Button themeColor={"primary"} onClick={selectData}>
+                  확인
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={onClose}
+                >
+                  닫기
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        ) : (
+          <BottomContainer>
+            <ButtonContainer>
+              <FormBoxWrap
+                border={true}
+                style={{ width: "40vw", marginRight: "70px" }}
+              >
+                <FormBox>
+                  <tbody>
+                    <th>공급가액</th>
+                    <td>
+                      <Input
+                        name="splyamt"
+                        type="number"
+                        value={filters.splyamt}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>소수점</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionRadioGroup
+                          name="decdiv"
+                          customOptionData={customOptionData}
+                          changeData={filterRadioChange}
+                        />
+                      )}
+                    </td>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        )}
       </Window>
       {custWindowVisible && (
         <CustomersWindow
