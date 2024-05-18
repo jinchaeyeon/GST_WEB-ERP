@@ -17,6 +17,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -67,14 +70,12 @@ import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   heightstate,
+  isFilterHideState,
   isLoading,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4110W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 const DATA_ITEM_KEY = "num";
@@ -289,7 +290,8 @@ const HU_A4110W: React.FC = () => {
     pgNum: 1,
     isSearch: true,
   });
-
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -940,6 +942,161 @@ const HU_A4110W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
+      {swiper?.activeIndex == 0 ? (
+        <FilterContainer>
+          <FilterBox>
+            <tbody>
+              <tr>
+                <th>기준년도</th>
+                <td>
+                  <div className="flex align-items-center">
+                    <DatePicker
+                      name="yyyy"
+                      format="yyyy"
+                      value={subfilters.yyyy}
+                      onChange={filterInputChange}
+                      placeholder=""
+                      calendar={YearCalendar}
+                      className="required"
+                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="semiannualgb"
+                        value={subfilters.semiannualgb}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        valueField="code"
+                        textField="codenm"
+                      />
+                    )}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2}>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    onClick={() => search2()}
+                    icon="search"
+                    style={{ width: "100%" }}
+                  >
+                    포인트 조회하기
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      ) : (
+        <FilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+            <tbody>
+              <tr>
+                <th>일자</th>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.strdt,
+                      end: filters.enddt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        strdt: e.value.start,
+                        enddt: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                </td>
+                <th>사업장</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="location"
+                      value={filters.location}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange2}
+                    />
+                  )}
+                </td>
+                <th>사업부</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="position"
+                      value={filters.position}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange2}
+                    />
+                  )}
+                </td>
+                <th>결재승인구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="appsts"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange2}
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>사번</th>
+                <td>
+                  <Input
+                    name="prsnnum"
+                    type="text"
+                    value={filters.prsnnum}
+                    onChange={filterInputChange2}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onUserWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </td>
+                <th>성명</th>
+                <td>
+                  <Input
+                    name="prsnnm"
+                    type="text"
+                    value={filters.prsnnm}
+                    onChange={filterInputChange2}
+                  />
+                </td>
+                <th>비용부서</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="dptcd"
+                      value={filters.dptcd}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange2}
+                      valueField="dptcd"
+                      textField="dptnm"
+                    />
+                  )}
+                </td>
+                <th>전표처리구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="acntdiv"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange2}
+                    />
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      )}
       {isMobile ? (
         <>
           <Swiper
@@ -948,55 +1105,11 @@ const HU_A4110W: React.FC = () => {
             }}
             onActiveIndexChange={(swiper) => {
               index = swiper.activeIndex;
+              setIsFilterHideStates(true);
             }}
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                <FilterContainer>
-                  <FilterBox>
-                    <tbody>
-                      <tr>
-                        <th>기준년도</th>
-                        <td>
-                          <div className="flex align-items-center">
-                            <DatePicker
-                              name="yyyy"
-                              format="yyyy"
-                              value={subfilters.yyyy}
-                              onChange={filterInputChange}
-                              placeholder=""
-                              calendar={YearCalendar}
-                              className="required"
-                            />
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="semiannualgb"
-                                value={subfilters.semiannualgb}
-                                customOptionData={customOptionData}
-                                changeData={filterComboBoxChange}
-                                valueField="code"
-                                textField="codenm"
-                              />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan={2}>
-                          <Button
-                            themeColor={"primary"}
-                            fillMode="outline"
-                            onClick={() => search2()}
-                            icon="search"
-                            style={{ width: "100%" }}
-                          >
-                            포인트 조회하기
-                          </Button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
                 <FormBoxWrap border={true} className="ButtonContainer">
                   <FormBox>
                     <tbody>
@@ -1015,8 +1128,8 @@ const HU_A4110W: React.FC = () => {
                             className="readonly"
                           />
                         </td>
-                        </tr>
-                        <tr style={{ display: "flax", flexDirection: "row" }}>
+                      </tr>
+                      <tr style={{ display: "flax", flexDirection: "row" }}>
                         <th style={{ width: "30%", minWidth: "100px" }}>
                           잔여포인트
                         </th>
@@ -1169,117 +1282,6 @@ const HU_A4110W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>일자</th>
-                        <td>
-                          <CommonDateRangePicker
-                            value={{
-                              start: filters.strdt,
-                              end: filters.enddt,
-                            }}
-                            onChange={(e: {
-                              value: { start: any; end: any };
-                            }) =>
-                              setFilters((prev) => ({
-                                ...prev,
-                                strdt: e.value.start,
-                                enddt: e.value.end,
-                              }))
-                            }
-                            className="required"
-                          />
-                        </td>
-                        <th>사업장</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="location"
-                              value={filters.location}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange2}
-                            />
-                          )}
-                        </td>
-                        <th>사업부</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="position"
-                              value={filters.position}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange2}
-                            />
-                          )}
-                        </td>
-                        <th>결재승인구분</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="appsts"
-                              customOptionData={customOptionData}
-                              changeData={filterRadioChange2}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>사번</th>
-                        <td>
-                          <Input
-                            name="prsnnum"
-                            type="text"
-                            value={filters.prsnnum}
-                            onChange={filterInputChange2}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onUserWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>성명</th>
-                        <td>
-                          <Input
-                            name="prsnnm"
-                            type="text"
-                            value={filters.prsnnm}
-                            onChange={filterInputChange2}
-                          />
-                        </td>
-                        <th>비용부서</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="dptcd"
-                              value={filters.dptcd}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange2}
-                              valueField="dptcd"
-                              textField="dptnm"
-                            />
-                          )}
-                        </td>
-                        <th>전표처리구분</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="acntdiv"
-                              customOptionData={customOptionData}
-                              changeData={filterRadioChange2}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
                 <GridContainer
                   style={{
                     width: `${deviceWidth - 30}px`,
