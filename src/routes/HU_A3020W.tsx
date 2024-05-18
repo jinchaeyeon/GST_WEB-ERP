@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -39,6 +39,7 @@ import {
   UseParaPc,
   UsePermissions,
   getGridItemChangedData,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -48,7 +49,7 @@ import {
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
@@ -129,6 +130,14 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const HU_A3020W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".k-tabstrip-items-wrapper");
+
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -1427,7 +1436,7 @@ const HU_A3020W: React.FC = () => {
       >
         <TabStripTab title="지급항목">
           <GridContainer width="100%">
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
@@ -1460,7 +1469,7 @@ const HU_A3020W: React.FC = () => {
               fileName="지급항목"
             >
               <Grid
-                style={{ height: "77.5vh" }}
+                style={{ height: isMobile ? deviceHeight - height - height2 : "77.5vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1542,7 +1551,7 @@ const HU_A3020W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="공제항목">
           <GridContainer width="100%">
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
@@ -1575,7 +1584,7 @@ const HU_A3020W: React.FC = () => {
               fileName="지급항목"
             >
               <Grid
-                style={{ height: "77.5vh" }}
+                style={{ height: isMobile ? deviceHeight - height - height2 : "77.5vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,

@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -43,7 +43,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3160W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -51,6 +51,10 @@ const DATA_ITEM_KEY = "num";
 const numberField = ["totpayamt", "totded", "rlpayamt"];
 
 const HU_B3160W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
 
@@ -400,9 +404,6 @@ const HU_B3160W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
-        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -411,7 +412,7 @@ const HU_B3160W: React.FC = () => {
           fileName="급상여이체명부"
         >
           <Grid
-            style={{ height: "81.5vh" }}
+            style={{ height: isMobile ? deviceHeight : "81.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
