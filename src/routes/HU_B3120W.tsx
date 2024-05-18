@@ -67,7 +67,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -100,7 +100,6 @@ const HU_B3120W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");
-  var height4 = getHeight(".ButtonContainer3");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -110,7 +109,29 @@ const HU_B3120W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const [tabSelected, setTabSelected] = useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      if (e.selected == 0) {
+        setFilters2((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+      } else if (e.selected == 1) {
+        setFilters3((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+      } else if (e.selected == 2) {
+        setFilters4((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+      }
+      setIsFilterHideStates(true);
+    }
+
     setTabSelected(e.selected);
   };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -468,7 +489,10 @@ const HU_B3120W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        payyrmm: item.payyrmm + "01",
+      }));
 
       setMainDataResult2((prev) => {
         return {
@@ -844,9 +868,6 @@ const HU_B3120W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    if (swiper) {
-      swiper.slideTo(0);
-    }
   };
 
   const search2 = () => {
@@ -880,9 +901,6 @@ const HU_B3120W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper && isMobile) {
-          swiper.slideTo(0);
-        }
       }
     } catch (e) {
       alert(e);
@@ -1092,7 +1110,15 @@ const HU_B3120W: React.FC = () => {
         <ButtonContainer>
           {permissions && (
             <TopButtons
-              search={search}
+              search={
+                index == 1 && tabSelected == 0
+                  ? search2
+                  : index == 1 && tabSelected == 1
+                  ? search2
+                  : index == 1 && tabSelected == 2
+                  ? search3
+                  : search
+              }
               exportExcel={exportExcel}
               permissions={permissions}
               pathname="HU_B3120W"
@@ -1229,12 +1255,111 @@ const HU_B3120W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                {tabSelected == 0 ? (
+                  <FilterContainer>
+                    <FilterBox>
+                      <tbody>
+                        <tr>
+                          <th>기간</th>
+                          <td>
+                            <CommonDateRangePicker
+                              value={{
+                                start: filters2.frdt,
+                                end: filters2.todt,
+                              }}
+                              onChange={(e: {
+                                value: { start: any; end: any };
+                              }) => {
+                                setFilters2((prev) => ({
+                                  ...prev,
+                                  frdt: e.value.start,
+                                  todt: e.value.end,
+                                }));
+                                setFilters3((prev) => ({
+                                  ...prev,
+                                  frdt: e.value.start,
+                                  todt: e.value.end,
+                                }));
+                              }}
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
+                ) : tabSelected == 1 ? (
+                  <FilterContainer>
+                    <FilterBox>
+                      <tbody>
+                        <tr>
+                          <th>기간</th>
+                          <td>
+                            <CommonDateRangePicker
+                              value={{
+                                start: filters2.frdt,
+                                end: filters2.todt,
+                              }}
+                              onChange={(e: {
+                                value: { start: any; end: any };
+                              }) => {
+                                setFilters2((prev) => ({
+                                  ...prev,
+                                  frdt: e.value.start,
+                                  todt: e.value.end,
+                                }));
+                                setFilters3((prev) => ({
+                                  ...prev,
+                                  frdt: e.value.start,
+                                  todt: e.value.end,
+                                }));
+                              }}
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
+                ) : (
+                  <FilterContainer>
+                    <FilterBox>
+                      <tbody>
+                        <tr>
+                          <th>급여유형</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="paytypeCombo"
+                                value={filters4.paytypeCombo}
+                                customOptionData={customOptionData}
+                                changeData={filterComboBoxChange}
+                              />
+                            )}
+                          </td>
+                          <th>년월</th>
+                          <td>
+                            <DatePicker
+                              name="prdate"
+                              value={filters4.prdate}
+                              format="yyyy-MM"
+                              onChange={filterInputChange}
+                              className="required"
+                              placeholder=""
+                              calendar={MonthCalendar}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
+                )}
                 <FormBoxWrap border={true} className="ButtonContainer2">
                   <FormBox>
                     <tbody>
-                      <tr style={{ display: "flax", flexDirection: "row" }}>
-                        <th style={{ width: "10%", minWidth: "60px" }}>사번</th>
-                        <td style={{ width: "30%" }}>
+                      <tr>
+                        <th>사번</th>
+                        <td>
                           <Input
                             name="prsnnum"
                             type="text"
@@ -1242,8 +1367,10 @@ const HU_B3120W: React.FC = () => {
                             className="readonly"
                           />
                         </td>
-                        <th style={{ width: "10%", minWidth: "60px" }}>성명</th>
-                        <td style={{ width: "30%" }}>
+                      </tr>
+                      <tr>
+                        <th>성명</th>
+                        <td>
                           <Input
                             name="prsnnm"
                             type="text"
@@ -1261,47 +1388,6 @@ const HU_B3120W: React.FC = () => {
                   onSelect={handleSelectTab}
                 >
                   <TabStripTab title="급여(월별 내역)">
-                    <FilterContainer>
-                      <FilterBox>
-                        <tbody>
-                          <tr>
-                            <th>기간</th>
-                            <td>
-                              <CommonDateRangePicker
-                                value={{
-                                  start: filters2.frdt,
-                                  end: filters2.todt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) => {
-                                  setFilters2((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }));
-                                  setFilters3((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }));
-                                }}
-                                className="required"
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                onClick={search2}
-                                icon="search"
-                                themeColor={"primary"}
-                              >
-                                조회
-                              </Button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
                     <GridContainer>
                       <ExcelExport
                         data={mainDataResult2.data}
@@ -1312,7 +1398,7 @@ const HU_B3120W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: deviceHeight - height2 - height3 - height4,
+                            height: deviceHeight - height2 - height3 - 15,
                           }}
                           data={process(
                             mainDataResult2.data.map((row) => ({
@@ -1386,47 +1472,6 @@ const HU_B3120W: React.FC = () => {
                     </GridContainer>
                   </TabStripTab>
                   <TabStripTab title="상여(월별 내역)">
-                    <FilterContainer>
-                      <FilterBox>
-                        <tbody>
-                          <tr>
-                            <th>기간</th>
-                            <td>
-                              <CommonDateRangePicker
-                                value={{
-                                  start: filters2.frdt,
-                                  end: filters2.todt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) => {
-                                  setFilters2((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }));
-                                  setFilters3((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }));
-                                }}
-                                className="required"
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                onClick={search2}
-                                icon="search"
-                                themeColor={"primary"}
-                              >
-                                조회
-                              </Button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
                     <GridContainer>
                       <ExcelExport
                         data={mainDataResult3.data}
@@ -1436,7 +1481,9 @@ const HU_B3120W: React.FC = () => {
                         fileName="개인별 명세"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 - height3 }}
+                          style={{
+                            height: deviceHeight - height2 - height3 - 15,
+                          }}
                           data={process(
                             mainDataResult3.data.map((row) => ({
                               ...row,
@@ -1512,49 +1559,9 @@ const HU_B3120W: React.FC = () => {
                     </GridContainer>
                   </TabStripTab>
                   <TabStripTab title="급여상여(명세서)">
-                    <FilterContainer>
-                      <FilterBox>
-                        <tbody>
-                          <tr>
-                            <th>급여유형</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="paytypeCombo"
-                                  value={filters4.paytypeCombo}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                />
-                              )}
-                            </td>
-                            <th>년월</th>
-                            <td>
-                              <DatePicker
-                                name="prdate"
-                                value={filters4.prdate}
-                                format="yyyy-MM"
-                                onChange={filterInputChange}
-                                className="required"
-                                placeholder=""
-                                calendar={MonthCalendar}
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                onClick={search3}
-                                icon="search"
-                                themeColor={"primary"}
-                              >
-                                조회
-                              </Button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
                     <div
                       style={{
-                        height: deviceHeight - height2 - height3,
+                        height: deviceHeight - height2 - height3 - 15,
                         marginBottom: "10px",
                       }}
                     >
