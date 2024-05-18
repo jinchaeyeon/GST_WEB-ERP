@@ -53,6 +53,7 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -71,7 +72,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -382,7 +383,10 @@ const PR_A9100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
@@ -1614,7 +1618,7 @@ const PR_A9100W: React.FC = () => {
         }}
       >
         <GridContainer>
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
 
             {permissions && (
@@ -1661,7 +1665,7 @@ const PR_A9100W: React.FC = () => {
             fileName="재공품기초재고등록"
           >
             <Grid
-              style={{ height: "74.5vh" }}
+              style={{ height: isMobile? deviceHeight - height : "76vh" }}
               data={process(
                 mainDataResult.data.map((row, num) => ({
                   ...row,
