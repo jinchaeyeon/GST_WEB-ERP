@@ -35,7 +35,7 @@ import {
 } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -57,6 +57,7 @@ import {
   UseMessages,
   UsePermissions,
   getGridItemChangedData,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -67,9 +68,12 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -87,6 +91,13 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const PR_B0020W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -413,6 +424,9 @@ const PR_B0020W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -506,6 +520,10 @@ const PR_B0020W: React.FC = () => {
     setCards(cardField);
     setMainDataResult({ ...mainDataResult });
     // 카드 삭제, 초기화 이후에도 카드가 바로 반영되게끔 선언.
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   // 바코드 초기화
@@ -623,206 +641,438 @@ const PR_B0020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainerWrap>
-        <GridContainer width="30%">
-          <GridTitleContainer>
-            <GridTitle>코드내역</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddCard}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="image-export"
-              >
-                바코드 추가
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <ExcelExport
-            data={newData}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            group={group}
-            fileName="바코드 출력"
-          >
-            <Grid
-              style={{ height: "79vh" }}
-              data={newData.map((item: { items: any[] }) => ({
-                ...item,
-                items: item.items.map((row: any) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-              }))}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //그룹기능
-              group={group}
-              groupable={true}
-              onExpandChange={onExpandChange}
-              expandField="expanded"
-              //incell 수정 기능
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field="chk"
-                title=" "
-                width="45px"
-                headerCell={CustomCheckBoxCell}
-                cell={CustomCheckBoxCell1}
-              />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]
-                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  ?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            centerField.includes(item.fieldName)
-                              ? CenterCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(70% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>바코드 추가목록</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onResetCard}
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                초기화
-              </Button>
-              <ReactToPrint
-                trigger={() => (
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>코드내역</GridTitle>
+                <ButtonContainer>
                   <Button
+                    onClick={onAddCard}
                     fillMode="outline"
                     themeColor={"primary"}
-                    icon="print"
+                    icon="image-export"
                   >
-                    출력
+                    바코드 추가
                   </Button>
-                )}
-                content={() => componentRef.current}
-              />
-            </ButtonContainer>
-          </GridTitleContainer>
-          <PrimaryP>
-            ※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한 개만
-            추가 가능
-          </PrimaryP>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-            ref={componentRef}
-          >
-            {cards !== null &&
-              cards.map((item: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <Card
-                      style={{
-                        width: "300px",
-                        height: "180px",
-                        boxShadow: "0 0 4px 0 rgba(0, 0, 0, .2)",
-                        marginLeft: "20px",
-                        marginRight: "20px",
-                        marginTop: "30px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <CardHeader
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          height: "50px",
-                        }}
-                      >
-                        <div>
-                          <CardTitle>{item.name}</CardTitle>
-                        </div>
-                        <div className="nonprintable">
-                          <Button
-                            onClick={() => {
-                              onDeleteCard(index, item.code);
-                            }}
-                            fillMode="flat"
-                            icon="close-circle"
-                          ></Button>
-                        </div>
-                      </CardHeader>
-                      <CardBody
-                        style={{
-                          margin: "15px",
-                          fontSize: "20px",
-                          textAlign: "center",
-                        }}
-                      >
-                        <tr>
-                          <td>
-                            <Barcode
-                              type="Code128"
-                              height={80}
-                              value={item.barcode}
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={newData}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                group={group}
+                fileName="바코드 출력"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={newData.map((item: { items: any[] }) => ({
+                    ...item,
+                    items: item.items.map((row: any) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                  }))}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //그룹기능
+                  group={group}
+                  groupable={true}
+                  onExpandChange={onExpandChange}
+                  expandField="expanded"
+                  //incell 수정 기능
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell}
+                    cell={CustomCheckBoxCell1}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                centerField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
                             />
-                          </td>
-                        </tr>
-                      </CardBody>
-                    </Card>
-                  </div>
-                );
-              })}
-          </div>
-        </GridContainer>
-      </GridContainerWrap>
-
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>바코드 추가목록</GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onResetCard}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      초기화
+                    </Button>
+                    <ReactToPrint
+                      trigger={() => (
+                        <Button
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="print"
+                        >
+                          출력
+                        </Button>
+                      )}
+                      content={() => componentRef.current}
+                    />
+                  </ButtonContainer>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <PrimaryP
+                style={{ marginTop: "5px" }}
+                className="ButtonContainer2"
+              >
+                ※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한
+                개만 추가 가능
+              </PrimaryP>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  height: deviceHeight - height - height2,
+                }}
+                ref={componentRef}
+              >
+                {cards !== null &&
+                  cards.map((item: any, index: number) => {
+                    return (
+                      <div key={index}>
+                        <Card
+                          style={{
+                            width: "300px",
+                            height: "180px",
+                            boxShadow: "0 0 4px 0 rgba(0, 0, 0, .2)",
+                            marginLeft: "20px",
+                            marginRight: "20px",
+                            marginTop: "30px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <CardHeader
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              height: "50px",
+                            }}
+                          >
+                            <div>
+                              <CardTitle>{item.name}</CardTitle>
+                            </div>
+                            <div className="nonprintable">
+                              <Button
+                                onClick={() => {
+                                  onDeleteCard(index, item.code);
+                                }}
+                                fillMode="flat"
+                                icon="close-circle"
+                              ></Button>
+                            </div>
+                          </CardHeader>
+                          <CardBody
+                            style={{
+                              margin: "15px",
+                              fontSize: "20px",
+                              textAlign: "center",
+                            }}
+                          >
+                            <tr>
+                              <td>
+                                <Barcode
+                                  type="Code128"
+                                  height={80}
+                                  value={item.barcode}
+                                />
+                              </td>
+                            </tr>
+                          </CardBody>
+                        </Card>
+                      </div>
+                    );
+                  })}
+              </div>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width="30%">
+              <GridTitleContainer>
+                <GridTitle>코드내역</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddCard}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="image-export"
+                  >
+                    바코드 추가
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={newData}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                group={group}
+                fileName="바코드 출력"
+              >
+                <Grid
+                  style={{ height: "80vh" }}
+                  data={newData.map((item: { items: any[] }) => ({
+                    ...item,
+                    items: item.items.map((row: any) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                  }))}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //그룹기능
+                  group={group}
+                  groupable={true}
+                  onExpandChange={onExpandChange}
+                  expandField="expanded"
+                  //incell 수정 기능
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell}
+                    cell={CustomCheckBoxCell1}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                centerField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>바코드 추가목록</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onResetCard}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    초기화
+                  </Button>
+                  <ReactToPrint
+                    trigger={() => (
+                      <Button
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="print"
+                      >
+                        출력
+                      </Button>
+                    )}
+                    content={() => componentRef.current}
+                  />
+                </ButtonContainer>
+              </GridTitleContainer>
+              <PrimaryP>
+                ※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한
+                개만 추가 가능
+              </PrimaryP>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                }}
+                ref={componentRef}
+              >
+                {cards !== null &&
+                  cards.map((item: any, index: number) => {
+                    return (
+                      <div key={index}>
+                        <Card
+                          style={{
+                            width: "300px",
+                            height: "180px",
+                            boxShadow: "0 0 4px 0 rgba(0, 0, 0, .2)",
+                            marginLeft: "20px",
+                            marginRight: "20px",
+                            marginTop: "30px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <CardHeader
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              height: "50px",
+                            }}
+                          >
+                            <div>
+                              <CardTitle>{item.name}</CardTitle>
+                            </div>
+                            <div className="nonprintable">
+                              <Button
+                                onClick={() => {
+                                  onDeleteCard(index, item.code);
+                                }}
+                                fillMode="flat"
+                                icon="close-circle"
+                              ></Button>
+                            </div>
+                          </CardHeader>
+                          <CardBody
+                            style={{
+                              margin: "15px",
+                              fontSize: "20px",
+                              textAlign: "center",
+                            }}
+                          >
+                            <tr>
+                              <td>
+                                <Barcode
+                                  type="Code128"
+                                  height={80}
+                                  value={item.barcode}
+                                />
+                              </td>
+                            </tr>
+                          </CardBody>
+                        </Card>
+                      </div>
+                    );
+                  })}
+              </div>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
