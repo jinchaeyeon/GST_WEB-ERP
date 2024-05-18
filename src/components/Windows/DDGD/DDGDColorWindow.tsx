@@ -35,7 +35,7 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
     left: isMobile == true ? 0 : 500,
     top: isMobile == true ? 0 : 50,
     width: isMobile == true ? deviceWidth : 800,
-    height: isMobile == true ? deviceWidth : 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
   const processApi = useApi();
   const [pc, setPc] = useState("");

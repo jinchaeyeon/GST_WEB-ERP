@@ -1,4 +1,5 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -11,12 +12,12 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -61,7 +62,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Button } from "@progress/kendo-react-buttons";
 
 var index = 0;
 
@@ -78,7 +78,7 @@ const HU_B4001W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-
+  var height3 = getHeight(".ButtonContainer3");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter_use = getter(DATA_ITEM_KEY_USE);
   const idGetter_adj = getter(DATA_ITEM_KEY_ADJ);
@@ -705,7 +705,7 @@ const HU_B4001W: React.FC = () => {
         find_row_value: "",
         isSearch: true,
       }));
-      if(swiper) {
+      if (swiper) {
         swiper.slideTo(0);
       }
     } catch (e) {
@@ -726,13 +726,8 @@ const HU_B4001W: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
-  const [isVisible, setIsVisible] = useState(false);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  // 토글 함수
-  const toggleFormVisibility = () => {
-    setIsVisible(!isVisible);
-  };
   return (
     <>
       <TitleContainer>
@@ -806,158 +801,134 @@ const HU_B4001W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
+                <GridTitleContainer className="ButtonContainer3">
+                  <GridTitle>사원정보</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    height: deviceHeight - height3,
+                    overflow: "scroll",
+                  }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>사번</th>
+                        <td>
+                          <Input
+                            name="prsnnum"
+                            type="text"
+                            value={userInfo.prsnnum}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>성명</th>
+                        <td>
+                          <Input
+                            name="prsnnm"
+                            type="text"
+                            value={userInfo.prsnnm}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>입사일</th>
+                        <td>
+                          <Input
+                            name="regorgdt"
+                            type="text"
+                            value={userInfo.regorgdt}
+                            readOnly={true}
+                            style={{ textAlign: "center" }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>퇴사일</th>
+                        <td>
+                          <Input
+                            name="rtrdt"
+                            type="text"
+                            value={userInfo.rtrdt}
+                            readOnly={true}
+                            style={{ textAlign: "center" }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>발생</th>
+                        <td>
+                          <Input
+                            name="totalday"
+                            type="number"
+                            value={userInfo.totalday}
+                            readOnly={true}
+                            style={{ textAlign: "center" }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>사용</th>
+                        <td>
+                          <Input
+                            name="usedday"
+                            type="number"
+                            value={userInfo.usedday}
+                            readOnly={true}
+                            style={{ textAlign: "center" }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>잔여</th>
+                        <td>
+                          <Input
+                            name="ramainday"
+                            type="number"
+                            value={userInfo.ramainday}
+                            readOnly={true}
+                            style={{ textAlign: "center" }}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
               <GridContainerWrap>
                 <GridTitleContainer className="ButtonContainer">
-                  <GridContainer>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
+                  <GridTitle>연차상세</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(2);
+                        }
                       }}
                     >
-                      <GridTitle>사원정보</GridTitle>
-                      <Button
-                        onClick={() => {
-                          if (swiper) {
-                            swiper.slideTo(1);
-                          }
-                        }}
-                      >
-                        연차조정
-                      </Button>
-                    </div>
-                    <FormBoxWrap border={true}>
-                      <FormBox>
-                        <tbody>
-                          <tr>
-                            <div style={{ display: "flex" }}>
-                              <th
-                                style={{
-                                  minWidth: "15%",
-                                  width: "15%",
-                                  padding: "0",
-                                }}
-                              >
-                                발생
-                              </th>
-                              <td>
-                                <Input
-                                  name="totalday"
-                                  type="number"
-                                  value={userInfo.totalday}
-                                  readOnly={true}
-                                  style={{ textAlign: "center" }}
-                                />
-                              </td>
-
-                              <th
-                                style={{
-                                  minWidth: "15%",
-                                  width: "15%",
-                                  padding: "0",
-                                }}
-                              >
-                                사용
-                              </th>
-                              <td>
-                                <Input
-                                  name="usedday"
-                                  type="number"
-                                  value={userInfo.usedday}
-                                  readOnly={true}
-                                  style={{ textAlign: "center" }}
-                                />
-                              </td>
-
-                              <th
-                                style={{
-                                  minWidth: "15%",
-                                  width: "15%",
-                                  padding: "0",
-                                }}
-                              >
-                                잔여
-                              </th>
-                              <td>
-                                <Input
-                                  name="ramainday"
-                                  type="number"
-                                  value={userInfo.ramainday}
-                                  readOnly={true}
-                                  style={{ textAlign: "center" }}
-                                />
-                              </td>
-                            </div>
-                            <th
-                              onClick={toggleFormVisibility}
-                              style={{ cursor: "pointer" }}
-                            >
-                              {isVisible ? "△ 접기" : "▽ 더보기"}
-                            </th>
-                            {isVisible && (
-                              <>
-                                <div style={{ display: "flex" }}>
-                                  <th style={{ minWidth: "30%", width: "30%" }}>
-                                    사번
-                                  </th>
-                                  <td>
-                                    <Input
-                                      name="prsnnum"
-                                      type="text"
-                                      value={userInfo.prsnum}
-                                      readOnly={true}
-                                    />
-                                  </td>
-                                </div>
-                                <div style={{ display: "flex" }}>
-                                  <th style={{ minWidth: "30%", width: "30%" }}>
-                                    성명
-                                  </th>
-                                  <td>
-                                    <Input
-                                      name="prsnnm"
-                                      type="text"
-                                      value={userInfo.prsnnm}
-                                      readOnly={true}
-                                    />
-                                  </td>
-                                </div>
-                                <div style={{ display: "flex" }}>
-                                  <th style={{ minWidth: "30%", width: "30%" }}>
-                                    입사일
-                                  </th>
-                                  <td>
-                                    <Input
-                                      name="regorgdt"
-                                      type="text"
-                                      value={userInfo.regorgdt}
-                                      readOnly={true}
-                                      style={{ textAlign: "center" }}
-                                    />
-                                  </td>
-                                </div>
-                                <div style={{ display: "flex" }}>
-                                  <th style={{ minWidth: "30%", width: "30%" }}>
-                                    퇴사일
-                                  </th>
-                                  <td>
-                                    <Input
-                                      name="rtrdt"
-                                      type="text"
-                                      value={userInfo.rtrdt}
-                                      readOnly={true}
-                                      style={{ textAlign: "center" }}
-                                    />
-                                  </td>
-                                </div>
-                              </>
-                            )}
-                          </tr>
-                        </tbody>
-                      </FormBox>
-                    </FormBoxWrap>
-                  </GridContainer>
+                      연차조정
+                    </Button>
+                  </ButtonContainer>
+                  <GridContainer></GridContainer>
                 </GridTitleContainer>
                 <GridContainer
                   style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
@@ -1006,32 +977,34 @@ const HU_B4001W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdUse"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  DateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : NumberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : undefined
-                                }
-                                footerCell={grdTotalFooterCell}
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdUse"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : undefined
+                                  }
+                                  footerCell={grdTotalFooterCell}
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
               </GridContainerWrap>
             </SwiperSlide>
-            <SwiperSlide key={1}>
+            <SwiperSlide key={2}>
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
@@ -1041,7 +1014,7 @@ const HU_B4001W: React.FC = () => {
                     <Button
                       onClick={() => {
                         if (swiper) {
-                          swiper.slideTo(0);
+                          swiper.slideTo(1);
                         }
                       }}
                       icon="arrow-left"
@@ -1103,30 +1076,32 @@ const HU_B4001W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdAdj"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : YearDateField.includes(item.fieldName)
-                                  ? YearDateCell
-                                  : CenterField.includes(item.fieldName)
-                                  ? CenterCell
-                                  : undefined
-                              }
-                              footerCell={grdTotalFooterCell}
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdAdj"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : DateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : YearDateField.includes(item.fieldName)
+                                    ? YearDateCell
+                                    : CenterField.includes(item.fieldName)
+                                    ? CenterCell
+                                    : undefined
+                                }
+                                footerCell={grdTotalFooterCell}
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -1266,26 +1241,28 @@ const HU_B4001W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdUse"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            footerCell={grdTotalFooterCell}
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdUse"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={grdTotalFooterCell}
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -1347,30 +1324,32 @@ const HU_B4001W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdj"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : DateField.includes(item.fieldName)
-                                ? DateCell
-                                : YearDateField.includes(item.fieldName)
-                                ? YearDateCell
-                                : CenterField.includes(item.fieldName)
-                                ? CenterCell
-                                : undefined
-                            }
-                            footerCell={grdTotalFooterCell}
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdAdj"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : YearDateField.includes(item.fieldName)
+                                  ? YearDateCell
+                                  : CenterField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={grdTotalFooterCell}
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>

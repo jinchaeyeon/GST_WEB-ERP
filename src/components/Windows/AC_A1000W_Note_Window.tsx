@@ -63,7 +63,7 @@ const AC_A1000W_Note_Window = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: isMobile == true ? deviceWidth : 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const pageChange = (event: GridPageChangeEvent) => {

@@ -238,7 +238,7 @@ const KendoWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceWidth : 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

@@ -105,7 +105,7 @@ const AdjustApprovalWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: isMobile == true ? deviceWidth : 600,
+    height: isMobile == true ? deviceHeight : 600,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

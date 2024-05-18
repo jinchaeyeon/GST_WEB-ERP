@@ -45,7 +45,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -57,7 +57,7 @@ const AC_B3000W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -367,7 +367,9 @@ const AC_B3000W: React.FC = () => {
       )
     ).substring(0, 4) + "년이전"
   );
-
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   return (
     <>
       <TitleContainer>
@@ -546,66 +548,90 @@ const AC_B3000W: React.FC = () => {
         </Grid>
       </GridContainer>
       <LandscapePrint>
-        <div
-          id="ItemCostSheet"
-          className="printable landscape"
-          ref={componentRef}
+        <GridContainer
+          style={{
+            height: deviceHeight,
+            overflow: "auto",
+            border: "solid 1px #e6e6e6",
+            display: isMobile ? "" : "flex",
+            alignItems: isMobile ? "" : "center",
+          }}
         >
-          <div className="title_container">
-            <h1 className="title">전체 감가상각비 계상</h1>
-          </div>
-          <table className="main_tb">
-            <colgroup>
-              <col width="5%" />
-              <col width="9%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="5%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-            </colgroup>
-            <tbody>
-              <tr>
-                <th>구분</th>
-                <th>품명</th>
-                <th>구입일</th>
-                <th>금액</th>
-                <th>내용연수</th>
-                <th>{dates6}</th>
-                <th>{dates5}</th>
-                <th>{dates4}</th>
-                <th>{dates3}</th>
-                <th>{dates2}</th>
-                <th>{dates}</th>
-                <th>합계</th>
-                <th>잔존가액</th>
-              </tr>
-              {mainDataResult.data.map((item: any, idx: number) => (
-                <tr key={idx}>
-                  <td className="center">{item.fxnum}</td>
-                  <td className="center">{item.fxnm}</td>
-                  <td className="center">{item.indt}</td>
-                  <td className="number">{numberWithCommas(item.fxpurcost)}</td>
-                  <td className="center">{item.fxdepyrmm}</td>
-                  <td className="number">{numberWithCommas(item.curdamt6)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt5)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt4)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt3)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt2)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt1)}</td>
-                  <td className="number">{numberWithCommas(item.totamt)}</td>
-                  <td className="number">{numberWithCommas(item.chamt)}</td>
+          <div
+            id="ItemCostSheet"
+            className="printable landscape"
+            ref={componentRef}
+          >
+            <div className="title_container">
+              <h1 className="title">전체 감가상각비 계상</h1>
+            </div>
+            <table className="main_tb">
+              <colgroup>
+                <col width="5%" />
+                <col width="9%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="5%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+                <col width="7%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th>구분</th>
+                  <th>품명</th>
+                  <th>구입일</th>
+                  <th>금액</th>
+                  <th>내용연수</th>
+                  <th>{dates6}</th>
+                  <th>{dates5}</th>
+                  <th>{dates4}</th>
+                  <th>{dates3}</th>
+                  <th>{dates2}</th>
+                  <th>{dates}</th>
+                  <th>합계</th>
+                  <th>잔존가액</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                {mainDataResult.data.map((item: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="center">{item.fxnum}</td>
+                    <td className="center">{item.fxnm}</td>
+                    <td className="center">{item.indt}</td>
+                    <td className="number">
+                      {numberWithCommas(item.fxpurcost)}
+                    </td>
+                    <td className="center">{item.fxdepyrmm}</td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt6)}
+                    </td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt5)}
+                    </td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt4)}
+                    </td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt3)}
+                    </td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt2)}
+                    </td>
+                    <td className="number">
+                      {numberWithCommas(item.curdamt1)}
+                    </td>
+                    <td className="number">{numberWithCommas(item.totamt)}</td>
+                    <td className="number">{numberWithCommas(item.chamt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </GridContainer>
       </LandscapePrint>
     </>
   );

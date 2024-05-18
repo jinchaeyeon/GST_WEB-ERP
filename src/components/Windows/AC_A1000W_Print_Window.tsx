@@ -34,7 +34,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 500,
-    height: isMobile == true ? deviceWidth : 220,
+    height: isMobile == true ? deviceHeight : 220,
   });
 
   const setLoading = useSetRecoilState(isLoading);
@@ -113,15 +113,13 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
             <tbody>
               <tr>
                 <td>
-                  <div className="filter-item-wrap">
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="print"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </div>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="print"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>

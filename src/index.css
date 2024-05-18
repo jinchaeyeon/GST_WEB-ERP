@@ -740,10 +740,6 @@ body {
 
 /**************** 작업일보 ****************/
 
-#ItemCostSheet {
-  width: 100%!important;
-}
-
 #ItemCostSheet table {
   border: 1px solid!important;
   table-layout: fixed!important;
@@ -820,10 +816,6 @@ body {
 }
 
 /**************** 업무일지 ****************/
-
-#DailyReport {
-  width: 100%!important;
-}
 
 #DailyReport table {
   border: 1px solid!important;

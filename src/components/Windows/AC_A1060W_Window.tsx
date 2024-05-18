@@ -317,7 +317,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: isMobile == true ? deviceWidth : 600,
+    height: isMobile == true ? deviceHeight : 600,
   });
   const [pc, setPc] = useState("");
   UseParaPc(setPc);

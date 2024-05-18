@@ -22,7 +22,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 800,
-    height: isMobile == true ? deviceWidth : 900,
+    height: isMobile == true ? deviceHeight : 900,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

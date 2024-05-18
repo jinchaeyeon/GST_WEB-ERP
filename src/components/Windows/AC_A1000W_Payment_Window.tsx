@@ -125,7 +125,7 @@ const CopyWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1500,
-    height: isMobile == true ? deviceWidth : 700,
+    height: isMobile == true ? deviceHeight : 700,
   });
 
   const [loginResult] = useRecoilState(loginResultState);

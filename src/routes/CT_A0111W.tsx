@@ -13,7 +13,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -40,7 +40,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -230,6 +230,9 @@ const CT_A0111W: React.FC = () => {
   };
 
   const componentRef = useRef(null);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   return (
     <>
       <TitleContainer>
@@ -390,114 +393,127 @@ const CT_A0111W: React.FC = () => {
         </Grid>
       </GridContainer>
       <LandscapePrint>
-        <div
-          id="ItemCostSheet"
-          className="printable landscape"
-          ref={componentRef}
+        <GridContainer
+          style={{
+            height: deviceHeight,
+            overflow: "auto",
+            border: "solid 1px #e6e6e6",
+            display: isMobile ? "" : "flex",
+            alignItems: isMobile ? "" : "center",
+          }}
         >
-          <div className="title_container">
-            <h1 className="title">품목별 표준원가 분석표</h1>
-            <table className="tb_approval right">
+          <div
+            id="ItemCostSheet"
+            className="printable landscape"
+            ref={componentRef}
+          >
+            <div className="title_container">
+              <h1 className="title">품목별 표준원가 분석표</h1>
+              <table className="tb_approval right">
+                <tbody>
+                  <tr>
+                    <th>담당</th>
+                    <th>검토</th>
+                    <th>승인</th>
+                  </tr>
+                  <tr className="contents">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>{dateformat2(convertDateToStr(new Date()))}</p>
+            <table className="main_tb">
+              <colgroup>
+                <col width="5%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+                <col width="auto" />
+              </colgroup>
               <tbody>
                 <tr>
-                  <th>담당</th>
-                  <th>검토</th>
-                  <th>승인</th>
+                  <th rowSpan={2}>NO</th>
+                  <th rowSpan={2}>품목코드</th>
+                  <th rowSpan={2}>품목명</th>
+                  <th colSpan={4} className="red">
+                    제 조 원 가
+                  </th>
+                  <th rowSpan={2}>
+                    판매비와
+                    <br />
+                    일반관리비
+                    <br />
+                    (G)
+                  </th>
+                  <th rowSpan={2}>
+                    이자비용
+                    <br />
+                    (H)
+                  </th>
+                  <th className="orange" rowSpan={2}>
+                    총 원가(I)
+                    <br />
+                    (F+G+H)
+                  </th>
                 </tr>
-                <tr className="contents">
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                <tr>
+                  <th className="red">
+                    재료비
+                    <br />
+                    (B)
+                  </th>
+                  <th className="red">
+                    노무비
+                    <br />
+                    (C)
+                  </th>
+                  <th className="red">
+                    제조경비
+                    <br />
+                    (E)
+                  </th>
+                  <th className="red">
+                    계(F)
+                    <br />
+                    (B+D+E)
+                  </th>
                 </tr>
+                {mainDataResult.data.map((item: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="center">{item.num}</td>
+                    <td className="center">{item.itemcd}</td>
+                    <td>{item.itemnm}</td>
+                    <td className="number red">
+                      {numberWithCommas(item.puramt)}
+                    </td>
+                    <td className="number red">
+                      {numberWithCommas(item.pramt)}
+                    </td>
+                    <td className="number red">
+                      {numberWithCommas(item.mfamt)}
+                    </td>
+                    <td className="number red">
+                      {numberWithCommas(item.totamt)}
+                    </td>
+                    <td className="number">{numberWithCommas(item.sacamt)}</td>
+                    <td className="number">{numberWithCommas(item.inamt)}</td>
+                    <td className="number orange">
+                      {numberWithCommas(item.totcost)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-          <p>{dateformat2(convertDateToStr(new Date()))}</p>
-          <table className="main_tb">
-            <colgroup>
-              <col width="5%" />
-              <col width="10%" />
-              <col width="10%" />
-              <col width="auto" />
-              <col width="auto" />
-              <col width="auto" />
-              <col width="auto" />
-              <col width="auto" />
-              <col width="auto" />
-            </colgroup>
-            <tbody>
-              <tr>
-                <th rowSpan={2}>NO</th>
-                <th rowSpan={2}>품목코드</th>
-                <th rowSpan={2}>품목명</th>
-                <th colSpan={4} className="red">
-                  제 조 원 가
-                </th>
-                <th rowSpan={2}>
-                  판매비와
-                  <br />
-                  일반관리비
-                  <br />
-                  (G)
-                </th>
-                <th rowSpan={2}>
-                  이자비용
-                  <br />
-                  (H)
-                </th>
-                <th className="orange" rowSpan={2}>
-                  총 원가(I)
-                  <br />
-                  (F+G+H)
-                </th>
-              </tr>
-              <tr>
-                <th className="red">
-                  재료비
-                  <br />
-                  (B)
-                </th>
-                <th className="red">
-                  노무비
-                  <br />
-                  (C)
-                </th>
-                <th className="red">
-                  제조경비
-                  <br />
-                  (E)
-                </th>
-                <th className="red">
-                  계(F)
-                  <br />
-                  (B+D+E)
-                </th>
-              </tr>
-              {mainDataResult.data.map((item: any, idx: number) => (
-                <tr key={idx}>
-                  <td className="center">{item.num}</td>
-                  <td className="center">{item.itemcd}</td>
-                  <td>{item.itemnm}</td>
-                  <td className="number red">
-                    {numberWithCommas(item.puramt)}
-                  </td>
-                  <td className="number red">{numberWithCommas(item.pramt)}</td>
-                  <td className="number red">{numberWithCommas(item.mfamt)}</td>
-                  <td className="number red">
-                    {numberWithCommas(item.totamt)}
-                  </td>
-                  <td className="number">{numberWithCommas(item.sacamt)}</td>
-                  <td className="number">{numberWithCommas(item.inamt)}</td>
-                  <td className="number orange">
-                    {numberWithCommas(item.totcost)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        </GridContainer>
       </LandscapePrint>
-
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
