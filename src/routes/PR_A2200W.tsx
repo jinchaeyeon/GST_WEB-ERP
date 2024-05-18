@@ -1038,7 +1038,6 @@ const PR_A2200W: React.FC = () => {
                 </TitleContainer>
                 <GridContainer
                   style={{
-                    height: "100%",
                     overflowY: "auto",
                     width: "100%",
                   }}
@@ -1055,12 +1054,36 @@ const PR_A2200W: React.FC = () => {
                           width: "100%",
                         }}
                       ></video>
-                      <FormBoxWrap>
+                      <FormBoxWrap className="ButtonContainer6">
                         <FormBox>
                           <tbody>
                             <tr
                               style={{ display: "flex", flexDirection: "row" }}
                             >
+                              <td>
+                                <Button
+                                  id={"button2"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={() => onCapture()}
+                                  style={{ width: "100%" }}
+                                >
+                                  촬영
+                                </Button>
+                                <input
+                                  id="uploadAttachment"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  ref={excelInput}
+                                  onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    handleFileUpload(event.target.files);
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <Button
                                   id={"button"}
@@ -1072,15 +1095,46 @@ const PR_A2200W: React.FC = () => {
                                   사진모드
                                 </Button>
                               </td>
+                            </tr>
+                            <tr>
+                              <td colSpan={2}>
+                                <TextArea
+                                  value={information.comment}
+                                  name="comment"
+                                  rows={50}
+                                  style={{
+                                    maxHeight: "20vh",
+                                    overflowY: "auto",
+                                    background: "#d6d8f9",
+                                  }}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            </tr>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
                               <td>
                                 <Button
-                                  id={"button2"}
                                   themeColor={"primary"}
-                                  fillMode={"outline"}
-                                  onClick={() => onCapture()}
+                                  fillMode={"solid"}
+                                  onClick={() => onDeletePicture()}
                                   style={{ width: "100%" }}
+                                  disabled={true}
                                 >
-                                  촬영
+                                  사진 삭제
+                                </Button>
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button5"}
+                                  themeColor={"primary"}
+                                  fillMode={"solid"}
+                                  onClick={() => onSaveClick()}
+                                  style={{ width: "100%" }}
+                                  disabled={true}
+                                >
+                                  저장
                                 </Button>
                               </td>
                             </tr>
@@ -1089,121 +1143,214 @@ const PR_A2200W: React.FC = () => {
                       </FormBoxWrap>
                     </>
                   ) : mainDataResult3.total > 0 ? (
-                    <Carousel
-                      cycleNavigation={true}
-                      navButtonsAlwaysVisible={true}
-                      autoPlay={false}
-                      onChange={handleChange}
-                      index={pictureindex}
-                    >
-                      {mainDataResult3.data[0].image.map((content: any) => (
-                        <>
-                          <div
-                            style={{
-                              width: "100%",
-                              height: deviceHeight - height5 - height6,
-                            }}
-                          >
-                            <img
-                              src={content.url}
+                    <>
+                      <Carousel
+                        cycleNavigation={true}
+                        navButtonsAlwaysVisible={true}
+                        autoPlay={false}
+                        onChange={handleChange}
+                        index={pictureindex}
+                      >
+                        {mainDataResult3.data[0].image.map((content: any) => (
+                          <>
+                            <div
                               style={{
-                                objectFit: "contain",
-                                height: "100%",
                                 width: "100%",
+                                height: deviceHeight - height5 - height6,
                               }}
-                            />
-                          </div>
-                        </>
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <div style={{ width: "100%", height: "55%" }}></div>
-                  )}
-
-                  {isCaptured ? (
-                    ""
-                  ) : (
-                    <FormBoxWrap className="ButtonContainer6">
-                      <FormBox>
-                        <tbody>
-                          <tr style={{ display: "flex", flexDirection: "row" }}>
-                            <td>
-                              <Button
-                                id={"button1"}
-                                themeColor={"primary"}
-                                fillMode={"outline"}
-                                onClick={upload}
-                                style={{ width: "100%" }}
-                              >
-                                첨부파일
-                              </Button>
-                              <input
-                                id="uploadAttachment"
-                                style={{ display: "none" }}
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                ref={excelInput}
-                                onChange={(
-                                  event: React.ChangeEvent<HTMLInputElement>
-                                ) => {
-                                  handleFileUpload(event.target.files);
-                                }}
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                id={"button3"}
-                                themeColor={"primary"}
-                                fillMode={"outline"}
-                                onClick={() => getPromise2()}
-                                style={{ width: "100%" }}
-                              >
-                                촬영모드
-                              </Button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td colSpan={2}>
-                              <TextArea
-                                value={information.comment}
-                                name="comment"
-                                rows={50}
+                            >
+                              <img
+                                src={content.url}
                                 style={{
-                                  maxHeight: "20vh",
-                                  overflowY: "auto",
-                                  background: "#d6d8f9",
+                                  objectFit: "contain",
+                                  height: "100%",
+                                  width: "100%",
                                 }}
-                                onChange={InputChange}
                               />
-                            </td>
-                          </tr>
-                          <tr style={{ display: "flex", flexDirection: "row" }}>
-                            <td>
-                              <Button
-                                themeColor={"primary"}
-                                fillMode={"solid"}
-                                onClick={() => onDeletePicture()}
-                                style={{ width: "100%" }}
-                              >
-                                사진 삭제
-                              </Button>
-                            </td>
-                            <td>
-                              <Button
-                                id={"button5"}
-                                themeColor={"primary"}
-                                fillMode={"solid"}
-                                onClick={() => onSaveClick()}
-                                style={{ width: "100%" }}
-                              >
-                                저장
-                              </Button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FormBox>
-                    </FormBoxWrap>
+                            </div>
+                          </>
+                        ))}
+                      </Carousel>
+                      <FormBoxWrap className="ButtonContainer6">
+                        <FormBox>
+                          <tbody>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <td>
+                                <Button
+                                  id={"button1"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={upload}
+                                  style={{ width: "100%" }}
+                                >
+                                  첨부파일
+                                </Button>
+                                <input
+                                  id="uploadAttachment"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  ref={excelInput}
+                                  onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    handleFileUpload(event.target.files);
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button3"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={() => getPromise2()}
+                                  style={{ width: "100%" }}
+                                >
+                                  촬영모드
+                                </Button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colSpan={2}>
+                                <TextArea
+                                  value={information.comment}
+                                  name="comment"
+                                  rows={50}
+                                  style={{
+                                    maxHeight: "20vh",
+                                    overflowY: "auto",
+                                    background: "#d6d8f9",
+                                  }}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            </tr>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <td>
+                                <Button
+                                  themeColor={"primary"}
+                                  fillMode={"solid"}
+                                  onClick={() => onDeletePicture()}
+                                  style={{ width: "100%" }}
+                                >
+                                  사진 삭제
+                                </Button>
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button5"}
+                                  themeColor={"primary"}
+                                  fillMode={"solid"}
+                                  onClick={() => onSaveClick()}
+                                  style={{ width: "100%" }}
+                                >
+                                  저장
+                                </Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        style={{
+                          width: "100%",
+                          height: deviceHeight - height5 - height6,
+                        }}
+                      ></div>
+                      <FormBoxWrap className="ButtonContainer6">
+                        <FormBox>
+                          <tbody>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <td>
+                                <Button
+                                  id={"button1"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={upload}
+                                  style={{ width: "100%" }}
+                                >
+                                  첨부파일
+                                </Button>
+                                <input
+                                  id="uploadAttachment"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  ref={excelInput}
+                                  onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    handleFileUpload(event.target.files);
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button3"}
+                                  themeColor={"primary"}
+                                  fillMode={"outline"}
+                                  onClick={() => getPromise2()}
+                                  style={{ width: "100%" }}
+                                >
+                                  촬영모드
+                                </Button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colSpan={2}>
+                                <TextArea
+                                  value={information.comment}
+                                  name="comment"
+                                  rows={50}
+                                  style={{
+                                    maxHeight: "20vh",
+                                    overflowY: "auto",
+                                    background: "#d6d8f9",
+                                  }}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            </tr>
+                            <tr
+                              style={{ display: "flex", flexDirection: "row" }}
+                            >
+                              <td>
+                                <Button
+                                  themeColor={"primary"}
+                                  fillMode={"solid"}
+                                  onClick={() => onDeletePicture()}
+                                  style={{ width: "100%" }}
+                                >
+                                  사진 삭제
+                                </Button>
+                              </td>
+                              <td>
+                                <Button
+                                  id={"button5"}
+                                  themeColor={"primary"}
+                                  fillMode={"solid"}
+                                  onClick={() => onSaveClick()}
+                                  style={{ width: "100%" }}
+                                >
+                                  저장
+                                </Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    </>
                   )}
                 </GridContainer>
               </GridContainer>
