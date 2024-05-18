@@ -14,7 +14,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -34,6 +34,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   useSysMessage,
@@ -48,7 +49,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import DetailWindow from "../components/Windows/HU_A6000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -64,6 +65,12 @@ let targetRowIndex: null | number = null;
 const dateField = ["regorgdt", "rtrdt"];
 
 const HU_A6000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
+  var height = getHeight(".ButtonContainer");
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -622,7 +629,7 @@ const HU_A6000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>기본정보</GridTitle>
           <ButtonContainer>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
@@ -646,7 +653,7 @@ const HU_A6000W: React.FC = () => {
           fileName="일용직 인사관리"
         >
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "81vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -53,6 +53,7 @@ import {
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
@@ -68,7 +69,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import AmtWindow from "../components/Windows/HU_A4100W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -222,6 +223,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const HU_A4100W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1130,7 +1136,7 @@ const HU_A4100W: React.FC = () => {
             // fetchGrid,
           }}
         >
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
@@ -1170,7 +1176,7 @@ const HU_A4100W: React.FC = () => {
             fileName="복지포인트등록"
           >
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: isMobile ? deviceHeight - height : "78vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1227,40 +1233,42 @@ const HU_A4100W: React.FC = () => {
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? YearDateCell
-                            : CommandField.includes(item.fieldName)
-                            ? ColumnCommandCell
-                            : CustomField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : undefined
-                        }
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? editNumberFooterCell
-                            : undefined
-                        }
-                      />
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? YearDateCell
+                              : CommandField.includes(item.fieldName)
+                              ? ColumnCommandCell
+                              : CustomField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : numberField.includes(item.fieldName)
+                              ? editNumberFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </FormContext.Provider>

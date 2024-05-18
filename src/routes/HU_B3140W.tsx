@@ -54,6 +54,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -66,7 +67,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -106,6 +107,12 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const HU_B3140W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+
+  var height = getHeight(".k-tabstrip-items-wrapper");
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -1713,7 +1720,7 @@ const HU_B3140W: React.FC = () => {
               fileName="급상여분석정보"
             >
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "72vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1756,30 +1763,32 @@ const HU_B3140W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 1
-                              ? mainTotalFooterCell
-                              : NumberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 1
+                                ? mainTotalFooterCell
+                                : NumberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -1795,7 +1804,7 @@ const HU_B3140W: React.FC = () => {
               fileName="급상여분석정보"
             >
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "72vh" }}
                 data={newData.map((item: { items: any[] }) => ({
                   ...item,
                   items: item.items.map((row: any) => ({
@@ -1835,176 +1844,321 @@ const HU_B3140W: React.FC = () => {
                 onPageChange={pageChange}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 1
-                              ? mainTotalFooterCell2
-                              : NumberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                  customOptionData.menuCustomColumnOptions["grdList2"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 1
+                                ? mainTotalFooterCell2
+                                : NumberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+        {isMobile ? (
+          <TabStripTab title="월별급여내역">
+            <GridContainer width="100%">
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
+                }}
+                fileName="급상여분석정보"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter(row)],
+                    })),
+                    mainDataState3
                   )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
-        <TabStripTab title="월별급상여내역">
-          <GridContainer width="100%">
-            <GridTitleContainer>
-              <GridTitle>급여내역</GridTitle>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult3.data}
-              ref={(exporter) => {
-                _export3 = exporter;
-              }}
-              fileName="급상여분석정보"
-            >
-              <Grid
-                style={{ height: "32.5vh" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState3[idGetter(row)],
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="payyrmm"
+                    title="년월"
+                    width="130px"
+                    cell={MonthDateCell}
+                    footerCell={mainTotalFooterCell3}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="인원(명)"
+                    width="130px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn title="총급여액">{createColumn()}</GridColumn>
+                  <GridColumn title="총공제액">{createColumn2()}</GridColumn>
+                  <GridColumn
+                    field="rlpayamt"
+                    title="실수령액"
+                    width="130px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell3}
+                  />
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </TabStripTab>
+        ) : (
+          <TabStripTab title="월별급상여내역">
+            <GridContainer width="100%">
+              <GridTitleContainer>
+                <GridTitle>급여내역</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="급상여분석정보"
               >
-                <GridColumn
-                  field="payyrmm"
-                  title="년월"
-                  width="130px"
-                  cell={MonthDateCell}
-                  footerCell={mainTotalFooterCell3}
-                />
-                <GridColumn
-                  field="cnt"
-                  title="인원(명)"
-                  width="130px"
-                  cell={NumberCell}
-                />
-                <GridColumn title="총급여액">{createColumn()}</GridColumn>
-                <GridColumn title="총공제액">{createColumn2()}</GridColumn>
-                <GridColumn
-                  field="rlpayamt"
-                  title="실수령액"
-                  width="130px"
-                  cell={NumberCell}
-                  footerCell={gridSumQtyFooterCell3}
-                />
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-          <GridContainer width="100%">
-            <GridTitleContainer>
-              <GridTitle>상여내역</GridTitle>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult4.data}
-              ref={(exporter) => {
-                _export4 = exporter;
-              }}
-              fileName="급상여분석정보"
-            >
-              <Grid
-                style={{ height: "30vh" }}
-                data={process(
-                  mainDataResult4.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState4[idGetter(row)],
-                  })),
-                  mainDataState4
-                )}
-                {...mainDataState4}
-                onDataStateChange={onMainDataStateChange4}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+                <Grid
+                  style={{ height: "32.5vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter(row)],
+                    })),
+                    mainDataState3
+                  )}
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="payyrmm"
+                    title="년월"
+                    width="130px"
+                    cell={MonthDateCell}
+                    footerCell={mainTotalFooterCell3}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="인원(명)"
+                    width="130px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn title="총급여액">{createColumn()}</GridColumn>
+                  <GridColumn title="총공제액">{createColumn2()}</GridColumn>
+                  <GridColumn
+                    field="rlpayamt"
+                    title="실수령액"
+                    width="130px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell3}
+                  />
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width="100%">
+              <GridTitleContainer>
+                <GridTitle>상여내역</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult4.data}
+                ref={(exporter) => {
+                  _export4 = exporter;
                 }}
-                onSelectionChange={ondetailSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult4.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange4}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="급상여분석정보"
               >
-                <GridColumn
-                  field="payyrmm"
-                  title="년월"
-                  width="130px"
-                  cell={MonthDateCell}
-                  footerCell={mainTotalFooterCell4}
-                />
-                <GridColumn
-                  field="cnt"
-                  title="인원(명)"
-                  width="130px"
-                  cell={NumberCell}
-                />
-                <GridColumn title="총급여액">{createColumn3()}</GridColumn>
-                <GridColumn title="총공제액">{createColumn4()}</GridColumn>
-                <GridColumn
-                  field="rlpayamt"
-                  title="실수령액"
-                  width="130px"
-                  cell={NumberCell}
-                  footerCell={gridSumQtyFooterCell4}
-                />
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
+                <Grid
+                  style={{ height: "30vh" }}
+                  data={process(
+                    mainDataResult4.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState4[idGetter(row)],
+                    })),
+                    mainDataState4
+                  )}
+                  {...mainDataState4}
+                  onDataStateChange={onMainDataStateChange4}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={ondetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult4.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange4}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="payyrmm"
+                    title="년월"
+                    width="130px"
+                    cell={MonthDateCell}
+                    footerCell={mainTotalFooterCell4}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="인원(명)"
+                    width="130px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn title="총급여액">{createColumn3()}</GridColumn>
+                  <GridColumn title="총공제액">{createColumn4()}</GridColumn>
+                  <GridColumn
+                    field="rlpayamt"
+                    title="실수령액"
+                    width="130px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell4}
+                  />
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </TabStripTab>
+        )}
+        {isMobile ? (
+          <TabStripTab title="월별상여내역">
+            <GridContainer width="100%">
+              <ExcelExport
+                data={mainDataResult4.data}
+                ref={(exporter) => {
+                  _export4 = exporter;
+                }}
+                fileName="급상여분석정보"
+              >
+                <Grid
+                  style={{ height: deviceHeight - height }}
+                  data={process(
+                    mainDataResult4.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState4[idGetter(row)],
+                    })),
+                    mainDataState4
+                  )}
+                  {...mainDataState4}
+                  onDataStateChange={onMainDataStateChange4}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={ondetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult4.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange4}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="payyrmm"
+                    title="년월"
+                    width="130px"
+                    cell={MonthDateCell}
+                    footerCell={mainTotalFooterCell4}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="인원(명)"
+                    width="130px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn title="총급여액">{createColumn3()}</GridColumn>
+                  <GridColumn title="총공제액">{createColumn4()}</GridColumn>
+                  <GridColumn
+                    field="rlpayamt"
+                    title="실수령액"
+                    width="130px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell4}
+                  />
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </TabStripTab>
+        ) : null}
         <TabStripTab title="급여상세내역">
           <GridContainer width="100%">
             <ExcelExport
@@ -2015,7 +2169,7 @@ const HU_B3140W: React.FC = () => {
               fileName="급상여분석정보"
             >
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "72vh" }}
                 data={process(
                   mainDataResult5.data.map((row) => ({
                     ...row,
@@ -2081,7 +2235,7 @@ const HU_B3140W: React.FC = () => {
               fileName="급상여분석정보"
             >
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "72vh" }}
                 data={process(
                   mainDataResult6.data.map((row) => ({
                     ...row,
