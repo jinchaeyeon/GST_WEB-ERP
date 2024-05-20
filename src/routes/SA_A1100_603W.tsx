@@ -495,6 +495,9 @@ const SA_A1100_603W: React.FC = () => {
       isSearch: true,
     }));
     setTabSelected(1);
+    if(swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -1256,6 +1259,9 @@ const SA_A1100_603W: React.FC = () => {
         }
         if (unsavedAttadatnums.length > 0) {
           setDeletedAttadatnums(unsavedAttadatnums);
+        }
+        if(swiper) {
+          swiper.slideTo(0);
         }
       }
     } catch (e) {
