@@ -13,9 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -38,9 +37,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
-  getQueryFromBizComponent,
-  handleKeyPressSearch,
+  getBizCom,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -77,7 +75,7 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -625,57 +623,14 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-      const outprocynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA011")
-      );
-      const prodempQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const procunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(outprocynQueryStr, setOutprocynListData);
-      fetchQuery(prodempQueryStr, setProdempListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(procunitQueryStr, setProcunitListData);
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
+      setOutprocynListData(getBizCom(bizComponentData, "L_BA011"));
+      setProdempListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setProcunitListData(getBizCom(bizComponentData, "L_BA015"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   interface IItemData {
     itemcd: string;

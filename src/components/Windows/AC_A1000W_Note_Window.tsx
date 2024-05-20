@@ -107,13 +107,6 @@ const AC_A1000W_Note_Window = ({
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "R_USEYN",
-    //사용여부,
-    setBizComponentData
-  );
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
