@@ -49,6 +49,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
+  getBizCom,
   getHeight,
   getYn,
   handleKeyPressSearch,
@@ -722,24 +723,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      setPostcdListData(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_HU005"
-        ) == undefined
-          ? []
-          : bizComponentData.find(
-              (item: any) => item.bizComponentId == "L_HU005"
-            ).bizComponentItems
-      );
-      setUseYnListData(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_COM013"
-        ) == undefined
-          ? []
-          : bizComponentData.find(
-              (item: any) => item.bizComponentId == "L_COM013"
-            ).bizComponentItems
-      );
+      setPostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setUseYnListData(getBizCom(bizComponentData, "L_COM013"));
     }
   }, [bizComponentData]);
 

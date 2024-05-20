@@ -15,6 +15,14 @@ import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
+export const getBizCom = (bizComponentData: any, id: string) => {
+  return bizComponentData.find((item: any) => item.bizComponentId == id) ==
+    undefined
+    ? []
+    : bizComponentData.find((item: any) => item.bizComponentId == id)
+        .bizComponentItems;
+};
+
 export const getHeight = (className: string) => {
   var container = document.querySelector(className);
   if (container?.clientHeight != undefined) {

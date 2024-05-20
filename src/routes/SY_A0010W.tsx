@@ -49,8 +49,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
+  getBizCom,
   getHeight,
   handleKeyPressSearch
 } from "../components/CommonFunction";
@@ -99,7 +99,7 @@ const Page: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -167,15 +167,7 @@ const pc = UseGetValueFromSessionItem("pc");
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData != null) {
-      setUserListData(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        ) == undefined
-          ? []
-          : bizComponentData.find(
-              (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-            ).bizComponentItems
-      );
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
 

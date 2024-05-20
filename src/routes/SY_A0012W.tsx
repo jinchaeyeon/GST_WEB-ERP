@@ -15,15 +15,13 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Buffer } from "buffer";
-import { bytesToBase64 } from "byte-base64";
 import cryptoRandomString from "crypto-random-string";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -51,15 +49,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -355,7 +352,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
   const value = field && dataItem[field] ? dataItem[field] : "";
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
@@ -512,7 +509,7 @@ const SY_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -649,15 +646,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      setMenuListData(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_MenuWeb"
-        ) == undefined
-          ? []
-          : bizComponentData.find(
-              (item: any) => item.bizComponentId == "L_MenuWeb"
-            ).bizComponentItems
-      );
+      setMenuListData(getBizCom(bizComponentData, "L_MenuWeb"));
     }
   }, [bizComponentData]);
 
@@ -1591,62 +1580,66 @@ const pc = UseGetValueFromSessionItem("pc");
                         editable={false}
                       />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map((item: any, idx: number) => {
-                          const caption = getCaption(item.id, item.caption);
-                          return (
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                id={item.id}
-                                field={item.fieldName}
-                                title={caption}
-                                width={item.width}
-                                cell={
-                                  NameField.includes(item.fieldName)
-                                    ? NameCell
-                                    : CustomField.includes(item.fieldName)
-                                    ? CustomComboBoxCell
-                                    : EncryptedField2.includes(item.fieldName)
-                                    ? EncryptedCell2
-                                    : EncryptedField.includes(item.fieldName)
-                                    ? EncryptedCell
-                                    : checkField.includes(item.fieldName)
-                                    ? CheckBoxCell
-                                    : DateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : CustomRadioField.includes(item.fieldName)
-                                    ? CustomRadioCell
-                                    : CustonCommandField.includes(
-                                        item.fieldName
-                                      )
-                                    ? ColumnCommandCell
-                                    : CustomPopupField.includes(item.fieldName)
-                                    ? ColumnPopUpCell
-                                    : undefined
-                                }
-                                headerCell={
-                                  requiredHeaderField.includes(item.fieldName)
-                                    ? RequiredHeader
-                                    : undefined
-                                }
-                                className={
-                                  editableField.includes(item.fieldName)
-                                    ? "editable-new-only"
-                                    : requiredField.includes(item.fieldName)
-                                    ? "required"
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell
-                                    : undefined
-                                }
-                              />
-                            )
-                          );
-                        })}
+                        customOptionData.menuCustomColumnOptions["grdList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map((item: any, idx: number) => {
+                            const caption = getCaption(item.id, item.caption);
+                            return (
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={caption}
+                                  width={item.width}
+                                  cell={
+                                    NameField.includes(item.fieldName)
+                                      ? NameCell
+                                      : CustomField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : EncryptedField2.includes(item.fieldName)
+                                      ? EncryptedCell2
+                                      : EncryptedField.includes(item.fieldName)
+                                      ? EncryptedCell
+                                      : checkField.includes(item.fieldName)
+                                      ? CheckBoxCell
+                                      : DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : CustomRadioField.includes(
+                                          item.fieldName
+                                        )
+                                      ? CustomRadioCell
+                                      : CustonCommandField.includes(
+                                          item.fieldName
+                                        )
+                                      ? ColumnCommandCell
+                                      : CustomPopupField.includes(
+                                          item.fieldName
+                                        )
+                                      ? ColumnPopUpCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredHeaderField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
+                                  className={
+                                    editableField.includes(item.fieldName)
+                                      ? "editable-new-only"
+                                      : requiredField.includes(item.fieldName)
+                                      ? "required"
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                            );
+                          })}
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
