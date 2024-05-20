@@ -164,7 +164,7 @@ const SY_A0125W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA002,R_USEYN,L_HU005, L_dptcd_001",
+    "L_BA002, R_USEYN, L_HU005, L_dptcd_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -177,8 +177,8 @@ const SY_A0125W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      setDptcdListData(getBizCom(bizComponentData, "L_HU005"));
-      setpostcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setDptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
     }
   }, [bizComponentData]);
 
