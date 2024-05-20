@@ -37,7 +37,6 @@ import {
   UseParaPc,
   convertDateToStr,
   toDate,
-  setdptcdListData,
   getBizCom
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
