@@ -18,8 +18,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -44,16 +43,15 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate,
-  UseGetValueFromSessionItem
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -118,7 +116,7 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -196,65 +194,13 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603_Q"
-        )
-      );
-      const requireQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM502_603"
-        )
-      );
-      const completion_methodQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM503_603"
-        )
-      );
-      fetchQueryData(userQueryStr, setUserListData);
-
-      fetchQueryData(statusQueryStr, setStatusListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(requireQueryStr, setRequireListData);
-      fetchQueryData(completion_methodQueryStr, setCompletion_methodListData);
-
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setStatusListData(getBizCom(bizComponentData, "L_CM500_603_Q"));
+      setRequireListData(getBizCom(bizComponentData, "L_CM502_603"));
+      setCompletion_methodListData(getBizCom(bizComponentData, "L_CM503_603"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });

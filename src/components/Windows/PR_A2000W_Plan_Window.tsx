@@ -38,8 +38,8 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
+  getBizCom
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -125,45 +125,11 @@ const KendoWindow = ({
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-      const prodempQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
-      );
-
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(prodempQueryStr, setProdempListData);
-      fetchQuery(prodmacQueryStr, setProdmacListData);
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
+      setProdempListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setProdmacListData(getBizCom(bizComponentData, "L_fxcode"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
