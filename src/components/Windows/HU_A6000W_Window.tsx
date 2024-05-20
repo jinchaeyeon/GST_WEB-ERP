@@ -36,8 +36,8 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
-  getQueryFromBizComponent,
   toDate,
+  setdptcdListData
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
@@ -165,36 +165,10 @@ const CopyWindow = ({
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      fetchQuery(dptcdQueryStr, setdptcdListData);
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [information, setInformation] = useState<{ [name: string]: any }>({

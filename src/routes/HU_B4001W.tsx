@@ -50,7 +50,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   isValidDate,
 } from "../components/CommonFunction";
 import {

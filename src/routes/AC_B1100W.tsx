@@ -39,7 +39,7 @@ import {
   convertDateToStrWithTime2,
   findMessage,
   getBizCom,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";

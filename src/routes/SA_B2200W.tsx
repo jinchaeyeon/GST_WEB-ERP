@@ -38,7 +38,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   setDefaultDate,
   getHeight,

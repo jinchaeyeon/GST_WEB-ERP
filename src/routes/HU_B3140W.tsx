@@ -56,7 +56,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {

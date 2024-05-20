@@ -12,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -38,9 +37,9 @@ import {
   UseMessages,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
+  getBizCom,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -174,104 +173,21 @@ const CopyWindow = ({
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA016")
-      );
-      const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA004")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const testtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA019_603"
-        )
-      );
-      const requestgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_Requestgb"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const materialgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA012_603"
-        )
-      );
-      const assaygbeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA013_603"
-        )
-      );
-      const startschgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA014_603"
-        )
-      );
-      const financegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA015_603"
-        )
-      );
-      const amtgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA016_603"
-        )
-      );
-      const addordgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA017_603"
-        )
-      );
-      const relationgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA018_603"
-        )
-      );
-      fetchQuery(quotypeQueryStr, setQuotypeListData);
-      fetchQuery(quostsQueryStr, setQuostsListData);
-      fetchQuery(personQueryStr, setPersonListData);
-      fetchQuery(testtypeQueryStr, setTestTypeListData);
-      fetchQuery(requestgbQueryStr, setrequestgbListData);
-      fetchQuery(materialtypeQueryStr, setmaterialtypeListData);
-      fetchQuery(materialgbQueryStr, setmaterialgbListData);
-      fetchQuery(assaygbeQueryStr, setassaygbeListData);
-      fetchQuery(startschgbQueryStr, setstartschgbListData);
-      fetchQuery(financegbQueryStr, setfinancegbListData);
-      fetchQuery(amtgbQueryStr, setamtgbListData);
-      fetchQuery(addordgbQueryStr, setaddordgbListData);
-      fetchQuery(relationgbQueryStr, setrelationgbListData);
+      setQuotypeListData(getBizCom(bizComponentData, "L_SA016"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setQuostsListData(getBizCom(bizComponentData, "L_SA004"));
+      setTestTypeListData(getBizCom(bizComponentData, "L_SA019_603"));
+      setrequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
+      setmaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setmaterialgbListData(getBizCom(bizComponentData, "L_SA012_603"));
+      setassaygbeListData(getBizCom(bizComponentData, "L_SA013_603"));
+      setstartschgbListData(getBizCom(bizComponentData, "L_SA014_603"));
+      setfinancegbListData(getBizCom(bizComponentData, "L_SA015_603"));
+      setamtgbListData(getBizCom(bizComponentData, "L_SA016_603"));
+      setaddordgbListData(getBizCom(bizComponentData, "L_SA017_603"));
+      setrelationgbListData(getBizCom(bizComponentData, "L_SA018_603"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

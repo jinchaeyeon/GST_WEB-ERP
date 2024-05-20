@@ -49,10 +49,10 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   numberWithCommas,
   setDefaultDate,
   toDate,
+  getBizCom
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -284,46 +284,13 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });

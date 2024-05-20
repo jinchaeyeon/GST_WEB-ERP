@@ -39,9 +39,9 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
+  getBizCom
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -148,57 +148,14 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const divQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_PR300200"
-        )
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
-      );
-
-      fetchQuery(divQueryStr, setDivListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      setDivListData(getBizCom(bizComponentData, "L_PR300200"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA172"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA173"));
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

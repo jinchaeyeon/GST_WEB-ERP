@@ -44,7 +44,6 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   setDefaultDate2,
 } from "../CommonFunction";
 import {

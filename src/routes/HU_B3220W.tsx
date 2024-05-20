@@ -37,7 +37,7 @@ import {
   convertDateToStr,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";

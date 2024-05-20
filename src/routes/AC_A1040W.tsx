@@ -52,7 +52,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
