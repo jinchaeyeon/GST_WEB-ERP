@@ -641,7 +641,7 @@ const pc = UseGetValueFromSessionItem("pc");
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_dptcd_001,L_SYS005, L_MenuWeb", setBizComponentData);
+  UseBizComponent("L_MenuWeb", setBizComponentData);
 
   const [menuListData, setMenuListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
@@ -649,34 +649,17 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const menuQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_MenuWeb")
+      setMenuListData(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_MenuWeb"
+        ) == undefined
+          ? []
+          : bizComponentData.find(
+              (item: any) => item.bizComponentId == "L_MenuWeb"
+            ).bizComponentItems
       );
-      fetchQuery(menuQueryStr, setMenuListData);
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
