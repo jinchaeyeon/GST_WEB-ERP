@@ -37,6 +37,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -52,7 +53,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -86,7 +87,10 @@ const SA_B2200W_603: React.FC = () => {
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부, 수주일자/납기일자, 사업부구분, 대분류, 중분류, 소분류, 수량단위, 화폐단위
     setBizComponentData
   );
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   //공통코드 리스트 조회 ()
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -657,9 +661,7 @@ const SA_B2200W_603: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer
-        style={{ paddingBottom: document.documentElement.clientWidth <= 1200 ? "50px" : "" }}
-      >
+      <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -667,11 +669,11 @@ const SA_B2200W_603: React.FC = () => {
           }}
           fileName="수주현황조회"
         >
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "76vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -711,31 +713,33 @@ const SA_B2200W_603: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -25,8 +25,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -53,8 +52,7 @@ import {
   UseParaPc,
   UsePermissions,
   getHeight,
-  getQueryFromBizComponent,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -170,39 +168,17 @@ const Page: React.FC = () => {
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData != null) {
-      const userQueryStr = getQueryFromBizComponent(
+      setUserListData(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
+        ) == undefined
+          ? []
+          : bizComponentData.find(
+              (item: any) => item.bizComponentId == "L_sysUserMaster_001"
+            ).bizComponentItems
       );
-      fetchQueryData(userQueryStr, setUserListData);
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
@@ -769,7 +745,7 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
-    if(swiper) {
+    if (swiper) {
       swiper.slideTo(0);
     }
   };

@@ -24,7 +24,6 @@ import {
   modifySubItems,
   treeToFlat,
 } from "@progress/kendo-react-treelist";
-import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -51,7 +50,6 @@ import {
   UseParaPc,
   UsePermissions,
   getHeight,
-  getQueryFromBizComponent,
   getYn,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -158,10 +156,7 @@ const Page: React.FC = () => {
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_dptcd_001,L_COM013,L_BA001,L_BA002,L_HU005,L_SYS1205_1",
-    setBizComponentData
-  );
+  UseBizComponent("L_COM013,L_HU005", setBizComponentData);
 
   const allMenuColumns: TreeListColumnProps[] = [
     { field: "menu_name", title: "메뉴명", expandable: true },
@@ -728,40 +723,26 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
+      setPostcdListData(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_HU005"
+        ) == undefined
+          ? []
+          : bizComponentData.find(
+              (item: any) => item.bizComponentId == "L_HU005"
+            ).bizComponentItems
       );
-
-      const useYnQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_COM013")
+      setUseYnListData(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_COM013"
+        ) == undefined
+          ? []
+          : bizComponentData.find(
+              (item: any) => item.bizComponentId == "L_COM013"
+            ).bizComponentItems
       );
-
-      fetchQuery(postcdQueryStr, setPostcdListData);
-      fetchQuery(useYnQueryStr, setUseYnListData);
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const onAddClick = () => {
     setWorkType("N");
@@ -1229,7 +1210,7 @@ const Page: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    if(swiper) {
+    if (swiper) {
       swiper.slideTo(0);
     }
   };
@@ -1527,25 +1508,25 @@ const Page: React.FC = () => {
                   >
                     <GridColumn cell={CommandCell} width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions[
-                        "grdHeaderList"
-                      ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdHeaderList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -1778,25 +1759,25 @@ const Page: React.FC = () => {
                 >
                   <GridColumn cell={CommandCell} width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions[
-                      "grdHeaderList"
-                    ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdHeaderList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
