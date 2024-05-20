@@ -116,11 +116,11 @@ const MA_A8000W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  UseParaPc(setPc);
+  
 
   const [swiper, setSwiper] = useState<SwiperCore>();
 

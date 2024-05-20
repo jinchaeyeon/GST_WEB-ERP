@@ -176,8 +176,7 @@ const CopyWindow = ({
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const DATA_ITEM_KEY = "num";
 
   const companyCode = loginResult ? loginResult.companyCode : "";

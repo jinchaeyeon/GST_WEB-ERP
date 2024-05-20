@@ -92,8 +92,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);

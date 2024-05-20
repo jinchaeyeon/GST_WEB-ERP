@@ -77,8 +77,7 @@ const AC_A0000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

@@ -460,9 +460,9 @@ const CopyWindow = ({
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const [editIndex, setEditIndex] = useState<number | undefined>();

@@ -52,10 +52,10 @@ const MA_A3500W_615: React.FC = () => {
 
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  UseParaPc(setPc);
+  
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });

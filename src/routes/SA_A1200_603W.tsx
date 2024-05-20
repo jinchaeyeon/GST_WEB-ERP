@@ -88,8 +88,7 @@ const SA_A1200_603W: React.FC = () => {
   const [worktype, setWorktype] = useState<"N" | "U">("U");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);

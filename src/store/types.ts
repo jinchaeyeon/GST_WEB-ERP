@@ -108,7 +108,8 @@ export type TSessionItemCode =
   | "location"
   | "position"
   | "dptcd"
-  | "postcd";
+  | "postcd"
+  | "pc";
 
 export type TPermissions = {
   view: boolean;

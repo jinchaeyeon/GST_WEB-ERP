@@ -90,8 +90,7 @@ const KendoWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,

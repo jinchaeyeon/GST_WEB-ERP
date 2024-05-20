@@ -74,8 +74,7 @@ const KendoWindow = ({
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
 

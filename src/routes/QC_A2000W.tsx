@@ -439,9 +439,9 @@ const QC_A2000: React.FC = () => {
   };
 
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

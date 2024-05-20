@@ -112,8 +112,7 @@ const HU_A4110W: React.FC = () => {
   const userName = loginResult ? loginResult.userName : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 

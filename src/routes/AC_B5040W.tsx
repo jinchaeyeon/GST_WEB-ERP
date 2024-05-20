@@ -104,8 +104,7 @@ type TDetailData = {
 
 const AC_B5040W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   

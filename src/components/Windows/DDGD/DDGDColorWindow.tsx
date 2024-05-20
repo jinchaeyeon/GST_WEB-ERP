@@ -38,8 +38,7 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
     height: isMobile == true ? deviceHeight : 800,
   });
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   useEffect(() => {

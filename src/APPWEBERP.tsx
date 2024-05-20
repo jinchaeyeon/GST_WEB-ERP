@@ -4,7 +4,6 @@ import {
   LocalizationProvider,
   load,
 } from "@progress/kendo-react-intl";
-import axios from "axios";
 import currencyData from "cldr-core/supplemental/currencyData.json";
 import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
 import weekData from "cldr-core/supplemental/weekData.json";
@@ -30,7 +29,10 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
-import { UseGetValueFromSessionItem } from "./components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+} from "./components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import { default as PanelBarNavContainerWEBERP } from "./components/Containers/PanelBarNavContainerWEBERP";
 import Loader from "./components/Loader";
@@ -40,9 +42,8 @@ import {
   OSState,
   colors,
   isMobileMenuOpendState,
-  linkState,
   loginResultState,
-  sessionItemState,
+  sessionItemState
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
@@ -386,6 +387,8 @@ const App: React.FC = () => {
 const AppInner: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [osstate, setOSState] = useRecoilState(OSState);
@@ -415,11 +418,7 @@ const AppInner: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {
-    if (
-      token &&
-      userId != "" &&
-      (sessionUserId == "" || sessionUserId == null)
-    )
+    if (token && pc && userId != "" && (sessionUserId == "" || sessionUserId == null))
       fetchSessionItem();
   }, [userId, sessionUserId]);
 
@@ -449,14 +448,14 @@ const AppInner: React.FC = () => {
 
       if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
+        let array = rows
+          .filter((item: any) => item.class == "Session")
+          .map((item: any) => ({
+            code: item.code,
+            value: item.value,
+          }))
+          .concat([{ code: "pc", value: pc }]);
+        setSessionItem(array);
       }
     } catch (e: any) {
       console.log("menus error", e);

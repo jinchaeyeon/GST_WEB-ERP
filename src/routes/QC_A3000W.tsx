@@ -131,9 +131,9 @@ const QC_A3000: React.FC = () => {
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");

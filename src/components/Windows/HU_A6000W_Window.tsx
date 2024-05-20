@@ -123,9 +123,9 @@ const CopyWindow = ({
     });
   };
 
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
 
   const setLoading = useSetRecoilState(isLoading);
 

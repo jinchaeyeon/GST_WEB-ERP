@@ -53,8 +53,7 @@ const PR_A2000W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");

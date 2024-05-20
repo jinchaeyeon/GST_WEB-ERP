@@ -100,11 +100,11 @@ const MA_A2400W: React.FC = () => {
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  UseParaPc(setPc);
+  
   let deviceWidth = document.documentElement.clientWidth;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

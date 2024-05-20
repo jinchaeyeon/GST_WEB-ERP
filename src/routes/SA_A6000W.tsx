@@ -245,8 +245,7 @@ const SA_A6000W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const position = loginResult ? loginResult.position : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const pageChange = (event: GridPageChangeEvent) => {

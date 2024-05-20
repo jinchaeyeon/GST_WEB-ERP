@@ -143,8 +143,7 @@ const KendoWindow = ({
 
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
 

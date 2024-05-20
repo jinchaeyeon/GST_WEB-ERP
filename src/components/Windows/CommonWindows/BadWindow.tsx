@@ -66,9 +66,9 @@ const Badwindow = ({
   pathname,
 }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);

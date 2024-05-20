@@ -275,8 +275,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
   const value = field && dataItem[field] ? dataItem[field] : "";
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
@@ -436,8 +435,7 @@ const CR_A0010W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 

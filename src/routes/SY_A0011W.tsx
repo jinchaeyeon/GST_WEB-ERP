@@ -120,8 +120,7 @@ const Page: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();

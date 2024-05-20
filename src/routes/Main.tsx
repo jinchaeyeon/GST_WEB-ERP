@@ -109,8 +109,7 @@ const Main: React.FC = () => {
     return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머를 제거
   }, []);
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

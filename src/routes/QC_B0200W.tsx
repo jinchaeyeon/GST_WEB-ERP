@@ -98,9 +98,9 @@ const QC_B0200W: React.FC = () => {
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

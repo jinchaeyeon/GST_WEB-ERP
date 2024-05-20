@@ -51,12 +51,12 @@ const SA_A2300_PDA: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
 
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
 
-  UseParaPc(setPc);
+  
 
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions);

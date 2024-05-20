@@ -122,8 +122,7 @@ const MA_A3400_606W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_A3400_606W", setMessagesData);
   const processApi = useApi();

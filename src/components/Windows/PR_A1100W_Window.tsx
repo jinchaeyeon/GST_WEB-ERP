@@ -428,8 +428,7 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");

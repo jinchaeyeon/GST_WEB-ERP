@@ -420,8 +420,7 @@ const HU_A3040W: React.FC = () => {
     }, [isFilterHideStates]);
 
   const [workType, setWorkType] = useState("");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

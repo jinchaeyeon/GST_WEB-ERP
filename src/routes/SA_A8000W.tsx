@@ -108,9 +108,9 @@ const SA_A8000W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
 
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;

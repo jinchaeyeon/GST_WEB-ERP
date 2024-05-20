@@ -890,8 +890,7 @@ const AC_A0020W: React.FC = () => {
     });
   };
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

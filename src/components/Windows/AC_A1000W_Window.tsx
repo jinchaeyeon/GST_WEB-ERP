@@ -628,8 +628,7 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

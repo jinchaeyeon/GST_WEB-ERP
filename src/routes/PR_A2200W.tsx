@@ -84,8 +84,7 @@ const PR_A2200W: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(
     null
   ) as MutableRefObject<HTMLVideoElement>;
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [filters, setFilters] = useState({

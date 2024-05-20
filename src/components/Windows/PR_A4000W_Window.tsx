@@ -133,10 +133,10 @@ const DetailWindow = ({
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
 
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const [isInitSearch, setIsInitSearch] = useState(false);
-  UseParaPc(setPc);
+  
   const [stockWindowVisible, setStockWindowVisible] = useState<boolean>(false);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");

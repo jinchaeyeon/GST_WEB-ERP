@@ -303,8 +303,7 @@ const PR_A0060: React.FC = () => {
   const processApi = useApi();
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

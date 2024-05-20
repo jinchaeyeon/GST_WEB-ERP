@@ -251,8 +251,7 @@ const HU_A1060W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

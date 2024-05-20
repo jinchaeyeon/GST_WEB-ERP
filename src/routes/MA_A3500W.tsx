@@ -132,7 +132,7 @@ const MA_A3500W: React.FC = () => {
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
@@ -141,7 +141,7 @@ const MA_A3500W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  UseParaPc(setPc);
+  
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [swiper2, setSwiper2] = useState<SwiperCore>();
   const [isVisibleDetail, setIsVisableDetail] = useState(false);

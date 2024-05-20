@@ -129,8 +129,7 @@ const SY_A0500W: React.FC = () => {
     layout.position
   );
   const userId = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [clicked, setClicked] = useRecoilState(clickedState);
   const [info, setInfo] = useRecoilState(infoState);
   const [points, setPoints] = useRecoilState(pointsState);

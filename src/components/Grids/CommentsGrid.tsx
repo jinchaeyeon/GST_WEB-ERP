@@ -54,8 +54,7 @@ const CommentsGrid = (props: {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const user_id = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

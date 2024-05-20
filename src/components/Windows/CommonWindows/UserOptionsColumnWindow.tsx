@@ -586,8 +586,7 @@ const KendoWindow = ({
   };
 
   const sessionUserId = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({

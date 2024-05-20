@@ -126,8 +126,7 @@ const EA_A1000: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;

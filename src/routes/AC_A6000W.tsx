@@ -386,8 +386,7 @@ const AC_A6000W: React.FC = () => {
   const [custnm2, setCustnm2] = useState<string>("");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");

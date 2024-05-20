@@ -74,10 +74,10 @@ const HU_A6000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  UseParaPc(setPc);
+  
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

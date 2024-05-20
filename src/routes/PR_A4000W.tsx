@@ -159,8 +159,7 @@ const PR_A4000W: React.FC = () => {
   const idGetter2 = getter(DETAIL_ITEM_KEY);
   const idGetter3 = getter(DAILY_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");

@@ -471,10 +471,10 @@ const CopyWindow = ({
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  UseParaPc(setPc);
+  
   const DATA_ITEM_KEY = "num";
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 

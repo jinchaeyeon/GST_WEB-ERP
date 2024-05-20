@@ -159,11 +159,11 @@ const MA_A9001W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  UseParaPc(setPc);
+  
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

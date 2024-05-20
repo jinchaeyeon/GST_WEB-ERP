@@ -222,8 +222,7 @@ const CopyWindow = ({
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);

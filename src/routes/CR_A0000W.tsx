@@ -60,8 +60,7 @@ const CR_A0000W: React.FC = () => {
   const [schedulerData, setSchedulerData] = useState<DataResult>(
     processQuery([], schedulerState)
   );
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [selectedState, setSelectedState] = useState<string>("");
   const [ChangeDateVisible, setChangeDateVisible] = useState<boolean>(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);

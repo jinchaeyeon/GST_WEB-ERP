@@ -83,9 +83,9 @@ const SA_A2300: React.FC = () => {
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
 
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

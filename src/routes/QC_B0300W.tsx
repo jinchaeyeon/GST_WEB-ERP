@@ -43,6 +43,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -81,8 +82,7 @@ const QC_B0300W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   let isMobile = deviceWidth <= 1200;
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

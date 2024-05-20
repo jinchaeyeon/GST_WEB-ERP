@@ -319,8 +319,7 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 600,
   });
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");

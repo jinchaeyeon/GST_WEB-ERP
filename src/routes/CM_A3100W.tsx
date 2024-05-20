@@ -89,8 +89,7 @@ const CM_A3100W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [data, setData] = React.useState<any[]>([]);
   const [group, setGroup] = useState(initialGroup);
   const [total, setTotal] = useState(0);

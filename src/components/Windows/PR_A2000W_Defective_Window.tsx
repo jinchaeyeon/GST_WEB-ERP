@@ -90,8 +90,7 @@ const KendoWindow = ({
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const idGetter = getter(DATA_ITEM_KEY);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 

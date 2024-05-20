@@ -232,8 +232,7 @@ const HU_A2140W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const postcd = UseGetValueFromSessionItem("postcd");
   const dptcd = UseGetValueFromSessionItem("dptcd");

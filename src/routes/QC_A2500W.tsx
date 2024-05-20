@@ -98,9 +98,9 @@ const QC_A2500W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = document.documentElement.clientWidth;

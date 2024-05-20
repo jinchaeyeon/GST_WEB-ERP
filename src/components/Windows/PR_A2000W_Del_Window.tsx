@@ -79,8 +79,7 @@ const KendoWindow = ({
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

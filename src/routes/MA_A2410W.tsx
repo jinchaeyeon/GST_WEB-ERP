@@ -104,8 +104,7 @@ const MA_A2410W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter1 = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
 

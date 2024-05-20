@@ -44,8 +44,7 @@ const CR_A1101W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userid = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

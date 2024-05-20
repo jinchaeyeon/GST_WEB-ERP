@@ -73,8 +73,7 @@ type TResource = {
 function App() {
   const processApi = useApi();
   const userid = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [task, setTask] = useState<TTask[]>([]);
   const [assignment, setAssignment] = useState<TAssignment[]>([]);

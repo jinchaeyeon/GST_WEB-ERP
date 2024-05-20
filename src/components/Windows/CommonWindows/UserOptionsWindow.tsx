@@ -320,8 +320,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const isAdmin = role == "ADMIN";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [columnWindowVisible, setColumnWindowVisible] =
     useState<boolean>(false);

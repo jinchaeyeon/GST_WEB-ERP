@@ -74,8 +74,7 @@ const CM_A1000W_617: React.FC = () => {
   var height2 = getHeight(".ButtonContainer2");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1000W_617", setMessagesData);

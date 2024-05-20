@@ -59,10 +59,10 @@ var index = 0;
 const MA_A2300_615_PDAW: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  UseParaPc(setPc);
+  
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);

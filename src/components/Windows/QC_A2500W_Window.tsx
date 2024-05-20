@@ -103,10 +103,10 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 700,
   });
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   const processApi = useApi();
   //메시지 조회
 

@@ -77,8 +77,7 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

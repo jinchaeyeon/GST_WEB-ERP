@@ -150,8 +150,7 @@ const CM_A8000W: React.FC = () => {
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");

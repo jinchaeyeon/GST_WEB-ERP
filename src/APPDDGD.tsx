@@ -31,9 +31,11 @@ import AuthRoute from "./components/AuthRoute";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContainerDDGD";
 
-import axios from "axios";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-import { UseGetValueFromSessionItem } from "./components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+} from "./components/CommonFunction";
 import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
 import NotFound from "./routes/NotFound";
@@ -41,7 +43,6 @@ import {
   OSState,
   colors,
   isMobileMenuOpendState,
-  linkState,
   loginResultState,
   sessionItemState,
 } from "./store/atoms";
@@ -390,6 +391,8 @@ const App: React.FC = () => {
 const AppInner: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [osstate, setOSState] = useRecoilState(OSState);
@@ -419,11 +422,7 @@ const AppInner: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {
-    if (
-      token &&
-      userId != "" &&
-      (sessionUserId == "" || sessionUserId == null)
-    )
+    if (token && pc && userId != "" && (sessionUserId == "" || sessionUserId == null))
       fetchSessionItem();
   }, [userId, sessionUserId]);
 
@@ -453,14 +452,14 @@ const AppInner: React.FC = () => {
 
       if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
-        setSessionItem(
-          rows
-            .filter((item: any) => item.class == "Session")
-            .map((item: any) => ({
-              code: item.code,
-              value: item.value,
-            }))
-        );
+        let array = rows
+          .filter((item: any) => item.class == "Session")
+          .map((item: any) => ({
+            code: item.code,
+            value: item.value,
+          }))
+          .concat([{ code: "pc", value: pc }]);
+        setSessionItem(array);
       }
     } catch (e: any) {
       console.log("menus error", e);

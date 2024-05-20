@@ -83,8 +83,7 @@ const Main: React.FC = () => {
   const geoLocation = useGeoLocation();
   const [osstate, setOSState] = useRecoilState(OSState);
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

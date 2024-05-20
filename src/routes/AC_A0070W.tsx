@@ -247,8 +247,7 @@ const AC_A0070W: React.FC = () => {
   const listIdGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(SUB_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

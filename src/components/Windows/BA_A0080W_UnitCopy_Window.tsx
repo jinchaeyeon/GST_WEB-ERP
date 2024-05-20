@@ -101,9 +101,9 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   //메시지 조회
 
   const [messagesData, setMessagesData] = React.useState<any>(null);

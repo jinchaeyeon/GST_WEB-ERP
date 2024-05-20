@@ -207,8 +207,7 @@ const CHAT_BOT_MNG: React.FC = () => {
   };
 
   const userid = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const onSaveClick = async () => {
     const flatData: any = treeToFlat(state.data, "question", SUB_ITEMS_FIELD);

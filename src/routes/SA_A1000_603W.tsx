@@ -535,8 +535,7 @@ const SA_A1000_603W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   let gridRef: any = useRef(null);
   const userId = UseGetValueFromSessionItem("user_id");

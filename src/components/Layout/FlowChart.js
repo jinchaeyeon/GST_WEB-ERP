@@ -84,9 +84,9 @@ const FlowChart = (props) => {
   );
 
   const setLoading = useSetRecoilState(isLoading);
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  UseParaPc(setPc);
+  
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = useState(null);
   UseCustomOption("SY_A0060W", setCustomOptionData);

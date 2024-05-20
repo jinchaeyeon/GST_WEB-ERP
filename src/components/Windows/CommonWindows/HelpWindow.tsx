@@ -484,8 +484,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     user_id: "",
   });
 
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const onSaveClick = () => {
     const dataItem: { [name: string]: any } = mainDataResult.data.filter(

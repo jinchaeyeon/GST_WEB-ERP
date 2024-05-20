@@ -240,8 +240,7 @@ const CM_A4100W: React.FC = () => {
   var height3 = getHeight(".ButtonContainer2");
   var height4 = getHeight(".ButtonContainer3");
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 

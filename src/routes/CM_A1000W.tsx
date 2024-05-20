@@ -101,11 +101,11 @@ const CM_A1000W: React.FC = () => {
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1000W", setMessagesData);
-  UseParaPc(setPc);
+  
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

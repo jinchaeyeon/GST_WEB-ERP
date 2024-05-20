@@ -181,8 +181,7 @@ const CM_A1600W_603: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"

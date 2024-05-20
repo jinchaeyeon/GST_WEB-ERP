@@ -53,6 +53,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  UseGetValueFromSessionItem
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -117,8 +118,7 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

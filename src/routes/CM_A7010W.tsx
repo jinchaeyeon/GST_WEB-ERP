@@ -198,8 +198,7 @@ const CM_A7010W: React.FC = () => {
   const userName = UseGetValueFromSessionItem("user_name");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [workType, setWorkType] = useState("");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

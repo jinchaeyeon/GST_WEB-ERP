@@ -246,8 +246,7 @@ const HU_B4000W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   //FormContext받은 데이터 state
   const [prsnnm, setPrsnnm] = useState<string>("");

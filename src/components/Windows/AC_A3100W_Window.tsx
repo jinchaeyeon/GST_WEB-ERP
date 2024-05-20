@@ -153,8 +153,7 @@ const CopyWindow = ({
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const [tabSelected, setTabSelected] = useState(0);
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,

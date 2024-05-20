@@ -244,8 +244,7 @@ const KendoWindow = ({
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
   // 삭제할 첨부파일 리스트를 담는 함수

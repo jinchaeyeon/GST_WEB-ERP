@@ -98,11 +98,11 @@ const MA_A2700W: React.FC = () => {
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [pc, setPc] = useState("");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  UseParaPc(setPc);
+  
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");

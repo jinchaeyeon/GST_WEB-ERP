@@ -27,6 +27,7 @@ export const DEFAULT_SESSION_ITEM: TSessionItem[] = [
   { code: "location", value: "" },
   { code: "position", value: "" },
   { code: "dptcd", value: "" },
+  { code: "pc", value : ""}
 ];
 
 export const DEFAULT_LANG_CODE = {

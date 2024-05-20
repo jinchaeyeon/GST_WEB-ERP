@@ -232,8 +232,7 @@ const HU_A3200W: React.FC = () => {
   const [prsnnm, setPrsnnm] = useState<string>("");
   const [prsnnum, setPrsnnum] = useState<string>("");
   const [dptcd, setDptcd] = useState<string>("");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 

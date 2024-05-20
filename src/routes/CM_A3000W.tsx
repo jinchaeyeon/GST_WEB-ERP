@@ -131,8 +131,7 @@ const CM_A3000W: React.FC = () => {
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const idGetter3 = getter(ATT_DATA_ITEM_KEY);
   const processApi = useApi();
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const dptcd = UseGetValueFromSessionItem("dptcd");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

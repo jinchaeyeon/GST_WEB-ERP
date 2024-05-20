@@ -64,8 +64,7 @@ const CHAT_BOT: React.FC = () => {
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
   const userid = UseGetValueFromSessionItem("user_id");
-  const [pc, setPc] = useState("");
-  UseParaPc(setPc);
+const pc = UseGetValueFromSessionItem("pc");
 
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";
