@@ -15,7 +15,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -43,6 +43,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas3,
@@ -57,9 +58,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0021W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -94,6 +98,16 @@ const numberField = [
 const dateField = ["recdt", "strdt", "enddt"];
 
 const BA_A0021W_603: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper") + 10;
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var index = 0;
+  var index2 = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [swiper2, setSwiper2] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -334,6 +348,9 @@ const BA_A0021W_603: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -830,6 +847,9 @@ const BA_A0021W_603: React.FC = () => {
       pgNum: 1,
     }));
     setTabSelected(1);
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -1055,12 +1075,9 @@ const BA_A0021W_603: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <TabStrip
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-        style={{ width: "100%" }}
-      >
-        <TabStripTab title="조회">
+
+      {isMobile ? (
+        <>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1130,111 +1147,390 @@ const BA_A0021W_603: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainer>
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="고객이력관리"
-            >
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    custdiv: custdivListData.find(
-                      (item: any) => item.sub_code == row.custdiv
-                    )?.code_name,
-                    itemlvl3: itemlvl3ListData.find(
-                      (item: any) => item.sub_code == row.itemlvl3
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : centerField.includes(item.fieldName)
-                              ? CenterCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
-        <TabStripTab
-          title="처리"
-          disabled={mainDataResult.total == 0 ? true : false}
-        >
-          <TabStrip
-            selected={tabSelected2}
-            onSelect={handleSelectTab2}
-            style={{ width: "100%" }}
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <TabStripTab title="고객정보">
-              <FormBoxWrap border={true}>
-                <GridTitleContainer>
-                  <GridTitle>고객 기본정보</GridTitle>
-                </GridTitleContainer>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>업체명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={
+            <SwiperSlide key={0}>
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="고객이력관리"
+                >
+                  <Grid
+                    style={{ height: deviceHeight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        custdiv: custdivListData.find(
+                          (item: any) => item.sub_code == row.custdiv
+                        )?.code_name,
+                        itemlvl3: itemlvl3ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl3
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : centerField.includes(item.fieldName)
+                                    ? CenterCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <TabStrip
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+                style={{ width: "100%" }}
+              >
+                <TabStripTab title="고객정보">
+                  <Swiper
+                    onSwiper={(swiper2) => {
+                      setSwiper2(swiper2);
+                    }}
+                    onActiveIndexChange={(swiper2) => {
+                      index2 = swiper2.activeIndex;
+                    }}
+                  >
+                    <SwiperSlide key={0}>
+                      <GridContainer style={{ width: "100%" }}>
+                        <GridTitleContainer className="ButtonContainer">
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <GridTitle>고객 기본정보</GridTitle>
+                            <Button
+                              onClick={() => {
+                                if (swiper2) {
+                                  swiper2.slideTo(1);
+                                }
+                              }}
+                              icon="chevron-right"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <FormBoxWrap
+                          border={true}
+                          style={{
+                            height: deviceHeight - height - height1,
+                            overflow: "auto",
+                          }}
+                        >
+                          <FormBox>
+                            <tbody>
+                              <tr>
+                                <th>업체명</th>
+                                <td>
+                                  <Input
+                                    name="custnm"
+                                    type="text"
+                                    value={
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item) =>
+                                              item[DATA_ITEM_KEY] ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].custnm
+                                    }
+                                    className="readonly"
+                                  />
+                                </td>
+                                <th>개발분야</th>
+                                <td>
+                                  <Input
+                                    name="itemlvl3"
+                                    type="text"
+                                    value={
+                                      itemlvl3ListData.find(
+                                        (item: any) =>
+                                          item.sub_code ==
+                                          (mainDataResult.data.filter(
+                                            (item) =>
+                                              item[DATA_ITEM_KEY] ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0] == undefined
+                                            ? ""
+                                            : mainDataResult.data.filter(
+                                                (item) =>
+                                                  item[DATA_ITEM_KEY] ==
+                                                  Object.getOwnPropertyNames(
+                                                    selectedState
+                                                  )[0]
+                                              )[0].itemlvl3)
+                                      ) == undefined
+                                        ? ""
+                                        : itemlvl3ListData.find(
+                                            (item: any) =>
+                                              item.sub_code ==
+                                              (mainDataResult.data.filter(
+                                                (item) =>
+                                                  item[DATA_ITEM_KEY] ==
+                                                  Object.getOwnPropertyNames(
+                                                    selectedState
+                                                  )[0]
+                                              )[0] == undefined
+                                                ? ""
+                                                : mainDataResult.data.filter(
+                                                    (item) =>
+                                                      item[DATA_ITEM_KEY] ==
+                                                      Object.getOwnPropertyNames(
+                                                        selectedState
+                                                      )[0]
+                                                  )[0].itemlvl3)
+                                          )?.code_name
+                                    }
+                                    className="readonly"
+                                  />
+                                </td>
+                                <th>기업구분</th>
+                                <td>
+                                  <Input
+                                    name="itemlvl2"
+                                    type="text"
+                                    value={
+                                      itemlvl2ListData.find(
+                                        (item: any) =>
+                                          item.sub_code ==
+                                          (mainDataResult.data.filter(
+                                            (item) =>
+                                              item[DATA_ITEM_KEY] ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0] == undefined
+                                            ? ""
+                                            : mainDataResult.data.filter(
+                                                (item) =>
+                                                  item[DATA_ITEM_KEY] ==
+                                                  Object.getOwnPropertyNames(
+                                                    selectedState
+                                                  )[0]
+                                              )[0].itemlvl2)
+                                      ) == undefined
+                                        ? ""
+                                        : itemlvl2ListData.find(
+                                            (item: any) =>
+                                              item.sub_code ==
+                                              (mainDataResult.data.filter(
+                                                (item) =>
+                                                  item[DATA_ITEM_KEY] ==
+                                                  Object.getOwnPropertyNames(
+                                                    selectedState
+                                                  )[0]
+                                              )[0] == undefined
+                                                ? ""
+                                                : mainDataResult.data.filter(
+                                                    (item) =>
+                                                      item[DATA_ITEM_KEY] ==
+                                                      Object.getOwnPropertyNames(
+                                                        selectedState
+                                                      )[0]
+                                                  )[0].itemlvl2)
+                                          )?.code_name
+                                    }
+                                    className="readonly"
+                                  />
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>계약금액</th>
+                                <td>
+                                  <Input
+                                    name="cont_amt"
+                                    type="text"
+                                    value={
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? 0
+                                        : numberWithCommas3(
+                                            mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].cont_amt
+                                          )
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    className="readonly"
+                                  />
+                                </td>
+                                <th>기청구액</th>
+                                <td>
+                                  <Input
+                                    name="amt"
+                                    type="text"
+                                    value={
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? 0
+                                        : numberWithCommas3(
+                                            mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].amt
+                                          )
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    className="readonly"
+                                  />
+                                </td>
+                                <th>미청구액</th>
+                                <td>
+                                  <Input
+                                    name="no_amt"
+                                    type="text"
+                                    value={
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? 0
+                                        : numberWithCommas3(
+                                            mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].no_amt
+                                          )
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    className="readonly"
+                                  />
+                                </td>
+                                <th>미수금액</th>
+                                <td>
+                                  <Input
+                                    name="misu_amt"
+                                    type="text"
+                                    value={
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? 0
+                                        : numberWithCommas3(
+                                            mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].misu_amt
+                                          )
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    className="readonly"
+                                  />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </FormBox>
+                        </FormBoxWrap>
+                      </GridContainer>
+                    </SwiperSlide>
+                    <SwiperSlide key={1}>
+                      <GridContainer style={{ width: "100%" }}>
+                        <CommentsGrid
+                          ref_key={
                             mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
@@ -1245,21 +1541,458 @@ const BA_A0021W_603: React.FC = () => {
                                   (item) =>
                                     item[DATA_ITEM_KEY] ==
                                     Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].custnm
+                                )[0].custcd
                           }
-                          className="readonly"
+                          form_id={"BA_A0021W_603"}
+                          table_id={"BA020T"}
+                          style={{ height: `${deviceHeight - height - 65}px` }}
                         />
+                      </GridContainer>
+                    </SwiperSlide>
+                  </Swiper>
+                </TabStripTab>
+                <TabStripTab title="상담일지">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height + 5 }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            person: userListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (item: any) => item.sub_code == row.materialtype
+                            )?.code_name,
+                            type: typeListData.find(
+                              (item: any) => item.sub_code == row.type
+                            )?.code_name,
+                            usegb: usegbListData.find(
+                              (item: any) => item.sub_code == row.usegb
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="견적">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height + 5 }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            person: userListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="계약">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult4.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: deviceHeight - height + 5 }}
+                        data={process(
+                          mainDataResult4.data.map((row) => ({
+                            ...row,
+                            chkperson: userListData.find(
+                              (items: any) => items.user_id == row.chkperson
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                          })),
+                          mainDataState4
+                        )}
+                        {...mainDataState4}
+                        onDataStateChange={onMainDataStateChange4}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange4}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4.total}
+                        skip={page4.skip}
+                        take={page4.take}
+                        pageable={true}
+                        onPageChange={pageChange4}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            style={{ width: "100%" }}
+          >
+            <TabStripTab title="조회">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>기준년도</th>
+                      <td>
+                        <DatePicker
+                          name="yyyy"
+                          value={filters.yyyy}
+                          format="yyyy"
+                          onChange={filterInputChange}
+                          placeholder=""
+                          calendar={YearCalendar}
+                          className="required"
+                        />
+                      </td>
+                      <th>업체코드</th>
+                      <td>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={filters.custcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCustWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={filters.custnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="custdiv"
+                            value={filters.custdiv}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
                       </td>
                       <th>개발분야</th>
                       <td>
-                        <Input
-                          name="itemlvl3"
-                          type="text"
-                          value={
-                            itemlvl3ListData.find(
-                              (item: any) =>
-                                item.sub_code ==
-                                (mainDataResult.data.filter(
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl3"
+                            value={filters.itemlvl3}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              <GridContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="고객이력관리"
+                >
+                  <Grid
+                    style={{ height: "70vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        custdiv: custdivListData.find(
+                          (item: any) => item.sub_code == row.custdiv
+                        )?.code_name,
+                        itemlvl3: itemlvl3ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl3
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : centerField.includes(item.fieldName)
+                                    ? CenterCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+            <TabStripTab
+              title="처리"
+              disabled={mainDataResult.total == 0 ? true : false}
+            >
+              <TabStrip
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+                style={{ width: "100%" }}
+              >
+                <TabStripTab title="고객정보">
+                  <FormBoxWrap border={true}>
+                    <GridTitleContainer>
+                      <GridTitle>고객 기본정보</GridTitle>
+                    </GridTitleContainer>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>업체명</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
                                   (item) =>
                                     item[DATA_ITEM_KEY] ==
                                     Object.getOwnPropertyNames(selectedState)[0]
@@ -1271,10 +2004,18 @@ const BA_A0021W_603: React.FC = () => {
                                         Object.getOwnPropertyNames(
                                           selectedState
                                         )[0]
-                                    )[0].itemlvl3)
-                            ) == undefined
-                              ? ""
-                              : itemlvl3ListData.find(
+                                    )[0].custnm
+                              }
+                              className="readonly"
+                            />
+                          </td>
+                          <th>개발분야</th>
+                          <td>
+                            <Input
+                              name="itemlvl3"
+                              type="text"
+                              value={
+                                itemlvl3ListData.find(
                                   (item: any) =>
                                     item.sub_code ==
                                     (mainDataResult.data.filter(
@@ -1292,36 +2033,38 @@ const BA_A0021W_603: React.FC = () => {
                                               selectedState
                                             )[0]
                                         )[0].itemlvl3)
-                                )?.code_name
-                          }
-                          className="readonly"
-                        />
-                      </td>
-                      <th>기업구분</th>
-                      <td>
-                        <Input
-                          name="itemlvl2"
-                          type="text"
-                          value={
-                            itemlvl2ListData.find(
-                              (item: any) =>
-                                item.sub_code ==
-                                (mainDataResult.data.filter(
-                                  (item) =>
-                                    item[DATA_ITEM_KEY] ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0] == undefined
+                                ) == undefined
                                   ? ""
-                                  : mainDataResult.data.filter(
-                                      (item) =>
-                                        item[DATA_ITEM_KEY] ==
-                                        Object.getOwnPropertyNames(
-                                          selectedState
-                                        )[0]
-                                    )[0].itemlvl2)
-                            ) == undefined
-                              ? ""
-                              : itemlvl2ListData.find(
+                                  : itemlvl3ListData.find(
+                                      (item: any) =>
+                                        item.sub_code ==
+                                        (mainDataResult.data.filter(
+                                          (item) =>
+                                            item[DATA_ITEM_KEY] ==
+                                            Object.getOwnPropertyNames(
+                                              selectedState
+                                            )[0]
+                                        )[0] == undefined
+                                          ? ""
+                                          : mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].itemlvl3)
+                                    )?.code_name
+                              }
+                              className="readonly"
+                            />
+                          </td>
+                          <th>기업구분</th>
+                          <td>
+                            <Input
+                              name="itemlvl2"
+                              type="text"
+                              value={
+                                itemlvl2ListData.find(
                                   (item: any) =>
                                     item.sub_code ==
                                     (mainDataResult.data.filter(
@@ -1339,388 +2082,423 @@ const BA_A0021W_603: React.FC = () => {
                                               selectedState
                                             )[0]
                                         )[0].itemlvl2)
-                                )?.code_name
-                          }
-                          className="readonly"
-                        />
-                      </td>
-                      <th></th>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <th>계약금액</th>
-                      <td>
-                        <Input
-                          name="cont_amt"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? 0
-                              : numberWithCommas3(
-                                  mainDataResult.data.filter(
-                                    (item) =>
-                                      item[DATA_ITEM_KEY] ==
-                                      Object.getOwnPropertyNames(
-                                        selectedState
-                                      )[0]
-                                  )[0].cont_amt
-                                )
-                          }
-                          style={{ textAlign: "right" }}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>기청구액</th>
-                      <td>
-                        <Input
-                          name="amt"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? 0
-                              : numberWithCommas3(
-                                  mainDataResult.data.filter(
-                                    (item) =>
-                                      item[DATA_ITEM_KEY] ==
-                                      Object.getOwnPropertyNames(
-                                        selectedState
-                                      )[0]
-                                  )[0].amt
-                                )
-                          }
-                          style={{ textAlign: "right" }}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>미청구액</th>
-                      <td>
-                        <Input
-                          name="no_amt"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? 0
-                              : numberWithCommas3(
-                                  mainDataResult.data.filter(
-                                    (item) =>
-                                      item[DATA_ITEM_KEY] ==
-                                      Object.getOwnPropertyNames(
-                                        selectedState
-                                      )[0]
-                                  )[0].no_amt
-                                )
-                          }
-                          style={{ textAlign: "right" }}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>미수금액</th>
-                      <td>
-                        <Input
-                          name="misu_amt"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? 0
-                              : numberWithCommas3(
-                                  mainDataResult.data.filter(
-                                    (item) =>
-                                      item[DATA_ITEM_KEY] ==
-                                      Object.getOwnPropertyNames(
-                                        selectedState
-                                      )[0]
-                                  )[0].misu_amt
-                                )
-                          }
-                          style={{ textAlign: "right" }}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-              <GridContainer>
-                <CommentsGrid
-                  ref_key={
-                    mainDataResult.data.filter(
-                      (item) =>
-                        item[DATA_ITEM_KEY] ==
-                        Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
+                                ) == undefined
+                                  ? ""
+                                  : itemlvl2ListData.find(
+                                      (item: any) =>
+                                        item.sub_code ==
+                                        (mainDataResult.data.filter(
+                                          (item) =>
+                                            item[DATA_ITEM_KEY] ==
+                                            Object.getOwnPropertyNames(
+                                              selectedState
+                                            )[0]
+                                        )[0] == undefined
+                                          ? ""
+                                          : mainDataResult.data.filter(
+                                              (item) =>
+                                                item[DATA_ITEM_KEY] ==
+                                                Object.getOwnPropertyNames(
+                                                  selectedState
+                                                )[0]
+                                            )[0].itemlvl2)
+                                    )?.code_name
+                              }
+                              className="readonly"
+                            />
+                          </td>
+                          <th></th>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <th>계약금액</th>
+                          <td>
+                            <Input
+                              name="cont_amt"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : numberWithCommas3(
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].cont_amt
+                                    )
+                              }
+                              style={{ textAlign: "right" }}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>기청구액</th>
+                          <td>
+                            <Input
+                              name="amt"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : numberWithCommas3(
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].amt
+                                    )
+                              }
+                              style={{ textAlign: "right" }}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>미청구액</th>
+                          <td>
+                            <Input
+                              name="no_amt"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : numberWithCommas3(
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].no_amt
+                                    )
+                              }
+                              style={{ textAlign: "right" }}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>미수금액</th>
+                          <td>
+                            <Input
+                              name="misu_amt"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : numberWithCommas3(
+                                      mainDataResult.data.filter(
+                                        (item) =>
+                                          item[DATA_ITEM_KEY] ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].misu_amt
+                                    )
+                              }
+                              style={{ textAlign: "right" }}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                  <GridContainer>
+                    <CommentsGrid
+                      ref_key={
+                        mainDataResult.data.filter(
                           (item) =>
                             item[DATA_ITEM_KEY] ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].custcd
-                  }
-                  form_id={"BA_A0021W_603"}
-                  table_id={"BA020T"}
-                  style={{ height: "60vh" }}
-                />
-              </GridContainer>
-            </TabStripTab>
-            <TabStripTab title="상담일지">
-              <GridContainer>
-                <ExcelExport
-                  data={mainDataResult2.data}
-                  ref={(exporter) => {
-                    _export2 = exporter;
-                  }}
-                  fileName="고객이력관리"
-                >
-                  <Grid
-                    style={{ height: "75vh" }}
-                    data={process(
-                      mainDataResult2.data.map((row) => ({
-                        ...row,
-                        person: userListData.find(
-                          (items: any) => items.user_id == row.person
-                        )?.user_name,
-                        materialtype: materialtypeListData.find(
-                          (item: any) => item.sub_code == row.materialtype
-                        )?.code_name,
-                        type: typeListData.find(
-                          (item: any) => item.sub_code == row.type
-                        )?.code_name,
-                        usegb: usegbListData.find(
-                          (item: any) => item.sub_code == row.usegb
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                      })),
-                      mainDataState2
-                    )}
-                    {...mainDataState2}
-                    onDataStateChange={onMainDataStateChange2}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY2}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange2}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult2.total}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={pageChange2}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange2}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell2
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </TabStripTab>
-            <TabStripTab title="견적">
-              <GridContainer>
-                <ExcelExport
-                  data={mainDataResult3.data}
-                  ref={(exporter) => {
-                    _export3 = exporter;
-                  }}
-                  fileName="고객이력관리"
-                >
-                  <Grid
-                    style={{ height: "75vh" }}
-                    data={process(
-                      mainDataResult3.data.map((row) => ({
-                        ...row,
-                        person: userListData.find(
-                          (items: any) => items.user_id == row.person
-                        )?.user_name,
-                        materialtype: materialtypeListData.find(
-                          (items: any) => items.sub_code == row.materialtype
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                      })),
-                      mainDataState3
-                    )}
-                    {...mainDataState3}
-                    onDataStateChange={onMainDataStateChange3}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY3}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange3}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult3.total}
-                    skip={page3.skip}
-                    take={page3.take}
-                    pageable={true}
-                    onPageChange={pageChange3}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange3}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell3
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell3
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </TabStripTab>
-            <TabStripTab title="계약">
-              <GridContainer>
-                <ExcelExport
-                  data={mainDataResult4.data}
-                  ref={(exporter) => {
-                    _export4 = exporter;
-                  }}
-                  fileName="고객이력관리"
-                >
-                  <Grid
-                    style={{ height: "75vh" }}
-                    data={process(
-                      mainDataResult4.data.map((row) => ({
-                        ...row,
-                        chkperson: userListData.find(
-                          (items: any) => items.user_id == row.chkperson
-                        )?.user_name,
-                        materialtype: materialtypeListData.find(
-                          (items: any) => items.sub_code == row.materialtype
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                      })),
-                      mainDataState4
-                    )}
-                    {...mainDataState4}
-                    onDataStateChange={onMainDataStateChange4}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY4}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange4}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult4.total}
-                    skip={page4.skip}
-                    take={page4.take}
-                    pageable={true}
-                    onPageChange={pageChange4}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange4}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList4"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell4
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell4
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item) =>
+                                item[DATA_ITEM_KEY] ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].custcd
+                      }
+                      form_id={"BA_A0021W_603"}
+                      table_id={"BA020T"}
+                      style={{ height: "60vh" }}
+                    />
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="상담일지">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: "75vh" }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            person: userListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (item: any) => item.sub_code == row.materialtype
+                            )?.code_name,
+                            type: typeListData.find(
+                              (item: any) => item.sub_code == row.type
+                            )?.code_name,
+                            usegb: usegbListData.find(
+                              (item: any) => item.sub_code == row.usegb
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="견적">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: "75vh" }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            person: userListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="계약">
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult4.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
+                      }}
+                      fileName="고객이력관리"
+                    >
+                      <Grid
+                        style={{ height: "75vh" }}
+                        data={process(
+                          mainDataResult4.data.map((row) => ({
+                            ...row,
+                            chkperson: userListData.find(
+                              (items: any) => items.user_id == row.chkperson
+                            )?.user_name,
+                            materialtype: materialtypeListData.find(
+                              (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                          })),
+                          mainDataState4
+                        )}
+                        {...mainDataState4}
+                        onDataStateChange={onMainDataStateChange4}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange4}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4.total}
+                        skip={page4.skip}
+                        take={page4.take}
+                        pageable={true}
+                        onPageChange={pageChange4}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
             </TabStripTab>
           </TabStrip>
-        </TabStripTab>
-      </TabStrip>
+        </>
+      )}
+
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}

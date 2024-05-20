@@ -723,9 +723,7 @@ const PR_A2000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
-            >
+            <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>
                   <ButtonContainer style={{ justifyContent: "left" }}>
@@ -744,162 +742,168 @@ const PR_A2000W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitle>
               </GridTitleContainer>
-              <FilterBox style={{ width: "100%" }}>
-                <tbody>
-                  <tr>
-                    <th>시작시간</th>
-                    <td colSpan={3}>
-                      {startOrEnd == "end"
-                        ? masterDataResult.strtime +
-                          " (경과시간 : " +
-                          duration +
-                          ")"
-                        : "00:00:00"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>수량</th>
-                    <td>
-                      <NumericTextBox
-                        name="qty"
-                        value={filters.qty}
-                        onChange={filterNumericTextBoxChange}
-                      />
-                    </td>
-                    <th>불량</th>
-                    <td>
-                      <Input
-                        name="badqty"
-                        type="number"
-                        value={filters.badqty}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  {paraSaved.inlotnum_s !== "" ? (
+              <GridContainer
+                style={{ height: deviceHeight - height, overflow: "auto" }}
+              >
+                <FilterBox style={{ width: "100%" }}>
+                  <tbody>
                     <tr>
-                      <th>투입LOT</th>
-                      <td>
-                        <Input
-                          name="inlotnum"
-                          type="text"
-                          value={paraSaved.inlotnum_s}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>소재 품목명</th>
-                      <td>
-                        <Input
-                          name="initemnm"
-                          type="text"
-                          value={paraSaved.initemnm_s}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                  ) : (
-                    ""
-                  )}
-                  <tr>
-                    <th>비고</th>
-                    <td colSpan={3}>
-                      <TextArea
-                        value={filters.remark}
-                        name="remark"
-                        rows={5}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                  </tr>
-                  {stopStartOrEnd == "end" && stopStartTime ? (
-                    <tr>
-                      <th>비가동시작시간</th>
+                      <th>시작시간</th>
                       <td colSpan={3}>
-                        {convertDateToStrWithTime2(new Date(stopStartTime))}
+                        {startOrEnd == "end"
+                          ? masterDataResult.strtime +
+                            " (경과시간 : " +
+                            duration +
+                            ")"
+                          : "00:00:00"}
                       </td>
                     </tr>
-                  ) : (
-                    ""
-                  )}
-                </tbody>
-              </FilterBox>
+                    <tr>
+                      <th>수량</th>
+                      <td>
+                        <NumericTextBox
+                          name="qty"
+                          value={filters.qty}
+                          onChange={filterNumericTextBoxChange}
+                        />
+                      </td>
+                      <th>불량</th>
+                      <td>
+                        <Input
+                          name="badqty"
+                          type="number"
+                          value={filters.badqty}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    {paraSaved.inlotnum_s !== "" ? (
+                      <tr>
+                        <th>투입LOT</th>
+                        <td>
+                          <Input
+                            name="inlotnum"
+                            type="text"
+                            value={paraSaved.inlotnum_s}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>소재 품목명</th>
+                        <td>
+                          <Input
+                            name="initemnm"
+                            type="text"
+                            value={paraSaved.initemnm_s}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                    ) : (
+                      ""
+                    )}
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={3}>
+                        <TextArea
+                          value={filters.remark}
+                          name="remark"
+                          rows={5}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    {stopStartOrEnd == "end" && stopStartTime ? (
+                      <tr>
+                        <th>비가동시작시간</th>
+                        <td colSpan={3}>
+                          {convertDateToStrWithTime2(new Date(stopStartTime))}
+                        </td>
+                      </tr>
+                    ) : (
+                      ""
+                    )}
+                  </tbody>
+                </FilterBox>
 
-              {permissions && (
-                <>
-                  <ButtonContainer style={{ justifyContent: "center"}}>
-                    <Button
-                      onClick={onClickWork}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save && stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn green"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {startOrEnd == "start" ? "시작" : "종료"}
-                    </Button>
-                    <Button
-                      onClick={onDefectWndClick}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save &&
-                        startOrEnd == "end" &&
-                        stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn red"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      불량입력
-                    </Button>
-                  </ButtonContainer>
-                  <ButtonContainer style={{ justifyContent: "center"}}>
-                    <Button
-                      onClick={onInLotWndClick}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save &&
-                        startOrEnd == "end" &&
-                        stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      투입 LOT 선택
-                    </Button>
-                    <Button
-                      onClick={onClickStop}
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                      className="iot-btn gray"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
-                    </Button>
-                  </ButtonContainer>
-                </>
-              )}
+                {permissions && (
+                  <>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onClickWork}
+                        themeColor={"primary"}
+                        disabled={
+                          permissions.save && stopStartOrEnd == "start"
+                            ? false
+                            : true
+                        }
+                        className="iot-btn green"
+                        style={{
+                          width: "110px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {startOrEnd == "start" ? "시작" : "종료"}
+                      </Button>
+                      <Button
+                        onClick={onDefectWndClick}
+                        themeColor={"primary"}
+                        disabled={
+                          permissions.save &&
+                          startOrEnd == "end" &&
+                          stopStartOrEnd == "start"
+                            ? false
+                            : true
+                        }
+                        className="iot-btn red"
+                        style={{
+                          width: "110px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        불량입력
+                      </Button>
+                    </ButtonContainer>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onInLotWndClick}
+                        themeColor={"primary"}
+                        disabled={
+                          permissions.save &&
+                          startOrEnd == "end" &&
+                          stopStartOrEnd == "start"
+                            ? false
+                            : true
+                        }
+                        className="iot-btn"
+                        style={{
+                          width: "110px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        투입 LOT 선택
+                      </Button>
+                      <Button
+                        onClick={onClickStop}
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                        className="iot-btn gray"
+                        style={{
+                          width: "110px",
+                          height: "50px",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {stopStartOrEnd == "start"
+                          ? "비가동입력"
+                          : "비가동종료"}
+                      </Button>
+                    </ButtonContainer>
+                  </>
+                )}
+              </GridContainer>
             </GridContainer>
           </SwiperSlide>
         </Swiper>
