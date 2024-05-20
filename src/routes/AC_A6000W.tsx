@@ -62,6 +62,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -343,39 +344,10 @@ const AC_A6000W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQueryData(userQueryStr, setUserListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
 
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages("AC_A6000W", setMessagesData);

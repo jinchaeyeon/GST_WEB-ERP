@@ -41,6 +41,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -130,50 +131,13 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const billstat2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC902")
-      );
-      const report_statQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC906")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      const bizdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA027")
-      );
-      const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC013")
-      );
-      fetchQuery(billstat2QueryStr, setbillstat2ListData);
-      fetchQuery(report_statQueryStr, setreport_statListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(bizdivQueryStr, setBizdivListData);
-      fetchQuery(taxtypeQueryStr, setTaxtypeListData);
+      setbillstat2ListData(getBizCom(bizComponentData, "L_AC902"));
+      setreport_statListData(getBizCom(bizComponentData, "L_AC906"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
+      setBizdivListData(getBizCom(bizComponentData, "L_BA027"));
+      setTaxtypeListData(getBizCom(bizComponentData, "L_AC013"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
