@@ -37,7 +37,8 @@ import {
   UseParaPc,
   convertDateToStr,
   toDate,
-  setdptcdListData
+  setdptcdListData,
+  getBizCom
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
