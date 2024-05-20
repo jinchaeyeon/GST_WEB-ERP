@@ -13,15 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { InputChangeEvent } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -49,9 +41,8 @@ import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
@@ -379,7 +370,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob) );
+      setUrl(URL.createObjectURL(blob));
     } else {
       //데이터 없을 경우
       setUrl("");
@@ -484,7 +475,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     user_id: "",
   });
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const onSaveClick = () => {
     const dataItem: { [name: string]: any } = mainDataResult.data.filter(
@@ -612,40 +603,9 @@ const pc = UseGetValueFromSessionItem("pc");
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      fetchQueryData(userQueryStr, setUserListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [is_attached, setIs_attached] = useState<string>("");
@@ -805,7 +765,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files == null) return false;
-    setLoading(true)
+    setLoading(true);
 
     let data: any;
 
@@ -827,7 +787,7 @@ const pc = UseGetValueFromSessionItem("pc");
     }
 
     fetchmanualGrid();
-    setLoading(false)
+    setLoading(false);
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");

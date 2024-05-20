@@ -18,13 +18,13 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import "swiper/css";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -48,18 +48,17 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -78,9 +77,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -595,7 +591,7 @@ const PR_A9000W: React.FC = () => {
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [editIndex2, setEditIndex2] = useState<number | undefined>();
@@ -629,35 +625,9 @@ const PR_A9000W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData != null) {
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2756,7 +2726,11 @@ const PR_A9000W: React.FC = () => {
                   fileName="재공품 기타입출고"
                 >
                   <Grid
-                    style={{ height: isMobile? deviceHeight - height - height1 : "68vh" }}
+                    style={{
+                      height: isMobile
+                        ? deviceHeight - height - height1
+                        : "68vh",
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2801,40 +2775,42 @@ const PR_A9000W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : customField.includes(item.fieldName)
-                                  ? CustomComboBoxCell
-                                  : itemcdField.includes(item.fieldName)
-                                  ? ColumnCommandCell
-                                  : undefined
-                              }
-                              headerCell={
-                                customHeaderField.includes(item.fieldName)
-                                  ? RequiredHeader
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : numberField2.includes(item.fieldName)
-                                  ? editNumberFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : customField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : itemcdField.includes(item.fieldName)
+                                    ? ColumnCommandCell
+                                    : undefined
+                                }
+                                headerCell={
+                                  customHeaderField.includes(item.fieldName)
+                                    ? RequiredHeader
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : numberField2.includes(item.fieldName)
+                                    ? editNumberFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -2889,7 +2865,9 @@ const PR_A9000W: React.FC = () => {
                 fileName="재공품 기타입출고"
               >
                 <Grid
-                  style={{ height: isMobile? deviceHeight - height - height1 : "68vh" }}
+                  style={{
+                    height: isMobile ? deviceHeight - height - height1 : "68vh",
+                  }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
@@ -2933,40 +2911,42 @@ const PR_A9000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : dateField.includes(item.fieldName)
-                                ? DateCell
-                                : customField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : itemcdField.includes(item.fieldName)
-                                ? ColumnCommandCell2
-                                : undefined
-                            }
-                            headerCell={
-                              customHeaderField2.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? detailTotalFooterCell
-                                : numberField2.includes(item.fieldName)
-                                ? editNumberFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : customField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : itemcdField.includes(item.fieldName)
+                                  ? ColumnCommandCell2
+                                  : undefined
+                              }
+                              headerCell={
+                                customHeaderField2.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? detailTotalFooterCell
+                                  : numberField2.includes(item.fieldName)
+                                  ? editNumberFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>

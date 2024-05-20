@@ -13,9 +13,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -43,8 +45,8 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas3,
   setDefaultDate,
@@ -61,9 +63,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0021W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -215,62 +214,16 @@ const BA_A0021W_603: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
-      );
-      const typeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM701")
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA076")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA077")
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(usegbQueryStr, setUsegbListData);
-      fetchQuery(typeQueryStr, setTypeListData);
-      fetchQuery(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQuery(userQueryStr, setUserListData);
-      fetchQuery(custdivQueryStr, setCustdivListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      setUsegbListData(getBizCom(bizComponentData, "L_CM700"));
+      setTypeListData(getBizCom(bizComponentData, "L_CM701"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setCustdivListData(getBizCom(bizComponentData, "L_BA026"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA076"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA077"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0021W_603", setCustomOptionData);

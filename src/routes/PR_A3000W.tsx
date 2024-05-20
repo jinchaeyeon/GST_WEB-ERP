@@ -6,8 +6,11 @@ import {
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -23,12 +26,11 @@ import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox"
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
+  getBizCom,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -38,9 +40,6 @@ import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import { useApi } from "../hooks/api";
 import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -48,7 +47,7 @@ const DATA_ITEM_KEY = "idx";
 const PR_A3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
@@ -78,35 +77,9 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-
-      fetchQuery(proccdQueryStr, setProccdListData);
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   type TMainDataResult = {
     itemnm: string;

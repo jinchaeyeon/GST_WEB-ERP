@@ -2,11 +2,9 @@ import {
   ComboBoxChangeEvent,
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 
-import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../../hooks/api";
-import { getQueryFromBizComponent } from "../CommonFunction";
 
 type TCommonComboBox = {
   name: string;
@@ -33,7 +31,8 @@ const CommonComboBox = ({
   para = "",
 }: TCommonComboBox) => {
   const processApi = useApi();
-  const [listData, setListData] = useState([]);
+  const [listData, setListData]: any = useState(bizComponentData.data.Rows);
+
   bizComponentData = bizComponentData.find(
     (item: any) => item.bizComponentId == bizComponentId
   );
@@ -42,36 +41,6 @@ const CommonComboBox = ({
   if (className.includes("required")) {
     required = true;
   }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  //콤보박스 리스트 쿼리 조회
-  const fetchData = useCallback(async () => {
-    let data: any;
-
-    const queryStr = getQueryFromBizComponent(bizComponentData);
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-
-      setListData(rows); //리스트 세팅
-    }
-  }, []);
 
   let newColumns = [];
 
@@ -88,7 +57,7 @@ const CommonComboBox = ({
       newColumns = newColumns.filter((column: any) => column.width !== 0);
     }
   }
-  
+
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value == null ? "" : e.target.value[valueField];
     let values = e.value;

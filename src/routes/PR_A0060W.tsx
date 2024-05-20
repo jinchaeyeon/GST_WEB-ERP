@@ -67,6 +67,7 @@ import {
   handleKeyPressSearch,
   isValidDate,
   useSysMessage,
+  getBizCom,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -303,7 +304,7 @@ const PR_A0060: React.FC = () => {
   const processApi = useApi();
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -379,43 +380,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_004"
-        )
-      );
-
-      fetchQuery(dptcdQueryStr, setdptcdListData);
-      fetchQuery(personQueryStr, setPersonListData);
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_004"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1356,7 +1324,7 @@ const pc = UseGetValueFromSessionItem("pc");
     });
     if (swiper && isMobile) {
       swiper.slideTo(1);
-		}
+    }
   };
 
   const onAddClick = () => {

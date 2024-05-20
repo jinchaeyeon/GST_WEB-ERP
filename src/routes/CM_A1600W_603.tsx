@@ -11,7 +11,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -25,8 +25,10 @@ import {
   TimelineView,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -50,18 +52,17 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime,
   dateformat,
   dateformat2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -87,9 +88,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -181,7 +179,7 @@ const CM_A1600W_603: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"
@@ -248,37 +246,9 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const colorQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
-        )
-      );
-
-      fetchQuery(colorQueryStr, setColorData);
+      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [todoDataState, setTodoDataState] = useState<State>({
     sort: [],
@@ -3008,7 +2978,11 @@ const pc = UseGetValueFromSessionItem("pc");
               fileName="Scheduler"
             >
               <Grid
-                style={{ height: isMobile? deviceHeight - height - height3 - 30 : "73.5vh" }}
+                style={{
+                  height: isMobile
+                    ? deviceHeight - height - height3 - 30
+                    : "73.5vh",
+                }}
                 data={process(
                   userDataResult.data.map((row) => ({
                     ...row,

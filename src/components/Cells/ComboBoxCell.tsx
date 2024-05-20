@@ -4,9 +4,8 @@ import {
 } from "@progress/kendo-react-dropdowns";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useApi } from "../../hooks/api";
-import { getQueryFromBizComponent } from "../CommonFunction";
 
 interface item {
   color: string;

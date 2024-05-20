@@ -15,11 +15,10 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
 import { Column, ColumnEditorOptions } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -34,7 +33,6 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -44,15 +42,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
-  getQueryFromBizComponent,
+  getBizCom,
   setDefaultDate,
   toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,6 +57,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
@@ -112,7 +110,7 @@ const BA_A0020_603: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -180,59 +178,14 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_QC001_603"
-        )
-      );
-
-      const ncrdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_QC040")
-      );
-
-      const combytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_QC111")
-      );
-      const userQueryStr2 = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
-      );
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(statusQueryStr, setStatusListData);
-      fetchQueryData(ncrdivQueryStr, setNcrdivListData);
-      fetchQueryData(combytypeQueryStr, setCombytyleListData);
-      fetchQueryData(userQueryStr2, setUserListData2);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setStatusListData(getBizCom(bizComponentData, "L_QC001_603"));
+      setNcrdivListData(getBizCom(bizComponentData, "L_QC040"));
+      setCombytyleListData(getBizCom(bizComponentData, "L_QC111"));
+      setUserListData2(getBizCom(bizComponentData, "L_HU250T"));
     }
   }, [bizComponentData]);
 
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [mainDataState, setMainDataState] = useState<State>({
@@ -1937,28 +1890,30 @@ const pc = UseGetValueFromSessionItem("pc");
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -2321,25 +2276,25 @@ const pc = UseGetValueFromSessionItem("pc");
                         style={{ width: "50px" }}
                       />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList2"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <Column
-                                field={item.fieldName}
-                                header={item.caption}
-                                editor={(options) => cellEditor(options)}
-                                style={{
-                                  width: item.width,
-                                  whiteSpace: "nowrap",
-                                  textOverflow: "ellipsis",
-                                  overflow: "hidden",
-                                  minWidth: item.width,
-                                }}
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdList2"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <Column
+                                  field={item.fieldName}
+                                  header={item.caption}
+                                  editor={(options) => cellEditor(options)}
+                                  style={{
+                                    width: item.width,
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
+                                    minWidth: item.width,
+                                  }}
+                                />
+                              )
+                          )}
                     </DataTable>
                   </CardContent>
                 </Card>
@@ -2433,25 +2388,27 @@ const pc = UseGetValueFromSessionItem("pc");
                           style={{ width: "50px" }}
                         />
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList3"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <Column
-                                  field={item.fieldName}
-                                  header={item.caption}
-                                  editor={(options) => cellEditor2(options)}
-                                  style={{
-                                    width: item.width,
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden",
-                                    minWidth: item.width,
-                                  }}
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <Column
+                                    field={item.fieldName}
+                                    header={item.caption}
+                                    editor={(options) => cellEditor2(options)}
+                                    style={{
+                                      width: item.width,
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                      overflow: "hidden",
+                                      minWidth: item.width,
+                                    }}
+                                  />
+                                )
+                            )}
                       </DataTable>
                     </CardContent>
                   </Card>
@@ -2546,25 +2503,27 @@ const pc = UseGetValueFromSessionItem("pc");
                           style={{ width: "50px" }}
                         />
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList4"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <Column
-                                  field={item.fieldName}
-                                  header={item.caption}
-                                  editor={(options) => cellEditor3(options)}
-                                  style={{
-                                    width: item.width,
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden",
-                                    minWidth: item.width,
-                                  }}
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <Column
+                                    field={item.fieldName}
+                                    header={item.caption}
+                                    editor={(options) => cellEditor3(options)}
+                                    style={{
+                                      width: item.width,
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                      overflow: "hidden",
+                                      minWidth: item.width,
+                                    }}
+                                  />
+                                )
+                            )}
                       </DataTable>
                     </CardContent>
                   </Card>

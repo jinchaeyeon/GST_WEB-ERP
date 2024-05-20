@@ -1,12 +1,11 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { bytesToBase64 } from "byte-base64";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -15,8 +14,8 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  getQueryFromBizComponent,
-  setDefaultDate,
+  getBizCom,
+  setDefaultDate
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
@@ -104,35 +103,10 @@ const QC_B0100W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-
-      fetchQuery(proccdQueryStr, setProccdListData);
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: 20,
@@ -512,7 +486,7 @@ const QC_B0100W: React.FC = () => {
   };
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",

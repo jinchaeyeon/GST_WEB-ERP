@@ -3,10 +3,8 @@ import {
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useApi } from "../../hooks/api";
-import { getQueryFromBizComponent } from "../CommonFunction";
 
 interface CustomCellProps extends GridCellProps {
   bizComponent: any;
@@ -30,7 +28,7 @@ const ComboBoxColorCell = (props: CustomCellProps) => {
     styles,
   } = props;
   const processApi = useApi();
-  const [listData, setListData]: any = useState([]);
+  const [listData, setListData]: any = useState(bizComponent.data.Rows);
 
   let isInEdit = field == dataItem.inEdit;
   if (className.includes("read-only")) {
@@ -41,14 +39,9 @@ const ComboBoxColorCell = (props: CustomCellProps) => {
     }
   }
 
-  const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
   const dataValue = dataItem[field];
 
   const value = listData.find((item: any) => item[valueField] == dataValue);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const columns = bizComponent ? bizComponent.bizComponentItems : [];
   let newColumns = columns.map((column: any) => ({
@@ -57,31 +50,6 @@ const ComboBoxColorCell = (props: CustomCellProps) => {
     width: column.columnWidth,
   }));
   newColumns = newColumns.filter((column: any) => column.width !== 0);
-
-  const fetchData = useCallback(async () => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    } else {
-      console.log("[오류발생]");
-      console.log(data);
-    }
-  }, []);
 
   const handleChange = (e: ComboBoxChangeEvent) => {
     if (onChange) {

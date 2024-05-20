@@ -23,7 +23,6 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -53,17 +52,16 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
+  getHeight,
   getItemQuery,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -417,7 +415,7 @@ const MA_A7000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -489,17 +487,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const loadplaceQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_LOADPLACE"
-        )
-      );
-
-      fetchQuery(loadplaceQueryStr, setLoadPlaceListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setLoadPlaceListData(getBizCom(bizComponentData, "L_LOADPLACE"));
     }
   }, [bizComponentData]);
 
@@ -561,28 +550,6 @@ const pc = UseGetValueFromSessionItem("pc");
       };
     });
   }, [itemInfo]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1951,38 +1918,40 @@ const pc = UseGetValueFromSessionItem("pc");
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : customField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : itemcdField.includes(item.fieldName)
-                            ? ColumnCommandCell
-                            : undefined
-                        }
-                        headerCell={
-                          requiredfield.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField2.includes(item.fieldName)
-                            ? editNumberFooterCell
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : customField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : itemcdField.includes(item.fieldName)
+                              ? ColumnCommandCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredfield.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : numberField2.includes(item.fieldName)
+                              ? editNumberFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>

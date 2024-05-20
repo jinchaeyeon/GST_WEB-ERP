@@ -11,8 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -30,7 +29,7 @@ import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
-  getQueryFromBizComponent,
+  getBizCom,
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import {
@@ -84,35 +83,9 @@ const KendoWindow = ({
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
-      );
-
-      fetchQuery(custdivQueryStr, setCustdivListData);
+      setCustdivListData(getBizCom(bizComponentData, "L_BA026"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
