@@ -48,8 +48,6 @@ module.exports = {
         },
       },
     },
-    disableHostCheck: true,
-    https: false,
     hot: true,
     historyApiFallback: true,
     compress: true,
