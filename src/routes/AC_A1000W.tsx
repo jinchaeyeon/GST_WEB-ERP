@@ -44,6 +44,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -144,44 +145,11 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const inputQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const slipdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC002")
-      );
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(inputQueryStr, setInputListData);
-      fetchQuery(slipdivQueryStr, setslipdivListData);
+      setUsersListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setInputListData(getBizCom(bizComponentData, "L_AC006"));
+      setslipdivListData(getBizCom(bizComponentData, "L_AC002"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {

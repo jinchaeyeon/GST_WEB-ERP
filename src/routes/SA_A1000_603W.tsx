@@ -81,6 +81,7 @@ import {
   dateformat,
   dateformat2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
@@ -721,131 +722,26 @@ const pc = UseGetValueFromSessionItem("pc");
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const materialgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA012_603"
-        )
-      );
-      const assaygbeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA013_603"
-        )
-      );
-      const startschgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA014_603"
-        )
-      );
-      const financegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA015_603"
-        )
-      );
-      const amtgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA016_603"
-        )
-      );
-      const addordgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA017_603"
-        )
-      );
-      const relationgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA018_603"
-        )
-      );
-      const statusQueryStr3 = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_BA016_603"
-        )
-      );
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
-      );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
-        )
-      );
-      const statusQueryStr2 = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA011_603"
-        )
-      );
-      const meditypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603"
-        )
-      );
-
-      const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA016")
-      );
-
-      const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA004")
-      );
-
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      fetchQueryData(materialgbQueryStr, setMaterialgbListData);
-      fetchQueryData(assaygbeQueryStr, setAssaygbeListData);
-      fetchQueryData(startschgbQueryStr, setStartschgbListData);
-      fetchQueryData(financegbQueryStr, setFinancegbListData);
-      fetchQueryData(amtgbQueryStr, setAmtgbListData);
-      fetchQueryData(addordgbQueryStr, setAddordgbListData);
-      fetchQueryData(relationgbQueryStr, setRelationgbListData);
-      fetchQueryData(statusQueryStr3, setStatusListData3);
-      fetchQueryData(ordstsQueryStr, setOrdstsListData);
-      fetchQueryData(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(quotypeQueryStr, setQuotypeListData);
-      fetchQueryData(quostsQueryStr, setQuostsListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(meditypeQueryStr, setMeditypeListData);
-      fetchQueryData(statusQueryStr, setStatusListData);
-      fetchQueryData(statusQueryStr2, setStatusListData2);
+    if (bizComponentData !== null) {  
+      setMaterialgbListData(getBizCom(bizComponentData, "L_SA012_603"));
+      setAssaygbeListData(getBizCom(bizComponentData, "L_SA013_603"));
+      setStartschgbListData(getBizCom(bizComponentData, "L_SA014_603"));
+      setFinancegbListData(getBizCom(bizComponentData, "L_SA015_603"));
+      setAmtgbListData(getBizCom(bizComponentData, "L_SA016_603"));
+      setAddordgbListData(getBizCom(bizComponentData, "L_SA017_603"));
+      setRelationgbListData(getBizCom(bizComponentData, "L_SA018_603"));
+      setStatusListData3(getBizCom(bizComponentData, "L_BA016_603"));
+      setOrdstsListData(getBizCom(bizComponentData, "L_SA002"));
+      setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setQuotypeListData(getBizCom(bizComponentData, "L_SA016"));
+      setQuostsListData(getBizCom(bizComponentData, "L_SA004"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setMeditypeListData(getBizCom(bizComponentData, "L_CM501_603"));
+      setStatusListData(getBizCom(bizComponentData, "L_CM500_603"));
+      setStatusListData2(getBizCom(bizComponentData, "L_SA011_603"));
     }
-  }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
+  }, [bizComponentData]); 
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

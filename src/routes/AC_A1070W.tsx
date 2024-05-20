@@ -44,6 +44,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -156,44 +157,12 @@ const AC_A1070W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(positionQueryStr, setPositionListData);
-      fetchQuery(locationQueryStr, setLocationListData);
+    if (bizComponentData !== null) { 
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setPositionListData(getBizCom(bizComponentData, "L_BA028"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

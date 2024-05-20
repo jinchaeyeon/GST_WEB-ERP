@@ -67,6 +67,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
   getQueryFromBizComponent,
@@ -527,44 +528,11 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const reviewlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU110")
-      );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
-      );
-      fetchQuery(reviewlvl1QueryStr, setReviewlvl1ListData);
-      fetchQuery(userQueryStr, setUserListData);
-      fetchQuery(dptcdQueryStr, setdptcdListData);
+      setReviewlvl1ListData(getBizCom(bizComponentData, "L_HU110"));
+      setUserListData(getBizCom(bizComponentData, "L_HU250T"));
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //엑셀 내보내기
   let _export: any;

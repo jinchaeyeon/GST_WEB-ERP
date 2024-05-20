@@ -197,6 +197,8 @@ const pc = UseGetValueFromSessionItem("pc");
       );
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(inputpathQueryStr, setInputPathListData);
+      setUserListData(getBizCom(bizComponentData, "L_AC065"));
+      setInputPathListData(getBizCom(bizComponentData, "L_AC065"));
     }
   }, [bizComponentData]);
 

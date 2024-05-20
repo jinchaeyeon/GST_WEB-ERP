@@ -41,7 +41,8 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  getHeight
+  getHeight,
+  getBizCom,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -54,11 +55,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -154,43 +151,11 @@ const SA_B2200: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(ordstsQueryStr, setOrdstsListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setOrdstsListData(getBizCom(bizComponentData, "L_SA002"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -788,31 +753,33 @@ const SA_B2200: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

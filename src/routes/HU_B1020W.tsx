@@ -34,6 +34,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  getBizCom,
   getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import {
@@ -95,49 +96,13 @@ const HU_B1020W: React.FC = () => {
   //#endregion
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
-      );
-      const paycdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU028")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      fetchQuery(dptcdQueryStr, setDptcdListData);
-      fetchQuery(postcdQueryStr, setPostcdListData);
-      fetchQuery(paycdQueryStr, setPaydListData);
-      fetchQuery(locationQueryStr, setLocationListData);
+    if (bizComponentData !== null) { 
+      setDptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setPostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setPaydListData(getBizCom(bizComponentData, "L_HU028"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   type TFilters = {
     pgSize: number;

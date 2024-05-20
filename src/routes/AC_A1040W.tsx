@@ -50,6 +50,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -281,65 +282,17 @@ const AC_A1040W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
-      );
-      const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC014")
-      );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
-      );
-      const usekindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC038")
-      );
-      const etaxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC401")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC065")
-      );
-      fetchQuery(positionQueryStr, setPositionListData);
-      fetchQuery(usekindQueryStr, setusekindListData);
-      fetchQuery(postcdQueryStr, setpostcdListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(dptcdQueryStr, setdptcdListData);
-      fetchQuery(taxtypeQueryStr, setTaxtypeListData);
-      fetchQuery(etaxQueryStr, setetaxListData);
-      fetchQuery(taxdivQueryStr, settaxdivListData);
+    if (bizComponentData !== null) {   
+      setPositionListData(getBizCom(bizComponentData, "L_BA028"));
+      setusekindListData(getBizCom(bizComponentData, "L_AC038"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setTaxtypeListData(getBizCom(bizComponentData, "L_AC014"));
+      setetaxListData(getBizCom(bizComponentData, "L_AC401"));
+      settaxdivListData(getBizCom(bizComponentData, "L_AC065"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
