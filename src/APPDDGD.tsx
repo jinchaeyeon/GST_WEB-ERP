@@ -388,18 +388,6 @@ const App: React.FC = () => {
 };
 
 const AppInner: React.FC = () => {
-  const fileName: string = `apiserver.json`;
-  const [Link, setLink] = useRecoilState(linkState);
-  const get_text_file = async () => {
-    axios.get(`/${fileName}`).then((res: any) => {
-      setLink(res.data[0].url);
-    });
-  };
-
-  useEffect(() => {
-    get_text_file();
-  }, [Link]);
-
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role == "ADMIN";
@@ -434,12 +422,10 @@ const AppInner: React.FC = () => {
     if (
       token &&
       userId != "" &&
-      (sessionUserId == "" || sessionUserId == null) &&
-      Link != "" &&
-      Link != undefined
+      (sessionUserId == "" || sessionUserId == null)
     )
       fetchSessionItem();
-  }, [userId, sessionUserId, Link]);
+  }, [userId, sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"

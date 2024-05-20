@@ -58,6 +58,7 @@ export const clickedState = atom<string>({
 export const linkState = atom<any>({
   key: "linkState",
   default: "",
+  effects_UNSTABLE: [persistAtom]
 });
 
 export const infoState = atom<TInfoItem>({

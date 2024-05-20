@@ -2,6 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -9,8 +11,30 @@ module.exports = {
   mode: isDevelopment ? "development" : "production",
   // Production 빌드 시, 리액트 코드 트랜스파일링 할 시작점 설정.
   entry: "./src/index.tsx",
+  watchOptions: {
+    ignored: /node_modules/,
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        test: /\.(js|jsx|ts|tsx)$/,
+        parallel: true,
+        terserOptions: {
+          format: {
+            comments: false, // 빌드 시, comment 제거 (주석 제거)
+          },
+          compress: {
+            drop_console: true, // 빌드 시, console.* 구문 코드 제거
+          },
+        },
+        extractComments: false, // 주석을 별도의 파일로 추출할 지 여부
+      }),
+    ],
+  },
 
   devServer: {
+    liveReload: true,
     static: {
       directory: path.resolve(__dirname, "public"),
     },
@@ -24,6 +48,8 @@ module.exports = {
         },
       },
     },
+    disableHostCheck: true,
+    https: false,
     hot: true,
     historyApiFallback: true,
     compress: true,
@@ -94,8 +120,8 @@ module.exports = {
         ],
       },
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.(png|jpg|jpeg|ttf|woff|svg)$/,
@@ -127,13 +153,14 @@ module.exports = {
       ],
     }),
     new webpack.ProvidePlugin({ React: "react" }),
+    new MiniCssExtractPlugin()
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
   },
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: '[name].[contenthash:8].js',
-    clean: true
+    filename: "[name].[contenthash:8].js",
+    clean: true,
   },
 };
