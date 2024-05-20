@@ -31,11 +31,11 @@ const CommonComboBox = ({
   para = "",
 }: TCommonComboBox) => {
   const processApi = useApi();
-  const [listData, setListData]: any = useState(bizComponentData.data.Rows);
-
   bizComponentData = bizComponentData.find(
     (item: any) => item.bizComponentId == bizComponentId
   );
+
+  const [listData, setListData]: any = useState(bizComponentData.data.Rows);
 
   let required = false;
   if (className.includes("required")) {
