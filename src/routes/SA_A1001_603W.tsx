@@ -985,6 +985,10 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const onPrint = () => {
+    if(!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
+      return false;
+    } 
+    
     setParaData((prev) => ({
       ...prev,
       workType: "PRINT",
