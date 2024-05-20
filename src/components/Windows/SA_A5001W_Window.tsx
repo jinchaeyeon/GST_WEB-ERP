@@ -49,8 +49,8 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   numberWithCommas,
   toDate,
 } from "../CommonFunction";
@@ -294,43 +294,15 @@ const CopyWindow = ({
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
-      );
-      const custcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
-      );
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(custcdQueryStr, setCustcdListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(locationQueryStr, setLocationListData);
+      setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA172"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA173"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setCustcdListData(getBizCom(bizComponentData, "L_CUST"));
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
     }
   }, [bizComponentData]);
 
