@@ -34,6 +34,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
+  getBizCom,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -151,64 +152,16 @@ const AC_B5080W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
-      );
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC014")
-      );
-      const inkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA003")
-      );
-      const inputpathQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
-      );
-      fetchQuery(userQueryStr, setUserListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(taxtypeQueryStr, setTaxtypeListData);
-      fetchQuery(inkindQueryStr, setInkindListData);
-      fetchQuery(inputpathQueryStr, setInputpathListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
+      setTaxtypeListData(getBizCom(bizComponentData, "L_AC014"));
+      setInkindListData(getBizCom(bizComponentData, "L_BA003"));
+      setInputpathListData(getBizCom(bizComponentData, "L_AC006"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

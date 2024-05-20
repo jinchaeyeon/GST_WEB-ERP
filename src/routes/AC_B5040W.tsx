@@ -43,6 +43,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
@@ -139,50 +140,13 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const taxgubunQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC405")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC402")
-      );
-      const inoutdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC003")
-      );
-      const taxkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC403")
-      );
-      const balkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC404")
-      );
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(inoutdivQueryStr, setInoutdivListData);
-      fetchQuery(taxkindQueryStr, setTaxkindListData);
-      fetchQuery(balkindQueryStr, setBalkindListData);
-      fetchQuery(taxgubunQueryStr, setTaxgubunListData);
+      setTaxdivListData(getBizCom(bizComponentData, "L_AC402"));
+      setInoutdivListData(getBizCom(bizComponentData, "L_AC003"));
+      setTaxkindListData(getBizCom(bizComponentData, "L_AC403"));
+      setBalkindListData(getBizCom(bizComponentData, "L_AC404"));
+      setTaxgubunListData(getBizCom(bizComponentData, "L_AC405"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
