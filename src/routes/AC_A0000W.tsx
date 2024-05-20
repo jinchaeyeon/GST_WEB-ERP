@@ -46,7 +46,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   isValidDate,
   useSysMessage,

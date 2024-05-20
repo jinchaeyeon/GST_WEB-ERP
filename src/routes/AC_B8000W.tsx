@@ -37,7 +37,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {

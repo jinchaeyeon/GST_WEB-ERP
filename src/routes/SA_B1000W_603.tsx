@@ -40,7 +40,7 @@ import {
   UsePermissions,
   dateformat2,
   getBizCom,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {

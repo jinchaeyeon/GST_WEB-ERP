@@ -62,7 +62,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,

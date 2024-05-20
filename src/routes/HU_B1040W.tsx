@@ -37,7 +37,7 @@ import {
   UsePermissions,
   getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {

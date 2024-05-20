@@ -43,7 +43,7 @@ import {
   dateformat2,
   getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  
   numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";

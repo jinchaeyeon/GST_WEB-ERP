@@ -55,7 +55,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   numberWithCommas,
 } from "../components/CommonFunction";

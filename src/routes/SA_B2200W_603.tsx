@@ -39,7 +39,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";

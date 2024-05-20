@@ -52,7 +52,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
+  
   setDefaultDate,
 } from "../components/CommonFunction";
 import {

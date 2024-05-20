@@ -39,7 +39,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
-  getQueryFromBizComponent,
+  
   setDefaultDate,
 } from "../components/CommonFunction";
 import {

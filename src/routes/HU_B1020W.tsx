@@ -35,7 +35,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
-  getQueryFromBizComponent,
+  
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,

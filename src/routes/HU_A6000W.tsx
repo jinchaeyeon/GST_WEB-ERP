@@ -36,7 +36,7 @@ import {
   UsePermissions,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
+  
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
