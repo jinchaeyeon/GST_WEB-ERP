@@ -45,6 +45,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -213,49 +214,14 @@ const AC_A1060W: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(personQueryStr, setPersonListData);
+    if (bizComponentData !== null) { 
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({

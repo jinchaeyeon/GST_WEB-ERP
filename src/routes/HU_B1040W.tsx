@@ -35,6 +35,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -211,97 +212,25 @@ const HU_B1040W: React.FC = () => {
   const [taxcdListData, setTaxcdListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
-      );
-      const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA001")
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      );
-      const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
-      );
-      const nationcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA057")
-      );
-      const ocptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU037")
-      );
-      const workgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU075")
-      );
-      const workclsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU076")
-      );
-      const jobcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU007")
-      );
-      const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU006")
-      );
-      const regcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU012")
-      );
-      const rtrrsnQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU023")
-      );
-      const emptypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU024")
-      );
-      const paycdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU028")
-      );
-      const taxcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU029")
-      );
-      fetchQuery(dptcdQueryStr, setdptcdListData);
-      fetchQuery(postcdQueryStr, setpostcdListData);
-      fetchQuery(orgdivQueryStr, setOrgdivListData);
-      fetchQuery(locationQueryStr, setLocationListData);
-      fetchQuery(positionQueryStr, setPositionListData);
-      fetchQuery(nationcdQueryStr, setNationcdListData);
-      fetchQuery(ocptcdQueryStr, setOcptcdListData);
-      fetchQuery(workgbQueryStr, setWorkgbListData);
-      fetchQuery(workclsQueryStr, setWorkclsListData);
-      fetchQuery(jobcdQueryStr, setJobcdListData);
-      fetchQuery(abilcdQueryStr, setAbilcdListData);
-      fetchQuery(regcdQueryStr, setRegcdListData);
-      fetchQuery(rtrrsnQueryStr, setRtrrsnListData);
-      fetchQuery(emptypeQueryStr, setEmptypeListData);
-      fetchQuery(paycdQueryStr, setPaycdListData);
-      fetchQuery(taxcdQueryStr, setTaxcdListData);
+    if (bizComponentData !== null) {   
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setOrgdivListData(getBizCom(bizComponentData, "L_BA001"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
+      setPositionListData(getBizCom(bizComponentData, "L_BA028"));
+      setNationcdListData(getBizCom(bizComponentData, "L_BA057"));
+      setOcptcdListData(getBizCom(bizComponentData, "L_HU037"));
+      setWorkgbListData(getBizCom(bizComponentData, "L_HU075"));
+      setWorkclsListData(getBizCom(bizComponentData, "L_HU076"));
+      setJobcdListData(getBizCom(bizComponentData, "L_HU007"));
+      setAbilcdListData(getBizCom(bizComponentData, "L_HU006"));
+      setRegcdListData(getBizCom(bizComponentData, "L_HU012"));
+      setRtrrsnListData(getBizCom(bizComponentData, "L_HU023"));
+      setEmptypeListData(getBizCom(bizComponentData, "L_HU024"));
+      setPaycdListData(getBizCom(bizComponentData, "L_HU028"));
+      setTaxcdListData(getBizCom(bizComponentData, "L_HU029"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

@@ -54,6 +54,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -214,45 +215,12 @@ const HU_B3140W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
-      );
-      const paytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU032")
-      );
-
-      fetchQuery(paytypeQueryStr, setPaytypeListData);
-      fetchQuery(postcdQueryStr, setPostcdListData);
-      fetchQuery(dptcdQueryStr, setDptcdListData);
+      setPaytypeListData(getBizCom(bizComponentData, "L_HU032"));
+      setPostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setDptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)

@@ -49,6 +49,7 @@ import {
   dateformat,
   dateformat2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
   getQueryFromBizComponent,
@@ -273,50 +274,11 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const contractgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA037")
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      fetchQueryData(contractgbQueryStr, setcontractgbListData);
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
+      setcontractgbListData(getBizCom(bizComponentData, "L_BA037"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
     }
-  }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
+  }, [bizComponentData]); 
 
   // 조회조건
   const [filters, setFilters] = useState({

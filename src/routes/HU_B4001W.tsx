@@ -48,6 +48,7 @@ import {
   convertDateToStrWithTime2,
   dateformat2,
   findMessage,
+  getBizCom,
   getHeight,
   getQueryFromBizComponent,
   isValidDate,
@@ -138,40 +139,11 @@ const HU_B4001W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
-      );
-      const adjdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU092")
-      );
-
-      fetchQuery(personQueryStr, setPersonListData);
-      fetchQuery(adjdivQueryStr, setAdjdivListData);
+    if (bizComponentData !== null) {   
+      setPersonListData(getBizCom(bizComponentData, "L_HU250T"));
+      setAdjdivListData(getBizCom(bizComponentData, "L_HU092"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const ComboBoxChange = (e: any) => {

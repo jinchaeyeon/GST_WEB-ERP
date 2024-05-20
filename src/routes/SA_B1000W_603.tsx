@@ -39,6 +39,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   dateformat2,
+  getBizCom,
   getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -562,63 +563,13 @@ const SA_B1000W_603: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
-        )
-      );
-      const statusQueryStr2 = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA011_603"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const meditypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603"
-        )
-      );
-      fetchQueryData(statusQueryStr2, setStatusListData2);
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(meditypeQueryStr, setMeditypeListData);
-      fetchQueryData(statusQueryStr, setStatusListData);
+      setStatusListData2(getBizCom(bizComponentData, "L_SA011_603"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setMeditypeListData(getBizCom(bizComponentData, "L_CM501_603"));
+      setStatusListData(getBizCom(bizComponentData, "L_CM500_603"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

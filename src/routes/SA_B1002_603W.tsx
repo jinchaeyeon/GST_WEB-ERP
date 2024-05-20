@@ -38,6 +38,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getQueryFromBizComponent,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -151,46 +152,11 @@ const SA_B1002_603W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
     }
   }, [bizComponentData]);
 
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   // 조회조건
   const [filters, setFilters] = useState({

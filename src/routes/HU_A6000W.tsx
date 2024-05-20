@@ -34,6 +34,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   UsePermissions,
+  getBizCom,
   getHeight,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -94,38 +95,11 @@ const HU_A6000W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU006")
-      );
-      fetchQuery(abilcdQueryStr, setAbilcdListDate);
+    if (bizComponentData !== null) {    
+      setAbilcdListDate(getBizCom(bizComponentData, "L_HU006"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = React.useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
+  
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A6000W", setCustomOptionData);

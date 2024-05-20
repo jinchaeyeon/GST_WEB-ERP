@@ -48,6 +48,7 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -254,52 +255,12 @@ const SA_A1001_603W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const requestgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_Requestgb"
-        )
-      );
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(requestgbQueryStr, setRequestgbListData);
+    if (bizComponentData !== null) {      
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));      
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));      
+      setRequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
