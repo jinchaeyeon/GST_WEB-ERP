@@ -14,9 +14,11 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -39,13 +41,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -62,9 +63,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -105,7 +103,7 @@ const PR_A5000W: React.FC = () => {
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -163,49 +161,12 @@ const PR_A5000W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const fxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
-      );
-
-      fetchQuery(proccdQueryStr, setProccdListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(fxQueryStr, setFxListData);
+      setFxListData(getBizCom(bizComponentData, "L_fxcode"));
+      setUsersListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setProccdListData(getBizCom(bizComponentData, "L_PR010"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

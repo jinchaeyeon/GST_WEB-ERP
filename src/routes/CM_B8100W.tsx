@@ -12,8 +12,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -32,12 +31,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -94,7 +92,7 @@ const CM_B8100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -152,37 +150,9 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(userQueryStr, setUserListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });

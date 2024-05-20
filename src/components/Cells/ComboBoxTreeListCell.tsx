@@ -1,12 +1,9 @@
 import {
   ComboBoxChangeEvent,
-  MultiColumnComboBox
+  MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { TreeListCellProps } from "@progress/kendo-react-treelist";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
-import { useApi } from "../../hooks/api";
-import { getQueryFromBizComponent } from "../CommonFunction";
+import { useState } from "react";
 
 interface CustomCellProps extends TreeListCellProps {
   bizComponent: any;
@@ -29,39 +26,8 @@ const ComboBoxCell = (props: CustomCellProps) => {
     ...others
   } = props;
 
-  const processApi = useApi();
-  const [listData, setListData]: any = useState([]);
+  const [listData, setListData]: any = useState(bizComponent.data.Rows);
   const isInEdit = readOnly ? false : field == dataItem.inEdit;
-  const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = useCallback(async () => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    } else {
-      console.log("[오류발생]");
-      console.log(data);
-    }
-  }, []);
 
   const handleChange = (e: ComboBoxChangeEvent) => {
     if (onChange) {

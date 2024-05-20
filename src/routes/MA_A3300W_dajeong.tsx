@@ -13,8 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -36,11 +35,10 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
+  getBizCom,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -95,7 +93,6 @@ const MA_A3300W_dajeong: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -206,60 +203,15 @@ const MA_A3300W_dajeong: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
-      );
-      const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const inuseQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_MA002")
-      );
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(taxdivQueryStr, setTaxdivListData);
-      fetchQuery(usersQueryStr, setUsersListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
-      fetchQuery(inuseQueryStr, setInuseListData);
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
+      setUsersListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setInuseListData(getBizCom(bizComponentData, "L_MA002"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -418,7 +370,7 @@ const MA_A3300W_dajeong: React.FC = () => {
       "@p_attdatnum": "",
       "@p_remark": "",
       "@p_baseamt": 0,
-      "@p_wonchgrat": 0, 
+      "@p_wonchgrat": 0,
       "@p_uschgrat": 0,
       "@p_importnum": "",
       "@p_auto_transfer": "",
@@ -843,7 +795,7 @@ const MA_A3300W_dajeong: React.FC = () => {
     );
   };
 
-  // ButtonInInput 버튼 클릭 시 
+  // ButtonInInput 버튼 클릭 시
   const onAddClick = () => {
     setWorkType("N");
     setDetailWindowVisible(true);
@@ -1325,32 +1277,34 @@ const MA_A3300W_dajeong: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        DateField.includes(item.fieldName)
-                          ? DateCell
-                          : NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : NumberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          DateField.includes(item.fieldName)
+                            ? DateCell
+                            : NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : NumberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1408,32 +1362,34 @@ const MA_A3300W_dajeong: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        NumberField.includes(item.fieldName)
-                          ? NumberCell
-                          : DateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 1
-                          ? detailTotalFooterCell
-                          : NumberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList2"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          NumberField.includes(item.fieldName)
+                            ? NumberCell
+                            : DateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 1
+                            ? detailTotalFooterCell
+                            : NumberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

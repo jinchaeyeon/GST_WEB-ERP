@@ -16,8 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -49,14 +48,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
@@ -163,7 +161,7 @@ const MA_A9001W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  
+
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -319,57 +317,14 @@ const MA_A9001W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC013")
-      );
-      const etaxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC401")
-      );
-      const exceptynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC406")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const drcrdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_AC001")
-      );
-
-      fetchQuery(taxtypeQueryStr, setTaxtypeListData);
-      fetchQuery(etaxQueryStr, setEtaxListData);
-      fetchQuery(exceptynQueryStr, setExceptynListData);
-      fetchQuery(personQueryStr, setPersonListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(drcrdivQueryStr, setDrcrdivListData);
+      setTaxtypeListData(getBizCom(bizComponentData, "L_AC013"));
+      setEtaxListData(getBizCom(bizComponentData, "L_AC401"));
+      setExceptynListData(getBizCom(bizComponentData, "L_AC406"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setDrcrdivListData(getBizCom(bizComponentData, "L_AC001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

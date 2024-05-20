@@ -21,9 +21,11 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -48,11 +50,10 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   useSysMessage,
@@ -72,9 +73,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "sub_code";
@@ -168,7 +166,7 @@ const PR_A0040W: React.FC = () => {
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -275,39 +273,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

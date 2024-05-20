@@ -1,13 +1,12 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { bytesToBase64 } from "byte-base64";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -17,7 +16,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat2,
-  getQueryFromBizComponent,
+  getBizCom,
   setDefaultDate,
   toDate2,
 } from "../components/CommonFunction";
@@ -99,36 +98,9 @@ const PR_B1103W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(userQueryStr, setUserListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -542,7 +514,7 @@ const PR_B1103W: React.FC = () => {
 
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",

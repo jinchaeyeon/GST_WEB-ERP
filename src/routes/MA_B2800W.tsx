@@ -16,10 +16,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -32,7 +30,7 @@ import {
   FilterBox,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
@@ -50,8 +48,8 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -234,46 +232,12 @@ const MA_B2800W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
-      );
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-      const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
-      );
-      fetchQuery(amtunitQueryStr, setAmtunitListData);
-      fetchQuery(doexdivQueryStr, setDoexdivListData);
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

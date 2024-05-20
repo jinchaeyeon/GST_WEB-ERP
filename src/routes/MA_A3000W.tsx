@@ -18,7 +18,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -43,18 +43,17 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getCustDataQuery,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -192,7 +191,7 @@ const MA_A3000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  
+
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -278,40 +277,10 @@ const MA_A3000W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const custQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
-      );
-      const loadPlaceQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_LOADPLACE"
-        )
-      );
-      fetchQuery(custQueryStr, setCustListData);
-      fetchQuery(loadPlaceQueryStr, setLoadPlaceListData);
+      setCustListData(getBizCom(bizComponentData, "L_CUST"));
+      setLoadPlaceListData(getBizCom(bizComponentData, "L_LOADPLACE"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

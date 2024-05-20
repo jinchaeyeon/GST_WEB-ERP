@@ -1,11 +1,10 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { bytesToBase64 } from "byte-base64";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -15,7 +14,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat2,
-  getQueryFromBizComponent,
+  getBizCom,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -110,43 +109,12 @@ const PR_B1104W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
-      );
-
-      fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA172"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA173"));
     }
   }, [bizComponentData]);
 
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: 20,
@@ -455,7 +423,7 @@ const PR_B1104W: React.FC = () => {
 
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",

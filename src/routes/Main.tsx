@@ -7,7 +7,7 @@ import {
   GridEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import React, { CSSProperties, useCallback, useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -19,7 +19,6 @@ import {
   SchedulerItemProps,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import { bytesToBase64 } from "byte-base64";
 import { useRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -43,12 +42,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   chkScrollHandler,
   convertDateToStr,
-  getQueryFromBizComponent,
-  useGeoLocation,
-  getHeight
+  getBizCom,
+  getHeight,
+  useGeoLocation
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
@@ -109,7 +107,7 @@ const Main: React.FC = () => {
     return () => clearTimeout(timer); // 컴포넌트가 언마운트될 때 타이머를 제거
   }, []);
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -639,37 +637,9 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const colorQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
-        )
-      );
-
-      fetchQuery(colorQueryStr, setColorData);
+      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const CustomItem = (props: SchedulerItemProps) => {
     let colorCode = "";

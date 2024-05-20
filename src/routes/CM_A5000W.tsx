@@ -21,7 +21,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -48,12 +48,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
   setDefaultDate2,
@@ -142,7 +141,7 @@ const CM_A5000W: React.FC = () => {
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
   const [workType, setWorkType] = useState("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   let deviceWidth = document.documentElement.clientWidth;
@@ -237,63 +236,13 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603_Q"
-        )
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      const require_typeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM502_603"
-        )
-      );
-      const completion_methodQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM503_603"
-        )
-      );
-      fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(require_typeQueryStr, setRequire_typeListData);
-      fetchQueryData(completion_methodQueryStr, setCompletion_methodListData);
-      fetchQueryData(statusQueryStr, setStatusListData);
+      setStatusListData(getBizCom(bizComponentData, "L_CM500_603_Q"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setRequire_typeListData(getBizCom(bizComponentData, "L_CM502_603"));
+      setCompletion_methodListData(getBizCom(bizComponentData, "L_CM503_603"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1954,32 +1903,34 @@ const pc = UseGetValueFromSessionItem("pc");
                 editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : StatusField.includes(item.fieldName)
-                              ? StatusCell
-                              : checkboxField.includes(item.fieldName)
-                              ? CheckBoxReadOnlyCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : StatusField.includes(item.fieldName)
+                                ? StatusCell
+                                : checkboxField.includes(item.fieldName)
+                                ? CheckBoxReadOnlyCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

@@ -16,9 +16,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip } from "@progress/kendo-react-layout/dist/npm/tabstrip/TabStrip";
 import { TabStripTab } from "@progress/kendo-react-layout/dist/npm/tabstrip/TabStripTab";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -42,16 +44,15 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
   toDate,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -67,9 +68,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8210W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -131,7 +129,7 @@ const CM_A8210W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   let deviceWidth = document.documentElement.clientWidth;
@@ -262,33 +260,6 @@ const pc = UseGetValueFromSessionItem("pc");
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -2112,27 +2083,27 @@ const pc = UseGetValueFromSessionItem("pc");
                         ></Button>
                       </ButtonContainer>
                     </ButtonContainer>
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>입력일자</th>
-                          <td>
-                            <div className="filter-item-wrap">
-                              <DatePicker
-                                name="recdt"
-                                value={filters.recdt}
-                                format="yyyy-MM-dd"
-                                onChange={filterInputChange}
-                                className="required"
-                                placeholder=""
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
+                    <FormBoxWrap border={true}>
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>입력일자</th>
+                            <td>
+                              <div className="filter-item-wrap">
+                                <DatePicker
+                                  name="recdt"
+                                  value={filters.recdt}
+                                  format="yyyy-MM-dd"
+                                  onChange={filterInputChange}
+                                  className="required"
+                                  placeholder=""
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}

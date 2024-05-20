@@ -22,10 +22,8 @@ import {
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -61,18 +59,17 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
   isValidDate,
   numberWithCommas,
   useSysMessage,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -333,7 +330,7 @@ const BA_A0020: React.FC = () => {
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [loginResult] = useRecoilState(loginResultState);
@@ -410,39 +407,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
-      );
-      const BizdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA027")
-      );
-
-      fetchQuery(custdivQueryStr, setCustdivListData);
-      fetchQuery(BizdivQueryStr, setBizdivListData);
+      setCustdivListData(getBizCom(bizComponentData, "L_BA026"));
+      setBizdivListData(getBizCom(bizComponentData, "L_BA027"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //체크박스 유무
   const [yn, setyn] = useState(true);
@@ -1765,7 +1733,7 @@ const pc = UseGetValueFromSessionItem("pc");
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
     setyn(true);
-    if(swiper) {
+    if (swiper) {
       swiper.slideTo(0);
     }
   };

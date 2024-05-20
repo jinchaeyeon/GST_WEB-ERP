@@ -19,7 +19,6 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -53,17 +52,16 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
   useSysMessage,
-  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -198,7 +196,7 @@ const CM_A7010W: React.FC = () => {
   const userName = UseGetValueFromSessionItem("user_name");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [workType, setWorkType] = useState("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -328,44 +326,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      fetchQueryData(usegbQueryStr, setUsegbListData);
-      fetchQueryData(personQueryStr, setPersonListData);
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setUsegbListData(getBizCom(bizComponentData, "L_CM700"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {

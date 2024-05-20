@@ -16,9 +16,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -44,14 +46,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -73,9 +74,6 @@ import { IItemData } from "../hooks/interfaces";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const GO_DATA_ITEM_KEY = "num";
@@ -159,7 +157,7 @@ const PR_A4000W: React.FC = () => {
   const idGetter2 = getter(DETAIL_ITEM_KEY);
   const idGetter3 = getter(DAILY_ITEM_KEY);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -221,40 +219,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
-      );
-      const prodempQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(prodmacQueryStr, setProdmacListData);
-      fetchQuery(prodempQueryStr, setProdempListData);
+      setProdmacListData(getBizCom(bizComponentData, "L_fxcode"));
+      setProdempListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [tabSelected, setTabSelected] = React.useState(0);
 

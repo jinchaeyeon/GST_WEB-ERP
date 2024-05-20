@@ -16,7 +16,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -41,12 +41,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
   setDefaultDate2,
@@ -108,7 +107,7 @@ const CM_A7000W: React.FC = () => {
   const userName = UseGetValueFromSessionItem("user_name");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [workType, setWorkType] = useState("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -219,65 +218,14 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const typeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM701")
-      );
-      const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
-      );
-      const testtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA019_603"
-        )
-      );
-      const requestgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_Requestgb"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_SA001_603"
-        )
-      );
-      fetchQueryData(typeQueryStr, setTypeListData);
-      fetchQueryData(personQueryStr, setPersonListData);
-      fetchQueryData(usegbQueryStr, setUsegbListData);
-      fetchQueryData(testtypeQueryStr, setTestTypeListData);
-      fetchQueryData(requestgbQueryStr, setrequestgbListData);
-      fetchQueryData(materialtypeQueryStr, setmaterialtypeListData);
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setTypeListData(getBizCom(bizComponentData, "L_CM701"));
+      setUsegbListData(getBizCom(bizComponentData, "L_CM700"));
+      setTestTypeListData(getBizCom(bizComponentData, "L_SA019_603"));
+      setrequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
+      setmaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const setCustPersonData = (data: any) => {
     setInformation((prev: any) => {
@@ -1707,28 +1655,30 @@ const pc = UseGetValueFromSessionItem("pc");
                 editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

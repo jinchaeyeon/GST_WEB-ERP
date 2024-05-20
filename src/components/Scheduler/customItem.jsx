@@ -1,8 +1,7 @@
 import { SchedulerItem } from "@progress/kendo-react-scheduler";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApi } from "../../hooks/api";
-import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
+import { UseBizComponent, getBizCom } from "../CommonFunction";
 
 export const CustomItem = (props) => {
   const [colorData, setColorData] = useState([]);
@@ -11,37 +10,9 @@ export const CustomItem = (props) => {
   const processApi = useApi();
   useEffect(() => {
     if (bizComponentData !== null) {
-      const colorQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item) => item.bizComponentId == "L_APPOINTMENT_COLOR"
-        )
-      );
-
-      fetchQuery(colorQueryStr, setColorData);
+      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr, setListData) => {
-    let data;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   let colorCode = "";
   if (props.dataItem.colorID != undefined) {

@@ -12,15 +12,13 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   MouseEvent,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
+  type CSSProperties
 } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -47,13 +45,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   findMessage,
   getBizCom,
   getHeight,
-  getQueryFromBizComponent,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -130,7 +126,7 @@ const SY_A0500W: React.FC = () => {
     layout.position
   );
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [clicked, setClicked] = useRecoilState(clickedState);
   const [info, setInfo] = useRecoilState(infoState);
   const [points, setPoints] = useRecoilState(pointsState);
@@ -149,7 +145,7 @@ const pc = UseGetValueFromSessionItem("pc");
       setLocationListData(getBizCom(bizComponentData, "L_BA002"));
     }
   }, [bizComponentData]);
-  
+
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

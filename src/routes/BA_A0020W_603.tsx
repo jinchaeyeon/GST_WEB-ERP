@@ -3,7 +3,6 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -30,14 +29,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
   numberWithCommas,
@@ -76,7 +74,9 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -90,9 +90,6 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import { IAttachmentData } from "../hooks/interfaces";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -252,7 +249,7 @@ const BA_A0020W_603: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -482,42 +479,11 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
-      );
-      const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA076")
-      );
-      const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA077")
-      );
-      fetchQuery(custdivQueryStr, setCustdivListData);
-      fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
-      fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
+      setCustdivListData(getBizCom(bizComponentData, "L_BA026"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA076"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA077"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

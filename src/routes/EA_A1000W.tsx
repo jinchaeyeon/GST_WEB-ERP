@@ -13,9 +13,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -37,13 +39,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
-  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -59,9 +60,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -126,7 +124,7 @@ const EA_A1000: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
@@ -257,51 +255,12 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_dptcd_001"
-        )
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
-      );
-      const resnoQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_004"
-        )
-      );
-      const appgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_EA001")
-      );
-
-      fetchQuery(postcdQueryStr, setpostcdListData);
-      fetchQuery(dptcdQueryStr, setdptcdListData);
-      fetchQuery(resnoQueryStr, setResnoListData);
-      fetchQuery(appgbQueryStr, setappgbListData);
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
+      setResnoListData(getBizCom(bizComponentData, "L_sysUserMaster_004"));
+      setappgbListData(getBizCom(bizComponentData, "L_EA001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState3, setMainDataState3] = useState<State>({
     sort: [],

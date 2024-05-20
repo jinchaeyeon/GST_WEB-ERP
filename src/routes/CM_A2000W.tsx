@@ -13,8 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -36,15 +35,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
+  getBizCom,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
-  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -52,7 +50,11 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/CM_A2000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -71,7 +73,7 @@ const CM_A2000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".ButtonContainer");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -141,36 +143,9 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      fetchQuery(userQueryStr, setUserListData);
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -767,29 +742,31 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : checkField.includes(item.fieldName)
-                          ? CheckBoxReadOnlyCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : checkField.includes(item.fieldName)
+                            ? CheckBoxReadOnlyCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

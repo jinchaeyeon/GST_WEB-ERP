@@ -2,11 +2,10 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import { CardContent, CardHeader, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import { bytesToBase64 } from "byte-base64";
 import { Card } from "primereact/card";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApi } from "../../hooks/api";
-import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
+import { UseBizComponent, getBizCom } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import DDGDColorWindow from "../Windows/DDGD/DDGDColorWindow";
 
@@ -25,34 +24,9 @@ const CardBox = (props) => {
   const processApi = useApi();
   useEffect(() => {
     if (bizComponentData !== null) {
-      const classQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item) => item.bizComponentId == "L_BA310")
-      );
-      fetchQuery(classQueryStr, setClassListData);
+      setClassListData(getBizCom(bizComponentData, "L_BA310"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr, setListData) => {
-    let data;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const handleColors = () => {
     setColorWindowVisible(true);

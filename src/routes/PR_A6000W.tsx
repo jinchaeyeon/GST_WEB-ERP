@@ -25,9 +25,11 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -48,13 +50,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
   findMessage,
+  getBizCom,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -72,9 +73,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -109,7 +107,6 @@ const PR_A6000W: React.FC = () => {
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -230,45 +227,11 @@ const PR_A6000W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const stopcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_PR011")
-      );
-      const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
-      );
-      const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      fetchQuery(stopcdQueryStr, setStopcdListData);
-      fetchQuery(prodmacQueryStr, setProdmacListData);
-      fetchQuery(usersQueryStr, setUsersListData);
+      setStopcdListData(getBizCom(bizComponentData, "L_PR011"));
+      setProdmacListData(getBizCom(bizComponentData, "L_fxcode"));
+      setUsersListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1480,18 +1443,18 @@ const PR_A6000W: React.FC = () => {
               style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
-              <ButtonContainer style={{ justifyContent: "left" }}>
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(1);
-                    }
-                  }}
-                  icon="chevron-left"
-                  themeColor={"primary"}
-                  fillMode={"flat"}
-                ></Button>
-                <GridTitle>비가동상세</GridTitle>
+                <ButtonContainer style={{ justifyContent: "left" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  <GridTitle>비가동상세</GridTitle>
                 </ButtonContainer>
                 <ButtonContainer>
                   <Button

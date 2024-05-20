@@ -20,8 +20,7 @@ import {
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -52,14 +51,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -143,7 +141,7 @@ const BA_A0040: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
@@ -216,39 +214,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
-      );
-
-      fetchQuery(itemacntQueryStr, setItemacntListData);
-      fetchQuery(qtyunitQueryStr, setQtyunitListData);
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1510,25 +1479,25 @@ const pc = UseGetValueFromSessionItem("pc");
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }
-    
-    if(e.selected == 0) {
+
+    if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
         pgNum: 1,
-      }))
-    } else if(e.selected == 1) {
+      }));
+    } else if (e.selected == 1) {
       setsubFilters((prev) => ({
         ...prev,
         isSearch: true,
         pgNum: 1,
-      }))
-    }  else if(e.selected == 2) {
+      }));
+    } else if (e.selected == 2) {
       setsubFilters2((prev) => ({
         ...prev,
         isSearch: true,
         pgNum: 1,
-      }))
+      }));
     }
     setTabSelected(e.selected);
   };

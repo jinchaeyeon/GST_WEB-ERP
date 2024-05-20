@@ -15,8 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -43,15 +42,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
-  getQueryFromBizComponent,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  getHeight
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -122,7 +120,7 @@ const MA_A3400_606W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_A3400_606W", setMessagesData);
   const processApi = useApi();
@@ -137,37 +135,9 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
-      );
-      fetchQueryData(itemacntQueryStr, setItemacntListData);
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -576,7 +546,7 @@ const pc = UseGetValueFromSessionItem("pc");
           pgNum: 1,
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -1496,7 +1466,6 @@ const pc = UseGetValueFromSessionItem("pc");
         </>
       ) : (
         <>
-          
           {isVisibleDetail && (
             <>
               <GridContainer>
