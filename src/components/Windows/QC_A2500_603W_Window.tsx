@@ -37,7 +37,7 @@ import {
   UseMessages,
   convertDateToStr,
   findMessage,
-  getQueryFromBizComponent,
+  getBizCom,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../CommonFunction";
@@ -141,40 +141,10 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
-      );
-      fetchQuery(personQueryStr, setPersonListData);
-      fetchQuery(userQueryStr, setUserListData);
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setUserListData(getBizCom(bizComponentData, "L_HU250T"));
     }
   }, [bizComponentData]);
-
-  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-    let data: any;
-
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      setListData(rows);
-    }
-  }, []);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
