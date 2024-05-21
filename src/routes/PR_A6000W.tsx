@@ -1315,8 +1315,10 @@ const PR_A6000W: React.FC = () => {
                           item.sortOrder !== -1 && (
                             <GridColumn
                               key={idx}
+                              id={item.id}
                               field={item.fieldName}
                               title={item.caption}
+                              width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
@@ -1327,7 +1329,7 @@ const PR_A6000W: React.FC = () => {
                                   ? mainTotalFooterCell
                                   : undefined
                               }
-                            />
+                            ></GridColumn>
                           )
                       )}
                 </Grid>
@@ -1396,6 +1398,7 @@ const PR_A6000W: React.FC = () => {
                     enabled: true,
                     mode: "single",
                   }}
+                  onSelectionChange={onSelectionChange2}
                   //페이지네이션
                   total={total}
                   skip={page2.skip}
@@ -1418,6 +1421,7 @@ const PR_A6000W: React.FC = () => {
                           item.sortOrder !== -1 && (
                             <GridColumn
                               key={idx}
+                              id={item.id}
                               field={item.fieldName}
                               title={item.caption}
                               width={item.width}
@@ -1431,7 +1435,7 @@ const PR_A6000W: React.FC = () => {
                                   ? detail2TotalFooterCell
                                   : undefined
                               }
-                            />
+                            ></GridColumn>
                           )
                       )}
                 </Grid>
@@ -1538,6 +1542,7 @@ const PR_A6000W: React.FC = () => {
                           item.sortOrder !== -1 && (
                             <GridColumn
                               key={idx}
+                              id={item.id}
                               field={item.fieldName}
                               title={item.caption}
                               width={item.width}
@@ -1553,7 +1558,7 @@ const PR_A6000W: React.FC = () => {
                                   ? detailTotalFooterCell
                                   : undefined
                               }
-                            />
+                            ></GridColumn>
                           )
                       )}
                 </Grid>
@@ -1620,8 +1625,10 @@ const PR_A6000W: React.FC = () => {
                           item.sortOrder !== -1 && (
                             <GridColumn
                               key={idx}
+                              id={item.id}
                               field={item.fieldName}
                               title={item.caption}
+                              width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
@@ -1632,7 +1639,7 @@ const PR_A6000W: React.FC = () => {
                                   ? mainTotalFooterCell
                                   : undefined
                               }
-                            />
+                            ></GridColumn>
                           )
                       )}
                 </Grid>
@@ -1673,6 +1680,7 @@ const PR_A6000W: React.FC = () => {
                     enabled: true,
                     mode: "single",
                   }}
+                  onSelectionChange={onSelectionChange2}
                   //페이지네이션
                   total={total}
                   skip={page2.skip}
@@ -1695,6 +1703,7 @@ const PR_A6000W: React.FC = () => {
                           item.sortOrder !== -1 && (
                             <GridColumn
                               key={idx}
+                              id={item.id}
                               field={item.fieldName}
                               title={item.caption}
                               width={item.width}
@@ -1708,7 +1717,7 @@ const PR_A6000W: React.FC = () => {
                                   ? detail2TotalFooterCell
                                   : undefined
                               }
-                            />
+                            ></GridColumn>
                           )
                       )}
                 </Grid>
@@ -1800,6 +1809,7 @@ const PR_A6000W: React.FC = () => {
                         item.sortOrder !== -1 && (
                           <GridColumn
                             key={idx}
+                            id={item.id}
                             field={item.fieldName}
                             title={item.caption}
                             width={item.width}
@@ -1815,7 +1825,7 @@ const PR_A6000W: React.FC = () => {
                                 ? detailTotalFooterCell
                                 : undefined
                             }
-                          />
+                          ></GridColumn>
                         )
                     )}
               </Grid>
