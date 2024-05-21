@@ -121,6 +121,7 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -1235,6 +1236,8 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
@@ -1305,6 +1308,7 @@ const SA_A1000_603W: React.FC = () => {
         quonum: selectedRowData.quonum,
         quorev: selectedRowData.quorev,
       }));
+      setIsFilterHideStates(true);
     }
     setTabSelected(e.selected);
   };
@@ -3041,6 +3045,9 @@ const SA_A1000_603W: React.FC = () => {
       quoseq: selectedRowData.quoseq,
       isSearch: true,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onRowDoubleClick = (props: any) => {
@@ -8837,7 +8844,10 @@ const SA_A1000_603W: React.FC = () => {
                   <Stepper
                     activeStep={step}
                     orientation="vertical"
-                    style={{ height: deviceHeight - height - height5, overflow: "auto" }}
+                    style={{
+                      height: deviceHeight - height - height5,
+                      overflow: "auto",
+                    }}
                   >
                     {mainDataResult8.data.map((item, index) => (
                       <Step key={index}>

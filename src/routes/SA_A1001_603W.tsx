@@ -19,7 +19,7 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -50,7 +50,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
-  
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -75,9 +75,12 @@ import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_De
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -141,6 +144,15 @@ const iconCell = (props: GridCellProps) => {
 };
 
 const SA_A1001_603W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -157,7 +169,7 @@ const SA_A1001_603W: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_A1001_603W", setMessagesData);
@@ -255,14 +267,16 @@ const SA_A1001_603W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {      
-      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));      
-      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));      
+    if (bizComponentData !== null) {
+      setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setRequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
     }
   }, [bizComponentData]);
 
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
     setValues2(false);
     if (e.selected == 0) {
@@ -300,6 +314,7 @@ const SA_A1001_603W: React.FC = () => {
         finalquowonamt: data.finalquowonamt,
         quocalyn: data.quocalyn,
       }));
+      setIsFilterHideStates(true);
     }
 
     setTabSelected(e.selected);
@@ -946,10 +961,10 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const onPrint = () => {
-    if(!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
+    if (!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
       return false;
-    } 
-    
+    }
+
     setParaData((prev) => ({
       ...prev,
       workType: "PRINT",
@@ -1514,12 +1529,14 @@ const SA_A1001_603W: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="견적(조회)">
           <FilterContainer>
             <FilterBox
               onKeyPress={(e) => handleKeyPressSearch(e, search)}
               style={{ height: "10%" }}
+              className="ButtonContainer3"
             >
               <tbody>
                 <tr>
@@ -1683,9 +1700,11 @@ const SA_A1001_603W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
-            </GridTitleContainer>
+            {!isMobile && (
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
+            )}
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -1694,7 +1713,9 @@ const SA_A1001_603W: React.FC = () => {
               fileName="견적관리"
             >
               <Grid
-                style={{ height: "65vh" }}
+                style={{
+                  height: isMobile ? deviceHeight - height : "65vh",
+                }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1774,255 +1795,586 @@ const SA_A1001_603W: React.FC = () => {
           title="견적(처리)"
           disabled={mainDataResult.total == 0 ? true : false}
         >
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-            <ButtonContainer>
-              <Button themeColor={"primary"} onClick={onPrint} icon="print">
-                견적서 출력
-              </Button>
-              <Button themeColor={"primary"} onClick={onSendEmail} icon="email">
-                이메일 전송
-              </Button>
-              <Button
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="palette"
-                onClick={onDesignWndClick}
+          {isMobile ? (
+            <>
+              <ButtonContainer
+                className="ButtonContainer"
+                style={{ gap: "3px" }}
               >
-                디자인상세
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCal}
-                icon="calculator"
-              >
-                견적 산출
-              </Button>
-              <Button
-                onClick={onSave}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-              <Button
-                themeColor={"primary"}
-                onClick={onSALTRN}
-                fillMode="outline"
-                icon="dictionary-add"
-              >
-                계약 전환
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <FormBoxWrap border={true}>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>PJT NO.</th>
-                  <td>
-                    <Input
-                      name="quonum"
-                      type="text"
-                      value={information.quonum}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>업체명</th>
-                  <td>
-                    <Input
-                      name="custnm"
-                      type="text"
-                      value={information.custnm}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>의뢰자</th>
-                  <td>
-                    <Input
-                      name="custprsnnm"
-                      type="text"
-                      value={information.custprsnnm}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>의뢰목적</th>
-                  <td>
-                    <Input
-                      name="requestgb"
-                      type="text"
-                      value={
-                        requestgbListData.find(
-                          (items: any) =>
-                            items.sub_code == information.requestgb
-                        )?.code_name
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                  <th>물질분야</th>
-                  <td>
-                    <Input
-                      name="materialtype"
-                      type="text"
-                      value={
-                        materialtypeListData.find(
-                          (items: any) =>
-                            items.sub_code == information.materialtype
-                        )?.code_name
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>REV</th>
-                  <td>
-                    <Input
-                      name="quorev"
-                      type="text"
-                      value={information.quorev}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>의뢰품목수</th>
-                  <td>
-                    <Input
-                      name="itemcnt"
-                      type="text"
-                      value={numberWithCommas(parseFloat(information.itemcnt))}
-                      className="readonly"
-                      style={{ textAlign: "end" }}
-                    />
-                  </td>
-                  <th>견적 발행일</th>
-                  <td>
-                    <Input
-                      name="pubdt"
-                      type="text"
-                      value={dateformat2(information.pubdt)}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>최종견적금액</th>
-                  <td>
-                    <Input
-                      name="finalquowonamt"
-                      type="text"
-                      value={numberWithCommas(
-                        parseFloat(information.finalquowonamt)
-                      )}
-                      className="readonly"
-                      style={{ textAlign: "end" }}
-                    />
-                  </td>
-                  <th>계약확정여부</th>
-                  <td>
-                    <Input
-                      name="contractyn"
-                      type="text"
-                      value={information.contractyn}
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>견적리스트</GridTitle>
-            </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult2.data}
-              ref={(exporter) => {
-                _export2 = exporter;
-              }}
-              fileName="견적관리"
-            >
-              <Grid
-                style={{ height: "60vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+                <Button themeColor={"primary"} onClick={onPrint} icon="print">
+                  견적서 출력
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  onClick={onSendEmail}
+                  icon="email"
+                >
+                  이메일 전송
+                </Button>
+                <Button
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="palette"
+                  onClick={onDesignWndClick}
+                >
+                  디자인상세
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onCal}
+                  icon="calculator"
+                >
+                  견적 산출
+                </Button>
+                <Button
+                  onClick={onSave}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  onClick={onSALTRN}
+                  fillMode="outline"
+                  icon="dictionary-add"
+                >
+                  계약 전환
+                </Button>
+              </ButtonContainer>
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
                 }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell2}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]
-                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    ?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : iconField.includes(item.fieldName)
-                                ? iconCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell2
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
+                <SwiperSlide key={0}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle>
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          상세정보
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                            icon="chevron-right"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <FormBoxWrap
+                      border={true}
+                      style={{
+                        height: deviceHeight - height - height1 - height2 + 25,
+                        overflow: "auto",
+                      }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>PJT NO.</th>
+                            <td>
+                              <Input
+                                name="quonum"
+                                type="text"
+                                value={information.quonum}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>업체명</th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={information.custnm}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>의뢰자</th>
+                            <td>
+                              <Input
+                                name="custprsnnm"
+                                type="text"
+                                value={information.custprsnnm}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>의뢰목적</th>
+                            <td>
+                              <Input
+                                name="requestgb"
+                                type="text"
+                                value={
+                                  requestgbListData.find(
+                                    (items: any) =>
+                                      items.sub_code == information.requestgb
+                                  )?.code_name
+                                }
+                                className="readonly"
+                              />
+                            </td>
+                            <th>물질분야</th>
+                            <td>
+                              <Input
+                                name="materialtype"
+                                type="text"
+                                value={
+                                  materialtypeListData.find(
+                                    (items: any) =>
+                                      items.sub_code == information.materialtype
+                                  )?.code_name
+                                }
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>REV</th>
+                            <td>
+                              <Input
+                                name="quorev"
+                                type="text"
+                                value={information.quorev}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>의뢰품목수</th>
+                            <td>
+                              <Input
+                                name="itemcnt"
+                                type="text"
+                                value={numberWithCommas(
+                                  parseFloat(information.itemcnt)
+                                )}
+                                className="readonly"
+                                style={{ textAlign: "end" }}
+                              />
+                            </td>
+                            <th>견적 발행일</th>
+                            <td>
+                              <Input
+                                name="pubdt"
+                                type="text"
+                                value={dateformat2(information.pubdt)}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>최종견적금액</th>
+                            <td>
+                              <Input
+                                name="finalquowonamt"
+                                type="text"
+                                value={numberWithCommas(
+                                  parseFloat(information.finalquowonamt)
+                                )}
+                                className="readonly"
+                                style={{ textAlign: "end" }}
+                              />
+                            </td>
+                            <th>계약확정여부</th>
+                            <td>
+                              <Input
+                                name="contractyn"
+                                type="text"
+                                value={information.contractyn}
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle>
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          <ButtonContainer>
+                            <Button
+                              onClick={() => {
+                                if (swiper) {
+                                  swiper.slideTo(0);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            {"견적리스트"}
+                          </ButtonContainer>
+                        </ButtonContainer>
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="견적관리"
+                    >
+                      <Grid
+                        style={{
+                          height:
+                            deviceHeight - height - height1 - height2 + 25,
+                        }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <GridColumn
+                          field="chk"
+                          title=" "
+                          width="45px"
+                          headerCell={CustomCheckBoxCell2}
+                          cell={CheckBoxCell}
+                        />
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : iconField.includes(item.fieldName)
+                                        ? iconCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell2
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </>
+          ) : (
+            <>
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button themeColor={"primary"} onClick={onPrint} icon="print">
+                    견적서 출력
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    onClick={onSendEmail}
+                    icon="email"
+                  >
+                    이메일 전송
+                  </Button>
+                  <Button
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="palette"
+                    onClick={onDesignWndClick}
+                  >
+                    디자인상세
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    onClick={onCal}
+                    icon="calculator"
+                  >
+                    견적 산출
+                  </Button>
+                  <Button
+                    onClick={onSave}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    onClick={onSALTRN}
+                    fillMode="outline"
+                    icon="dictionary-add"
+                  >
+                    계약 전환
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>PJT NO.</th>
+                      <td>
+                        <Input
+                          name="quonum"
+                          type="text"
+                          value={information.quonum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={information.custnm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>의뢰자</th>
+                      <td>
+                        <Input
+                          name="custprsnnm"
+                          type="text"
+                          value={information.custprsnnm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>의뢰목적</th>
+                      <td>
+                        <Input
+                          name="requestgb"
+                          type="text"
+                          value={
+                            requestgbListData.find(
+                              (items: any) =>
+                                items.sub_code == information.requestgb
+                            )?.code_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th>물질분야</th>
+                      <td>
+                        <Input
+                          name="materialtype"
+                          type="text"
+                          value={
+                            materialtypeListData.find(
+                              (items: any) =>
+                                items.sub_code == information.materialtype
+                            )?.code_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>REV</th>
+                      <td>
+                        <Input
+                          name="quorev"
+                          type="text"
+                          value={information.quorev}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>의뢰품목수</th>
+                      <td>
+                        <Input
+                          name="itemcnt"
+                          type="text"
+                          value={numberWithCommas(
+                            parseFloat(information.itemcnt)
+                          )}
+                          className="readonly"
+                          style={{ textAlign: "end" }}
+                        />
+                      </td>
+                      <th>견적 발행일</th>
+                      <td>
+                        <Input
+                          name="pubdt"
+                          type="text"
+                          value={dateformat2(information.pubdt)}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>최종견적금액</th>
+                      <td>
+                        <Input
+                          name="finalquowonamt"
+                          type="text"
+                          value={numberWithCommas(
+                            parseFloat(information.finalquowonamt)
+                          )}
+                          className="readonly"
+                          style={{ textAlign: "end" }}
+                        />
+                      </td>
+                      <th>계약확정여부</th>
+                      <td>
+                        <Input
+                          name="contractyn"
+                          type="text"
+                          value={information.contractyn}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>견적리스트</GridTitle>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName="견적관리"
+                >
+                  <Grid
+                    style={{ height: "60vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
                     )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : iconField.includes(item.fieldName)
+                                    ? iconCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell2
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (

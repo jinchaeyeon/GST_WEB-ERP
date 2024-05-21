@@ -53,6 +53,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
   setDefaultDate2,
@@ -81,6 +82,8 @@ import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
+  heightstate,
+  isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -93,6 +96,9 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -134,6 +140,13 @@ const StatusCell = (props: GridCellProps) => {
 };
 
 const CM_A5000W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const idGetter = getter(DATA_ITEM_KEY);
 
   let gridRef: any = useRef(null);
@@ -448,7 +461,8 @@ const CM_A5000W: React.FC = () => {
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
-
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
@@ -504,6 +518,7 @@ const CM_A5000W: React.FC = () => {
             : toDate(selectedRowData.recdt),
       });
       fetchHtmlDocument(selectedRowData);
+      setIsFilterHideStates(true);
     }
     setTabSelected(e.selected);
   };
@@ -1674,11 +1689,13 @@ const CM_A5000W: React.FC = () => {
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
-            <GridTitleContainer>
+            {!isMobile && (
               <GridTitleContainer>
-                <GridTitle>조회조건</GridTitle>
+                <GridTitleContainer>
+                  <GridTitle>조회조건</GridTitle>
+                </GridTitleContainer>
               </GridTitleContainer>
-            </GridTitleContainer>
+            )}
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -1824,8 +1841,8 @@ const CM_A5000W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
+            <GridTitleContainer className="ButtonContainer">
+              {!isMobile && <GridTitle>요약정보</GridTitle>}
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -1852,7 +1869,7 @@ const CM_A5000W: React.FC = () => {
               fileName="컨설팅(문의·답변)관리"
             >
               <Grid
-                style={{ height: "60vh" }}
+                style={{ height: deviceHeight - height - height1 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1943,669 +1960,1451 @@ const CM_A5000W: React.FC = () => {
             mainDataResult.data.length == 0 && workType == "" ? true : false
           }
         >
-          <GridContainerWrap>
-            <GridContainer width="50%">
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-
-                  <ButtonContainer>
-                    <Button
-                      onClick={onDeleteClick}
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                      icon="delete"
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
+            >
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        {"상세정보"}
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon="delete"
+                      >
+                        문의 삭제
+                      </Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        문의 저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  {information.ref_document_id != "" ? (
+                    <FormBoxWrap
+                      border={true}
+                      style={{
+                        height: deviceHeight - height - height2 + 23,
+                        overflow: "auto",
+                      }}
                     >
-                      문의 삭제
-                    </Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>등록번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="document_id"
+                                type="text"
+                                value={information.document_id}
+                                className="readonly"
+                                readOnly={true}
+                              />
+                            </td>
+                            <th>영업담당자</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="user_name"
+                                type="text"
+                                value={information.user_name}
+                                className="readonly"
+                                readOnly={true}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>문의일자</th>
+                            <td colSpan={3}>
+                              <DatePicker
+                                name="request_date"
+                                value={information.request_date}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                className="readonly"
+                              />
+                            </td>
+                            <th>답변기한일</th>
+                            <td colSpan={3}>
+                              <DatePicker
+                                name="finexpdt"
+                                value={information.finexpdt}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>문의분야</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="require_type"
+                                  value={information.require_type}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
+                            </td>
+                            <th>문의답변방법</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="completion_method"
+                                  value={information.completion_method}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>상태</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="status"
+                                  value={information.status}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
+                            </td>
+                            <th>업체명</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="customernm"
+                                type="text"
+                                value={information.customernm}
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>PJT NO.</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="project"
+                                type="text"
+                                value={information.project}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>예약번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="quotestnum"
+                                type="text"
+                                value={information.quotestnum}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick2}
+                                  icon="search"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>의뢰자</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="custprsnnm"
+                                type="text"
+                                value={information.custprsnnm}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>시험번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="testnum"
+                                type="text"
+                                value={information.testnum}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick2}
+                                  icon="search"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>물질분야</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="materialtype"
+                                  value={information.materialtype}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
+                            </td>
+                            <th>물질상세분야</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="extra_field2"
+                                type="text"
+                                value={information.extra_field2}
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>제목</th>
+                            <td colSpan={6}>
+                              <Input
+                                name="title"
+                                type="text"
+                                value={information.title}
+                                className="readonly"
+                              />
+                            </td>
+                            <th style={{ width: "10%" }}>
+                              <Checkbox
+                                title="긴급"
+                                name="is_emergency"
+                                value={
+                                  information.is_emergency == "Y" ? true : false
+                                }
+                                onChange={CheckChange}
+                                label={"긴급"}
+                                disabled={true}
+                              />
+                            </th>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  ) : (
+                    <FormBoxWrap
+                      border={true}
+                      style={{
+                        height: deviceHeight - height - height2 + 23,
+                        overflow: "auto",
+                      }}
                     >
-                      문의 저장
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                {information.ref_document_id != "" ? (
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>등록번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="document_id"
-                              type="text"
-                              value={information.document_id}
-                              className="readonly"
-                              readOnly={true}
-                            />
-                          </td>
-                          <th>영업담당자</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="user_name"
-                              type="text"
-                              value={information.user_name}
-                              className="readonly"
-                              readOnly={true}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>문의일자</th>
-                          <td colSpan={3}>
-                            <DatePicker
-                              name="request_date"
-                              value={information.request_date}
-                              format="yyyy-MM-dd"
-                              placeholder=""
-                              className="readonly"
-                            />
-                          </td>
-                          <th>답변기한일</th>
-                          <td colSpan={3}>
-                            <DatePicker
-                              name="finexpdt"
-                              value={information.finexpdt}
-                              format="yyyy-MM-dd"
-                              placeholder=""
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>문의분야</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="require_type"
-                                value={information.require_type}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>등록번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="document_id"
+                                type="text"
+                                value={information.document_id}
                                 className="readonly"
-                                disabled={true}
+                                readOnly={true}
                               />
-                            )}
-                          </td>
-                          <th>문의답변방법</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="completion_method"
-                                value={information.completion_method}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>상태</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="status"
-                                value={information.status}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
-                          <th>업체명</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="customernm"
-                              type="text"
-                              value={information.customernm}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>PJT NO.</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="project"
-                              type="text"
-                              value={information.project}
-                              className="readonly"
-                            />
-                          </td>
-                          <th>예약번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="quotestnum"
-                              type="text"
-                              value={information.quotestnum}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick2}
-                                icon="search"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>의뢰자</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="custprsnnm"
-                              type="text"
-                              value={information.custprsnnm}
-                              className="readonly"
-                            />
-                          </td>
-                          <th>시험번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="testnum"
-                              type="text"
-                              value={information.testnum}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick2}
-                                icon="search"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>물질분야</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="materialtype"
-                                value={information.materialtype}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
-                          <th>물질상세분야</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="extra_field2"
-                              type="text"
-                              value={information.extra_field2}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>제목</th>
-                          <td colSpan={6}>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={information.title}
-                              className="readonly"
-                            />
-                          </td>
-                          <th style={{ width: "10%" }}>
-                            <Checkbox
-                              title="긴급"
-                              name="is_emergency"
-                              value={
-                                information.is_emergency == "Y" ? true : false
-                              }
-                              onChange={CheckChange}
-                              label={"긴급"}
-                              disabled={true}
-                            />
-                          </th>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                ) : (
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>등록번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="document_id"
-                              type="text"
-                              value={information.document_id}
-                              className="readonly"
-                              readOnly={true}
-                            />
-                          </td>
-                          <th>영업담당자</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="user_name"
-                              type="text"
-                              value={information.user_name}
-                              onChange={InputChange}
-                              className="required"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type="button"
-                                icon="more-horizontal"
-                                fillMode="flat"
-                                onClick={onPrsnnumWndClick2}
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>문의일자</th>
-                          <td colSpan={3}>
-                            <DatePicker
-                              name="request_date"
-                              value={information.request_date}
-                              format="yyyy-MM-dd"
-                              onChange={InputChange}
-                              placeholder=""
-                              className="required"
-                            />
-                          </td>
-                          <th>답변기한일</th>
-                          <td colSpan={3}>
-                            <DatePicker
-                              name="finexpdt"
-                              value={information.finexpdt}
-                              format="yyyy-MM-dd"
-                              onChange={InputChange}
-                              placeholder=""
-                              className="required"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>문의분야</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="require_type"
-                                value={information.require_type}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
-                          <th>문의답변방법</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="completion_method"
-                                value={information.completion_method}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>상태</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="status"
-                                value={information.status}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
+                            </td>
+                            <th>영업담당자</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="user_name"
+                                type="text"
+                                value={information.user_name}
+                                onChange={InputChange}
                                 className="required"
                               />
-                            )}
-                          </td>
-                          <th>업체명</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="customernm"
-                              type="text"
-                              value={information.customernm}
-                              onChange={filterInputChange}
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onCustWndClick2}
-                                icon="more-horizontal"
-                                fillMode="flat"
+                              <ButtonInInput>
+                                <Button
+                                  type="button"
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                  onClick={onPrsnnumWndClick2}
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>문의일자</th>
+                            <td colSpan={3}>
+                              <DatePicker
+                                name="request_date"
+                                value={information.request_date}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                                className="required"
                               />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>PJT NO.</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="project"
-                              type="text"
-                              value={information.project}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                icon="more-horizontal"
-                                fillMode="flat"
-                                onClick={onProjectWndClick}
+                            </td>
+                            <th>답변기한일</th>
+                            <td colSpan={3}>
+                              <DatePicker
+                                name="finexpdt"
+                                value={information.finexpdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                                className="required"
                               />
-                            </ButtonInInput>
-                          </td>
-                          <th>예약번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="quotestnum"
-                              type="text"
-                              value={information.quotestnum}
-                              onChange={filterInputChange}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick}
-                                icon="more-horizontal"
-                                fillMode="flat"
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>문의분야</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="require_type"
+                                  value={information.require_type}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>문의답변방법</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="completion_method"
+                                  value={information.completion_method}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>상태</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="status"
+                                  value={information.status}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                            <th>업체명</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="customernm"
+                                type="text"
+                                value={information.customernm}
+                                onChange={filterInputChange}
                               />
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick2}
-                                icon="search"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>의뢰자</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="custprsnnm"
-                              type="text"
-                              value={information.custprsnnm}
-                              className="readonly"
-                            />
-                          </td>
-                          <th>시험번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="testnum"
-                              type="text"
-                              value={information.testnum}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick}
-                                icon="more-horizontal"
-                                fillMode="flat"
-                              />
-                              <Button
-                                type={"button"}
-                                onClick={onProjectWndClick2}
-                                icon="search"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>물질분야</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="materialtype"
-                                value={information.materialtype}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onCustWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>PJT NO.</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="project"
+                                type="text"
+                                value={information.project}
                                 className="readonly"
-                                disabled={true}
                               />
-                            )}
-                          </td>
-                          <th>물질상세분야</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="extra_field2"
-                              type="text"
-                              value={information.extra_field2}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>제목</th>
-                          <td colSpan={6}>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={information.title}
-                              onChange={InputChange}
-                              className="required"
-                            />
-                          </td>
-                          <th style={{ width: "10%" }}>
-                            <Checkbox
-                              title="긴급"
-                              name="is_emergency"
-                              value={
-                                information.is_emergency == "Y" ? true : false
-                              }
-                              onChange={CheckChange}
-                              label={"긴급"}
-                            />
-                          </th>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                )}
-              </GridContainer>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>문의</GridTitle>
-                </GridTitleContainer>
-                <GridContainer height="32vh">
-                  <RichEditor id="docEditor" ref={docEditorRef} hideTools />
+                              <ButtonInInput>
+                                <Button
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                  onClick={onProjectWndClick}
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>예약번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="quotestnum"
+                                type="text"
+                                value={information.quotestnum}
+                                onChange={filterInputChange}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick2}
+                                  icon="search"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>의뢰자</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="custprsnnm"
+                                type="text"
+                                value={information.custprsnnm}
+                                className="readonly"
+                              />
+                            </td>
+                            <th>시험번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="testnum"
+                                type="text"
+                                value={information.testnum}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                                <Button
+                                  type={"button"}
+                                  onClick={onProjectWndClick2}
+                                  icon="search"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>물질분야</th>
+                            <td colSpan={3}>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="materialtype"
+                                  value={information.materialtype}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
+                            </td>
+                            <th>물질상세분야</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="extra_field2"
+                                type="text"
+                                value={information.extra_field2}
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>제목</th>
+                            <td colSpan={6}>
+                              <Input
+                                name="title"
+                                type="text"
+                                value={information.title}
+                                onChange={InputChange}
+                                className="required"
+                              />
+                            </td>
+                            <th>
+                              <Checkbox
+                                title="긴급"
+                                name="is_emergency"
+                                value={
+                                  information.is_emergency == "Y" ? true : false
+                                }
+                                onChange={CheckChange}
+                                label={"긴급"}
+                              />
+                            </th>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  )}
                 </GridContainer>
-              </GridContainer>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <Input
-                            name="files"
-                            value={information.files}
-                            className="readonly"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              icon="more-horizontal"
-                              fillMode={"flat"}
-                              onClick={onAttachQuestionWndClick}
-                            />
-                          </ButtonInInput>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>
-                  <div style={{ display: "flex" }}>
-                    <p style={{ marginRight: "5px" }}>답변</p>
-                    {workType == "N" ? (
-                      ""
-                    ) : information2.ref_document_id != "" ? (
-                      <div
-                        style={{
-                          width: "80px",
-                          borderRadius: "2px",
-                          backgroundColor: "#70ad47",
-                          color: "white",
-                          padding: "5px 10px",
-                          textAlign: "center",
-                          marginRight: "5px",
-                          fontWeight: 700,
-                          fontSize: "12px",
-                        }}
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
                       >
-                        완료
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          width: "80px",
-                          borderRadius: "2px",
-                          backgroundColor: "#ffc000",
-                          color: "white",
-                          padding: "5px 10px",
-                          textAlign: "center",
-                          marginRight: "5px",
-                          fontWeight: 700,
-                          fontSize: "12px",
-                        }}
+                        <ButtonContainer>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                            icon="chevron-left"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                          {"문의"}
+                        </ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon="delete"
                       >
-                        대기중
-                      </div>
-                    )}
-                  </div>
-                </GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onDeleteClick2}
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                    icon="delete"
+                        문의 삭제
+                      </Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        문의 저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <GridContainer
+                    style={{ height: deviceHeight - height - height2 - 79 }}
                   >
-                    답변 삭제
-                  </Button>
-                  <Button
-                    onClick={onSaveClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    답변 저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>답변일</th>
-                      <td>
-                        {workType == "N" ? (
-                          <DatePicker
-                            name="recdt"
-                            value={information2.recdt}
-                            format="yyyy-MM-dd"
-                            placeholder=""
-                            className="readonly"
-                          />
-                        ) : (
-                          <DatePicker
-                            name="recdt"
-                            value={information2.recdt}
-                            format="yyyy-MM-dd"
-                            placeholder=""
-                            onChange={InputChange2}
-                            className="required"
-                          />
-                        )}
-                      </td>
-                      <th>PM담당자</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="person"
-                                value={information2.person}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange2}
-                                textField="user_name"
-                                valueField="user_id"
+                    <RichEditor id="docEditor" ref={docEditorRef} hideTools />
+                  </GridContainer>
+                  <FormBoxWrap border={true} className="ButtonContainer3">
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th style={{ width: isMobile ? "" : "5%" }}>
+                            첨부파일
+                          </th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="files"
+                                value={information.files}
                                 className="readonly"
-                                disabled={true}
                               />
-                            )
-                          : customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="person"
-                                value={information2.person}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange2}
-                                textField="user_name"
-                                valueField="user_id"
+                              <ButtonInInput>
+                                <Button
+                                  icon="more-horizontal"
+                                  fillMode={"flat"}
+                                  onClick={onAttachQuestionWndClick}
+                                />
+                              </ButtonInInput>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={2}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer3">
+                    <GridTitle>
+                      <div style={{ display: "flex" }}>
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          <ButtonContainer>
+                            <Button
+                              onClick={() => {
+                                if (swiper) {
+                                  swiper.slideTo(1);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            <p style={{ marginRight: "5px" }}>답변</p>
+                            {workType == "N" ? (
+                              ""
+                            ) : information2.ref_document_id != "" ? (
+                              <div
+                                style={{
+                                  width: "80px",
+                                  borderRadius: "2px",
+                                  backgroundColor: "#70ad47",
+                                  color: "white",
+                                  padding: "5px 10px",
+                                  textAlign: "center",
+                                  marginRight: "5px",
+                                  fontWeight: 700,
+                                  fontSize: "12px",
+                                }}
+                              >
+                                완료
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  width: "80px",
+                                  borderRadius: "2px",
+                                  backgroundColor: "#ffc000",
+                                  color: "white",
+                                  padding: "5px 10px",
+                                  textAlign: "center",
+                                  marginRight: "5px",
+                                  fontWeight: 700,
+                                  fontSize: "12px",
+                                }}
+                              >
+                                대기중
+                              </div>
+                            )}
+                          </ButtonContainer>
+                        </ButtonContainer>
+                      </div>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick2}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon="delete"
+                      >
+                        답변 삭제
+                      </Button>
+                      <Button
+                        onClick={onSaveClick2}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        답변 저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <FormBoxWrap border={true}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>답변일</th>
+                          <td>
+                            {workType == "N" ? (
+                              <DatePicker
+                                name="recdt"
+                                value={information2.recdt}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                className="readonly"
+                              />
+                            ) : (
+                              <DatePicker
+                                name="recdt"
+                                value={information2.recdt}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                onChange={InputChange2}
                                 className="required"
                               />
                             )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-              <GridContainer height={`calc(100% - 185px)`}>
-                <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
-              </GridContainer>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <Input
-                            name="files"
-                            value={information2.files}
-                            className="readonly"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              icon="more-horizontal"
-                              fillMode={"flat"}
-                              onClick={onAttachAnswerWndClick}
-                            />
-                          </ButtonInInput>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridContainer>
-          </GridContainerWrap>
+                          </td>
+                          <th>PM담당자</th>
+                          <td>
+                            {workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="person"
+                                    value={information2.person}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    textField="user_name"
+                                    valueField="user_id"
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )
+                              : customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="person"
+                                    value={information2.person}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    textField="user_name"
+                                    valueField="user_id"
+                                    className="required"
+                                  />
+                                )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                  <GridContainer  style={{ height: deviceHeight - height - height3 - 240 }}>
+                    <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
+                  </GridContainer>
+                  <FormBoxWrap border={true}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th style={{ width: isMobile ? "" : "5%" }}>
+                            첨부파일
+                          </th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="files"
+                                value={information2.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  icon="more-horizontal"
+                                  fillMode={"flat"}
+                                  onClick={onAttachAnswerWndClick}
+                                />
+                              </ButtonInInput>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <GridContainer width="50%">
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>상세정보</GridTitle>
+
+                      <ButtonContainer>
+                        <Button
+                          onClick={onDeleteClick}
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                          icon="delete"
+                        >
+                          문의 삭제
+                        </Button>
+                        <Button
+                          onClick={onSaveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                        >
+                          문의 저장
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    {information.ref_document_id != "" ? (
+                      <FormBoxWrap border={true}>
+                        <FormBox>
+                          <tbody>
+                            <tr>
+                              <th>등록번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="document_id"
+                                  type="text"
+                                  value={information.document_id}
+                                  className="readonly"
+                                  readOnly={true}
+                                />
+                              </td>
+                              <th>영업담당자</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="user_name"
+                                  type="text"
+                                  value={information.user_name}
+                                  className="readonly"
+                                  readOnly={true}
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>문의일자</th>
+                              <td colSpan={3}>
+                                <DatePicker
+                                  name="request_date"
+                                  value={information.request_date}
+                                  format="yyyy-MM-dd"
+                                  placeholder=""
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>답변기한일</th>
+                              <td colSpan={3}>
+                                <DatePicker
+                                  name="finexpdt"
+                                  value={information.finexpdt}
+                                  format="yyyy-MM-dd"
+                                  placeholder=""
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>문의분야</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="require_type"
+                                    value={information.require_type}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
+                              </td>
+                              <th>문의답변방법</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="completion_method"
+                                    value={information.completion_method}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>상태</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="status"
+                                    value={information.status}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
+                              </td>
+                              <th>업체명</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="customernm"
+                                  type="text"
+                                  value={information.customernm}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>PJT NO.</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="project"
+                                  type="text"
+                                  value={information.project}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>예약번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="quotestnum"
+                                  type="text"
+                                  value={information.quotestnum}
+                                  className="readonly"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick2}
+                                    icon="search"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>의뢰자</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="custprsnnm"
+                                  type="text"
+                                  value={information.custprsnnm}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>시험번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="testnum"
+                                  type="text"
+                                  value={information.testnum}
+                                  className="readonly"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick2}
+                                    icon="search"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>물질분야</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="materialtype"
+                                    value={information.materialtype}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
+                              </td>
+                              <th>물질상세분야</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="extra_field2"
+                                  type="text"
+                                  value={information.extra_field2}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>제목</th>
+                              <td colSpan={6}>
+                                <Input
+                                  name="title"
+                                  type="text"
+                                  value={information.title}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th style={{ width: "10%" }}>
+                                <Checkbox
+                                  title="긴급"
+                                  name="is_emergency"
+                                  value={
+                                    information.is_emergency == "Y"
+                                      ? true
+                                      : false
+                                  }
+                                  onChange={CheckChange}
+                                  label={"긴급"}
+                                  disabled={true}
+                                />
+                              </th>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    ) : (
+                      <FormBoxWrap border={true}>
+                        <FormBox>
+                          <tbody>
+                            <tr>
+                              <th>등록번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="document_id"
+                                  type="text"
+                                  value={information.document_id}
+                                  className="readonly"
+                                  readOnly={true}
+                                />
+                              </td>
+                              <th>영업담당자</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="user_name"
+                                  type="text"
+                                  value={information.user_name}
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type="button"
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                    onClick={onPrsnnumWndClick2}
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>문의일자</th>
+                              <td colSpan={3}>
+                                <DatePicker
+                                  name="request_date"
+                                  value={information.request_date}
+                                  format="yyyy-MM-dd"
+                                  onChange={InputChange}
+                                  placeholder=""
+                                  className="required"
+                                />
+                              </td>
+                              <th>답변기한일</th>
+                              <td colSpan={3}>
+                                <DatePicker
+                                  name="finexpdt"
+                                  value={information.finexpdt}
+                                  format="yyyy-MM-dd"
+                                  onChange={InputChange}
+                                  placeholder=""
+                                  className="required"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>문의분야</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="require_type"
+                                    value={information.require_type}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )}
+                              </td>
+                              <th>문의답변방법</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="completion_method"
+                                    value={information.completion_method}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>상태</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="status"
+                                    value={information.status}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="required"
+                                  />
+                                )}
+                              </td>
+                              <th>업체명</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="customernm"
+                                  type="text"
+                                  value={information.customernm}
+                                  onChange={filterInputChange}
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onCustWndClick2}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>PJT NO.</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="project"
+                                  type="text"
+                                  value={information.project}
+                                  className="readonly"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                    onClick={onProjectWndClick}
+                                  />
+                                </ButtonInInput>
+                              </td>
+                              <th>예약번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="quotestnum"
+                                  type="text"
+                                  value={information.quotestnum}
+                                  onChange={filterInputChange}
+                                  className="readonly"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick2}
+                                    icon="search"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>의뢰자</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="custprsnnm"
+                                  type="text"
+                                  value={information.custprsnnm}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>시험번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="testnum"
+                                  type="text"
+                                  value={information.testnum}
+                                  className="readonly"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                  <Button
+                                    type={"button"}
+                                    onClick={onProjectWndClick2}
+                                    icon="search"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>물질분야</th>
+                              <td colSpan={3}>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="materialtype"
+                                    value={information.materialtype}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
+                              </td>
+                              <th>물질상세분야</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="extra_field2"
+                                  type="text"
+                                  value={information.extra_field2}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>제목</th>
+                              <td colSpan={6}>
+                                <Input
+                                  name="title"
+                                  type="text"
+                                  value={information.title}
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                              </td>
+                              <th style={{ width: "10%" }}>
+                                <Checkbox
+                                  title="긴급"
+                                  name="is_emergency"
+                                  value={
+                                    information.is_emergency == "Y"
+                                      ? true
+                                      : false
+                                  }
+                                  onChange={CheckChange}
+                                  label={"긴급"}
+                                />
+                              </th>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    )}
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>문의</GridTitle>
+                    </GridTitleContainer>
+                    <GridContainer height="32vh">
+                      <RichEditor id="docEditor" ref={docEditorRef} hideTools />
+                    </GridContainer>
+                  </GridContainer>
+                  <FormBoxWrap border={true}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th style={{ width: isMobile ? "" : "5%" }}>
+                            첨부파일
+                          </th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="files"
+                                value={information.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  icon="more-horizontal"
+                                  fillMode={"flat"}
+                                  onClick={onAttachQuestionWndClick}
+                                />
+                              </ButtonInInput>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+                <GridContainer width={`calc(50% - ${GAP}px)`}>
+                  <GridTitleContainer>
+                    <GridTitle>
+                      <div style={{ display: "flex" }}>
+                        <p style={{ marginRight: "5px" }}>답변</p>
+                        {workType == "N" ? (
+                          ""
+                        ) : information2.ref_document_id != "" ? (
+                          <div
+                            style={{
+                              width: "80px",
+                              borderRadius: "2px",
+                              backgroundColor: "#70ad47",
+                              color: "white",
+                              padding: "5px 10px",
+                              textAlign: "center",
+                              marginRight: "5px",
+                              fontWeight: 700,
+                              fontSize: "12px",
+                            }}
+                          >
+                            완료
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              width: "80px",
+                              borderRadius: "2px",
+                              backgroundColor: "#ffc000",
+                              color: "white",
+                              padding: "5px 10px",
+                              textAlign: "center",
+                              marginRight: "5px",
+                              fontWeight: 700,
+                              fontSize: "12px",
+                            }}
+                          >
+                            대기중
+                          </div>
+                        )}
+                      </div>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onDeleteClick2}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon="delete"
+                      >
+                        답변 삭제
+                      </Button>
+                      <Button
+                        onClick={onSaveClick2}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        답변 저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <FormBoxWrap border={true}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>답변일</th>
+                          <td>
+                            {workType == "N" ? (
+                              <DatePicker
+                                name="recdt"
+                                value={information2.recdt}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                className="readonly"
+                              />
+                            ) : (
+                              <DatePicker
+                                name="recdt"
+                                value={information2.recdt}
+                                format="yyyy-MM-dd"
+                                placeholder=""
+                                onChange={InputChange2}
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>PM담당자</th>
+                          <td>
+                            {workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="person"
+                                    value={information2.person}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    textField="user_name"
+                                    valueField="user_id"
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )
+                              : customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="person"
+                                    value={information2.person}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    textField="user_name"
+                                    valueField="user_id"
+                                    className="required"
+                                  />
+                                )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                  <GridContainer height={`calc(100% - 185px)`}>
+                    <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
+                  </GridContainer>
+                  <FormBoxWrap border={true}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th style={{ width: isMobile ? "" : "5%" }}>
+                            첨부파일
+                          </th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="files"
+                                value={information2.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  icon="more-horizontal"
+                                  fillMode={"flat"}
+                                  onClick={onAttachAnswerWndClick}
+                                />
+                              </ButtonInInput>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
