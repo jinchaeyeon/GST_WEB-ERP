@@ -83,6 +83,7 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -460,7 +461,8 @@ const CM_A5000W: React.FC = () => {
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
-
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
@@ -516,6 +518,7 @@ const CM_A5000W: React.FC = () => {
             : toDate(selectedRowData.recdt),
       });
       fetchHtmlDocument(selectedRowData);
+      setIsFilterHideStates(true);
     }
     setTabSelected(e.selected);
   };
