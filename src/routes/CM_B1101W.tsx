@@ -16,6 +16,9 @@ import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -36,9 +39,9 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -48,9 +51,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_B1101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -190,6 +190,7 @@ const CM_B1101W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -298,13 +299,15 @@ const CM_B1101W: React.FC = () => {
         };
       });
 
-      if (totalRowCnt > 0) setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-      setDetailFilters((prev) => ({
-        ...prev,
-        custcd: rows[0].custcd,
-        isSearch: true,
-        pgNum: 1,
-      }));
+      if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        setDetailFilters((prev) => ({
+          ...prev,
+          custcd: rows[0].custcd,
+          isSearch: true,
+          pgNum: 1,
+        }));
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);

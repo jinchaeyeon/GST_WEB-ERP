@@ -151,6 +151,7 @@ const pc = UseGetValueFromSessionItem("pc");
         ...prev,
         use_yn: defaultOption.find((item: any) => item.id == "use_yn")
           ?.valueCode,
+        isSearch: true
       }));
     }
   }, [customOptionData]);

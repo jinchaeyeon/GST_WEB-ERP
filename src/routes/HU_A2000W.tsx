@@ -266,6 +266,7 @@ const pc = UseGetValueFromSessionItem("pc");
           ?.valueCode,
         workcls: defaultOption.find((item: any) => item.id == "workcls")
           ?.valueCode,
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -420,7 +421,7 @@ const pc = UseGetValueFromSessionItem("pc");
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, customOptionData]);
+  }, [filters]);
 
   //그리드 리셋
   const resetAllGrid = () => {
