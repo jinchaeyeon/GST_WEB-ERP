@@ -40,6 +40,8 @@ import {
   findMessage,
   getBizCom,
   
+  getHeight,
+  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -51,7 +53,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -71,6 +73,10 @@ const centerField = [
 let targetRowIndex: null | number = null;
 
 const AC_B1100W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -548,7 +554,7 @@ const AC_B1100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -559,7 +565,7 @@ const AC_B1100W: React.FC = () => {
           fileName="전표변경이력"
         >
           <Grid
-            style={{ height: "77.5vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "77.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
