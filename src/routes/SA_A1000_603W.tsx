@@ -1365,20 +1365,28 @@ const pc = UseGetValueFromSessionItem("pc");
         ...prev,
         [name]: value == true ? "E" : "",
       }));
-    } else if (name == "etcagencyyn") {
+    } else if (name == "agency6") {
       setInformation((prev) => ({
         ...prev,
-        etcagency: value == false ? "" : " ",
+        [name]: value == true ? "K" : "",
+        etcagency: ""
       }));
-    } else if (name == "etcguidyn") {
+    } else if (name == "guid6") {
       setInformation((prev) => ({
         ...prev,
-        etcguid: value == false ? "" : " ",
+        [name]: value == true ? "K" : "",
+        etcguid: ""
       }));
-    } else if (name == "etcglpyn") {
+    } else if (name == "glp6") {
       setInformation((prev) => ({
         ...prev,
-        etcglp: value == false ? "" : " ",
+        [name]: value == true ? "K" : "",
+        etcglp: ""
+      }));
+    } else if (name == "etcagency" || name == "etcguid" || name == "etcglp") {
+      setInformation((prev) => ({
+        ...prev,
+        [name] : value,
       }));
     } else if (name == "translate1" || name == "report1") {
       setInformation((prev) => ({
@@ -1614,6 +1622,7 @@ const pc = UseGetValueFromSessionItem("pc");
     agency3: "",
     agency4: "",
     agency5: "",
+    agency6: "",
     etcagency: "",
     reportcnt: 0,
     transreportcnt: 0,
@@ -1626,12 +1635,14 @@ const pc = UseGetValueFromSessionItem("pc");
     glp3: "",
     glp4: "",
     glp5: "",
+    glp6: "",
     etcglp: "",
     guid1: "",
     guid2: "",
     guid3: "",
     guid4: "",
     guid5: "",
+    guid6: "",
     etcguid: "",
     materialindt: new Date(),
     materialnm: "",
@@ -1926,6 +1937,7 @@ const pc = UseGetValueFromSessionItem("pc");
           agency3: row[0].agency3,
           agency4: row[0].agency4,
           agency5: row[0].agency5,
+          agency6: row[0].agency6,
           etcagency: row[0].etcagency,
           reportcnt: row[0].reportcnt,
           transreportcnt: row[0].transreportcnt,
@@ -1940,12 +1952,14 @@ const pc = UseGetValueFromSessionItem("pc");
           glp3: row[0].glp3,
           glp4: row[0].glp4,
           glp5: row[0].glp5,
+          glp6: row[0].glp6,
           etcglp: row[0].etcglp,
           guid1: row[0].guid1,
           guid2: row[0].guid2,
           guid3: row[0].guid3,
           guid4: row[0].guid4,
           guid5: row[0].guid5,
+          guid6: row[0].guid6,
           etcguid: row[0].etcguid,
           materialindt: toDate(row[0].materialindt),
           materialnm: row[0].materialnm,
@@ -2010,6 +2024,7 @@ const pc = UseGetValueFromSessionItem("pc");
           agency3: "",
           agency4: "",
           agency5: "",
+          agency6: "",
           etcagency: "",
           reportcnt: 0,
           transreportcnt: 0,
@@ -2022,12 +2037,14 @@ const pc = UseGetValueFromSessionItem("pc");
           glp3: "",
           glp4: "",
           glp5: "",
+          glp6: "",
           etcglp: "",
           guid1: "",
           guid2: "",
           guid3: "",
           guid4: "",
           guid5: "",
+          guid6: "",
           etcguid: "",
           materialindt: new Date(),
           materialnm: "",
@@ -3258,6 +3275,7 @@ const pc = UseGetValueFromSessionItem("pc");
       agency3: "",
       agency4: "",
       agency5: "",
+      agency6: "",
       etcagency: "",
       reportcnt: 0,
       transreportcnt: 0,
@@ -3271,12 +3289,14 @@ const pc = UseGetValueFromSessionItem("pc");
       glp3: "",
       glp4: "",
       glp5: "",
+      glp6: "",
       etcglp: "",
       guid1: "",
       guid2: "",
       guid3: "",
       guid4: "",
       guid5: "",
+      guid6: "",
       etcguid: "",
       materialindt: setDefaultDate2(customOptionData, "materialindt"),
       materialnm: "",
@@ -3516,6 +3536,8 @@ const pc = UseGetValueFromSessionItem("pc");
           "|" +
           (Information.agency5 == "" ? "N" : Information.agency5) +
           "|" +
+          (Information.agency6 == "" ? "N" : Information.agency6) +
+          "|" +
           Information.etcagency;
 
         const guid =
@@ -3529,6 +3551,8 @@ const pc = UseGetValueFromSessionItem("pc");
           "|" +
           (Information.guid5 == "" ? "N" : Information.guid5) +
           "|" +
+          (Information.guid6 == "" ? "N" : Information.guid6) +
+          "|" +
           Information.etcguid;
 
         const glp =
@@ -3541,6 +3565,8 @@ const pc = UseGetValueFromSessionItem("pc");
           (Information.glp4 == "" ? "N" : Information.glp4) +
           "|" +
           (Information.glp5 == "" ? "N" : Information.glp5) +
+          "|" +
+          (Information.glp6 == "" ? "N" : Information.glp6) +
           "|" +
           Information.etcglp;
 
@@ -5167,14 +5193,14 @@ const pc = UseGetValueFromSessionItem("pc");
                   <td>
                     <Checkbox
                       title="기타"
-                      name="etcagencyyn"
+                      name="agency6"
                       label={"기타"}
-                      value={Information.etcagency != "" ? true : false}
+                      value={Information.agency6 == "K" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
                   <td>
-                    {Information.etcagency != "" ? (
+                    {Information.agency6 == "K" ? (
                       <Input
                         name="etcagency"
                         type="text"
@@ -5243,14 +5269,14 @@ const pc = UseGetValueFromSessionItem("pc");
                   <td>
                     <Checkbox
                       title="기타"
-                      name="etcguidyn"
+                      name="guid6"
                       label={"기타"}
-                      value={Information.etcguid != "" ? true : false}
+                      value={Information.guid6 == "K" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
                   <td>
-                    {Information.etcguid != "" ? (
+                    {Information.guid6 == "K" ? (
                       <Input
                         name="etcguid"
                         type="text"
@@ -5317,16 +5343,16 @@ const pc = UseGetValueFromSessionItem("pc");
                     />
                   </td>
                   <td>
-                    <Checkbox
+                     <Checkbox
                       title="기타"
-                      name="etcglpyn"
+                      name="glp6"
                       label={"기타"}
-                      value={Information.etcglp != "" ? true : false}
+                      value={Information.glp6 == "K" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
                   <td>
-                    {Information.etcglp != "" ? (
+                    {Information.glp6 == "K" ? (
                       <Input
                         name="etcglp"
                         type="text"

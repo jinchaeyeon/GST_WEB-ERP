@@ -20,7 +20,7 @@ export const getBizCom = (bizComponentData: any, id: string) => {
     undefined
     ? []
     : bizComponentData.find((item: any) => item.bizComponentId == id)
-        .bizComponentItems;
+        .data.Rows;
 };
 
 export const getHeight = (className: string) => {
