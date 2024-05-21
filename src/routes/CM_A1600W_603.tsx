@@ -2488,45 +2488,43 @@ const CM_A1600W_603: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="65%">
-                  <GridTitleContainer>
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>작성자</th>
-                            <td>
-                              {bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="person"
-                                  value={schedulerFilter.person}
-                                  bizComponentId="L_sysUserMaster_001"
-                                  bizComponentData={bizComponentData}
-                                  changeData={filterComboBoxChange}
-                                  valueField="user_id"
-                                  textField="user_name"
-                                  className="required"
-                                />
-                              )}
-                            </td>
-                            <th>계획구분</th>
-                            <td>
-                              {bizComponentData !== null && (
-                                <BizComponentRadioGroup
-                                  name="rdoplandiv"
-                                  value={schedulerFilter.rdoplandiv}
-                                  bizComponentId="R_PLANDIV_YN"
-                                  bizComponentData={bizComponentData}
-                                  changeData={filterRadioChange}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-                  </GridTitleContainer>
+                  <FilterContainer>
+                    <FilterBox
+                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                    >
+                      <tbody>
+                        <tr>
+                          <th>작성자</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={schedulerFilter.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={filterComboBoxChange}
+                                valueField="user_id"
+                                textField="user_name"
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>계획구분</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="rdoplandiv"
+                                value={schedulerFilter.rdoplandiv}
+                                bizComponentId="R_PLANDIV_YN"
+                                bizComponentData={bizComponentData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
                   <GridTitleContainer>
                     <GridTitle>개인 스케줄(표)</GridTitle>
                   </GridTitleContainer>

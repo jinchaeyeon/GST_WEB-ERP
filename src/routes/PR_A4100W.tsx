@@ -199,6 +199,7 @@ const PR_A4100W: React.FC = () => {
         outprocyn: defaultOption.find((item: any) => item.id == "outprocyn")
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -445,7 +446,7 @@ const PR_A4100W: React.FC = () => {
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData, customOptionData]);
+  }, [filters]);
 
   let gridRef: any = useRef(null);
 
