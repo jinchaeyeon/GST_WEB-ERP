@@ -72,6 +72,8 @@ const numberField = ["금액", "미수금", "미지급금"];
 const dateField = ["매출일자", "Tax발행일자", "입고일자"];
 
 const AC_B6080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const [tabSelected, setTabSelected] = React.useState(0);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -997,6 +999,7 @@ const AC_B6080W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="매출TAX미처리">
           <FilterContainer>

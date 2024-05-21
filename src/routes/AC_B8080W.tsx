@@ -32,6 +32,8 @@ import { isLoading, sessionItemState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -382,6 +384,7 @@ const AC_B8080W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="수출실적 일괄제출명세서">
           <GridContainer>

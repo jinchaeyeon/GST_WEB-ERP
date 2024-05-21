@@ -1677,6 +1677,7 @@ const HU_B3140W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="개인별월내역(합계)">
           <GridContainer width="100%">

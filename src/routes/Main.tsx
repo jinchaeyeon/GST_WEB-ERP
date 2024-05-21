@@ -835,6 +835,7 @@ const Main: React.FC = () => {
                   style={{ width: "100%" }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
+                  scrollable={isMobile}
                 >
                   <TabStripTab title="업무 달력">
                     <GridContainer
@@ -896,6 +897,7 @@ const Main: React.FC = () => {
                       }}
                       selected={tabSelected2}
                       onSelect={handleSelectTab2}
+                      scrollable={isMobile}
                     >
                       {layoutTab}
                     </TabStrip>
@@ -1072,6 +1074,7 @@ const Main: React.FC = () => {
                 style={{ width: "100%" }}
                 selected={tabSelected}
                 onSelect={handleSelectTab}
+                scrollable={isMobile}
               >
                 <TabStripTab title="업무 달력">
                   <GridContainer>
@@ -1125,6 +1128,7 @@ const Main: React.FC = () => {
                     style={{ width: "100%" }}
                     selected={tabSelected2}
                     onSelect={handleSelectTab2}
+                    scrollable={isMobile}
                   >
                     {layoutTab}
                   </TabStrip>

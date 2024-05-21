@@ -1607,6 +1607,7 @@ const MA_A3600W: React.FC = () => {
             style={{
               width: "100%",
             }}
+            scrollable={isMobile}
           >
             <TabStripTab title="상세자료">
               <Swiper

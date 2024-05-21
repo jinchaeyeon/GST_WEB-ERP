@@ -1945,7 +1945,7 @@ const HU_B4010W: React.FC = () => {
                     </GridMui>
                   </GridMui>
                 </GridContainer>
-                <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+                <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
                   <TabStripTab title="월별 평균">
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -2577,7 +2577,7 @@ const HU_B4010W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+              <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
                 <TabStripTab title="당월 평가내용">
                   <ExcelExport
                     data={mainDataResult3.data}

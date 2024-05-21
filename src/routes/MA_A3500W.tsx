@@ -2661,6 +2661,7 @@ const MA_A3500W: React.FC = () => {
                   }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
+                  scrollable={isMobile}
                 >
                   <TabStripTab title="품목참조">
                     <GridContainer>
@@ -3526,6 +3527,7 @@ const MA_A3500W: React.FC = () => {
                 style={{ width: "100%", height: "48.5vh" }}
                 selected={tabSelected}
                 onSelect={handleSelectTab}
+                scrollable={isMobile}
               >
                 <TabStripTab title="품목참조">
                   <FormBoxWrap>

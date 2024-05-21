@@ -2082,6 +2082,7 @@ const CM_A4100W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="교육기준정보">
           {isMobile ? (

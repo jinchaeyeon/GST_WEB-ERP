@@ -3840,6 +3840,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="국민연금">
               <Swiper
@@ -4600,6 +4601,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="국민연금">
               <GridContainerWrap>

@@ -1801,6 +1801,7 @@ const PR_A4000W: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="생산실적관리">
           <FilterContainer>

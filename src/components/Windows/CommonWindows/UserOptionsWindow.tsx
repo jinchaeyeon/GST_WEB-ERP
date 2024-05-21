@@ -2003,7 +2003,7 @@ const pc = UseGetValueFromSessionItem("pc");
       onResize={handleResize}
       onClose={onClose}
     >
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
         {isAdmin && (
           <TabStripTab title="컨트롤정보">
             <GridContainerWrap>

@@ -2274,6 +2274,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{ width: "100%", height: isMobile ? "" : "83vh" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="전사관리">
           {isMobile ? (

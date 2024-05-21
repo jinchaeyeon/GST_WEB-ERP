@@ -1367,6 +1367,7 @@ const QC_B0200W: React.FC = () => {
         }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="전체">
           <GridContainer

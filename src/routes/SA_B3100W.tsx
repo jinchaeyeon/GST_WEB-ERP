@@ -777,6 +777,7 @@ const SA_B3100W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="전체">
               <Swiper
@@ -2055,6 +2056,7 @@ const SA_B3100W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ height: "80vh", width: "100%", paddingBottom: "15px" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">

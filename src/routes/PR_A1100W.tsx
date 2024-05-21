@@ -2611,6 +2611,7 @@ const PR_A1100W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="처리">
           <GridContainer style={{ width: "100%", overflow: "auto" }}>

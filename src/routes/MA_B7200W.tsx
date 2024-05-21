@@ -1833,6 +1833,7 @@ const MA_B7200W: React.FC = () => {
             style={{
               width: `${deviceWidth - 30}px`,
             }}
+            scrollable={isMobile}
           >
             <TabStripTab title="재고현황">
               <Swiper
@@ -2487,6 +2488,7 @@ const MA_B7200W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%", height: "80vh" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="재고현황">
               <GridContainerWrap>

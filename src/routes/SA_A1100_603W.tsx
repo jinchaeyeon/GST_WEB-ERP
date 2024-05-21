@@ -2471,6 +2471,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{
           width: "100%",
         }}
+        scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
           <FilterContainer>

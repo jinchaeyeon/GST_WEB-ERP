@@ -68,6 +68,8 @@ const NumberField = [
 let targetRowIndex: null | number = null;
 
 const AC_B5080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -1135,6 +1137,7 @@ const AC_B5080W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="TAX미발(매출)">
           <GridContainer width="100%">

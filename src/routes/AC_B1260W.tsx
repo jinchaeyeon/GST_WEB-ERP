@@ -64,6 +64,8 @@ import { Iparameters, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
 
 const AC_B1260W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -895,7 +897,7 @@ const AC_B1260W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
         <TabStripTab title="제조경비">
           <GridContainerWrap flexDirection="column">
             <GridContainer>

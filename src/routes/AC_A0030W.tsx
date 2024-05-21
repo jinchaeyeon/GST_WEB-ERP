@@ -116,12 +116,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const AC_A0030W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const listIdGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(SUB_DATA_ITEM_KEY);
   const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   // const [loginResult] = useRecoilState(loginResultState);
@@ -1388,6 +1390,7 @@ const pc = UseGetValueFromSessionItem("pc");
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="상세정보">
               <ButtonContainer style={{ float: "right" }}>

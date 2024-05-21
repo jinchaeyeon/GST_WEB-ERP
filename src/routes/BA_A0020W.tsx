@@ -3756,6 +3756,7 @@ const BA_A0020: React.FC = () => {
                 selected={tabSelected}
                 onSelect={handleSelectTab}
                 style={{ width: "100%" }}
+                scrollable={isMobile}
               >
                 <TabStripTab title="상세정보">
                   <GridTitleContainer className="ButtonContainer3">
@@ -4714,6 +4715,7 @@ const BA_A0020: React.FC = () => {
                 selected={tabSelected}
                 onSelect={handleSelectTab}
                 style={{ width: "100%" }}
+                scrollable={isMobile}
               >
                 <TabStripTab title="상세정보">
                   <GridTitleContainer>

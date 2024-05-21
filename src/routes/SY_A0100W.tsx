@@ -771,6 +771,7 @@ const App: React.FC = () => {
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="데이터 등록 현황">
               <CusomizedGrid></CusomizedGrid>

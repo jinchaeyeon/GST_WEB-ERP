@@ -2217,6 +2217,7 @@ const CM_A1600W_603: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="스케줄러">
           {isMobile ? (

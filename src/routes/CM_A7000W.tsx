@@ -97,6 +97,8 @@ let temp = 0;
 let deletedMainRows: any[] = [];
 
 const CM_A7000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
 
@@ -1436,6 +1438,7 @@ const CM_A7000W: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
           <GridTitleContainer>

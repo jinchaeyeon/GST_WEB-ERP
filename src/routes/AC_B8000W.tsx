@@ -84,7 +84,8 @@ const numberField = [
 const dateField = ["shipdt"];
 
 const AC_B8000W: React.FC = () => {
-  
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -2254,6 +2255,7 @@ const AC_B8000W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="세금계산서 홈택스">
           <FilterContainer>

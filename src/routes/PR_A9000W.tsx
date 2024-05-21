@@ -2676,6 +2676,7 @@ const PR_A9000W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="재공기타입고">
           <GridContainerWrap>

@@ -107,6 +107,8 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const AC_A1070W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1388,6 +1390,7 @@ const AC_A1070W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="입고자료">
           <ExcelExport
