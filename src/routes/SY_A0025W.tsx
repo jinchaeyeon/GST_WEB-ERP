@@ -1797,46 +1797,6 @@ const SY_A0025W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
-            <Title>관리번호 채번정보</Title>
-
-            <ButtonContainer>
-              {permissions && (
-                <TopButtons
-                  search={search}
-                  permissions={permissions}
-                  exportExcel={exportExcel}
-                  pathname="SY_A0025W"
-                />
-              )}
-            </ButtonContainer>
-          </TitleContainer>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>관리번호ID</th>
-                  <td>
-                    <Input
-                      name="numbering_id"
-                      type="text"
-                      value={filters.numbering_id}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>관리번호명</th>
-                  <td>
-                    <Input
-                      name="numbering_name"
-                      type="text"
-                      value={filters.numbering_name}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
           <GridContainerWrap>
             <GridContainer width={"25%"}>
               <GridTitleContainer>
@@ -2190,7 +2150,6 @@ const SY_A0025W: React.FC = () => {
                           )}
                         </tr>
                       </>
-                      \
                       <tr>
                         <th>시작채번연변</th>
                         <td colSpan={3}>

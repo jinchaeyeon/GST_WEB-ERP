@@ -434,7 +434,7 @@ const PR_A9100W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA171,L_BA172,L_BA173,L_BA061,L_BA015,L_BA017",
+    "L_PR010,L_BA171,L_BA172,L_BA173,L_BA061,L_BA015,L_BA017",
     setBizComponentData
   );
 
