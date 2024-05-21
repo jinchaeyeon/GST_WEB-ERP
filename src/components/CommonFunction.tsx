@@ -911,7 +911,9 @@ export const UseGetValueFromSessionItem = (code: string) => {
 
   if (sessionItem) {
     if(sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined) {
-      return  "";
+      alert("세션이 만료되었습니다.");
+      window.location.href = "/";
+      return "";
     } else {
       return sessionItem.find((sessionItem) => sessionItem.code == codes)!.value
     }
