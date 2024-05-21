@@ -1383,11 +1383,6 @@ const pc = UseGetValueFromSessionItem("pc");
         [name]: value == true ? "K" : "",
         etcglp: ""
       }));
-    } else if (name == "etcagency" || name == "etcguid" || name == "etcglp") {
-      setInformation((prev) => ({
-        ...prev,
-        [name] : value,
-      }));
     } else if (name == "translate1" || name == "report1") {
       setInformation((prev) => ({
         ...prev,
@@ -1407,13 +1402,13 @@ const pc = UseGetValueFromSessionItem("pc");
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "T" : "",
-        report5: value == false ? "" : " ",
+        etcreport: "",
       }));
     } else if (name == "translate4") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "T" : "",
-        translate5: value == false ? "" : " ",
+        etctranslatereport: "",
       }));
     } else {
       setInformation((prev) => ({
@@ -1666,7 +1661,7 @@ const pc = UseGetValueFromSessionItem("pc");
     report2: "",
     report3: "",
     report4: "",
-    report5: "",
+    etcreport: "",
     requestgb: "A",
     rev_reason: "",
     testenddt: null,
@@ -1676,7 +1671,7 @@ const pc = UseGetValueFromSessionItem("pc");
     translate2: "",
     translate3: "",
     translate4: "",
-    translate5: "",
+    etctranslatereport: "",
   });
 
   const [Information2, setInformation2] = useState<{ [name: string]: any }>({
@@ -1985,7 +1980,7 @@ const pc = UseGetValueFromSessionItem("pc");
           report2: row[0].report2,
           report3: row[0].report3,
           report4: row[0].report4,
-          report5: row[0].report5,
+          etcreport: row[0].etcreport,
           requestgb: row[0].requestgb,
           rev_reason: row[0].rev_reason,
           testenddt: isValidDate(row[0].testenddt)
@@ -1999,7 +1994,7 @@ const pc = UseGetValueFromSessionItem("pc");
           translate2: row[0].translate2,
           translate3: row[0].translate3,
           translate4: row[0].translate4,
-          translate5: row[0].translate5,
+          etctranslatereport: row[0].etctranslatereport,
         });
       } else {
         setWorktype("U");
@@ -2068,7 +2063,7 @@ const pc = UseGetValueFromSessionItem("pc");
           report2: "",
           report3: "",
           report4: "",
-          report5: "",
+          etcreport: "",
           requestgb: "A",
           rev_reason: "",
           testenddt: null,
@@ -2078,7 +2073,7 @@ const pc = UseGetValueFromSessionItem("pc");
           translate2: "",
           translate3: "",
           translate4: "",
-          translate5: "",
+          etctranslatereport: "",
         });
       }
 
@@ -3323,7 +3318,7 @@ const pc = UseGetValueFromSessionItem("pc");
       report2: "",
       report3: "",
       report4: "",
-      report5: "",
+      etcreport: "",
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         ?.valueCode,
       rev_reason: "",
@@ -3335,7 +3330,7 @@ const pc = UseGetValueFromSessionItem("pc");
       translate2: "",
       translate3: "",
       translate4: "",
-      translate5: "",
+      etctranslatereport: "",
     });
     resetAllGrid();
     setTabSelected(1);
@@ -3579,7 +3574,7 @@ const pc = UseGetValueFromSessionItem("pc");
           "|" +
           (Information.translate4 == "" ? "N" : Information.translate4) +
           "|" +
-          Information.translate5;
+          Information.etctranslatereport;
 
         const report =
           (Information.report1 == "" ? "N" : Information.report1) +
@@ -3590,7 +3585,7 @@ const pc = UseGetValueFromSessionItem("pc");
           "|" +
           (Information.report4 == "" ? "N" : Information.report4) +
           "|" +
-          Information.report5;
+          Information.etcreport;
 
         if (dataItem.length == 0 && deletedMainRows2.length == 0) {
           setParaData({
@@ -5412,16 +5407,16 @@ const pc = UseGetValueFromSessionItem("pc");
                   <td>
                     {Information.report4 == "T" ? (
                       <Input
-                        name="report5"
+                        name="etcreport"
                         type="text"
-                        value={Information.report5}
+                        value={Information.etcreport}
                         onChange={InputChange}
                       />
                     ) : (
                       <Input
-                        name="report5"
+                        name="etcreport"
                         type="text"
-                        value={Information.report5}
+                        value={Information.etcreport}
                         className="readonly"
                       />
                     )}
@@ -5479,16 +5474,16 @@ const pc = UseGetValueFromSessionItem("pc");
                   <td>
                     {Information.translate4 == "T" ? (
                       <Input
-                        name="translate5"
+                        name="etctranslatereport"
                         type="text"
-                        value={Information.translate5}
+                        value={Information.etctranslatereport}
                         onChange={InputChange}
                       />
                     ) : (
                       <Input
-                        name="translate5"
+                        name="etctranslatereport"
                         type="text"
-                        value={Information.translate5}
+                        value={Information.etctranslatereport}
                         className="readonly"
                       />
                     )}
