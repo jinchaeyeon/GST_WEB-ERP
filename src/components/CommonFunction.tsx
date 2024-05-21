@@ -911,7 +911,7 @@ export const UseGetValueFromSessionItem = (code: string) => {
 
   if (sessionItem) {
     if(sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined) {
-      alert("세션이 만료되었습니다.");
+      resetLocalStorage();
       window.location.href = "/";
       return "";
     } else {
