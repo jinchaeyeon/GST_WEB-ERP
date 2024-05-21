@@ -3041,6 +3041,9 @@ const SA_A1000_603W: React.FC = () => {
       quoseq: selectedRowData.quoseq,
       isSearch: true,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+		}
   };
 
   const onRowDoubleClick = (props: any) => {
