@@ -25,6 +25,7 @@ const NumberCell = (props: CustomCellProps) => {
     className = "",
     myProp,
     color = "black",
+    rowType,
   } = props;
   let isInEdit = field == dataItem.inEdit;
   const value = dataItem[field];
@@ -45,17 +46,23 @@ const NumberCell = (props: CustomCellProps) => {
 
   const defaultRendering =
     myProp == undefined ? (
-      <td
-        style={{ textAlign: "right", color: color }}
-        aria-colindex={ariaColumnIndex}
-        data-grid-col-index={columnIndex}
-      >
-        {isInEdit ? (
-          <NumericTextBox value={value} format={"0"} onChange={handleChange} />
-        ) : (
-          numberWithCommas3(value)
-        )}
-      </td>
+      rowType == "groupHeader" ? null : (
+        <td
+          style={{ textAlign: "right", color: color }}
+          aria-colindex={ariaColumnIndex}
+          data-grid-col-index={columnIndex}
+        >
+          {isInEdit ? (
+            <NumericTextBox
+              value={value}
+              format={"0"}
+              onChange={handleChange}
+            />
+          ) : (
+            numberWithCommas3(value)
+          )}
+        </td>
+      )
     ) : (
       <td
         aria-colindex={ariaColumnIndex}

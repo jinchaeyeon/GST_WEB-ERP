@@ -17,6 +17,7 @@ const DateCell = (props: CustomCellProps) => {
     onChange,
     className = "",
     color = "black",
+    rowType,
   } = props;
   let isInEdit = field == dataItem.inEdit;
 
@@ -50,35 +51,36 @@ const DateCell = (props: CustomCellProps) => {
     }
   };
 
-  const defaultRendering = (
-    <td
-      style={{ textAlign: "center", color: color }}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-    >
-      {isInEdit ? (
-        <DatePicker
-          name={field}
-          defaultValue={typeof value == "string" ? new Date() : value}
-          format={"yyyy-MM-dd"}
-          onChange={onDateChange}
-          calendar={Calendars}
-          placeholder=""
-          show={true}
-        />
-      ) : typeof value == "object" ? (
-        convertDateToStr(value) == "99991231" ? (
-          ""
+  const defaultRendering =
+    rowType == "groupHeader" ? null : (
+      <td
+        style={{ textAlign: "center", color: color }}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+      >
+        {isInEdit ? (
+          <DatePicker
+            name={field}
+            defaultValue={typeof value == "string" ? new Date() : value}
+            format={"yyyy-MM-dd"}
+            onChange={onDateChange}
+            calendar={Calendars}
+            placeholder=""
+            show={true}
+          />
+        ) : typeof value == "object" ? (
+          convertDateToStr(value) == "99991231" ? (
+            ""
+          ) : (
+            dateformat2(convertDateToStr(value))
+          )
+        ) : typeof value == "string" && value !== "" ? (
+          dateformat2(value)
         ) : (
-          dateformat2(convertDateToStr(value))
-        )
-      ) : typeof value == "string" && value !== "" ? (
-        dateformat2(value)
-      ) : (
-        ""
-      )}
-    </td>
-  );
+          ""
+        )}
+      </td>
+    );
 
   //return defaultRendering;
   //return typeof value == "string"

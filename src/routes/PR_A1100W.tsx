@@ -64,7 +64,7 @@ import {
   getCodeFromValue,
   getGridItemChangedData,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -160,7 +160,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
-  return bizComponent ? (
+  return props.rowType == "groupHeader" ? null : bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
