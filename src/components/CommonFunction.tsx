@@ -910,7 +910,11 @@ export const UseGetValueFromSessionItem = (code: string) => {
     code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
 
   if (sessionItem) {
-    return sessionItem.find((sessionItem) => sessionItem.code == codes)!.value;
+    if(sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined) {
+      return  "";
+    } else {
+      return sessionItem.find((sessionItem) => sessionItem.code == codes)!.value
+    }
   } else {
     console.log("sessionItem 오류");
     return "";
