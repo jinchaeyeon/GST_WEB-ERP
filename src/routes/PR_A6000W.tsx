@@ -247,27 +247,26 @@ const PR_A6000W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.num]: true });
+      setSelectedState3({ [rowData.num]: true });
 
       setWorkType("U");
       setDetailWindowVisible(true);
     };
-
-    if (props.dataItem.field == "group_category_name") {
-      return <td></td>;
-    } else {
-      return (
-        <td className="k-command-cell">
-          <Button
-            className="k-grid-edit-command"
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onEditClick}
-            icon="edit"
-          ></Button>
-        </td>
-      );
-    }
+    return (
+      <>
+        {props.rowType == "groupHeader" ? null : (
+          <td className="k-command-cell">
+            <Button
+              className="k-grid-edit-command"
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onEditClick}
+              icon="edit"
+            ></Button>
+          </td>
+        )}
+      </>
+    );
   };
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)
@@ -517,13 +516,10 @@ const PR_A6000W: React.FC = () => {
     }
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-          groupId: row.recdt + "recdt",
-          group_category_name: "비가동일자" + " : " + row.recdt,
-        };
-      });
+      const rows = data.tables[0].Rows.map((row: any) => ({
+        ...row,
+        group_category_name: "비가동일자" + " : " + row.recdt,
+      }));
       if (filters2.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
@@ -611,17 +607,14 @@ const PR_A6000W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any) => {
-        return {
-          ...row,
-          groupId: row.prodmac + "prodmac",
-          group_category_name:
-            "설비" +
-            " : " +
-            prodmacListData.find((item: any) => item.fxcode == row.prodmac)
-              ?.fxfull,
-        };
-      });
+      const rows = data.tables[0].Rows.map((row: any) => ({
+        ...row,
+        group_category_name:
+          "설비" +
+          " : " +
+          prodmacListData.find((item: any) => item.fxcode == row.prodmac)
+            ?.fxfull,
+      }));
 
       if (filters3.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -1432,7 +1425,7 @@ const PR_A6000W: React.FC = () => {
                               }
                               footerCell={
                                 item.sortOrder == 0
-                                  ? detail2TotalFooterCell
+                                  ? detailTotalFooterCell
                                   : undefined
                               }
                             ></GridColumn>
@@ -1555,7 +1548,7 @@ const PR_A6000W: React.FC = () => {
                               }
                               footerCell={
                                 item.sortOrder == 0
-                                  ? detailTotalFooterCell
+                                  ? detail2TotalFooterCell
                                   : undefined
                               }
                             ></GridColumn>
@@ -1714,7 +1707,7 @@ const PR_A6000W: React.FC = () => {
                               }
                               footerCell={
                                 item.sortOrder == 0
-                                  ? detail2TotalFooterCell
+                                  ? detailTotalFooterCell
                                   : undefined
                               }
                             ></GridColumn>
@@ -1822,7 +1815,7 @@ const PR_A6000W: React.FC = () => {
                             }
                             footerCell={
                               item.sortOrder == 0
-                                ? detailTotalFooterCell
+                                ? detail2TotalFooterCell
                                 : undefined
                             }
                           ></GridColumn>
