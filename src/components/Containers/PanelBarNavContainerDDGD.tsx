@@ -137,8 +137,6 @@ const PanelBarNavContainer = (props: any) => {
   // 새로고침하거나 Path 변경 시
   useEffect(() => {
     const handleTabClose = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      return (event.returnValue = "true");
     };
 
     const handleUnload = () => {
