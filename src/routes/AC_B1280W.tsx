@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -35,6 +35,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -45,7 +46,7 @@ import CodeReport from "../components/Prints/CodeReport";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -54,11 +55,15 @@ const numberField = ["dramt", "cramt"];
 let targetRowIndex: null | number = null;
 
 const AC_B1280W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -459,7 +464,7 @@ const AC_B1280W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           {permissions && (
             <ButtonContainer>
@@ -483,7 +488,7 @@ const AC_B1280W: React.FC = () => {
           fileName="단축코드별리스트"
         >
           <Grid
-            style={{ height: "74vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "77vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

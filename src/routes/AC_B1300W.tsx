@@ -35,6 +35,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -45,7 +46,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8030W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -53,6 +54,11 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const AC_B1300W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -564,7 +570,7 @@ const AC_B1300W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -575,7 +581,7 @@ const AC_B1300W: React.FC = () => {
           fileName="분개장"
         >
           <Grid
-            style={{ height: "73vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "73vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
