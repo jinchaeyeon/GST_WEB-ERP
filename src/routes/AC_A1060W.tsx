@@ -113,6 +113,8 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 const AC_A1060W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -1743,6 +1745,7 @@ const AC_A1060W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="판매자료">
           <ExcelExport

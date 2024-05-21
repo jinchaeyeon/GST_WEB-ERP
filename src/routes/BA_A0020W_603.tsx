@@ -3096,6 +3096,7 @@ const BA_A0020W_603: React.FC = () => {
               selected={tabSelected}
               onSelect={handleSelectTab}
               style={{ width: "100%" }}
+              scrollable={isMobile}
             >
               <TabStripTab title="기본">
                 <ButtonContainer className="ButtonContainer3">
@@ -4121,6 +4122,7 @@ const BA_A0020W_603: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="기본">
               <FormBoxWrap border={true}>

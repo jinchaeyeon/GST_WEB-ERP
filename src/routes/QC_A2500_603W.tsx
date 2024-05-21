@@ -1647,6 +1647,7 @@ const BA_A0020_603: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%", height: "90vh" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
           <FilterContainer>

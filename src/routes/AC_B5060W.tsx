@@ -50,6 +50,8 @@ const DATA_ITEM_KEY3 = "num";
 const numberField = ["maesu", "amt", "vat"];
 
 const AC_B5060W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1136,6 +1138,7 @@ const AC_B5060W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="매출처별 세금계산서">
           <GridContainer width="100%">
@@ -1203,6 +1206,7 @@ const AC_B5060W: React.FC = () => {
             style={{ width: "100%" }}
             selected={tabSelected2}
             onSelect={handleSelectTab2}
+            scrollable={isMobile}
           >
             <TabStripTab title="전자세금계산서분">
               <GridContainer width="100%">
@@ -1426,6 +1430,7 @@ const AC_B5060W: React.FC = () => {
             style={{ width: "100%" }}
             selected={tabSelected2}
             onSelect={handleSelectTab2}
+            scrollable={isMobile}
           >
             <TabStripTab title="전자세금계산서분">
               <GridContainer width="100%">

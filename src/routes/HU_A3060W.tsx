@@ -3234,6 +3234,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="소득세율">
               <FilterContainer>
@@ -4023,6 +4024,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="소득세율">
               <FilterContainer>

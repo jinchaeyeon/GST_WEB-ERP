@@ -12,6 +12,9 @@ import * as ReactDOM from "react-dom";
 import { insertImageFiles } from "./utils";
 
 export const InsertImageDialog = (props: any) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  
   const [selected, setSelected] = React.useState(0);
   const [files, setFiles] = React.useState([]);
 
@@ -148,7 +151,7 @@ export const InsertImageDialog = (props: any) => {
       initialWidth={500}
       initialHeight={480}
     >
-      <TabStrip selected={selected} onSelect={onTabSelect} animation={false}>
+      <TabStrip selected={selected} onSelect={onTabSelect} animation={false} scrollable={isMobile}>
         {Object.entries(attrs).length == 0 && (
           <TabStripTab title="Upload">
             <div className="k-edit-form-container pt-3 pb-3">

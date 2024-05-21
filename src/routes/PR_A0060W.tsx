@@ -2646,6 +2646,7 @@ const PR_A0060: React.FC = () => {
               selected={tabSelected}
               onSelect={handleSelectTab}
               style={{ width: "100%" }}
+              scrollable={isMobile}
             >
               <TabStripTab title="설비정보">
                 <FormBoxWrap
@@ -3231,6 +3232,7 @@ const PR_A0060: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="설비정보">
               <FormBoxWrap style={{ height: isMobile ? "100%" : "33vh" }}>

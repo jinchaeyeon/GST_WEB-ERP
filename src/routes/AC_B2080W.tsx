@@ -82,6 +82,8 @@ const numberField = [
 const dateField = ["acntdt"];
 
 const AC_B2080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const [tabSelected, setTabSelected] = React.useState(0);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -1024,6 +1026,7 @@ const AC_B2080W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="5개년 매출분석">
           <GridContainer width="100%">

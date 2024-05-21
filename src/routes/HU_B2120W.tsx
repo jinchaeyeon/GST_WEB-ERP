@@ -616,7 +616,7 @@ const HU_B2120W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
         <TabStripTab title="근무시간기록부">
           <GridContainer width="100%">
             <ExcelExport

@@ -290,6 +290,7 @@ const SY_A0060W: React.FC = () => {
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="레이아웃 리스트">
               <Grid style={{ marginBottom: "30px" }} container spacing={2}>
@@ -385,6 +386,7 @@ const SY_A0060W: React.FC = () => {
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="레이아웃 리스트">
               <FilterContainer>

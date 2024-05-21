@@ -1433,6 +1433,7 @@ const pc = UseGetValueFromSessionItem("pc");
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
           <FilterContainer>

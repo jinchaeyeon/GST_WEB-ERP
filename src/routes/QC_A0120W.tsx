@@ -795,6 +795,7 @@ const QC_A0120: React.FC = () => {
             }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="공정불량">
               <Swiper
@@ -1105,6 +1106,7 @@ const QC_A0120: React.FC = () => {
             style={{ width: "100%", height: "79vh" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="공정불량">
               <GridContainerWrap>

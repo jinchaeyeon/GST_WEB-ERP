@@ -104,8 +104,10 @@ type TDetailData = {
 };
 
 const AC_B5040W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   
@@ -1110,6 +1112,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="국세청자료">
           <FilterContainer>

@@ -58,6 +58,8 @@ const dateField = ["acntdt1"];
 const centerField = ["acntdate"];
 
 const AC_B2000W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -1144,6 +1146,7 @@ const AC_B2000W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="계정과목별">
           <GridContainerWrap>

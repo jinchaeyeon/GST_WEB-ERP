@@ -4535,6 +4535,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="고정지급공제">
           <FormContext.Provider

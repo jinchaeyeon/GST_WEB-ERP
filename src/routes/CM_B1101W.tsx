@@ -888,6 +888,7 @@ const CM_B1101W: React.FC = () => {
               selected={tabSelected}
               onSelect={handleSelectTab}
               style={{ width: "100%" }}
+              scrollable={isMobile}
             >
               <TabStripTab title="일자별">
                 <GridContainer style={{ width: "100%" }}>
@@ -1142,6 +1143,7 @@ const CM_B1101W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="일자별">
               <GridContainer>

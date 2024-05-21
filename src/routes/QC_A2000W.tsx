@@ -2568,6 +2568,7 @@ const QC_A2000: React.FC = () => {
         }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="발주정보">
           <GridContainerWrap>

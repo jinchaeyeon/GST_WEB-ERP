@@ -1198,6 +1198,7 @@ const BA_A0021W_603: React.FC = () => {
                 selected={tabSelected2}
                 onSelect={handleSelectTab2}
                 style={{ width: "100%" }}
+                scrollable={isMobile}
               >
                 <TabStripTab title="고객정보">
                   <Swiper
@@ -1767,6 +1768,7 @@ const BA_A0021W_603: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="조회">
               <FilterContainer>
@@ -1930,6 +1932,7 @@ const BA_A0021W_603: React.FC = () => {
                 selected={tabSelected2}
                 onSelect={handleSelectTab2}
                 style={{ width: "100%" }}
+                scrollable={isMobile}
               >
                 <TabStripTab title="고객정보">
                   <FormBoxWrap border={true}>

@@ -980,6 +980,7 @@ const PanelBarNavContainer = (props: any) => {
                       style={{ width: "100%", maxHeight: "600px" }}
                       selected={tabSelected}
                       onSelect={handleSelectTab}
+                      scrollable={isMobile}
                     >
                       <TabStripTab title="알림">
                         <Swiper
@@ -1277,6 +1278,7 @@ const PanelBarNavContainer = (props: any) => {
                         style={{ width: "100%", maxHeight: "600px" }}
                         selected={tabSelected}
                         onSelect={handleSelectTab}
+                        scrollable={isMobile}
                       >
                         <TabStripTab title="알림">
                           <Swiper

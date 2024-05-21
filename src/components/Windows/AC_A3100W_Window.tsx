@@ -2030,6 +2030,7 @@ const pc = UseGetValueFromSessionItem("pc");
           style={{ width: "100%", height: `calc(100% - 80px)` }}
           selected={tabSelected}
           onSelect={handleSelectTab}
+          scrollable={isMobile}
         >
           <TabStripTab title="기본정보">
             <FormBoxWrap border={true}>

@@ -756,6 +756,8 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
 };
 
 const AC_A0020W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -4687,6 +4689,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="관리항목">
           <FilterContainer>

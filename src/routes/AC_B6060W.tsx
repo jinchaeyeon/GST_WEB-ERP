@@ -1846,6 +1846,7 @@ const AC_B6060W: React.FC = () => {
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="기간별">
           <GridContainer width="100%">

@@ -1362,6 +1362,7 @@ const SA_B2410: React.FC = () => {
               selected={tabSelected}
               onSelect={handleSelectTab}
               style={{ width: "100%" }}
+              scrollable={isMobile}
             >
               <TabStripTab title="업체별">
                 <GridContainer style={{ width: "100%" }}>
@@ -1808,6 +1809,7 @@ const SA_B2410: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
+            scrollable={isMobile}
           >
             <TabStripTab title="업체별">
               <GridContainer width="100%">

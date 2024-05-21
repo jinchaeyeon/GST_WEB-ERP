@@ -2710,6 +2710,7 @@ FROM HU072T WHERE paycd = '4'`;
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="일용직일근태">
           <FilterContainer>

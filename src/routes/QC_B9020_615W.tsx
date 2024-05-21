@@ -815,7 +815,7 @@ const QC_B9020_615W: React.FC = () => {
           </SwiperSlide>
         </Swiper>
       ) : (
-        <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+        <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
           <TabStripTab title="수집위치">
             <Accordion defaultExpanded>
               <AccordionSummary

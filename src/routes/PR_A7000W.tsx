@@ -2437,6 +2437,7 @@ const PR_A7000W: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="작업지시">
           <FilterContainer>

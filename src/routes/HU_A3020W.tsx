@@ -1432,6 +1432,7 @@ const pc = UseGetValueFromSessionItem("pc");
         style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
+        scrollable={isMobile}
       >
         <TabStripTab title="지급항목">
           <GridContainer width="100%">

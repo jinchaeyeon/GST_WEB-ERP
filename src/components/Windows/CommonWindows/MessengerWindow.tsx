@@ -830,6 +830,7 @@ const pc = UseGetValueFromSessionItem("pc");
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ height: `calc(100% - ${leftOverHeight}px)` }}
+        scrollable={isMobile}
       >
         <TabStripTab title="받은 쪽지">
           <GridContainer height={"270px"}>

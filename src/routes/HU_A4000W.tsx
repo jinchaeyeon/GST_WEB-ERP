@@ -4709,6 +4709,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="인사고과기준">
               <Swiper
@@ -5615,6 +5616,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     style={{ width: "100%" }}
                     selected={tabSelected2}
                     onSelect={handleSelectTab2}
+                    scrollable={isMobile}
                   >
                     <TabStripTab title="불량">
                       <GridContainer>
@@ -6036,6 +6038,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     style={{ width: "100%" }}
                     selected={tabSelected3}
                     onSelect={handleSelectTab3}
+                    scrollable={isMobile}
                   >
                     <TabStripTab title="분류1">
                       <GridContainer>
@@ -6303,6 +6306,7 @@ const pc = UseGetValueFromSessionItem("pc");
             style={{ width: "100%" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
+            scrollable={isMobile}
           >
             <TabStripTab title="인사고과기준">
               <GridContainerWrap>
@@ -7111,6 +7115,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     style={{ width: "100%" }}
                     selected={tabSelected2}
                     onSelect={handleSelectTab2}
+                    scrollable={isMobile}
                   >
                     <TabStripTab title="불량">
                       <GridContainer>
@@ -7511,6 +7516,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     style={{ width: "100%" }}
                     selected={tabSelected3}
                     onSelect={handleSelectTab3}
+                    scrollable={isMobile}
                   >
                     <TabStripTab title="분류1">
                       <GridContainer>

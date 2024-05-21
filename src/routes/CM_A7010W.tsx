@@ -1091,6 +1091,7 @@ const CM_A7010W: React.FC = () => {
         selected={tabSelected}
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
+        scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
           {isMobile ? (

@@ -1357,6 +1357,7 @@ const HU_B3120W: React.FC = () => {
                   style={{ width: "100%" }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
+                  scrollable={isMobile}
                 >
                   <TabStripTab title="급여(월별 내역)">
                     <GridContainer>
@@ -1682,6 +1683,7 @@ const HU_B3120W: React.FC = () => {
                 style={{ width: "100%" }}
                 selected={tabSelected}
                 onSelect={handleSelectTab}
+                scrollable={isMobile}
               >
                 <TabStripTab title="급여상여(월별 내역)">
                   <FilterContainer>
