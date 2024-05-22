@@ -80,6 +80,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
@@ -142,7 +143,7 @@ const customField = ["insert_userid"];
 
 const centerField = ["num"];
 const centerField2 = ["seq"];
-
+const requiredField = ["paydt"];
 let temp = 0;
 let temp2 = 0;
 let temp6 = 0;
@@ -1991,6 +1992,23 @@ const SA_A1100_603W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
+
+    let valid = true;
+    dataItem.map((item) => {
+      if (
+        convertDateToStr(item.paydt).substring(0, 4) < "1997" ||
+        convertDateToStr(item.paydt).substring(6, 8) > "31" ||
+        convertDateToStr(item.paydt).substring(6, 8) < "01" ||
+        convertDateToStr(item.paydt).substring(6, 8).length != 2
+      ) {
+        valid = false;
+      }
+    });
+
+    if (valid != true) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    }
     if (dataItem.length == 0 && deletedMainRows6.length == 0) return false;
 
     let dataArr: TdataArr2 = {
@@ -3295,6 +3313,11 @@ const SA_A1100_603W: React.FC = () => {
                                       ? CenterCell
                                       : undefined
                                   }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
                                   footerCell={
                                     item.sortOrder == 0
                                       ? mainTotalFooterCell6
@@ -3799,6 +3822,11 @@ const SA_A1100_603W: React.FC = () => {
                                         ? NumberCell
                                         : centerField.includes(item.fieldName)
                                         ? CenterCell
+                                        : undefined
+                                    }
+                                    headerCell={
+                                      requiredField.includes(item.fieldName)
+                                        ? RequiredHeader
                                         : undefined
                                     }
                                     footerCell={

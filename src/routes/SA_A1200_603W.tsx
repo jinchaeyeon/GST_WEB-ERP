@@ -50,7 +50,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { gridList } from "../store/columns/SA_A1200_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -76,6 +76,7 @@ const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 const DateField = ["conplandt", "contradt", "recdt"];
 const NumberField = ["passdt", "seq", "num"];
+const requiredField = ["recdt"];
 
 let temp = 0;
 let deletedMainRows: any = [];
@@ -1206,6 +1207,18 @@ const SA_A1200_603W: React.FC = () => {
         );
       }
     );
+    let valid = true;
+    dataItem.map((item: any) => {
+      if (
+        convertDateToStr(item.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(item.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(item.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(item.recdt).substring(6, 8).length != 2
+      ) {
+        valid = false;
+      }
+    });
+
     if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
@@ -2198,6 +2211,11 @@ const SA_A1200_603W: React.FC = () => {
                                       ? DateCell
                                       : undefined
                                   }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
                                   footerCell={
                                     item.sortOrder === 0
                                       ? mainTotalFooterCell2
@@ -2640,6 +2658,11 @@ const SA_A1200_603W: React.FC = () => {
                                   cell={
                                     DateField.includes(item.fieldName)
                                       ? DateCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
                                       : undefined
                                   }
                                   footerCell={

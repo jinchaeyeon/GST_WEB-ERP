@@ -91,7 +91,7 @@ import {
   numberWithCommas3,
   setDefaultDate,
   setDefaultDate2,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1241,7 +1241,7 @@ const SA_A1000_603W: React.FC = () => {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
     }
-    if(isMobile) {
+    if (isMobile) {
       setIsFilterHideStates(true);
     }
     if (e.selected == 1) {
@@ -7085,6 +7085,11 @@ const SA_A1000_603W: React.FC = () => {
                                         ? DateCell
                                         : itemField.includes(item.fieldName)
                                         ? ColumnCommandCell
+                                        : undefined
+                                    }
+                                    headerCell={
+                                      headerField.includes(item.fieldName)
+                                        ? RequiredHeader
                                         : undefined
                                     }
                                     footerCell={
