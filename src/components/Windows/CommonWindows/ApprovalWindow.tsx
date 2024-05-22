@@ -1504,278 +1504,602 @@ const KendoWindow = ({
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width="50%" height={position.height / 2 - 100 + "px"}>
-          <GridTitleContainer>
-            <GridTitle>결재/합의 정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={() =>
-                  onArrowsBtnClick({
-                    direction: "UP",
-                    dataInfo: arrowBtnClickPara,
-                  })
-                }
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="chevron-up"
-                title="행 위로 이동"
-              ></Button>
-              <Button
-                onClick={() =>
-                  onArrowsBtnClick({
-                    direction: "DOWN",
-                    dataInfo: arrowBtnClickPara,
-                  })
-                }
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="chevron-down"
-                title="행 아래로 이동"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code == row.postcd
-                )?.code_name,
-                appgb: appgbListData.find(
-                  (item: any) => item.sub_code == row.appgb
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            style={{ height: `calc(100% - 35px)` }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="resno"
-              title="결재자"
-              width="120px"
-              footerCell={mainTotalFooterCell}
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn field="postcd" title="직위" width="120px" />
-            <GridColumn field="appgb" title="결재구분" width="120px" />
-            <GridColumn
-              field="appseq"
-              title="결재순서"
-              width="100px"
-              cell={NumberCell}
-              headerCell={RequiredHeader}
-            />
-            <GridColumn
-              field="appline"
-              title="결재라인"
-              width="120px"
-              headerCell={RequiredHeader}
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="arbitragb"
-              title="전결유무"
-              width="80px"
-              cell={CheckBoxCell}
-            />
-          </Grid>
-        </GridContainer>
-        <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>참조자 정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick2}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            data={process(
-              mainDataResult2.data.map((row) => ({
-                ...row,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code == row.postcd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-              })),
-              mainDataState2
-            )}
-            {...mainDataState2}
-            onDataStateChange={onMainDataStateChange2}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            style={{ height: `calc(100% - 35px)` }}
-            onSelectionChange={onSelectionChange2}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult2.total}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange2}
-            cellRender={customCellRender2}
-            rowRender={customRowRender2}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="resno"
-              title="결재자"
-              width="120px"
-              footerCell={mainTotalFooterCell2}
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn field="postcd" title="직위" width="120px" />
-          </Grid>
-        </GridContainer>
-      </GridContainerWrap>
-      <GridContainer>
-        <GridTitleContainer>
-          <ButtonContainer>
-            <Button onClick={upload} themeColor={"primary"} icon={"upload"}>
-              업로드
-              <input
-                id="uploadAttachment"
-                style={{ display: "none" }}
-                type="file"
-                multiple
-                ref={excelsInput}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  handleFileUpload(event.target.files);
+      {isMobile ? (
+        <>
+          <GridContainerWrap style={{ overflow: "auto" }}>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>결재/합의 정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "UP",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-up"
+                    title="행 위로 이동"
+                  ></Button>
+                  <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "DOWN",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-down"
+                    title="행 아래로 이동"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    appgb: appgbListData.find(
+                      (item: any) => item.sub_code == row.appgb
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
                 }}
-              />
-            </Button>
-            <Button
-              onClick={downloadFiles}
-              themeColor={"primary"}
-              fillMode={"outline"}
-              icon={"download"}
+                style={{ height: deviceHeight / 4 }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="resno"
+                  title="결재자"
+                  width="120px"
+                  footerCell={mainTotalFooterCell}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn field="postcd" title="직위" width="120px" />
+                <GridColumn field="appgb" title="결재구분" width="120px" />
+                <GridColumn
+                  field="appseq"
+                  title="결재순서"
+                  width="100px"
+                  cell={NumberCell}
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn
+                  field="appline"
+                  title="결재라인"
+                  width="120px"
+                  headerCell={RequiredHeader}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn
+                  field="arbitragb"
+                  title="전결유무"
+                  width="80px"
+                  cell={CheckBoxCell}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>참조자 정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  mainDataResult2.data.map((row) => ({
+                    ...row,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                  })),
+                  mainDataState2
+                )}
+                {...mainDataState2}
+                onDataStateChange={onMainDataStateChange2}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                style={{ height: deviceHeight / 4 }}
+                onSelectionChange={onSelectionChange2}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult2.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange2}
+                cellRender={customCellRender2}
+                rowRender={customRowRender2}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="resno"
+                  title="결재자"
+                  width="120px"
+                  footerCell={mainTotalFooterCell2}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn field="postcd" title="직위" width="120px" />
+              </Grid>
+            </GridContainer>
+            <GridContainer>
+              <GridTitleContainer>
+                <ButtonContainer>
+                  <Button
+                    onClick={upload}
+                    themeColor={"primary"}
+                    icon={"upload"}
+                  >
+                    업로드
+                    <input
+                      id="uploadAttachment"
+                      style={{ display: "none" }}
+                      type="file"
+                      multiple
+                      ref={excelsInput}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        handleFileUpload(event.target.files);
+                      }}
+                    />
+                  </Button>
+                  <Button
+                    onClick={downloadFiles}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"download"}
+                  >
+                    다운로드
+                  </Button>
+                  <Button
+                    onClick={deleteFiles}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"delete"}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: deviceHeight / 5 }}
+                data={process(
+                  mainDataResult3.data.map((row) => ({
+                    ...row,
+                    person: userListData.find(
+                      (item: any) => item.user_id == row.person
+                    )?.user_name,
+                    insert_time: convertDateToStrWithTime2(
+                      new Date(row.insert_time)
+                    ),
+                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                  })),
+                  {}
+                )}
+                sortable={true}
+                groupable={false}
+                reorderable={true}
+                fixedScroll={true}
+                total={mainDataResult3.total}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  drag: false,
+                  cell: false,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange3}
+                onItemChange={onMainItemChange3}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
+                />
+                <GridColumn
+                  field="original_name"
+                  title="파일이름"
+                  width="400px"
+                />
+                <GridColumn field="file_size" title="파일SIZE" width="150px" />
+                <GridColumn field="user_name" title="등록자명" width="150px" />
+                <GridColumn
+                  field="insert_time"
+                  title="입력시간"
+                  width="200px"
+                />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+          <BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={onConfirmClick}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer
+              width="50%"
+              height={position.height / 2 - 100 + "px"}
             >
-              다운로드
-            </Button>
-            <Button
-              onClick={deleteFiles}
-              themeColor={"primary"}
-              fillMode={"outline"}
-              icon={"delete"}
-            >
-              삭제
-            </Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: position.height / 2 - 250 + "px" }}
-          data={process(
-            mainDataResult3.data.map((row) => ({
-              ...row,
-              person: userListData.find(
-                (item: any) => item.user_id == row.person
-              )?.user_name,
-              insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
-              [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-            })),
-            {}
-          )}
-          sortable={true}
-          groupable={false}
-          reorderable={true}
-          fixedScroll={true}
-          total={mainDataResult3.total}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "single",
-          }}
-          onSelectionChange={onSelectionChange3}
-          onItemChange={onMainItemChange3}
-          cellRender={customCellRender3}
-          rowRender={customRowRender3}
-          editField={EDIT_FIELD}
-        >
-          <GridColumn
-            field="chk"
-            title=" "
-            width="45px"
-            headerCell={CustomCheckBoxCell2}
-            cell={CheckBoxCell}
-          />
-          <GridColumn field="original_name" title="파일이름" width="400px" />
-          <GridColumn field="file_size" title="파일SIZE" width="150px" />
-          <GridColumn field="user_name" title="등록자명" width="150px" />
-          <GridColumn field="insert_time" title="입력시간" width="200px" />
-        </Grid>
-      </GridContainer>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmClick}>
-            확인
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-      </BottomContainer>
+              <GridTitleContainer>
+                <GridTitle>결재/합의 정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "UP",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-up"
+                    title="행 위로 이동"
+                  ></Button>
+                  <Button
+                    onClick={() =>
+                      onArrowsBtnClick({
+                        direction: "DOWN",
+                        dataInfo: arrowBtnClickPara,
+                      })
+                    }
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="chevron-down"
+                    title="행 아래로 이동"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    appgb: appgbListData.find(
+                      (item: any) => item.sub_code == row.appgb
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                style={{ height: `calc(100% - 35px)` }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="resno"
+                  title="결재자"
+                  width="120px"
+                  footerCell={mainTotalFooterCell}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn field="postcd" title="직위" width="120px" />
+                <GridColumn field="appgb" title="결재구분" width="120px" />
+                <GridColumn
+                  field="appseq"
+                  title="결재순서"
+                  width="100px"
+                  cell={NumberCell}
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn
+                  field="appline"
+                  title="결재라인"
+                  width="120px"
+                  headerCell={RequiredHeader}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn
+                  field="arbitragb"
+                  title="전결유무"
+                  width="80px"
+                  cell={CheckBoxCell}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>참조자 정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  mainDataResult2.data.map((row) => ({
+                    ...row,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                  })),
+                  mainDataState2
+                )}
+                {...mainDataState2}
+                onDataStateChange={onMainDataStateChange2}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                style={{ height: `calc(100% - 35px)` }}
+                onSelectionChange={onSelectionChange2}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult2.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange2}
+                cellRender={customCellRender2}
+                rowRender={customRowRender2}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="resno"
+                  title="결재자"
+                  width="120px"
+                  footerCell={mainTotalFooterCell2}
+                  cell={CustomComboBoxCell}
+                />
+                <GridColumn field="postcd" title="직위" width="120px" />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+          <>
+            <GridContainer>
+              <GridTitleContainer>
+                <ButtonContainer>
+                  <Button
+                    onClick={upload}
+                    themeColor={"primary"}
+                    icon={"upload"}
+                  >
+                    업로드
+                    <input
+                      id="uploadAttachment"
+                      style={{ display: "none" }}
+                      type="file"
+                      multiple
+                      ref={excelsInput}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        handleFileUpload(event.target.files);
+                      }}
+                    />
+                  </Button>
+                  <Button
+                    onClick={downloadFiles}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"download"}
+                  >
+                    다운로드
+                  </Button>
+                  <Button
+                    onClick={deleteFiles}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"delete"}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: position.height / 2 - 250 + "px" }}
+                data={process(
+                  mainDataResult3.data.map((row) => ({
+                    ...row,
+                    person: userListData.find(
+                      (item: any) => item.user_id == row.person
+                    )?.user_name,
+                    insert_time: convertDateToStrWithTime2(
+                      new Date(row.insert_time)
+                    ),
+                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                  })),
+                  {}
+                )}
+                sortable={true}
+                groupable={false}
+                reorderable={true}
+                fixedScroll={true}
+                total={mainDataResult3.total}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  drag: false,
+                  cell: false,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange3}
+                onItemChange={onMainItemChange3}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
+                />
+                <GridColumn
+                  field="original_name"
+                  title="파일이름"
+                  width="400px"
+                />
+                <GridColumn field="file_size" title="파일SIZE" width="150px" />
+                <GridColumn field="user_name" title="등록자명" width="150px" />
+                <GridColumn
+                  field="insert_time"
+                  title="입력시간"
+                  width="200px"
+                />
+              </Grid>
+            </GridContainer>
+            <BottomContainer>
+              <ButtonContainer>
+                <Button themeColor={"primary"} onClick={onConfirmClick}>
+                  확인
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={onClose}
+                >
+                  닫기
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        </>
+      )}
     </Window>
   );
 };

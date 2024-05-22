@@ -26,7 +26,11 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
-import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
+import {
+  UseBizComponent,
+  getHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 
 type IKendoWindow = {
@@ -48,6 +52,7 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -314,9 +319,14 @@ const KendoWindow = ({
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer
+        style={{
+          height: isMobile? "auto" : `calc(100% - 170px)`,
+          overflow: isMobile? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "100%" }}
+          style={{ height: isMobile ? deviceHeight - height - 170 : `calc(100% - 10px)` }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -369,7 +379,7 @@ const KendoWindow = ({
           <GridColumn field="mngitemnm6" title="관리항목명6" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="ButtonContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인
