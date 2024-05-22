@@ -14,7 +14,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -40,6 +40,8 @@ import {
   findMessage,
   getBizCom,
   
+  getHeight,
+  
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -57,7 +59,7 @@ import { useLocation } from "react-router-dom";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1002_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -76,6 +78,10 @@ const numberField = [
 ];
 
 const SA_B1002_603W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+	let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
@@ -611,7 +617,7 @@ const SA_B1002_603W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -622,7 +628,7 @@ const SA_B1002_603W: React.FC = () => {
           fileName="견적현황조회"
         >
           <Grid
-            style={{ height: "70vh" }}
+            style={{ height: isMobile? deviceHeight - height : "70vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -43,9 +43,7 @@ import {
   dateformat2,
   getBizCom,
   getGridItemChangedData,
-  
   getHeight,
-  
   numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -88,7 +86,8 @@ const SA_A1200_603W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");  
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -101,7 +100,7 @@ const SA_A1200_603W: React.FC = () => {
   const [worktype, setWorktype] = useState<"N" | "U">("U");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -912,7 +911,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -1609,7 +1608,7 @@ const pc = UseGetValueFromSessionItem("pc");
               fileName="계약가능성관리"
             >
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "65vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1650,451 +1649,9 @@ const pc = UseGetValueFromSessionItem("pc");
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell
-                              : NumberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-        </TabStripTab>
-        <TabStripTab title="상세정보" disabled={worktype == "U" ? false : true}>
-          <GridContainerWrap style={{ flexDirection: "column" }}>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>계약가능성관리</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    themeColor={"primary"}
-                    icon="save"
-                    onClick={onSaveClick}
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-            </GridContainer>
-            <FormBoxWrap
-              border={true}
-              style={{ display: isMobile ? "block" : "flex" }}
-            >
-              <FormBox width={"50%"}>
-                <GridTitleContainer>
-                  <GridTitle>Feasibility</GridTitle>
-                </GridTitleContainer>
-                <tbody>
-                  <tr>
-                    <th>물질확보여부</th>
-                    <td>
-                      {bizComponentData !== null && (
-                        <BizComponentComboBox
-                          name="materialgb"
-                          value={Information.materialgb}
-                          bizComponentId="L_SA012_603"
-                          bizComponentData={bizComponentData}
-                          changeData={ComboBoxChange}
-                          className="required"
-                        />
-                      )}
-                    </td>
-                    <td>
-                      <Input
-                        name="grade1"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade1)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>분석법 보유 여부</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="assaygbe"
-                        value={Information.assaygbe}
-                        bizComponentId="L_SA013_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade2"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade2)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>시작예정</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="startschgb"
-                        value={Information.startschgb}
-                        bizComponentId="L_SA014_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade3"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade3)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>재무/투자현황</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="financegb"
-                        value={Information.financegb}
-                        bizComponentId="L_SA015_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade4"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade4)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>합계</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="totgrade1"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.totgrade1)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>결과</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="result1"
-                        type="text"
-                        style={{
-                          textAlign: "center",
-                        }}
-                        value={Information.result1}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-              <FormBox style={{ width: "100%" }}>
-                <GridTitleContainer>
-                  <GridTitle>Weight</GridTitle>
-                </GridTitleContainer>
-                <tbody>
-                  <tr>
-                    <th>금액</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="amtgb"
-                        value={Information.amtgb}
-                        bizComponentId="L_SA016_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade5"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade5)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>추가수주</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="addordgb"
-                        value={Information.addordgb}
-                        bizComponentId="L_SA017_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade6"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade6)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>BTT관계사 확장</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="relationgb"
-                        value={Information.relationgb}
-                        bizComponentId="L_SA018_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade7"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.grade7)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>합계</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="totgrade2"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information.totgrade2)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>결과</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="result2"
-                        type="text"
-                        style={{
-                          textAlign: "center",
-                        }}
-                        value={Information.result2}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-
-            <GridTitleContainer>
-              <GridTitle>계약성사관리</GridTitle>
-            </GridTitleContainer>
-            <FormBoxWrap
-              border={true}
-              style={{ display: isMobile ? "block" : "flex" }}
-            >
-              <GridContainer style={{ flexDirection: "column" }}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th style={{ textAlign: "right" }}>견적차수</th>
-                      <td>
-                        <Input
-                          name="quorev"
-                          type="text"
-                          style={{
-                            textAlign: "center",
-                          }}
-                          value={Information.quorev}
-                          className="readonly"
-                        />
-                      </td>
-                      <th style={{ textAlign: "right" }}>견적제출일</th>
-                      <td>
-                        <Input
-                          name="submitdt"
-                          type="text"
-                          style={{
-                            textAlign: "center",
-                          }}
-                          value={dateformat2(Information.submitdt)}
-                          className="readonly"
-                        />
-                      </td>
-                      <th style={{ textAlign: "right" }}>활동차수</th>
-                      <td>
-                        <Input
-                          name="seq"
-                          type="text"
-                          style={{
-                            textAlign: "center",
-                          }}
-                          value={Information.seq}
-                          className="readonly"
-                        />
-                      </td>
-                      <th style={{ textAlign: "right" }}>계약목표일</th>
-                      <td>
-                        <Input
-                          name="conplandt"
-                          type="text"
-                          style={{
-                            textAlign: "center",
-                          }}
-                          value={dateformat2(Information.conplandt)}
-                          className="readonly"
-                        />
-                      </td>
-                      <th style={{ textAlign: "right" }}>경과기간</th>
-                      <td>
-                        <Input
-                          name="passdt"
-                          type="text"
-                          style={{
-                            textAlign: "center",
-                          }}
-                          value={Information.passdt}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </GridContainer>
-            </FormBoxWrap>
-            <GridContainer>
-              <ExcelExport
-                data={mainDataResult2.data}
-                ref={(exporter) => {
-                  _export2 = exporter;
-                }}
-                fileName="계약가능성관리"
-              >
-                <GridTitleContainer>
-                  <GridTitle>코멘트</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick3}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <Grid
-                  style={{ height: "25vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      recdt: row.recdt
-                        ? new Date(dateformat(row.recdt))
-                        : new Date(dateformat("99991231")),
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={ongrdDetailItemChange2}
-                  cellRender={customCellRender2}
-                  rowRender={customRowRender2}
-                  editField={EDIT_FIELD}
-                >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2106,20 +1663,998 @@ const pc = UseGetValueFromSessionItem("pc");
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
+                                : NumberField.includes(item.fieldName)
+                                ? NumberCell
                                 : undefined
                             }
                             footerCell={
                               item.sortOrder === 0
-                                ? mainTotalFooterCell2
+                                ? mainTotalFooterCell
+                                : NumberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
                                 : undefined
                             }
                           />
                         )
                     )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+        <TabStripTab title="상세정보" disabled={worktype == "U" ? false : true}>
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
+            >
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          계약가능성관리
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                            icon="chevron-right"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          themeColor={"primary"}
+                          icon="save"
+                          onClick={onSaveClick}
+                        >
+                          저장
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                  </GridContainer>
+                  <FormBoxWrap
+                    border={true}
+                    style={{
+                      display: isMobile ? "block" : "flex",
+                      height: deviceHeight - height - height1 + 23,
+                      overflow: "auto",
+                    }}
+                  >
+                    <FormBox width={"50%"}>
+                      <GridTitleContainer>
+                        <GridTitle>Feasibility</GridTitle>
+                      </GridTitleContainer>
+                      <tbody>
+                        <tr>
+                          <th>물질확보여부</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="materialgb"
+                                value={Information.materialgb}
+                                bizComponentId="L_SA012_603"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <Input
+                              name="grade1"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade1)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>분석법 보유 여부</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="assaygbe"
+                              value={Information.assaygbe}
+                              bizComponentId="L_SA013_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade2"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade2)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>시작예정</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="startschgb"
+                              value={Information.startschgb}
+                              bizComponentId="L_SA014_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade3"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade3)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>재무/투자현황</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="financegb"
+                              value={Information.financegb}
+                              bizComponentId="L_SA015_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade4"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade4)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>합계</th>
+                          <td colSpan={2}>
+                            <Input
+                              name="totgrade1"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.totgrade1)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>결과</th>
+                          <td colSpan={2}>
+                            <Input
+                              name="result1"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={Information.result1}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                    <FormBox style={{ width: "100%" }}>
+                      <GridTitleContainer>
+                        <GridTitle>Weight</GridTitle>
+                      </GridTitleContainer>
+                      <tbody>
+                        <tr>
+                          <th>금액</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="amtgb"
+                              value={Information.amtgb}
+                              bizComponentId="L_SA016_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade5"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade5)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>추가수주</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="addordgb"
+                              value={Information.addordgb}
+                              bizComponentId="L_SA017_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade6"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade6)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>BTT관계사 확장</th>
+                          <td>
+                            <BizComponentComboBox
+                              name="relationgb"
+                              value={Information.relationgb}
+                              bizComponentId="L_SA018_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name="grade7"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.grade7)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>합계</th>
+                          <td colSpan={2}>
+                            <Input
+                              name="totgrade2"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                              }}
+                              value={numberWithCommas3(Information.totgrade2)}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>결과</th>
+                          <td colSpan={2}>
+                            <Input
+                              name="result2"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={Information.result2}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <ButtonContainer>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                            icon="chevron-left"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                          계약성사관리
+                        </ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <FormBoxWrap
+                    border={true}
+                    style={{
+                      display: isMobile ? "block" : "flex",
+                      height: deviceHeight - height - height2 + 23,
+                      overflow: "auto",
+                    }}
+                  >
+                    <GridContainer style={{ flexDirection: "column" }}>
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th style={{ textAlign: "right" }}>견적차수</th>
+                            <td>
+                              <Input
+                                name="quorev"
+                                type="text"
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                value={Information.quorev}
+                                className="readonly"
+                              />
+                            </td>
+                            <th style={{ textAlign: "right" }}>견적제출일</th>
+                            <td>
+                              <Input
+                                name="submitdt"
+                                type="text"
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                value={dateformat2(Information.submitdt)}
+                                className="readonly"
+                              />
+                            </td>
+                            <th style={{ textAlign: "right" }}>활동차수</th>
+                            <td>
+                              <Input
+                                name="seq"
+                                type="text"
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                value={Information.seq}
+                                className="readonly"
+                              />
+                            </td>
+                            <th style={{ textAlign: "right" }}>계약목표일</th>
+                            <td>
+                              <Input
+                                name="conplandt"
+                                type="text"
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                value={dateformat2(Information.conplandt)}
+                                className="readonly"
+                              />
+                            </td>
+                            <th style={{ textAlign: "right" }}>경과기간</th>
+                            <td>
+                              <Input
+                                name="passdt"
+                                type="text"
+                                style={{
+                                  textAlign: "center",
+                                }}
+                                value={Information.passdt}
+                                className="readonly"
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </GridContainer>
+                  </FormBoxWrap>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={2}>
+                <GridContainer style={{ width: "100%" }}>
+                  <ExcelExport
+                    data={mainDataResult2.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="계약가능성관리"
+                  >
+                    <GridTitleContainer className="ButtonContainer3">
+                      <GridTitle>
+                        <ButtonContainer
+                          style={{ justifyContent: "left" }}
+                        >
+                          <ButtonContainer>
+                            <Button
+                              onClick={() => {
+                                if (swiper) {
+                                  swiper.slideTo(1);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            코멘트
+                          </ButtonContainer>
+                        </ButtonContainer>
+                      </GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
+                        <Button
+                          onClick={onSaveClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: deviceHeight - height - height3 + 23 }}
+                      data={process(
+                        mainDataResult2.data.map((row) => ({
+                          ...row,
+                          recdt: row.recdt
+                            ? new Date(dateformat(row.recdt))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                        })),
+                        mainDataState2
+                      )}
+                      {...mainDataState2}
+                      onDataStateChange={onMainDataStateChange2}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange2}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult2.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange2}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={ongrdDetailItemChange2}
+                      cellRender={customCellRender2}
+                      rowRender={customRowRender2}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList2"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder === 0
+                                      ? mainTotalFooterCell2
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainerWrap style={{ flexDirection: "column" }}>
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>계약가능성관리</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        themeColor={"primary"}
+                        icon="save"
+                        onClick={onSaveClick}
+                      >
+                        저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                </GridContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{ display: isMobile ? "block" : "flex" }}
+                >
+                  <FormBox width={"50%"}>
+                    <GridTitleContainer>
+                      <GridTitle>Feasibility</GridTitle>
+                    </GridTitleContainer>
+                    <tbody>
+                      <tr>
+                        <th>물질확보여부</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="materialgb"
+                              value={Information.materialgb}
+                              bizComponentId="L_SA012_603"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
+                        <td>
+                          <Input
+                            name="grade1"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade1)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>분석법 보유 여부</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="assaygbe"
+                            value={Information.assaygbe}
+                            bizComponentId="L_SA013_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade2"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade2)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>시작예정</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="startschgb"
+                            value={Information.startschgb}
+                            bizComponentId="L_SA014_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade3"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade3)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>재무/투자현황</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="financegb"
+                            value={Information.financegb}
+                            bizComponentId="L_SA015_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade4"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade4)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>합계</th>
+                        <td colSpan={2}>
+                          <Input
+                            name="totgrade1"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.totgrade1)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>결과</th>
+                        <td colSpan={2}>
+                          <Input
+                            name="result1"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={Information.result1}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                  <FormBox style={{ width: "100%" }}>
+                    <GridTitleContainer>
+                      <GridTitle>Weight</GridTitle>
+                    </GridTitleContainer>
+                    <tbody>
+                      <tr>
+                        <th>금액</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="amtgb"
+                            value={Information.amtgb}
+                            bizComponentId="L_SA016_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade5"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade5)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>추가수주</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="addordgb"
+                            value={Information.addordgb}
+                            bizComponentId="L_SA017_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade6"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade6)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>BTT관계사 확장</th>
+                        <td>
+                          <BizComponentComboBox
+                            name="relationgb"
+                            value={Information.relationgb}
+                            bizComponentId="L_SA018_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="grade7"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.grade7)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>합계</th>
+                        <td colSpan={2}>
+                          <Input
+                            name="totgrade2"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.totgrade2)}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>결과</th>
+                        <td colSpan={2}>
+                          <Input
+                            name="result2"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={Information.result2}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+
+                <GridTitleContainer>
+                  <GridTitle>계약성사관리</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{ display: isMobile ? "block" : "flex" }}
+                >
+                  <GridContainer style={{ flexDirection: "column" }}>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th style={{ textAlign: "right" }}>견적차수</th>
+                          <td>
+                            <Input
+                              name="quorev"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={Information.quorev}
+                              className="readonly"
+                            />
+                          </td>
+                          <th style={{ textAlign: "right" }}>견적제출일</th>
+                          <td>
+                            <Input
+                              name="submitdt"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={dateformat2(Information.submitdt)}
+                              className="readonly"
+                            />
+                          </td>
+                          <th style={{ textAlign: "right" }}>활동차수</th>
+                          <td>
+                            <Input
+                              name="seq"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={Information.seq}
+                              className="readonly"
+                            />
+                          </td>
+                          <th style={{ textAlign: "right" }}>계약목표일</th>
+                          <td>
+                            <Input
+                              name="conplandt"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={dateformat2(Information.conplandt)}
+                              className="readonly"
+                            />
+                          </td>
+                          <th style={{ textAlign: "right" }}>경과기간</th>
+                          <td>
+                            <Input
+                              name="passdt"
+                              type="text"
+                              style={{
+                                textAlign: "center",
+                              }}
+                              value={Information.passdt}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </GridContainer>
+                </FormBoxWrap>
+                <GridContainer>
+                  <ExcelExport
+                    data={mainDataResult2.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="계약가능성관리"
+                  >
+                    <GridTitleContainer>
+                      <GridTitle>코멘트</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
+                        <Button
+                          onClick={onSaveClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: "25vh" }}
+                      data={process(
+                        mainDataResult2.data.map((row) => ({
+                          ...row,
+                          recdt: row.recdt
+                            ? new Date(dateformat(row.recdt))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                        })),
+                        mainDataState2
+                      )}
+                      {...mainDataState2}
+                      onDataStateChange={onMainDataStateChange2}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange2}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult2.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange2}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={ongrdDetailItemChange2}
+                      cellRender={customCellRender2}
+                      rowRender={customRowRender2}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList2"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder === 0
+                                      ? mainTotalFooterCell2
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
