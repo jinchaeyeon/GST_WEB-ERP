@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -34,6 +34,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -41,7 +42,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -51,6 +52,8 @@ let targetRowIndex: null | number = null;
 const AC_B6060W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -1849,7 +1852,7 @@ const AC_B6060W: React.FC = () => {
         scrollable={isMobile}
       >
         <TabStripTab title="기간별">
-          <GridContainer width="100%">
+          <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -1858,7 +1861,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1915,7 +1918,7 @@ const AC_B6060W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="분기별">
-          <GridContainer width="100%">
+          <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult2.data}
               ref={(exporter) => {
@@ -1924,7 +1927,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -1975,7 +1978,7 @@ const AC_B6060W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="반기별">
-          <GridContainer width="100%">
+          <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult3.data}
               ref={(exporter) => {
@@ -1984,7 +1987,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
@@ -2038,7 +2041,7 @@ const AC_B6060W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="연간">
-          <GridContainer width="100%">
+          <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult4.data}
               ref={(exporter) => {
@@ -2047,7 +2050,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,

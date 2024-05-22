@@ -100,9 +100,8 @@ const BA_A0021W_603: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper") + 10;
+  var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var index = 0;
   var index2 = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
