@@ -20,6 +20,9 @@ import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -72,9 +75,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const COMMENT_DATA_ITEM_KEY = "num";
@@ -647,7 +647,7 @@ const BA_A0020_603: React.FC = () => {
         chkperson: rows[0].chkperson,
         itemcd: rows[0].itemcd,
         itemnm: rows[0].itemnm,
-        baddt: toDate(rows[0].baddt),
+        baddt: rows[0].baddt == "" ? null : toDate(rows[0].baddt),
         requiretext: rows[0].requiretext,
         protext: rows[0].protext,
         errtext: rows[0].errtext,
@@ -808,7 +808,9 @@ const BA_A0020_603: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
-      setIsFilterHideStates(true);
+      if(isMobile) {
+        setIsFilterHideStates(true);
+      }
     }
     setTabSelected(e.selected);
   };
@@ -1246,7 +1248,8 @@ const BA_A0020_603: React.FC = () => {
         status: Information.status,
         ncrdiv: Information.ncrdiv,
         combytype: Information.combytype,
-        baddt: convertDateToStr(Information.baddt),
+        baddt:
+          Information.baddt == null ? "" : convertDateToStr(Information.baddt),
         requiretext: Information.requiretext,
         protext: Information.protext,
         errtext: Information.errtext,

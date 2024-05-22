@@ -314,7 +314,9 @@ const SA_A1001_603W: React.FC = () => {
         finalquowonamt: data.finalquowonamt,
         quocalyn: data.quocalyn,
       }));
-      setIsFilterHideStates(true);
+      if(isMobile) {
+        setIsFilterHideStates(true);
+      }
     }
 
     setTabSelected(e.selected);

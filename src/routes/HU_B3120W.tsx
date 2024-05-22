@@ -130,7 +130,9 @@ const HU_B3120W: React.FC = () => {
           isSearch: true,
         }));
       }
-      setIsFilterHideStates(true);
+      if(isMobile) {
+        setIsFilterHideStates(true);
+      }
     }
 
     setTabSelected(e.selected);

@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -36,7 +36,6 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -45,16 +44,18 @@ import {
   getGridItemChangedData,
   getHeight,
   numberWithCommas3,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { gridList } from "../store/columns/SA_A1200_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-import { bytesToBase64 } from "byte-base64";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -69,9 +70,6 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -364,26 +362,26 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade1: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade1: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade1:
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
           prev.grade2 +
           prev.grade3 +
           prev.grade4,
         result1:
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
             prev.grade2 +
             prev.grade3 +
             prev.grade4 >=
           12
             ? "상"
-            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            : (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade2 +
                 prev.grade3 +
                 prev.grade4 >=
               7
             ? "중"
-            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            : (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade2 +
                 prev.grade3 +
                 prev.grade4 >
@@ -395,27 +393,27 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade2: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade2: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade1:
           prev.grade1 +
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
           prev.grade3 +
           prev.grade4,
         result1:
           prev.grade1 +
-            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            (e.e.value == undefined ? 0 : e.e.value.numref1) +
             prev.grade3 +
             prev.grade4 >=
           12
             ? "상"
             : prev.grade1 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade3 +
                 prev.grade4 >=
               7
             ? "중"
             : prev.grade1 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade3 +
                 prev.grade4 >
               1
@@ -426,28 +424,28 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade3: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade3: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade1:
           prev.grade1 +
           prev.grade2 +
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
           prev.grade4,
         result1:
           prev.grade1 +
             prev.grade2 +
-            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            (e.e.value == undefined ? 0 : e.e.value.numref1) +
             prev.grade4 >=
           12
             ? "상"
             : prev.grade1 +
                 prev.grade2 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade4 >=
               7
             ? "중"
             : prev.grade1 +
                 prev.grade2 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade4 >
               1
             ? "하"
@@ -457,29 +455,29 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade4: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade4: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade1:
           prev.grade1 +
           prev.grade2 +
           prev.grade3 +
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1),
+          (e.e.value == undefined ? 0 : e.e.value.numref1),
         result1:
           prev.grade1 +
             prev.grade2 +
             prev.grade3 +
-            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+            (e.e.value == undefined ? 0 : e.e.value.numref1) >=
           12
             ? "상"
             : prev.grade1 +
                 prev.grade2 +
                 prev.grade3 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+                (e.e.value == undefined ? 0 : e.e.value.numref1) >=
               7
             ? "중"
             : prev.grade1 +
                 prev.grade2 +
                 prev.grade3 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >
+                (e.e.value == undefined ? 0 : e.e.value.numref1) >
               1
             ? "하"
             : "",
@@ -488,23 +486,23 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade5: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade5: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade2:
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
           prev.grade6 +
           prev.grade7,
         result2:
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
             prev.grade6 +
             prev.grade7 >=
           7
             ? "상"
-            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            : (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade6 +
                 prev.grade7 >=
               4
             ? "중"
-            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            : (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade6 +
                 prev.grade7 >
               1
@@ -515,24 +513,24 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade6: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade6: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade2:
           prev.grade5 +
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          (e.e.value == undefined ? 0 : e.e.value.numref1) +
           prev.grade7,
         result2:
           prev.grade5 +
-            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            (e.e.value == undefined ? 0 : e.e.value.numref1) +
             prev.grade7 >=
           7
             ? "상"
             : prev.grade5 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade7 >=
               4
             ? "중"
             : prev.grade5 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                (e.e.value == undefined ? 0 : e.e.value.numref1) +
                 prev.grade7 >
               1
             ? "하"
@@ -542,25 +540,25 @@ const SA_A1200_603W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade7: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        grade7: e.e.value == undefined ? 0 : e.e.value.numref1,
         totgrade2:
           prev.grade5 +
           prev.grade6 +
-          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1),
+          (e.e.value == undefined ? 0 : e.e.value.numref1),
         result2:
           prev.grade5 +
             prev.grade6 +
-            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+            (e.e.value == undefined ? 0 : e.e.value.numref1) >=
           7
             ? "상"
             : prev.grade5 +
                 prev.grade6 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+                (e.e.value == undefined ? 0 : e.e.value.numref1) >=
               4
             ? "중"
             : prev.grade5 +
                 prev.grade6 +
-                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >
+                (e.e.value == undefined ? 0 : e.e.value.numref1) >
               1
             ? "하"
             : "",
@@ -929,7 +927,9 @@ const SA_A1200_603W: React.FC = () => {
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
-    setIsFilterHideStates(true);
+    if(isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -2100,9 +2100,7 @@ const SA_A1200_603W: React.FC = () => {
                   >
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>
-                        <ButtonContainer
-                          style={{ justifyContent: "left" }}
-                        >
+                        <ButtonContainer style={{ justifyContent: "left" }}>
                           <ButtonContainer>
                             <Button
                               onClick={() => {

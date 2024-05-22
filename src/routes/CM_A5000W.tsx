@@ -24,6 +24,9 @@ import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -50,11 +53,13 @@ import {
   UseMessages,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
+  isValidDate,
   setDefaultDate,
   setDefaultDate2,
   toDate,
@@ -96,9 +101,6 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -489,8 +491,12 @@ const CM_A5000W: React.FC = () => {
         document_id: selectedRowData.document_id,
         user_id: selectedRowData.user_id,
         user_name: selectedRowData.user_name,
-        request_date: toDate(selectedRowData.request_date),
-        finexpdt: toDate(selectedRowData.finexpdt),
+        request_date: isValidDate(selectedRowData.request_date)
+          ? new Date(dateformat(selectedRowData.request_date))
+          : null,
+        finexpdt: isValidDate(selectedRowData.finexpdt)
+          ? new Date(dateformat(selectedRowData.finexpdt))
+          : null,
         require_type: selectedRowData.require_type,
         completion_method: selectedRowData.completion_method,
         status: selectedRowData.status,
@@ -522,7 +528,9 @@ const CM_A5000W: React.FC = () => {
             : toDate(selectedRowData.recdt),
       });
       fetchHtmlDocument(selectedRowData);
-      setIsFilterHideStates(true);
+      if(isMobile) {
+        setIsFilterHideStates(true);
+      }
     }
     setTabSelected(e.selected);
   };
@@ -687,7 +695,7 @@ const CM_A5000W: React.FC = () => {
     isSearch: false,
   });
 
-  const [information, setInformation] = useState({
+  const [information, setInformation] = useState<{ [name: string]: any }>({
     document_id: "",
     user_id: "",
     user_name: "",
@@ -824,8 +832,12 @@ const CM_A5000W: React.FC = () => {
             user_id: selectedRow.user_id,
             user_name: selectedRow.user_name,
             project: selectedRow.project,
-            request_date: toDate(selectedRow.request_date),
-            finexpdt: toDate(selectedRow.finexpdt),
+            request_date: isValidDate(selectedRow.request_date)
+              ? new Date(dateformat(selectedRow.request_date))
+              : null,
+            finexpdt: isValidDate(selectedRow.finexpdt)
+              ? new Date(dateformat(selectedRow.finexpdt))
+              : null,
             require_type: selectedRow.require_type,
             completion_method: selectedRow.completion_method,
             status: selectedRow.status,
@@ -857,8 +869,12 @@ const CM_A5000W: React.FC = () => {
             user_id: rows[0].user_id,
             user_name: rows[0].user_name,
             project: rows[0].project,
-            request_date: toDate(rows[0].request_date),
-            finexpdt: toDate(rows[0].finexpdt),
+            request_date: isValidDate(rows[0].request_date)
+              ? new Date(dateformat(rows[0].request_date))
+              : null,
+            finexpdt: isValidDate(rows[0].finexpdt)
+              ? new Date(dateformat(rows[0].finexpdt))
+              : null,
             require_type: rows[0].require_type,
             completion_method: rows[0].completion_method,
             status: rows[0].status,
@@ -1270,8 +1286,12 @@ const CM_A5000W: React.FC = () => {
       user_id: selectedRowData.user_id,
       user_name: selectedRowData.user_name,
       project: selectedRowData.project,
-      request_date: toDate(selectedRowData.request_date),
-      finexpdt: toDate(selectedRowData.finexpdt),
+      request_date: isValidDate(selectedRowData.request_date)
+        ? new Date(dateformat(selectedRowData.request_date))
+        : null,
+      finexpdt: isValidDate(selectedRowData.finexpdt)
+        ? new Date(dateformat(selectedRowData.finexpdt))
+        : null,
       require_type: selectedRowData.require_type,
       completion_method: selectedRowData.completion_method,
       status: selectedRowData.status,
@@ -1384,8 +1404,12 @@ const CM_A5000W: React.FC = () => {
       ...prev,
       workType: workType,
       document_id: workType == "N" ? "" : information.document_id,
-      request_date: convertDateToStr(information.request_date),
-      finexpdt: convertDateToStr(information.finexpdt),
+      request_date: isValidDate(information.request_date)
+        ? convertDateToStr(information.request_date)
+        : "",
+      finexpdt: isValidDate(information.finexpdt)
+        ? convertDateToStr(information.finexpdt)
+        : "",
       require_type: information.require_type,
       completion_method: information.completion_method,
       status: information.status,

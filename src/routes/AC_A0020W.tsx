@@ -2209,7 +2209,10 @@ const AC_A0020W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    setIsFilterHideStates(true);
+    if(isMobile) {
+      setIsFilterHideStates(true);
+    }
+
     setTabSelected(e.selected);
     resetAllGrid();
 

@@ -285,7 +285,7 @@ export const useApi = () => {
 
                         isTokenRefreshing = true;
 
-                        const url = `${generateGetUrl()}api/auth/refresh`;
+                        const url = `${res.data[0].url}api/auth/refresh`;
                         let p;
 
                         // refresh token을 이용하여 access token 재발행 받기
@@ -456,7 +456,7 @@ export const useApi = () => {
                     errResponseStatus = error.response.status;
                     errResponseURL = error.request.responseURL;
                   } catch (e) {}
-
+                  
                   // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
                   if (errResponseURL.includes("auth/login")) {
                     return reject(error);
@@ -474,7 +474,7 @@ export const useApi = () => {
 
                       isTokenRefreshing = true;
 
-                      const url = `${generateGetUrl()}api/auth/refresh`;
+                      const url = `${Link}api/auth/refresh`;
                       let p;
 
                       // refresh token을 이용하여 access token 재발행 받기

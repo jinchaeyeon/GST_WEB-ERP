@@ -40,7 +40,6 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -48,6 +47,9 @@ import React, {
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -75,7 +77,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -90,8 +91,7 @@ import {
   numberWithCommas3,
   setDefaultDate,
   setDefaultDate2,
-  toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -102,6 +102,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
@@ -128,9 +129,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -190,7 +188,7 @@ const itemField = ["itemcd"];
 const colorField = ["status"];
 const centerField = ["passdt", "quorev", "itemcnt"];
 const centerField2 = ["status"];
-
+const headerField = ["itemcd", "itemnm"];
 const percentField = ["rate"];
 
 let temp2 = 0;
@@ -1243,16 +1241,10 @@ const SA_A1000_603W: React.FC = () => {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
     }
-    setIsFilterHideStates(true);
-    if (e.selected == 0) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-        pgNum: 1,
-        find_row_value: "",
-      }));
-      setWorktype("U");
-    } else if (e.selected == 1) {
+    if(isMobile) {
+      setIsFilterHideStates(true);
+    }
+    if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1308,7 +1300,7 @@ const SA_A1000_603W: React.FC = () => {
         isSearch: true,
         quonum: selectedRowData.quonum,
         quorev: selectedRowData.quorev,
-      }));      
+      }));
     }
     setTabSelected(e.selected);
   };
@@ -1973,7 +1965,9 @@ const SA_A1000_603W: React.FC = () => {
           guid5: row[0].guid5,
           guid6: row[0].guid6,
           etcguid: row[0].etcguid,
-          materialindt: toDate(row[0].materialindt),
+          materialindt: isValidDate(row[0].materialindt)
+            ? new Date(dateformat(row[0].materialindt))
+            : null,
           materialnm: row[0].materialnm,
           materialtype: row[0].materialtype,
           numbering_id: row[0].numbering_id,
@@ -1983,7 +1977,9 @@ const SA_A1000_603W: React.FC = () => {
           pubdt: isValidDate(row[0].pubdt)
             ? new Date(dateformat(row[0].pubdt))
             : null,
-          quodt: toDate(row[0].quodt),
+          quodt: isValidDate(row[0].quodt)
+            ? new Date(dateformat(row[0].quodt))
+            : null,
           quonum: row[0].quonum,
           quorev: row[0].quorev,
           quosts: row[0].quosts,
@@ -3095,7 +3091,6 @@ const SA_A1000_603W: React.FC = () => {
       field != "rowstatus" &&
       field != "quosts" &&
       field != "quoseq" &&
-      field != "ordsts" &&
       field != "quotestnum" &&
       field != "itemlvl1"
     ) {
@@ -3202,10 +3197,10 @@ const SA_A1000_603W: React.FC = () => {
       itemcd: "",
       itemlvl1: "",
       itemnm: "",
-      ordsts: "",
       quonum: Information.quonum,
       quorev: Information.quorev,
       quoseq: 0,
+      quosts: "1",
       quotestnum: "",
       remark: "",
       startdt: "99991231",
@@ -3500,317 +3495,336 @@ const SA_A1000_603W: React.FC = () => {
       );
     });
 
-    try {
-      if (
-        convertDateToStr(Information.quodt).substring(0, 4) < "1997" ||
-        convertDateToStr(Information.quodt).substring(6, 8) > "31" ||
-        convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
-        convertDateToStr(Information.quodt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.person == null ||
-        Information.person == "" ||
-        Information.person == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.quotype == null ||
-        Information.quotype == "" ||
-        Information.quotype == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.requestgb == null ||
-        Information.requestgb == "" ||
-        Information.requestgb == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.numbering_id == null ||
-        Information.numbering_id == "" ||
-        Information.numbering_id == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
-        convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
-        convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
-        convertDateToStr(Information.materialindt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else {
-        const agency =
-          (Information.agency1 == "" ? "N" : Information.agency1) +
-          "|" +
-          (Information.agency2 == "" ? "N" : Information.agency2) +
-          "|" +
-          (Information.agency3 == "" ? "N" : Information.agency3) +
-          "|" +
-          (Information.agency4 == "" ? "N" : Information.agency4) +
-          "|" +
-          (Information.agency5 == "" ? "N" : Information.agency5) +
-          "|" +
-          (Information.agency6 == "" ? "N" : Information.agency6) +
-          "|" +
-          Information.etcagency;
-
-        const guid =
-          (Information.guid1 == "" ? "N" : Information.guid1) +
-          "|" +
-          (Information.guid2 == "" ? "N" : Information.guid2) +
-          "|" +
-          (Information.guid3 == "" ? "N" : Information.guid3) +
-          "|" +
-          (Information.guid4 == "" ? "N" : Information.guid4) +
-          "|" +
-          (Information.guid5 == "" ? "N" : Information.guid5) +
-          "|" +
-          (Information.guid6 == "" ? "N" : Information.guid6) +
-          "|" +
-          Information.etcguid;
-
-        const glp =
-          (Information.glp1 == "" ? "N" : Information.glp1) +
-          "|" +
-          (Information.glp2 == "" ? "N" : Information.glp2) +
-          "|" +
-          (Information.glp3 == "" ? "N" : Information.glp3) +
-          "|" +
-          (Information.glp4 == "" ? "N" : Information.glp4) +
-          "|" +
-          (Information.glp5 == "" ? "N" : Information.glp5) +
-          "|" +
-          (Information.glp6 == "" ? "N" : Information.glp6) +
-          "|" +
-          Information.etcglp;
-
-        const translatereport =
-          (Information.translate1 == "" ? "N" : Information.translate1) +
-          "|" +
-          (Information.translate2 == "" ? "N" : Information.translate2) +
-          "|" +
-          (Information.translate3 == "" ? "N" : Information.translate3) +
-          "|" +
-          (Information.translate4 == "" ? "N" : Information.translate4) +
-          "|" +
-          Information.etctranslatereport;
-
-        const report =
-          (Information.report1 == "" ? "N" : Information.report1) +
-          "|" +
-          (Information.report2 == "" ? "N" : Information.report2) +
-          "|" +
-          (Information.report3 == "" ? "N" : Information.report3) +
-          "|" +
-          (Information.report4 == "" ? "N" : Information.report4) +
-          "|" +
-          Information.etcreport;
-
-        if (dataItem.length == 0 && deletedMainRows2.length == 0) {
-          setParaData({
-            workType: worktype,
-            orgdiv: sessionOrgdiv,
-            location: sessionLocation,
-            quonum: Information.quonum,
-            quorev: Information.quorev,
-            quoseq: Information.quorev,
-            quotype: Information.quotype,
-            quodt: convertDateToStr(Information.quodt),
-            pubdt: isValidDate(Information.pubdt)
-              ? convertDateToStr(Information.pubdt)
-              : "",
-            rev_reason: Information.rev_reason,
-            person: Information.person,
-            chkperson: Information.chkperson,
-            custcd: Information.custcd,
-            custnm: Information.custnm,
-            remark2: Information.remark2,
-            postcd: Information.postcd,
-            tel: Information.tel,
-            extra_field4: Information.extra_field4,
-            email: Information.email,
-            rcvpostcd: Information.rcvpostcd,
-            rcvtel: Information.rcvtel,
-            extra_field5: Information.extra_field5,
-            rcvemail: Information.rcvemail,
-            extra_field3: Information.extra_field3,
-            extra_field2: Information.extra_field2,
-            materialinfo: Information.materialinfo,
-            agency: agency,
-            reportcnt: Information.reportcnt,
-            transreportcnt: Information.transreportcnt,
-            attdatnum: Information.attdatnum,
-            assayyn: Information.assayyn,
-            assaydt: isValidDate(Information.assaydt)
-              ? convertDateToStr(Information.assaydt)
-              : "",
-            report: report,
-            rcvcustnm: Information.rcvcustnm,
-            rcvcustprsnnm: Information.rcvcustprsnnm,
-            remark3: Information.remark3,
-            materialtype: Information.materialtype,
-            materialindt: convertDateToStr(Information.materialindt),
-            materialnm: Information.materialnm,
-            guideline: guid,
-            translatereport: translatereport,
-            testenddt: isValidDate(Information.testenddt)
-              ? convertDateToStr(Information.testenddt)
-              : "",
-            teststdt: isValidDate(Information.teststdt)
-              ? convertDateToStr(Information.teststdt)
-              : "",
-            testtype: Information.testtype,
-            remark: Information.remark,
-            custprsnnm: Information.custprsnnm,
-            requestgb: Information.requestgb,
-            glpgb: glp,
-            numbering_id: Information.numbering_id,
-            rowstatus_s: "",
-            quoseq_s: "",
-            itemcd_s: "",
-            itemnm_s: "",
-            glpyn_s: "",
-            startdt_s: "",
-            enddt_s: "",
-            remark_s: "",
-            quonum_s: "",
-            quorev_s: "",
-            progress_status_s: "",
-            userid: userId,
-            pc: pc,
-            form_id: "SA_A1000_603W",
-          });
-        } else {
-          let dataArr: TdataArr = {
-            rowstatus_s: [],
-            quoseq_s: [],
-            itemcd_s: [],
-            itemnm_s: [],
-            glpyn_s: [],
-            startdt_s: [],
-            enddt_s: [],
-            remark_s: [],
-          };
-          dataItem.forEach((item: any, idx: number) => {
-            const {
-              rowstatus = "",
-              quoseq = "",
-              itemcd = "",
-              itemnm = "",
-              glpyn = "",
-              startdt = "",
-              enddt = "",
-              remark = "",
-            } = item;
-
-            dataArr.rowstatus_s.push(rowstatus);
-            dataArr.quoseq_s.push(quoseq);
-            dataArr.itemcd_s.push(itemcd);
-            dataArr.itemnm_s.push(itemnm);
-            dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(startdt);
-            dataArr.enddt_s.push(enddt);
-            dataArr.remark_s.push(remark);
-          });
-          deletedMainRows2.forEach((item: any, idx: number) => {
-            const {
-              rowstatus = "",
-              quoseq = "",
-              itemcd = "",
-              itemnm = "",
-              glpyn = "",
-              startdt = "",
-              enddt = "",
-              remark = "",
-            } = item;
-
-            dataArr.rowstatus_s.push("D");
-            dataArr.quoseq_s.push(quoseq);
-            dataArr.itemcd_s.push(itemcd);
-            dataArr.itemnm_s.push(itemnm);
-            dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(startdt);
-            dataArr.enddt_s.push(enddt);
-            dataArr.remark_s.push(remark);
-          });
-          setParaData({
-            workType: worktype,
-            orgdiv: sessionOrgdiv,
-            location: sessionLocation,
-            quonum: Information.quonum,
-            quorev: Information.quorev,
-            quoseq: Information.quorev,
-            quotype: Information.quotype,
-            quodt: convertDateToStr(Information.quodt),
-            person: Information.person,
-            pubdt: isValidDate(Information.pubdt)
-              ? convertDateToStr(Information.pubdt)
-              : "",
-            rev_reason: Information.rev_reason,
-            chkperson: Information.chkperson,
-            custcd: Information.custcd,
-            custnm: Information.custnm,
-            remark2: Information.remark2,
-            postcd: Information.postcd,
-            tel: Information.tel,
-            extra_field4: Information.extra_field4,
-            email: Information.email,
-            rcvpostcd: Information.rcvpostcd,
-            rcvtel: Information.rcvtel,
-            extra_field5: Information.extra_field5,
-            rcvemail: Information.rcvemail,
-            extra_field3: Information.extra_field3,
-            extra_field2: Information.extra_field2,
-            materialinfo: Information.materialinfo,
-            agency: agency,
-            reportcnt: Information.reportcnt,
-            transreportcnt: Information.transreportcnt,
-            attdatnum: Information.attdatnum,
-            assayyn: Information.assayyn,
-            assaydt: isValidDate(Information.assaydt)
-              ? convertDateToStr(Information.assaydt)
-              : "",
-            report: report,
-            rcvcustnm: Information.rcvcustnm,
-            rcvcustprsnnm: Information.rcvcustprsnnm,
-            remark3: Information.remark3,
-            materialtype: Information.materialtype,
-            materialindt: convertDateToStr(Information.materialindt),
-            materialnm: Information.materialnm,
-            guideline: guid,
-            translatereport: translatereport,
-            testenddt: isValidDate(Information.testenddt)
-              ? convertDateToStr(Information.testenddt)
-              : "",
-            teststdt: isValidDate(Information.teststdt)
-              ? convertDateToStr(Information.teststdt)
-              : "",
-            testtype: Information.testtype,
-            remark: Information.remark,
-            custprsnnm: Information.custprsnnm,
-            requestgb: Information.requestgb,
-            glpgb: glp,
-            numbering_id: Information.numbering_id,
-            rowstatus_s: dataArr.rowstatus_s.join("|"),
-            quoseq_s: dataArr.quoseq_s.join("|"),
-            itemcd_s: dataArr.itemcd_s.join("|"),
-            itemnm_s: dataArr.itemnm_s.join("|"),
-            glpyn_s: dataArr.glpyn_s.join("|"),
-            startdt_s: dataArr.startdt_s.join("|"),
-            enddt_s: dataArr.enddt_s.join("|"),
-            remark_s: dataArr.remark_s.join("|"),
-            quonum_s: "",
-            quorev_s: "",
-            progress_status_s: "",
-            userid: userId,
-            pc: pc,
-            form_id: "SA_A1000_603W",
-          });
-        }
+    let valid = true;
+    dataItem.map((item: any) => {
+      if (item.itemcd == "" || item.itemnm == "") {
+        valid = false;
       }
-    } catch (e) {
-      alert(e);
+    });
+
+    if (valid != true) {
+      alert("필수값을 채워주세요");
+    } else {
+      try {
+        if (
+          convertDateToStr(Information.quodt).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.quodt).substring(6, 8) > "31" ||
+          convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
+          convertDateToStr(Information.quodt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.person == null ||
+          Information.person == "" ||
+          Information.person == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.quotype == null ||
+          Information.quotype == "" ||
+          Information.quotype == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.requestgb == null ||
+          Information.requestgb == "" ||
+          Information.requestgb == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.numbering_id == null ||
+          Information.numbering_id == "" ||
+          Information.numbering_id == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
+          convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
+          convertDateToStr(Information.materialindt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else {
+          const agency =
+            (Information.agency1 == "" ? "N" : Information.agency1) +
+            "|" +
+            (Information.agency2 == "" ? "N" : Information.agency2) +
+            "|" +
+            (Information.agency3 == "" ? "N" : Information.agency3) +
+            "|" +
+            (Information.agency4 == "" ? "N" : Information.agency4) +
+            "|" +
+            (Information.agency5 == "" ? "N" : Information.agency5) +
+            "|" +
+            (Information.agency6 == "" ? "N" : Information.agency6) +
+            "|" +
+            Information.etcagency;
+
+          const guid =
+            (Information.guid1 == "" ? "N" : Information.guid1) +
+            "|" +
+            (Information.guid2 == "" ? "N" : Information.guid2) +
+            "|" +
+            (Information.guid3 == "" ? "N" : Information.guid3) +
+            "|" +
+            (Information.guid4 == "" ? "N" : Information.guid4) +
+            "|" +
+            (Information.guid5 == "" ? "N" : Information.guid5) +
+            "|" +
+            (Information.guid6 == "" ? "N" : Information.guid6) +
+            "|" +
+            Information.etcguid;
+
+          const glp =
+            (Information.glp1 == "" ? "N" : Information.glp1) +
+            "|" +
+            (Information.glp2 == "" ? "N" : Information.glp2) +
+            "|" +
+            (Information.glp3 == "" ? "N" : Information.glp3) +
+            "|" +
+            (Information.glp4 == "" ? "N" : Information.glp4) +
+            "|" +
+            (Information.glp5 == "" ? "N" : Information.glp5) +
+            "|" +
+            (Information.glp6 == "" ? "N" : Information.glp6) +
+            "|" +
+            Information.etcglp;
+
+          const translatereport =
+            (Information.translate1 == "" ? "N" : Information.translate1) +
+            "|" +
+            (Information.translate2 == "" ? "N" : Information.translate2) +
+            "|" +
+            (Information.translate3 == "" ? "N" : Information.translate3) +
+            "|" +
+            (Information.translate4 == "" ? "N" : Information.translate4) +
+            "|" +
+            Information.etctranslatereport;
+
+          const report =
+            (Information.report1 == "" ? "N" : Information.report1) +
+            "|" +
+            (Information.report2 == "" ? "N" : Information.report2) +
+            "|" +
+            (Information.report3 == "" ? "N" : Information.report3) +
+            "|" +
+            (Information.report4 == "" ? "N" : Information.report4) +
+            "|" +
+            Information.etcreport;
+
+          if (dataItem.length == 0 && deletedMainRows2.length == 0) {
+            setParaData({
+              workType: worktype,
+              orgdiv: sessionOrgdiv,
+              location: sessionLocation,
+              quonum: Information.quonum,
+              quorev: Information.quorev,
+              quoseq: Information.quorev,
+              quotype: Information.quotype,
+              quodt: isValidDate(Information.quodt)
+                ? convertDateToStr(Information.quodt)
+                : "",
+              pubdt: isValidDate(Information.pubdt)
+                ? convertDateToStr(Information.pubdt)
+                : "",
+              rev_reason: Information.rev_reason,
+              person: Information.person,
+              chkperson: Information.chkperson,
+              custcd: Information.custcd,
+              custnm: Information.custnm,
+              remark2: Information.remark2,
+              postcd: Information.postcd,
+              tel: Information.tel,
+              extra_field4: Information.extra_field4,
+              email: Information.email,
+              rcvpostcd: Information.rcvpostcd,
+              rcvtel: Information.rcvtel,
+              extra_field5: Information.extra_field5,
+              rcvemail: Information.rcvemail,
+              extra_field3: Information.extra_field3,
+              extra_field2: Information.extra_field2,
+              materialinfo: Information.materialinfo,
+              agency: agency,
+              reportcnt: Information.reportcnt,
+              transreportcnt: Information.transreportcnt,
+              attdatnum: Information.attdatnum,
+              assayyn: Information.assayyn,
+              assaydt: isValidDate(Information.assaydt)
+                ? convertDateToStr(Information.assaydt)
+                : "",
+              report: report,
+              rcvcustnm: Information.rcvcustnm,
+              rcvcustprsnnm: Information.rcvcustprsnnm,
+              remark3: Information.remark3,
+              materialtype: Information.materialtype,
+              materialindt: isValidDate(Information.materialindt)
+                ? convertDateToStr(Information.materialindt)
+                : "",
+              materialnm: Information.materialnm,
+              guideline: guid,
+              translatereport: translatereport,
+              testenddt: isValidDate(Information.testenddt)
+                ? convertDateToStr(Information.testenddt)
+                : "",
+              teststdt: isValidDate(Information.teststdt)
+                ? convertDateToStr(Information.teststdt)
+                : "",
+              testtype: Information.testtype,
+              remark: Information.remark,
+              custprsnnm: Information.custprsnnm,
+              requestgb: Information.requestgb,
+              glpgb: glp,
+              numbering_id: Information.numbering_id,
+              rowstatus_s: "",
+              quoseq_s: "",
+              itemcd_s: "",
+              itemnm_s: "",
+              glpyn_s: "",
+              startdt_s: "",
+              enddt_s: "",
+              remark_s: "",
+              quonum_s: "",
+              quorev_s: "",
+              progress_status_s: "",
+              userid: userId,
+              pc: pc,
+              form_id: "SA_A1000_603W",
+            });
+          } else {
+            let dataArr: TdataArr = {
+              rowstatus_s: [],
+              quoseq_s: [],
+              itemcd_s: [],
+              itemnm_s: [],
+              glpyn_s: [],
+              startdt_s: [],
+              enddt_s: [],
+              remark_s: [],
+            };
+            dataItem.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                quoseq = "",
+                itemcd = "",
+                itemnm = "",
+                glpyn = "",
+                startdt = "",
+                enddt = "",
+                remark = "",
+              } = item;
+
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.quoseq_s.push(quoseq);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemnm_s.push(itemnm);
+              dataArr.glpyn_s.push(glpyn);
+              dataArr.startdt_s.push(startdt);
+              dataArr.enddt_s.push(enddt);
+              dataArr.remark_s.push(remark);
+            });
+            deletedMainRows2.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                quoseq = "",
+                itemcd = "",
+                itemnm = "",
+                glpyn = "",
+                startdt = "",
+                enddt = "",
+                remark = "",
+              } = item;
+
+              dataArr.rowstatus_s.push("D");
+              dataArr.quoseq_s.push(quoseq);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemnm_s.push(itemnm);
+              dataArr.glpyn_s.push(glpyn);
+              dataArr.startdt_s.push(startdt);
+              dataArr.enddt_s.push(enddt);
+              dataArr.remark_s.push(remark);
+            });
+            setParaData({
+              workType: worktype,
+              orgdiv: sessionOrgdiv,
+              location: sessionLocation,
+              quonum: Information.quonum,
+              quorev: Information.quorev,
+              quoseq: Information.quorev,
+              quotype: Information.quotype,
+              quodt: isValidDate(Information.quodt)
+                ? convertDateToStr(Information.quodt)
+                : "",
+              person: Information.person,
+              pubdt: isValidDate(Information.pubdt)
+                ? convertDateToStr(Information.pubdt)
+                : "",
+              rev_reason: Information.rev_reason,
+              chkperson: Information.chkperson,
+              custcd: Information.custcd,
+              custnm: Information.custnm,
+              remark2: Information.remark2,
+              postcd: Information.postcd,
+              tel: Information.tel,
+              extra_field4: Information.extra_field4,
+              email: Information.email,
+              rcvpostcd: Information.rcvpostcd,
+              rcvtel: Information.rcvtel,
+              extra_field5: Information.extra_field5,
+              rcvemail: Information.rcvemail,
+              extra_field3: Information.extra_field3,
+              extra_field2: Information.extra_field2,
+              materialinfo: Information.materialinfo,
+              agency: agency,
+              reportcnt: Information.reportcnt,
+              transreportcnt: Information.transreportcnt,
+              attdatnum: Information.attdatnum,
+              assayyn: Information.assayyn,
+              assaydt: isValidDate(Information.assaydt)
+                ? convertDateToStr(Information.assaydt)
+                : "",
+              report: report,
+              rcvcustnm: Information.rcvcustnm,
+              rcvcustprsnnm: Information.rcvcustprsnnm,
+              remark3: Information.remark3,
+              materialtype: Information.materialtype,
+              materialindt: isValidDate(Information.materialindt)
+                ? convertDateToStr(Information.materialindt)
+                : "",
+              materialnm: Information.materialnm,
+              guideline: guid,
+              translatereport: translatereport,
+              testenddt: isValidDate(Information.testenddt)
+                ? convertDateToStr(Information.testenddt)
+                : "",
+              teststdt: isValidDate(Information.teststdt)
+                ? convertDateToStr(Information.teststdt)
+                : "",
+              testtype: Information.testtype,
+              remark: Information.remark,
+              custprsnnm: Information.custprsnnm,
+              requestgb: Information.requestgb,
+              glpgb: glp,
+              numbering_id: Information.numbering_id,
+              rowstatus_s: dataArr.rowstatus_s.join("|"),
+              quoseq_s: dataArr.quoseq_s.join("|"),
+              itemcd_s: dataArr.itemcd_s.join("|"),
+              itemnm_s: dataArr.itemnm_s.join("|"),
+              glpyn_s: dataArr.glpyn_s.join("|"),
+              startdt_s: dataArr.startdt_s.join("|"),
+              enddt_s: dataArr.enddt_s.join("|"),
+              remark_s: dataArr.remark_s.join("|"),
+              quonum_s: "",
+              quorev_s: "",
+              progress_status_s: "",
+              userid: userId,
+              pc: pc,
+              form_id: "SA_A1000_603W",
+            });
+          }
+        }
+      } catch (e) {
+        alert(e);
+      }
     }
   };
 
@@ -5880,6 +5894,11 @@ const SA_A1000_603W: React.FC = () => {
                                             ? DateCell
                                             : itemField.includes(item.fieldName)
                                             ? ColumnCommandCell
+                                            : undefined
+                                        }
+                                        headerCell={
+                                          headerField.includes(item.fieldName)
+                                            ? RequiredHeader
                                             : undefined
                                         }
                                         footerCell={

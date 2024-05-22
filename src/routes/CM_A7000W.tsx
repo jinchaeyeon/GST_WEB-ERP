@@ -19,6 +19,9 @@ import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -90,9 +93,6 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -337,12 +337,14 @@ const CM_A7000W: React.FC = () => {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
     }
-    setIsFilterHideStates(true);
+    if(isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
-      }))
+      }));
     } else if (e.selected == 1) {
       const data = mainDataResult.data.filter(
         (item) =>
@@ -355,7 +357,7 @@ const CM_A7000W: React.FC = () => {
         usegb: data.usegb,
         person: data.person,
         personnm: data.personnm,
-        recdt: toDate(data.recdt),
+        recdt: data.recdt == "" ? null : toDate(data.recdt),
         title: data.title,
         attdatnum: data.attdatnum == undefined ? "" : data.attdatnum,
         files: data.files,
@@ -560,7 +562,7 @@ const CM_A7000W: React.FC = () => {
     isSearch: false,
   });
 
-  const [information, setInformation] = useState({
+  const [information, setInformation] = useState<{ [name: string]: any }>({
     orgdiv: sessionOrgdiv,
     meetingnum: "",
     usegb: "",
@@ -963,7 +965,7 @@ const CM_A7000W: React.FC = () => {
       usegb: selectedRowData.usegb,
       person: selectedRowData.person,
       personnm: selectedRowData.personnm,
-      recdt: toDate(selectedRowData.recdt),
+      recdt: selectedRowData.recdt == "" ? null : toDate(selectedRowData.recdt),
       title: selectedRowData.title,
       attdatnum:
         selectedRowData.attdatnum == undefined ? "" : selectedRowData.attdatnum,
@@ -1068,7 +1070,8 @@ const CM_A7000W: React.FC = () => {
       orgdiv: sessionOrgdiv,
       meetingnum: information.meetingnum,
       meetingseq: 0,
-      recdt: convertDateToStr(information.recdt),
+      recdt:
+        information.recdt == null ? "" : convertDateToStr(information.recdt),
       usegb: information.usegb,
       title: information.title,
       attdatnum: information.attdatnum,
@@ -2304,7 +2307,9 @@ const CM_A7000W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitle>
                   </GridTitleContainer>
-                  <GridContainer style={{ height: deviceHeight - height - height4 }}>
+                  <GridContainer
+                    style={{ height: deviceHeight - height - height4 }}
+                  >
                     <RichEditor id="refEditor" ref={refEditorRef} />
                   </GridContainer>
                 </GridContainer>

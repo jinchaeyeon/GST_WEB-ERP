@@ -157,9 +157,11 @@ const PanelBarNavContainer = (props: any) => {
       unlisten();
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
-      setIsFilterheightstates(0);
-      setIsFilterHideStates(true);
-      setDeviceHeight(document.documentElement.clientHeight - 170);
+      if(isMobile) {
+        setIsFilterheightstates(0);
+        setIsFilterHideStates(true);
+        setDeviceHeight(document.documentElement.clientHeight - 170);
+      }
     };
   }, [
     unsavedAttadatnums,

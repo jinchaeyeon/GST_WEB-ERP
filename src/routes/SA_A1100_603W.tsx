@@ -20,7 +20,7 @@ import {
   RadioGroup,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -43,7 +43,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -52,7 +51,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
+  isValidDate,
   numberWithCommas,
   numberWithCommas3,
   setDefaultDate,
@@ -64,9 +63,11 @@ import { gridList } from "../store/columns/SA_A1100_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { bytesToBase64 } from "byte-base64";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -92,9 +93,6 @@ import {
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -204,7 +202,7 @@ const SA_A1100_603W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -278,7 +276,7 @@ const pc = UseGetValueFromSessionItem("pc");
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
     }
-  }, [bizComponentData]); 
+  }, [bizComponentData]);
 
   // 조회조건
   const [filters, setFilters] = useState({
@@ -334,7 +332,7 @@ const pc = UseGetValueFromSessionItem("pc");
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
-  const [Information, setInformation] = useState({
+  const [Information, setInformation] = useState<{ [name: string]: any }>({
     amtunit: "",
     change_contraamt: 0,
     contraamt: 0,
@@ -342,10 +340,10 @@ const pc = UseGetValueFromSessionItem("pc");
     custcd: "",
     custnm: "",
     custprsnnm: "",
-    enddt: new Date(),
+    enddt: null,
     fin_contraamt: 0,
     project: "",
-    strdt: new Date(),
+    strdt: null,
     wonchgrat: 0,
     insert_time: "",
     materialtype: "",
@@ -456,7 +454,7 @@ const pc = UseGetValueFromSessionItem("pc");
       isSearch: true,
     }));
     setTabSelected(1);
-    if(swiper) {
+    if (swiper) {
       swiper.slideTo(1);
     }
   };
@@ -883,19 +881,22 @@ const pc = UseGetValueFromSessionItem("pc");
           custprsnnm: data.tables[0].Rows[0].custprsnnm,
           enddt:
             data.tables[0].Rows[0].enddt == ""
-              ? new Date()
+              ? null
               : toDate(data.tables[0].Rows[0].enddt),
           fin_contraamt: Math.ceil(data.tables[0].Rows[0].fin_contraamt),
           project: data.tables[0].Rows[0].project,
           strdt:
             data.tables[0].Rows[0].strdt == ""
-              ? new Date()
+              ? null
               : toDate(data.tables[0].Rows[0].strdt),
           wonchgrat: Math.ceil(data.tables[0].Rows[0].wonchgrat),
           insert_time: data.tables[0].Rows[0].insert_time.substring(0, 10),
           materialtype: data.tables[0].Rows[0].materialtype,
           extra_field2: data.tables[0].Rows[0].extra_field2,
-          cotracdt: toDate(data.tables[0].Rows[0].cotracdt),
+          cotracdt:
+            data.tables[0].Rows[0].cotracdt == ""
+              ? null
+              : toDate(data.tables[0].Rows[0].cotracdt),
           attdatnum: data.tables[0].Rows[0].attdatnum,
           files: data.tables[0].Rows[0].files,
           quonum: data.tables[0].Rows[0].quonum,
@@ -911,10 +912,10 @@ const pc = UseGetValueFromSessionItem("pc");
           custcd: "",
           custnm: "",
           custprsnnm: "",
-          enddt: new Date(),
+          enddt: null,
           fin_contraamt: 0,
           project: "",
-          strdt: new Date(),
+          strdt: null,
           wonchgrat: 0,
           insert_time: "",
           materialtype: "",
@@ -1221,7 +1222,7 @@ const pc = UseGetValueFromSessionItem("pc");
         if (unsavedAttadatnums.length > 0) {
           setDeletedAttadatnums(unsavedAttadatnums);
         }
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -1864,8 +1865,12 @@ const pc = UseGetValueFromSessionItem("pc");
       "@p_location": sessionLocation,
       "@p_project": Information.project,
       "@p_cotracdt": convertDateToStr(Information.cotracdt),
-      "@p_strdt": convertDateToStr(Information.strdt),
-      "@p_enddt": convertDateToStr(Information.enddt),
+      "@p_strdt": isValidDate(Information.strdt)
+        ? convertDateToStr(Information.strdt)
+        : "",
+      "@p_enddt": isValidDate(Information.enddt)
+        ? convertDateToStr(Information.enddt)
+        : "",
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
       "@p_attdatnum": Information.attdatnum,
@@ -3542,6 +3547,7 @@ const pc = UseGetValueFromSessionItem("pc");
                                 value={Information.cotracdt}
                                 format="yyyy-MM-dd"
                                 placeholder=""
+                                className="required"
                                 onChange={InfoInputChange}
                               />
                             )}
