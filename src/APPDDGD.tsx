@@ -43,10 +43,12 @@ import {
   OSState,
   colors,
   isMobileMenuOpendState,
+  linkState,
   loginResultState,
   sessionItemState,
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
+import axios from "axios";
 
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
 const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
@@ -402,7 +404,12 @@ const AppInner: React.FC = () => {
     "#64b5f6",
     "#bbdefb",
   ]);
-
+  const [Link, setLink] = useRecoilState(linkState);
+  useEffect(() => {
+    axios.get(`/apiserver.json`).then((res: any) => {
+      setLink(res.data[0].url);
+    });
+  },[])
   useEffect(() => {
     if (
       /SmartTV/i.test(navigator.userAgent) ||
