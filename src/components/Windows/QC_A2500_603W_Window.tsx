@@ -447,7 +447,7 @@ const CopyWindow = ({
     setuserWindowVisible(true);
   };
   const onUserWndClick2 = () => {
-    setuserWindowVisible(true);
+    setuserWindowVisible2(true);
   };
   const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
