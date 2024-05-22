@@ -1251,6 +1251,7 @@ const SA_A1000_603W: React.FC = () => {
         find_row_value: "",
       }));
       setWorktype("U");
+      setIsFilterHideStates(true);
     } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
@@ -1307,8 +1308,7 @@ const SA_A1000_603W: React.FC = () => {
         isSearch: true,
         quonum: selectedRowData.quonum,
         quorev: selectedRowData.quorev,
-      }));
-      setIsFilterHideStates(true);
+      }));      
     }
     setTabSelected(e.selected);
   };

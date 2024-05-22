@@ -44,6 +44,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   
+  getHeight,
+  
   numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -54,7 +56,7 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { bytesToBase64 } from "byte-base64";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -68,7 +70,10 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { isLoading } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -80,6 +85,13 @@ let temp = 0;
 let deletedMainRows: any = [];
 
 const SA_A1200_603W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");  
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -897,6 +909,10 @@ const pc = UseGetValueFromSessionItem("pc");
       isSearch: true,
       pgNum: 1,
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+		}
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -911,6 +927,8 @@ const pc = UseGetValueFromSessionItem("pc");
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
       setFilters((prev) => ({
@@ -919,6 +937,7 @@ const pc = UseGetValueFromSessionItem("pc");
         find_row_value: "",
         isSearch: true,
       }));
+      setIsFilterHideStates(true);
     } else {
       const selectedRow = mainDataResult.data.filter(
         (item) =>
