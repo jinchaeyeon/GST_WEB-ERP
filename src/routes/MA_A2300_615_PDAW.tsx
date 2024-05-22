@@ -185,7 +185,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
       custcd: "",
       custnm: filters.custnm,
       custdiv: "",
-      useyn: "사용",
+      useyn: "",
     };
 
     try {
