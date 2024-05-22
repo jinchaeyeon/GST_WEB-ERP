@@ -1243,6 +1243,7 @@ const SA_A1000_603W: React.FC = () => {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
     }
+    setIsFilterHideStates(true);
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -1251,7 +1252,6 @@ const SA_A1000_603W: React.FC = () => {
         find_row_value: "",
       }));
       setWorktype("U");
-      setIsFilterHideStates(true);
     } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>

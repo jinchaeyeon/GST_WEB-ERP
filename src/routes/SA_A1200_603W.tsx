@@ -929,6 +929,7 @@ const SA_A1200_603W: React.FC = () => {
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
+    setIsFilterHideStates(true);
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -936,7 +937,6 @@ const SA_A1200_603W: React.FC = () => {
         find_row_value: "",
         isSearch: true,
       }));
-      setIsFilterHideStates(true);
     } else {
       const selectedRow = mainDataResult.data.filter(
         (item) =>
@@ -1437,6 +1437,18 @@ const SA_A1200_603W: React.FC = () => {
       <TitleContainer>
         <Title>계약가능성관리</Title>
         <ButtonContainer>
+          {tabSelected == 1 ? (
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+            >
+              저장
+            </Button>
+          ) : (
+            ""
+          )}
           {permissions && (
             <TopButtons
               search={search}
@@ -1712,15 +1724,6 @@ const SA_A1200_603W: React.FC = () => {
                           ></Button>
                         </ButtonContainer>
                       </GridTitle>
-                      <ButtonContainer>
-                        <Button
-                          themeColor={"primary"}
-                          icon="save"
-                          onClick={onSaveClick}
-                        >
-                          저장
-                        </Button>
-                      </ButtonContainer>
                     </GridTitleContainer>
                   </GridContainer>
                   <FormBoxWrap

@@ -337,13 +337,12 @@ const CM_A7000W: React.FC = () => {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
     }
-
+    setIsFilterHideStates(true);
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
-      }));
-      setIsFilterHideStates(true);
+      }))
     } else if (e.selected == 1) {
       const data = mainDataResult.data.filter(
         (item) =>
