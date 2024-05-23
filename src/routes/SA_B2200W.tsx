@@ -692,7 +692,7 @@ const SA_B2200: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+        style={{ width: isMobile? `${deviceWidth - 30}px` : "100%", overflow: "auto" }}
       >
         <ExcelExport
           data={mainDataResult.data}
