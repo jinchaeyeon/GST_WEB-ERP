@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -26,8 +26,12 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { UseBizComponent } from "../../CommonFunction";
+import { isFilterheightstate, isLoading } from "../../../store/atoms";
+import {
+  UseBizComponent,
+  getHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 
@@ -44,7 +48,16 @@ let temp = 0;
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate); //필터박스 높이
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height5 = getHeight(".WindowButtonContainer");
+  var height6 = getHeight(".WindowButtonContainer2");
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -423,7 +436,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -432,7 +445,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>품목코드</th>
@@ -480,12 +493,25 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="calc(100% - 470px)">
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
+        <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>품목리스트</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 42px)" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height2 - height3 - height4 - height5
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates -
+                height5,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -544,12 +570,25 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="remark" title="비고" width="120px" />
         </Grid>
       </GridContainer>
-      <GridContainer>
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
+        <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "250px" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height2 - height3 - height4 - height6
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates -
+                height6,
+          }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
@@ -601,7 +640,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="remark" title="비고" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
