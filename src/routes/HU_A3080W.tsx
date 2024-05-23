@@ -30,10 +30,9 @@ import {
   ButtonInInput,
   FilterBox,
   GridContainer,
-  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -49,7 +48,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -58,7 +56,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -645,7 +643,7 @@ const HU_A3080W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const idGetter5 = getter(DATA_ITEM_KEY5);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -3429,7 +3427,9 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3447,7 +3447,9 @@ const pc = UseGetValueFromSessionItem("pc");
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3523,7 +3525,9 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3541,7 +3545,9 @@ const pc = UseGetValueFromSessionItem("pc");
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3615,7 +3621,9 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3631,7 +3639,9 @@ const pc = UseGetValueFromSessionItem("pc");
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3703,7 +3713,9 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -3724,7 +3736,9 @@ const pc = UseGetValueFromSessionItem("pc");
         bnsrat = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -4553,7 +4567,10 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridContainer style={{ width: "100%" }}>
               {isMobile ? <>{renderFilterContainer()}</> : <></>}
-              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
+              <GridTitleContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "flex-end" }}
+              >
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -4700,7 +4717,10 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridContainer style={{ width: "100%" }}>
               {isMobile ? <>{renderFilterContainer()}</> : <></>}
-              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
+              <GridTitleContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "flex-end" }}
+              >
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -4859,7 +4879,10 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridContainer style={{ width: "100%" }}>
               {isMobile ? <>{renderFilterContainer()}</> : <></>}
-              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
+              <GridTitleContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "flex-end" }}
+              >
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -5018,7 +5041,10 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridContainer style={{ width: "100%" }}>
               {isMobile ? <>{renderFilterContainer()}</> : <></>}
-              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
+              <GridTitleContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "flex-end" }}
+              >
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -5170,7 +5196,10 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridContainer style={{ width: "100%" }}>
               {isMobile ? <>{renderFilterContainer()}</> : <></>}
-              <GridTitleContainer className="ButtonContainer"  style={{ justifyContent: "flex-end" }}>
+              <GridTitleContainer
+                className="ButtonContainer"
+                style={{ justifyContent: "flex-end" }}
+              >
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}

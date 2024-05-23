@@ -12,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -39,9 +38,8 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
-  
   getHeight,
-  
+  handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -79,7 +77,7 @@ const numberField = [
 
 const SA_B1002_603W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
-	let isMobile = deviceWidth <= 1200;
+  let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -450,7 +448,9 @@ const SA_B1002_603W: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
 
     var parts = sum.toString().split(".");
@@ -481,7 +481,7 @@ const SA_B1002_603W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>견적발행일</th>
@@ -628,7 +628,7 @@ const SA_B1002_603W: React.FC = () => {
           fileName="견적현황조회"
         >
           <Grid
-            style={{ height: isMobile? deviceHeight - height : "70vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "70vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -668,32 +668,34 @@ const SA_B1002_603W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -27,7 +27,6 @@ import {
   dateformat,
   getGridItemChangedData,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -54,7 +53,7 @@ const CommentsGrid = (props: {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const user_id = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -469,7 +468,9 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.id.push(id);
       dataArr.row_status.push(row_status);
       dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
       dataArr.user_id.push(user_id);
     });
 
@@ -480,7 +481,9 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.comment.push(comment);
       dataArr.id.push(id);
       dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
       dataArr.user_id.push(user_id);
     });
 

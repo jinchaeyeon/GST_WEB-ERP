@@ -23,10 +23,9 @@ import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -61,15 +60,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getItemQuery,
   numberWithCommas,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -454,7 +452,7 @@ const CopyWindow = ({
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const DATA_ITEM_KEY = "num";
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1174,7 +1172,9 @@ const pc = UseGetValueFromSessionItem("pc");
                 dataArr.reqseq_s.push(
                   reqseq == undefined || reqseq == "" ? 0 : reqseq
                 );
-                dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
+                dataArr.inexpdt_s.push(
+                  inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
+                );
                 dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
                 dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
                 dataArr.qty_s.push(qty == undefined ? 0 : qty);
@@ -1214,7 +1214,9 @@ const pc = UseGetValueFromSessionItem("pc");
                 dataArr.reqseq_s.push(
                   reqseq == undefined || reqseq == "" ? 0 : reqseq
                 );
-                dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
+                dataArr.inexpdt_s.push(
+                  inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
+                );
                 dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
                 dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
                 dataArr.qty_s.push(qty == undefined ? 0 : qty);

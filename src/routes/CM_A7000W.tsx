@@ -2249,7 +2249,7 @@ const CM_A7000W: React.FC = () => {
                   </FormBoxWrap>
                   <GridContainer>
                     <Grid
-                      style={{ height: deviceHeight - height - height3 - 35 }}
+                      style={{ height: deviceHeight - height - height3  }}
                       data={process(
                         detailDataResult.data.map((row) => ({
                           ...row,

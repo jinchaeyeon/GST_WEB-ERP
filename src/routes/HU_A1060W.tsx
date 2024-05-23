@@ -22,6 +22,9 @@ import React, {
   useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -44,14 +47,13 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -69,9 +71,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 interface IPrsnnum {
@@ -251,7 +250,7 @@ const HU_A1060W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -312,7 +311,7 @@ const pc = UseGetValueFromSessionItem("pc");
       find_row_value: "",
       isSearch: true,
     }));
-    if(swiper) {
+    if (swiper) {
       swiper.slideTo(0);
     }
   };
@@ -880,7 +879,7 @@ const pc = UseGetValueFromSessionItem("pc");
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob) );
+      setUrl(URL.createObjectURL(blob));
     } else {
       //데이터 없을 경우
       setUrl("");
@@ -948,7 +947,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
       rowsArr.rowstatus_s.push(rowstatus);
       rowsArr.datnum_s.push(datnum);
-      rowsArr.pubdt_s.push(pubdt);
+      rowsArr.pubdt_s.push(pubdt == "99991231" ? "" : pubdt);
       rowsArr.prsnnum_s.push(prsnnum);
       rowsArr.kind_s.push(kind);
       rowsArr.postcd_s.push(postcd);
@@ -1151,7 +1150,6 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                
                 <FormContext.Provider
                   value={{
                     prsnnum,

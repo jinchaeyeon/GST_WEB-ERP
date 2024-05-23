@@ -17,8 +17,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -47,12 +46,10 @@ import {
   UseMessages,
   UsePermissions,
   convertDateToStr,
-  dateformat,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -130,7 +127,7 @@ const HU_B3120W: React.FC = () => {
           isSearch: true,
         }));
       }
-      if(isMobile) {
+      if (isMobile) {
         setIsFilterHideStates(true);
       }
     }
@@ -1372,14 +1369,11 @@ const HU_B3120W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: deviceHeight - height2 - height3 - 15,
+                            height: deviceHeight - height2 - height3,
                           }}
                           data={process(
                             mainDataResult2.data.map((row) => ({
                               ...row,
-                              payyrmm: row.payyrmm
-                                ? new Date(dateformat(row.payyrmm))
-                                : new Date(dateformat("99991231")),
                               [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                             })),
                             mainDataState2
@@ -1456,14 +1450,11 @@ const HU_B3120W: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: deviceHeight - height2 - height3 - 15,
+                            height: deviceHeight - height2 - height3,
                           }}
                           data={process(
                             mainDataResult3.data.map((row) => ({
                               ...row,
-                              payyrmm: row.payyrmm
-                                ? new Date(dateformat(row.payyrmm))
-                                : new Date(dateformat("99991231")),
                               paytype: paytypeListData.find(
                                 (item: any) => item.sub_code == row.paytype
                               )?.code_name,
@@ -1535,7 +1526,7 @@ const HU_B3120W: React.FC = () => {
                   <TabStripTab title="급여상여(명세서)">
                     <div
                       style={{
-                        height: deviceHeight - height2 - height3 - 15,
+                        height: deviceHeight - height2 - height3,
                         marginBottom: "10px",
                       }}
                     >
@@ -1742,9 +1733,6 @@ const HU_B3120W: React.FC = () => {
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
-                            payyrmm: row.payyrmm
-                              ? new Date(dateformat(row.payyrmm))
-                              : new Date(dateformat("99991231")),
                             [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                           })),
                           mainDataState2
@@ -1822,9 +1810,6 @@ const HU_B3120W: React.FC = () => {
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
-                            payyrmm: row.payyrmm
-                              ? new Date(dateformat(row.payyrmm))
-                              : new Date(dateformat("99991231")),
                             paytype: paytypeListData.find(
                               (item: any) => item.sub_code == row.paytype
                             )?.code_name,

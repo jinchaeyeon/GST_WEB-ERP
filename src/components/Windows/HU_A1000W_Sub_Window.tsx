@@ -32,11 +32,10 @@ import MonthDateCell from "../Cells/MonthDateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -90,7 +89,7 @@ const KendoWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
@@ -498,7 +497,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.rowstatus.push(rowstatus);
           dataArr.location.push(sessionLocation);
           dataArr.prsnnum.push(prsnnum);
-          dataArr.yyyymm.push(yyyymm.substring(0, 6));
+          dataArr.yyyymm.push(
+            yyyymm == "99991231" ? "" : yyyymm.substring(0, 6)
+          );
           dataArr.overtime.push(overtime);
           dataArr.remark.push(remark);
         });
@@ -516,7 +517,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.rowstatus.push(rowstatus);
           dataArr.location.push(sessionLocation);
           dataArr.prsnnum.push(prsnnum);
-          dataArr.yyyymm.push(yyyymm.substring(0, 6));
+          dataArr.yyyymm.push(
+            yyyymm == "99991231" ? "" : yyyymm.substring(0, 6)
+          );
           dataArr.overtime.push(overtime);
           dataArr.remark.push(remark);
         });

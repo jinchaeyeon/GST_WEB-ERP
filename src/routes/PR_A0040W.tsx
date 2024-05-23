@@ -2149,7 +2149,7 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: deviceHeight - height - height3 - 10 }}
+                  style={{ height: deviceHeight - height - height3 }}
                   data={process(
                     subData2Result.data.map((row) => ({
                       ...row,

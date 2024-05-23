@@ -18,14 +18,12 @@ import {
   Input,
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -34,10 +32,9 @@ import {
   ButtonInInput,
   FilterBox,
   GridContainer,
-  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -50,7 +47,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -58,9 +54,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -233,7 +228,7 @@ const HU_A2140W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const postcd = UseGetValueFromSessionItem("postcd");
   const dptcd = UseGetValueFromSessionItem("dptcd");
@@ -1183,16 +1178,16 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
-        dataArr.recdt_s.push(recdt);
+        dataArr.recdt_s.push(recdt == "99991231" ? "" : recdt);
         dataArr.seq_s.push(seq);
-        dataArr.stddt_s.push(stddt);
+        dataArr.stddt_s.push(stddt == "99991231" ? "" : stddt);
         dataArr.stddiv_s.push(stddiv);
         dataArr.prsnnum_s.push(prsnnum);
         dataArr.location_s.push(location);
         dataArr.dptcd_s.push(dptcd);
         dataArr.postcd_s.push(postcd);
-        dataArr.startdate_s.push(startdate);
-        dataArr.enddate_s.push(enddate);
+        dataArr.startdate_s.push(startdate == "99991231" ? "" : startdate);
+        dataArr.enddate_s.push(enddate == "99991231" ? "" : enddate);
         dataArr.shh_s.push(shh);
         dataArr.smm_s.push(smm);
         dataArr.ehh_s.push(ehh);
@@ -1222,16 +1217,16 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
-        dataArr.recdt_s.push(recdt);
+        dataArr.recdt_s.push(recdt == "99991231" ? "" : recdt);
         dataArr.seq_s.push(seq);
-        dataArr.stddt_s.push(stddt);
+        dataArr.stddt_s.push(stddt == "99991231" ? "" : stddt);
         dataArr.stddiv_s.push(stddiv);
         dataArr.prsnnum_s.push(prsnnum);
         dataArr.location_s.push(location);
         dataArr.dptcd_s.push(dptcd);
         dataArr.postcd_s.push(postcd);
-        dataArr.startdate_s.push(startdate);
-        dataArr.enddate_s.push(enddate);
+        dataArr.startdate_s.push(startdate == "99991231" ? "" : startdate);
+        dataArr.enddate_s.push(enddate == "99991231" ? "" : enddate);
         dataArr.shh_s.push(shh);
         dataArr.smm_s.push(smm);
         dataArr.ehh_s.push(ehh);
@@ -1421,165 +1416,167 @@ const pc = UseGetValueFromSessionItem("pc");
           // fetchGrid,
         }}
       >
-            <GridContainer style={{ width: "100%", overflow: "auto"  }}>
-              <GridTitleContainer className="ButtonContainer">
-                <ButtonContainer>
-                  <Button
-                    onClick={onCheckClick}
-                    themeColor={"primary"}
-                    icon="track-changes-accept"
-                  >
-                    결재
-                  </Button>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    themeColor={"primary"}
-                    fillMode="outline"
-                    onClick={onCopyClick}
-                    icon="copy"
-                    title="행 복사"
-                  />
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName="근태허가신청"
+        <GridContainer style={{ width: "100%", overflow: "auto" }}>
+          <GridTitleContainer className="ButtonContainer">
+            <ButtonContainer>
+              <Button
+                onClick={onCheckClick}
+                themeColor={"primary"}
+                icon="track-changes-accept"
               >
-                <Grid
-                  style={{
-                    height: isMobile ? deviceHeight - height : "79vh",
-                  }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      rowstatus:
-                        row.rowstatus == null ||
-                        row.rowstatus == "" ||
-                        row.rowstatus == undefined
-                          ? ""
-                          : row.rowstatus,
-                      dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd == row.dptcd
-                      )?.dptnm,
-                      postcd: postcdListData.find(
-                        (item: any) => item.sub_code == row.postcd
-                      )?.code_name,
-                      appyn: appynListData.find(
-                        (item: any) => item.code == row.appyn
-                      )?.name,
-                      enddate: row.enddate
-                        ? new Date(dateformat(row.enddate))
-                        : new Date(dateformat("99991231")),
-                      recdt: row.recdt
-                        ? new Date(dateformat(row.recdt))
-                        : new Date(dateformat("99991231")),
-                      startdate: row.startdate
-                        ? new Date(dateformat(row.startdate))
-                        : new Date(dateformat("99991231")),
-                      stddt: row.stddt
-                        ? new Date(dateformat(row.stddt))
-                        : new Date(dateformat("99991231")),
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    })),
-                    mainDataState
+                결재
+              </Button>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyClick}
+                icon="copy"
+                title="행 복사"
+              />
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
+            }}
+            fileName="근태허가신청"
+          >
+            <Grid
+              style={{
+                height: isMobile ? deviceHeight - height : "79vh",
+              }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  rowstatus:
+                    row.rowstatus == null ||
+                    row.rowstatus == "" ||
+                    row.rowstatus == undefined
+                      ? ""
+                      : row.rowstatus,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd == row.dptcd
+                  )?.dptnm,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code == row.postcd
+                  )?.code_name,
+                  appyn: appynListData.find(
+                    (item: any) => item.code == row.appyn
+                  )?.name,
+                  enddate: row.enddate
+                    ? new Date(dateformat(row.enddate))
+                    : new Date(dateformat("99991231")),
+                  recdt: row.recdt
+                    ? new Date(dateformat(row.recdt))
+                    : new Date(dateformat("99991231")),
+                  startdate: row.startdate
+                    ? new Date(dateformat(row.startdate))
+                    : new Date(dateformat("99991231")),
+                  stddt: row.stddt
+                    ? new Date(dateformat(row.stddt))
+                    : new Date(dateformat("99991231")),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            DateField.includes(item.fieldName)
+                              ? DateCell
+                              : CustomComboField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : commandField.includes(item.fieldName)
+                              ? ColumnCommandCell //추후 작업
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 1
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
                   )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange}
-                  cellRender={customCellRender}
-                  rowRender={customRowRender}
-                  editField={EDIT_FIELD}
-                >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  <GridColumn
-                    field="chk"
-                    title=" "
-                    width="45px"
-                    headerCell={CustomCheckBoxCell2}
-                    cell={CheckBoxCell}
-                  />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : CustomComboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : commandField.includes(item.fieldName)
-                                ? ColumnCommandCell //추후 작업
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 1
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
       </FormContext.Provider>
       {detailWindowVisible && (
         <ApprovalWindow

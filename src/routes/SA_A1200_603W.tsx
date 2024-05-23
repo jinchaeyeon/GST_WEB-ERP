@@ -16,6 +16,11 @@ import {
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -29,8 +34,11 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -43,33 +51,26 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  handleKeyPressSearch,
   numberWithCommas3,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { gridList } from "../store/columns/SA_A1200_603W_C";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
-import { useHistory, useLocation } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import TopButtons from "../components/Buttons/TopButtons";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import { useApi } from "../hooks/api";
 import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/SA_A1200_603W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -928,7 +929,7 @@ const SA_A1200_603W: React.FC = () => {
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
-    if(isMobile) {
+    if (isMobile) {
       setIsFilterHideStates(true);
     }
     if (e.selected == 0) {
@@ -1246,7 +1247,7 @@ const SA_A1200_603W: React.FC = () => {
       dataArr.id.push(id);
       dataArr.row_status.push(rowstatus);
       dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.user_id.push(insert_userid);
     });
 
@@ -1257,7 +1258,7 @@ const SA_A1200_603W: React.FC = () => {
       dataArr.comment.push(comment);
       dataArr.id.push(id);
       dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.user_id.push(insert_userid);
     });
 
@@ -1480,7 +1481,7 @@ const SA_A1200_603W: React.FC = () => {
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
-            <FilterBox style={{ height: "10%" }}>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
                   <th>PJT NO.</th>

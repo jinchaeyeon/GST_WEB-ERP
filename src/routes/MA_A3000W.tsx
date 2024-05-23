@@ -1177,7 +1177,7 @@ const MA_A3000W: React.FC = () => {
       dataArr.fxdiv_s.push(fxdiv);
       dataArr.model_s.push(model);
       dataArr.serialno_s.push(serialno);
-      dataArr.purdt_s.push(purdt);
+      dataArr.purdt_s.push(purdt == "99991231" ? "" : purdt);
       dataArr.remark_s.push(remark);
       dataArr.attdatnum_s.push(attdatnum);
       dataArr.devmngnum_s.push(devmngnum);
@@ -1284,21 +1284,21 @@ const MA_A3000W: React.FC = () => {
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.recdt_s.push(recdt);
-      dataArr.indt_s.push(indt);
+      dataArr.indt_s.push(indt == "99991231" ? "" : indt);
       dataArr.person_s.push(person == undefined ? "" : person);
       dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
       dataArr.extra_field5_s.push(
         extra_field5 == undefined ? "" : extra_field5
       );
-      dataArr.strdt_s.push(strdt);
-      dataArr.enddt_s.push(enddt);
+      dataArr.strdt_s.push(strdt == "99991231" ? "" : strdt);
+      dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
       dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
       dataArr.outrecdt_s.push(outrecdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.outcustcd_s.push(outcustcd == undefined ? "" : outcustcd);
-      dataArr.outdt_s.push(outdt);
+      dataArr.outdt_s.push(outdt == "99991231" ? "" : outdt);
       dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1333,21 +1333,21 @@ const MA_A3000W: React.FC = () => {
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
       dataArr.recdt_s.push(recdt);
-      dataArr.indt_s.push(indt);
+      dataArr.indt_s.push(indt == "99991231" ? "" : indt);
       dataArr.person_s.push(person == undefined ? "" : person);
       dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
       dataArr.extra_field5_s.push(
         extra_field5 == undefined ? "" : extra_field5
       );
-      dataArr.strdt_s.push(strdt);
-      dataArr.enddt_s.push(enddt);
+      dataArr.strdt_s.push(strdt == "99991231" ? "" : strdt);
+      dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
       dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
       dataArr.outrecdt_s.push(outrecdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.outcustcd_s.push(outcustcd == undefined ? "" : outcustcd);
-      dataArr.outdt_s.push(outdt);
+      dataArr.outdt_s.push(outdt == "99991231" ? "" : outdt);
       dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
     });
 

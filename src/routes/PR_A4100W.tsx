@@ -59,7 +59,7 @@ import {
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -199,7 +199,7 @@ const PR_A4100W: React.FC = () => {
         outprocyn: defaultOption.find((item: any) => item.id == "outprocyn")
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -1003,7 +1003,7 @@ const PR_A4100W: React.FC = () => {
       dataArr.planno_s.push(planno);
       dataArr.planseq_s.push(planseq);
       dataArr.plandt_s.push(plandt);
-      dataArr.finexpdt_s.push(finexpdt);
+      dataArr.finexpdt_s.push(finexpdt == "99991231" ? "" : finexpdt);
       dataArr.proccd_s.push(proccd);
       dataArr.procseq_s.push(procseq);
       dataArr.outprocyn_s.push(outprocyn);

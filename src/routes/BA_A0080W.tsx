@@ -20,7 +20,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -1507,7 +1507,7 @@ const BA_A0080: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.amtunit.push(amtunit);
     });
 
@@ -1530,7 +1530,7 @@ const BA_A0080: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.amtunit.push(amtunit);
     });
 

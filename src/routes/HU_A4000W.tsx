@@ -21,14 +21,12 @@ import {
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -62,7 +60,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -70,10 +67,9 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   setDefaultDate,
   toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -512,7 +508,7 @@ const HU_A4000W: React.FC = () => {
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -4177,7 +4173,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(baddt);
+      dataArr.baddt_s.push(baddt == "99991231" ? "" : baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -4193,7 +4189,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.rowstatus_s.push("D");
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(baddt);
+      dataArr.baddt_s.push(baddt == "99991231" ? "" : baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -4265,7 +4261,7 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(reqdt);
+      dataArr.reqdt_s.push(reqdt == "99991231" ? "" : reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
@@ -4285,7 +4281,7 @@ const pc = UseGetValueFromSessionItem("pc");
       } = item;
       dataArr.rowstatus_s.push("D");
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(reqdt);
+      dataArr.reqdt_s.push(reqdt == "99991231" ? "" : reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);

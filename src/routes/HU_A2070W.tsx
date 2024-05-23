@@ -13,9 +13,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -37,7 +39,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -45,9 +46,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -64,9 +64,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 //그리드 별 키 필드값
@@ -152,7 +149,7 @@ const HU_A2070W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -882,7 +879,7 @@ const pc = UseGetValueFromSessionItem("pc");
             } = item;
             dataArr.rowstatus.push(rowstatus);
             dataArr.orgdiv.push(orgdiv);
-            dataArr.dutydt.push(dutydt);
+            dataArr.dutydt.push(dutydt == "99991231" ? "" : dutydt);
             dataArr.prsnnum.push(prsnnum);
             dataArr.shh.push(shh);
             dataArr.smm.push(smm);
@@ -904,7 +901,7 @@ const pc = UseGetValueFromSessionItem("pc");
             } = item;
             dataArr.rowstatus.push(rowstatus);
             dataArr.orgdiv.push(orgdiv);
-            dataArr.dutydt.push(dutydt);
+            dataArr.dutydt.push(dutydt == "99991231" ? "" : dutydt);
             dataArr.prsnnum.push(prsnnum);
             dataArr.shh.push(shh);
             dataArr.smm.push(smm);

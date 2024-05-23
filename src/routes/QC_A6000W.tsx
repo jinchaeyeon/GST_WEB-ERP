@@ -19,7 +19,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -53,7 +53,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1035,7 +1035,7 @@ const QC_A6000: React.FC = () => {
           dataArr.badcd_s.push(badcd == undefined ? "" : badcd);
           dataArr.badqty_s.push(badqty);
           dataArr.qcdecision.push(qcdecision);
-          dataArr.qcdt_s.push(qcdt);
+          dataArr.qcdt_s.push(qcdt == "99991231" ? "" : qcdt);
           dataArr.qcnum_s.push(qcnum);
           dataArr.eyeqc_s.push(eyeqc == undefined ? "" : eyeqc);
           dataArr.chkqty_s.push(chkqty == undefined ? "" : chkqty);

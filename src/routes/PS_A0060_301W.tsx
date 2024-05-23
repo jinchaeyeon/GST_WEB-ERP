@@ -36,16 +36,15 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate,
-  getHeight
+  toDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -90,7 +89,7 @@ const PS_A0060_301W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
@@ -566,7 +565,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.location.push(location);
       dataArr.code.push(code);
       dataArr.type.push(type);
-      dataArr.date.push(date);
+      dataArr.date.push(date == "99991231" ? "" : date);
       dataArr.apply_date.push(apply_date);
       dataArr.description.push(description);
     });
@@ -590,7 +589,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.location.push(location);
       dataArr.code.push(code);
       dataArr.type.push(type);
-      dataArr.date.push(date);
+      dataArr.date.push(date == "99991231" ? "" : date);
       dataArr.apply_date.push(apply_date);
       dataArr.description.push(description);
     });

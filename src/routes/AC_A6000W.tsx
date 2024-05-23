@@ -23,15 +23,13 @@ import {
   SchedulerViewSlotProps,
 } from "@progress/kendo-react-scheduler";
 import { checkIcon } from "@progress/kendo-svg-icons";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -57,17 +55,15 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getBizCom,
   getGridItemChangedData,
-  
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -80,10 +76,9 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading, sessionItemState } from "../store/atoms";
+import { OSState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { useRecoilState } from "recoil";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -358,7 +353,7 @@ const AC_A6000W: React.FC = () => {
   const [custnm2, setCustnm2] = useState<string>("");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -1581,7 +1576,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.position_s.push(position);
       dataArr.datnum_s.push(datnum);
       dataArr.seq_s.push(seq);
-      dataArr.acntdt_s.push(acntdt);
+      dataArr.acntdt_s.push(acntdt == "99991231" ? "" : acntdt);
       dataArr.div_s.push(div);
       dataArr.itemcd_s.push(itemcd);
       dataArr.amtunit_s.push(amtunit);
@@ -1617,7 +1612,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.position_s.push(position);
       dataArr.datnum_s.push(datnum);
       dataArr.seq_s.push(seq);
-      dataArr.acntdt_s.push(acntdt);
+      dataArr.acntdt_s.push(acntdt == "99991231" ? "" : acntdt);
       dataArr.div_s.push(div);
       dataArr.itemcd_s.push(itemcd);
       dataArr.amtunit_s.push(amtunit);
@@ -2120,38 +2115,40 @@ const pc = UseGetValueFromSessionItem("pc");
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              dateField.includes(item.fieldName)
-                                ? DateCell
-                                : numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : checkField.includes(item.fieldName)
-                                ? CustomCheckCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : checkField.includes(item.fieldName)
+                                  ? CustomCheckCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
@@ -2254,38 +2251,40 @@ const pc = UseGetValueFromSessionItem("pc");
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              dateField.includes(item.fieldName)
-                                ? DateCell
-                                : numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : comboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell2
-                                : checkField.includes(item.fieldName)
-                                ? CustomCheckCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell2
-                                : numberField.includes(item.fieldName)
-                                ? editNumberFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell2
+                                  : checkField.includes(item.fieldName)
+                                  ? CustomCheckCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : numberField.includes(item.fieldName)
+                                  ? editNumberFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>

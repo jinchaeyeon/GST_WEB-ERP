@@ -49,14 +49,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
-  handleKeyPressSearch,
   getHeight,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -275,7 +274,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
   const value = field && dataItem[field] ? dataItem[field] : "";
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
@@ -435,7 +434,7 @@ const CR_A0010W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
@@ -1166,8 +1165,10 @@ const pc = UseGetValueFromSessionItem("pc");
             "@p_email": email,
             "@p_tel_no": tel_no,
             "@p_mobile_no": mobile_no,
-            "@p_apply_start_date": apply_start_date,
-            "@p_apply_end_date": apply_end_date,
+            "@p_apply_start_date":
+              apply_start_date == "99991231" ? "" : apply_start_date,
+            "@p_apply_end_date":
+              apply_end_date == "99991231" ? "" : apply_end_date,
             "@p_hold_check_yn":
               hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
@@ -1182,7 +1183,7 @@ const pc = UseGetValueFromSessionItem("pc");
             "@p_opengb": opengb,
             "@p_profile_image": profile_image,
             "@p_user_ip": user_ip,
-            "@p_birdt": birdt,
+            "@p_birdt": birdt == "99991231" ? "" : birdt,
             "@p_bircd": bircd,
             "@p_mbouseyn": mbouseyn == "Y" || mbouseyn == true ? "Y" : "N",
             "@p_position": position,
@@ -1561,8 +1562,9 @@ const pc = UseGetValueFromSessionItem("pc");
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) => {
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map((item: any, idx: number) => {
                       const caption = getCaption(item.id, item.caption);
                       return (
                         item.sortOrder !== -1 && (
@@ -1611,8 +1613,7 @@ const pc = UseGetValueFromSessionItem("pc");
                           />
                         )
                       );
-                    }
-                  )}
+                    })}
               </Grid>
             </ExcelExport>
           </GridContainer>

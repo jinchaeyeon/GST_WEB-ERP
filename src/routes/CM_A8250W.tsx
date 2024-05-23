@@ -824,7 +824,7 @@ const CM_A8250W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.recdt_s.push(recdt);
+      dataArr.recdt_s.push(recdt == "99991231" ? "" : recdt);
       dataArr.gubun_s.push(gubun);
       dataArr.position_s.push(position);
       dataArr.remark3_s.push(remark3);

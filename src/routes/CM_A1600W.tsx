@@ -56,13 +56,12 @@ import {
   convertDateToStr,
   convertDateToStrWithTime,
   dateformat,
-  dateformat2,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1591,13 +1590,11 @@ const CM_A1600: React.FC = () => {
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.datnum_s.push(datnum);
       dataArr.contents_s.push(contents);
-      dataArr.strtime_s.push(dateformat2(strtime));
+      dataArr.strtime_s.push(strtime == "99991231" ? "" : strtime);
       dataArr.endtime_s.push(
-        dateformat2(
-          convertDateToStr(
-            new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
-          )
-        )
+        strtime == "99991231"
+          ? ""
+          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
@@ -1622,13 +1619,11 @@ const CM_A1600: React.FC = () => {
       dataArr.rowstatus_s.push("D");
       dataArr.datnum_s.push(datnum);
       dataArr.contents_s.push(contents);
-      dataArr.strtime_s.push(dateformat2(strtime));
+      dataArr.strtime_s.push(strtime == "99991231" ? "" : strtime);
       dataArr.endtime_s.push(
-        dateformat2(
-          convertDateToStr(
-            new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
-          )
-        )
+        strtime == "99991231"
+          ? ""
+          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn);
       dataArr.kind1_s.push(kind1);

@@ -15,7 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -38,14 +38,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -57,7 +56,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0090W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -183,7 +182,7 @@ type TdataArr = {
 const AC_A0090W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -786,7 +785,7 @@ const pc = UseGetValueFromSessionItem("pc");
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
     });
 
-    if(data != undefined) {
+    if (data != undefined) {
       setFilters2((prev) => ({
         ...prev,
         gisu: data.gisu,
@@ -1124,9 +1123,9 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.row_status_s.push(rowstatus);
       dataArr.gisu_s.push(gisu);
       dataArr.chasu_s.push(chasu);
-      dataArr.taxdt1_s.push(taxdt1);
-      dataArr.taxdt2_s.push(taxdt2);
-      dataArr.inputdt_s.push(inputdt);
+      dataArr.taxdt1_s.push(taxdt1 == "99991231" ? "" : taxdt1);
+      dataArr.taxdt2_s.push(taxdt2 == "99991231" ? "" : taxdt2);
+      dataArr.inputdt_s.push(inputdt == "99991231" ? "" : inputdt);
       dataArr.remark_s.push(remark);
       dataArr.chr1_s.push(chr1);
     });
@@ -1144,9 +1143,9 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.row_status_s.push(rowstatus);
       dataArr.gisu_s.push(gisu);
       dataArr.chasu_s.push(chasu);
-      dataArr.taxdt1_s.push(taxdt1);
-      dataArr.taxdt2_s.push(taxdt2);
-      dataArr.inputdt_s.push(inputdt);
+      dataArr.taxdt1_s.push(taxdt1 == "99991231" ? "" : taxdt1);
+      dataArr.taxdt2_s.push(taxdt2 == "99991231" ? "" : taxdt2);
+      dataArr.inputdt_s.push(inputdt == "99991231" ? "" : inputdt);
       dataArr.remark_s.push(remark);
       dataArr.chr1_s.push(chr1);
     });
@@ -1407,8 +1406,8 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.seq_s.push(seq);
       dataArr.docunm_s.push(docunm);
       dataArr.inname_s.push(inname);
-      dataArr.indate_s.push(indate);
-      dataArr.shipdt_s.push(shipdt);
+      dataArr.indate_s.push(indate == "99991231" ? "" : indate);
+      dataArr.shipdt_s.push(shipdt == "99991231" ? "" : shipdt);
       dataArr.paycd_s.push(paycd);
       dataArr.payrate_s.push(payrate);
       dataArr.jypay_s.push(jypay);
@@ -1439,8 +1438,8 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.seq_s.push(seq);
       dataArr.docunm_s.push(docunm);
       dataArr.inname_s.push(inname);
-      dataArr.indate_s.push(indate);
-      dataArr.shipdt_s.push(shipdt);
+      dataArr.indate_s.push(indate == "99991231" ? "" : indate);
+      dataArr.shipdt_s.push(shipdt == "99991231" ? "" : shipdt);
       dataArr.paycd_s.push(paycd);
       dataArr.payrate_s.push(payrate);
       dataArr.jypay_s.push(jypay);
@@ -1624,36 +1623,36 @@ const pc = UseGetValueFromSessionItem("pc");
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
-              ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-              ?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : CustomComboField.includes(item.fieldName)
-                          ? CustomComboBoxCell
-                          : CustomRadioField.includes(item.fieldName)
-                          ? CustomRadioCell
-                          : undefined
-                      }
-                      headerCell={
-                        RequiredField.includes(item.fieldName)
-                          ? RequiredHeader
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : CustomComboField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : CustomRadioField.includes(item.fieldName)
+                            ? CustomRadioCell
+                            : undefined
+                        }
+                        headerCell={
+                          RequiredField.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1785,40 +1784,40 @@ const pc = UseGetValueFromSessionItem("pc");
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList2"]
-              ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-              ?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : CustomComboField.includes(item.fieldName)
-                          ? CustomComboBoxCell2
-                          : undefined
-                      }
-                      headerCell={
-                        RequiredField.includes(item.fieldName)
-                          ? RequiredHeader
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell2
-                          : numberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : CustomComboField.includes(item.fieldName)
+                            ? CustomComboBoxCell2
+                            : undefined
+                        }
+                        headerCell={
+                          RequiredField.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell2
+                            : numberField2.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

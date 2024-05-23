@@ -2243,9 +2243,9 @@ const MA_A9001W: React.FC = () => {
       dataArr.taxnum_s.push(taxnum);
       dataArr.acntnum_s.push(acntnum);
       dataArr.notenum_s.push(notenum);
-      dataArr.enddt_s.push(enddt);
+      dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
       dataArr.pubbank_s.push(pubbank);
-      dataArr.pubdt_s.push(pubdt);
+      dataArr.pubdt_s.push(pubdt == "99991231" ? "" : pubdt);
       dataArr.pubperson_s.push(pubperson);
       dataArr.advanceinfo_s.push(advanceinfo == "" ? 0 : advanceinfo);
     });

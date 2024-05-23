@@ -56,13 +56,12 @@ import {
   convertDateToStr,
   convertDateToStrWithTime,
   dateformat,
-  dateformat2,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1613,13 +1612,11 @@ const CM_A1600W_603: React.FC = () => {
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.datnum_s.push(datnum);
       dataArr.contents_s.push(contents);
-      dataArr.strtime_s.push(dateformat2(strtime));
+      dataArr.strtime_s.push(strtime == "99991231" ? "" : strtime);
       dataArr.endtime_s.push(
-        dateformat2(
-          convertDateToStr(
-            new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
-          )
-        )
+        strtime == "99991231"
+          ? ""
+          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
@@ -1644,13 +1641,11 @@ const CM_A1600W_603: React.FC = () => {
       dataArr.rowstatus_s.push("D");
       dataArr.datnum_s.push(datnum);
       dataArr.contents_s.push(contents);
-      dataArr.strtime_s.push(dateformat2(strtime));
+      dataArr.strtime_s.push(strtime == "99991231" ? "" : strtime);
       dataArr.endtime_s.push(
-        dateformat2(
-          convertDateToStr(
-            new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
-          )
-        )
+        strtime == "99991231"
+          ? ""
+          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn);
       dataArr.kind1_s.push(kind1);
@@ -2286,7 +2281,7 @@ const CM_A1600W_603: React.FC = () => {
                     </div>
                   ) : (
                     <Scheduler
-                      height={deviceHeight - height - height1 - 30}
+                      height={deviceHeight - height - height1}
                       data={schedulerDataResult}
                       onDataChange={handleDataChange}
                       defaultDate={displayDate}
@@ -2398,7 +2393,7 @@ const CM_A1600W_603: React.FC = () => {
                     fileName="Scheduler"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 - 30 }}
+                      style={{ height: deviceHeight - height - height2 }}
                       data={process(
                         todoDataResult.data.map((row) => ({
                           ...row,
@@ -2844,7 +2839,7 @@ const CM_A1600W_603: React.FC = () => {
               </div>
             ) : (
               <Scheduler
-                height={isMobile ? `${deviceHeight - height - 30}px` : "77vh"}
+                height={isMobile ? `${deviceHeight - height}px` : "77vh"}
                 data={schedulerDataResult2}
                 defaultDate={displayDate}
                 group={{
@@ -2978,9 +2973,7 @@ const CM_A1600W_603: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile
-                    ? deviceHeight - height - height3 - 30
-                    : "73.5vh",
+                  height: isMobile ? deviceHeight - height - height3 : "73.5vh",
                 }}
                 data={process(
                   userDataResult.data.map((row) => ({

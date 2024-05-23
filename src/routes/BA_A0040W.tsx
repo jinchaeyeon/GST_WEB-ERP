@@ -2037,7 +2037,7 @@ const BA_A0040: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.amtunit.push(amtunit);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -2055,7 +2055,7 @@ const BA_A0040: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
       dataArr.amtunit.push(amtunit);
     });
 

@@ -1613,8 +1613,8 @@ const PR_A1100W: React.FC = () => {
       planArr.planseq_s.push(planseq);
       planArr.qtyunit_s.push(getCodeFromValue(qtyunit));
       planArr.procqty_s.push(procqty);
-      planArr.plandt_s.push(plandt);
-      planArr.finexpdt_s.push(finexpdt);
+      planArr.plandt_s.push(plandt == "99991231" ? "" : plandt);
+      planArr.finexpdt_s.push(finexpdt == "99991231" ? "" : finexpdt);
       planArr.prodmac_s.push(prodmac);
       planArr.prodemp_s.push(prodemp);
       planArr.proccd_s.push(getCodeFromValue(proccd));
@@ -2629,7 +2629,7 @@ const PR_A1100W: React.FC = () => {
               <Grid
                 style={{
                   height: isMobile
-                    ? deviceHeight - height - height1 - 30
+                    ? deviceHeight - height - height1 
                     : "64vh",
                 }}
                 data={newData.map((item: { items: any[] }) => ({
@@ -2805,7 +2805,7 @@ const PR_A1100W: React.FC = () => {
                       fileName="계획생산"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height2 - 30 }}
+                        style={{ height: deviceHeight - height - height2  }}
                         data={newData2.map((item: { items: any[] }) => ({
                           ...item,
                           items: item.items.map((row: any) => ({
@@ -2968,7 +2968,7 @@ const PR_A1100W: React.FC = () => {
                     fileName="계획생산"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 - 30 }}
+                      style={{ height: deviceHeight - height - height2  }}
                       data={process(
                         materialDataResult.data.map((row) => ({
                           ...row,

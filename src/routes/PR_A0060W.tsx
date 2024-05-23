@@ -24,13 +24,15 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -55,19 +57,17 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getCustDataQuery,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
   isValidDate,
-  useSysMessage,
-  getBizCom,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -93,9 +93,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "fxcode";
 const SUB_DATA_ITEM_KEY = "fxseq";
@@ -2043,7 +2040,7 @@ const PR_A0060: React.FC = () => {
 
           dataArr.rowstatus.push(rowstatus);
           dataArr.fxseq_s.push(fxseq);
-          dataArr.fxdt_s.push(fxdt);
+          dataArr.fxdt_s.push(fxdt == "99991231" ? "" : fxdt);
           dataArr.custcd_s.push(custcd);
           dataArr.custnm_s.push(custnm);
           dataArr.errtext_s.push(errtext);
@@ -2070,7 +2067,7 @@ const PR_A0060: React.FC = () => {
 
           dataArr.rowstatus.push("D");
           dataArr.fxseq_s.push(fxseq);
-          dataArr.fxdt_s.push(fxdt);
+          dataArr.fxdt_s.push(fxdt == "99991231" ? "" : fxdt);
           dataArr.custcd_s.push(custcd);
           dataArr.custnm_s.push(custnm);
           dataArr.errtext_s.push(errtext);
@@ -2651,7 +2648,7 @@ const PR_A0060: React.FC = () => {
               <TabStripTab title="설비정보">
                 <FormBoxWrap
                   style={{
-                    height: isMobile ? deviceHeight - height - 10 : "33vh",
+                    height: isMobile ? deviceHeight - height : "33vh",
                     overflow: "auto",
                   }}
                 >
@@ -3012,7 +3009,7 @@ const PR_A0060: React.FC = () => {
                       >
                         <Grid
                           style={{
-                            height: deviceHeight - height - height2 - 10,
+                            height: deviceHeight - height - height2,
                           }}
                           data={process(
                             subDataResult.data.map((row) => ({

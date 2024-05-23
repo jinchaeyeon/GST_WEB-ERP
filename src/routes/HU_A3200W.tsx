@@ -44,7 +44,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -53,7 +52,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -213,11 +212,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const HU_A3200W: React.FC = () => {
-  
- let deviceWidth = window.innerWidth;
- const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
- let isMobile = deviceWidth <= 1200;
- var height = getHeight(".ButtonContainer");
+  let deviceWidth = window.innerWidth;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".ButtonContainer");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -232,7 +230,7 @@ const HU_A3200W: React.FC = () => {
   const [prsnnm, setPrsnnm] = useState<string>("");
   const [prsnnum, setPrsnnum] = useState<string>("");
   const [dptcd, setDptcd] = useState<string>("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
@@ -802,7 +800,9 @@ const pc = UseGetValueFromSessionItem("pc");
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -826,7 +826,9 @@ const pc = UseGetValueFromSessionItem("pc");
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
+      dataArr.payyrmm_s.push(
+        payyrmm == "99991231" ? "" : payyrmm.substring(0, 6)
+      );
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -1094,40 +1096,42 @@ const pc = UseGetValueFromSessionItem("pc");
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? MonthDateCell
-                            : comboField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : commendField.includes(item.fieldName)
-                            ? ColumnCommandCell
-                            : undefined
-                        }
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? editNumberFooterCell
-                            : undefined
-                        }
-                      />
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? MonthDateCell
+                              : comboField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : commendField.includes(item.fieldName)
+                              ? ColumnCommandCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : numberField.includes(item.fieldName)
+                              ? editNumberFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>

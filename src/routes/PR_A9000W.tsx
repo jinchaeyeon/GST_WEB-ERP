@@ -21,7 +21,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import "swiper/css";
@@ -58,7 +58,7 @@ import {
   getItemQuery,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -2163,7 +2163,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(proddt);
+        dataArr.proddt_s.push(proddt == "99991231" ? "" : proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2200,7 +2200,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(proddt);
+        dataArr.proddt_s.push(proddt == "99991231" ? "" : proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);

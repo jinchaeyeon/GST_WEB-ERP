@@ -43,13 +43,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
   numberWithCommas,
   setDefaultDate,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -153,7 +152,7 @@ const CopyWindow = ({
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const [tabSelected, setTabSelected] = useState(0);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -642,7 +641,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.fxcode_s.push(fxcode);
         dataArr.seq_s.push(seq);
         dataArr.gubun_s.push(gubun);
-        dataArr.fxdt_s.push(fxdt);
+        dataArr.fxdt_s.push(
+          fxdt == "99991231" || fxdt == undefined ? "" : fxdt
+        );
         dataArr.remark_s.push(remark);
         dataArr.amt_s.push(amt);
         dataArr.qty_s.push(qty);
@@ -664,7 +665,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.fxcode_s.push(fxcode);
         dataArr.seq_s.push(seq);
         dataArr.gubun_s.push(gubun);
-        dataArr.fxdt_s.push(fxdt);
+        dataArr.fxdt_s.push(
+          fxdt == "99991231" || fxdt == undefined ? "" : fxdt
+        );
         dataArr.remark_s.push(remark);
         dataArr.amt_s.push(amt);
         dataArr.qty_s.push(qty);
@@ -726,7 +729,7 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.fxcode_s.push(fxcode);
-        dataArr.fxyrmm_s.push(fxyrmm.substr(0, 6));
+        dataArr.fxyrmm_s.push(fxyrmm == "99991231" ? "" : fxyrmm.substr(0, 6));
         dataArr.growamt_s.push(growamt);
         dataArr.dropamt_s.push(dropamt);
         dataArr.predamt_s.push(predamt);
@@ -752,7 +755,7 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.fxcode_s.push(fxcode);
-        dataArr.fxyrmm_s.push(fxyrmm.substr(0, 6));
+        dataArr.fxyrmm_s.push(fxyrmm == "99991231" ? "" : fxyrmm.substr(0, 6));
         dataArr.growamt_s.push(growamt);
         dataArr.dropamt_s.push(dropamt);
         dataArr.predamt_s.push(predamt);
@@ -818,7 +821,7 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.fxcode_s.push(fxcode);
-        dataArr.fxyrmm_s.push(fxyrmm.substr(0, 4));
+        dataArr.fxyrmm_s.push(fxyrmm == "99991231" ? "" : fxyrmm.substr(0, 4));
         dataArr.growamt_s.push(growamt);
         dataArr.dropamt_s.push(dropamt);
         dataArr.predamt_s.push(predamt);
@@ -843,7 +846,7 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.fxcode_s.push(fxcode);
-        dataArr.fxyrmm_s.push(fxyrmm.substr(0, 4));
+        dataArr.fxyrmm_s.push(fxyrmm == "99991231" ? "" : fxyrmm.substr(0, 4));
         dataArr.growamt_s.push(growamt);
         dataArr.dropamt_s.push(dropamt);
         dataArr.predamt_s.push(predamt);

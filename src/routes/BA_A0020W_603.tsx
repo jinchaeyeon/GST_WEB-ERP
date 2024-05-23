@@ -2630,7 +2630,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2653,7 +2653,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2738,7 +2738,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -2753,7 +2753,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -3112,7 +3112,7 @@ const BA_A0020W_603: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height - 40,
+                    height: deviceHeight - height,
                     overflow: "auto",
                   }}
                 >
@@ -3703,7 +3703,7 @@ const BA_A0020W_603: React.FC = () => {
                       fileName="고객정보관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - 35 }}
+                        style={{ height: deviceHeight - height }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3823,7 +3823,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - 35 }}
+                      style={{ height: deviceHeight - height }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3938,7 +3938,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - 35 }}
+                      style={{ height: deviceHeight - height }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,

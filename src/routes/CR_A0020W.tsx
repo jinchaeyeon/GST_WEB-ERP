@@ -34,12 +34,10 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
-  dateformat,
-  handleKeyPressSearch,
   getHeight,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -118,7 +116,7 @@ const CR_A0020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
@@ -748,9 +746,6 @@ const pc = UseGetValueFromSessionItem("pc");
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                birdt: row.birdt
-                  ? new Date(dateformat(row.birdt))
-                  : new Date(dateformat("99991231")), //new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

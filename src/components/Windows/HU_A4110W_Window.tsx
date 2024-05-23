@@ -14,8 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -52,12 +51,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
+  getBizCom,
   getGridItemChangedData,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -168,7 +166,7 @@ const KendoWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = loginResult ? loginResult.userId : "";
   const userName = loginResult ? loginResult.userName : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -1108,7 +1106,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.fxassetcd_s.push(fxassetcd == undefined ? "" : fxassetcd);
           dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
-          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.carddt_s.push(
+            carddt == "99991231" || carddt == undefined ? "" : carddt
+          );
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
           dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
           dataArr.creditnm_s.push(creditnm == undefined ? "" : creditnm);
@@ -1200,7 +1200,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.fxassetcd_s.push(fxassetcd == undefined ? "" : fxassetcd);
           dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
-          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.carddt_s.push(
+            carddt == "99991231" || carddt == undefined ? "" : carddt
+          );
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
           dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
           dataArr.creditnm_s.push(creditnm == undefined ? "" : creditnm);

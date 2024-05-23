@@ -55,11 +55,10 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -244,7 +243,7 @@ const KendoWindow = ({
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -1076,7 +1075,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
           dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
-          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.carddt_s.push(
+            carddt == "99991231" || carddt == undefined ? "" : carddt
+          );
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
         });
 
@@ -1127,7 +1128,9 @@ const pc = UseGetValueFromSessionItem("pc");
           dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
           dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
-          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.carddt_s.push(
+            carddt == "99991231" || carddt == undefined ? "" : carddt
+          );
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
         });
 

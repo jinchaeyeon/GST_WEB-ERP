@@ -35,15 +35,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
-  toDate,
-  getHeight
+  toDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -113,7 +112,7 @@ const CR_A1100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -542,7 +541,7 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.membership_id.push(membership_id);
       dataArr.seq.push(seq);
       dataArr.custcd.push(custcd);
-      dataArr.recdt.push(recdt);
+      dataArr.recdt.push(recdt == "99991231" ? "" : recdt);
     });
 
     setParaDataSaved((prev) => ({

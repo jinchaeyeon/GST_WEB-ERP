@@ -40,11 +40,10 @@ import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -319,7 +318,7 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 600,
   });
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");
@@ -992,9 +991,13 @@ const pc = UseGetValueFromSessionItem("pc");
       dataArr.taxnum_s.push(salenum == undefined ? "" : salenum);
       dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
       dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
-      dataArr.enddt_s.push(enddt);
+      dataArr.enddt_s.push(
+        enddt == "99991231" || enddt == undefined ? "" : enddt
+      );
       dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
-      dataArr.pubdt_s.push(pubdt);
+      dataArr.pubdt_s.push(
+        pubdt == "99991231" || pubdt == undefined ? "" : pubdt
+      );
       dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
       dataArr.fornamt_s.push(fornamt == undefined ? 0 : fornamt);
       dataArr.salerat_s.push(salerat == undefined ? 0 : salerat);

@@ -15,14 +15,12 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -47,7 +45,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -55,9 +52,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  numberWithCommas,
+  numberWithCommas
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -232,7 +228,7 @@ const HU_A4100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -293,10 +289,10 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {     
+    if (bizComponentData !== null) {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
-  }, [bizComponentData]);  
+  }, [bizComponentData]);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -437,7 +433,7 @@ const pc = UseGetValueFromSessionItem("pc");
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
-        yyyy : row.yyyy + "0101",
+        yyyy: row.yyyy + "0101",
       }));
 
       if (filters.find_row_value !== "") {
@@ -774,7 +770,7 @@ const pc = UseGetValueFromSessionItem("pc");
             remark = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          dataArr.yyyy_s.push(yyyy.substring(0, 4));
+          dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.Semiannualgb_s.push(Semiannualgb);
           dataArr.amt_s.push(amt);
@@ -790,7 +786,7 @@ const pc = UseGetValueFromSessionItem("pc");
             remark = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          dataArr.yyyy_s.push(yyyy.substring(0, 4));
+          dataArr.yyyy_s.push(yyyy == "99991231" ? "" : yyyy.substring(0, 4));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.Semiannualgb_s.push(Semiannualgb);
           dataArr.amt_s.push(amt);

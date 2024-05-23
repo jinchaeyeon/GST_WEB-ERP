@@ -17,10 +17,9 @@ import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -53,15 +52,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getItemQuery,
   numberWithCommas,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -474,7 +472,7 @@ const CopyWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  
+
   const DATA_ITEM_KEY = "num";
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
@@ -1764,7 +1762,7 @@ const CopyWindow = ({
         dataArr.load_place_s.push(load_place);
         dataArr.pac_s.push(pac);
         dataArr.itemlvl1_s.push(itemlvl1);
-        dataArr.enddt_s.push(enddt);
+        dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
         dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
       });
       deletedMainRows.forEach((item: any, idx: number) => {
@@ -1868,7 +1866,7 @@ const CopyWindow = ({
         dataArr.load_place_s.push(load_place);
         dataArr.pac_s.push(pac);
         dataArr.itemlvl1_s.push(itemlvl1);
-        dataArr.enddt_s.push(enddt);
+        dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
         dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
       });
       setParaData((prev) => ({

@@ -21,7 +21,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -56,7 +56,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1267,8 +1267,10 @@ const SY_A0120: React.FC = () => {
             "@p_email": email,
             "@p_tel_no": tel_no,
             "@p_mobile_no": mobile_no,
-            "@p_apply_start_date": apply_start_date,
-            "@p_apply_end_date": apply_end_date,
+            "@p_apply_start_date":
+              apply_start_date == "99991231" ? "" : apply_start_date,
+            "@p_apply_end_date":
+              apply_end_date == "99991231" ? "" : apply_end_date,
             "@p_hold_check_yn":
               hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
@@ -1283,7 +1285,7 @@ const SY_A0120: React.FC = () => {
             "@p_opengb": opengb,
             "@p_profile_image": profile_image,
             "@p_user_ip": user_ip,
-            "@p_birdt": birdt,
+            "@p_birdt": birdt == "99991231" ? "" : birdt,
             "@p_bircd": bircd,
             "@p_mbouseyn": mbouseyn == "Y" || mbouseyn == true ? "Y" : "N",
             "@p_position": position,

@@ -3718,8 +3718,8 @@ const SA_A1000_603W: React.FC = () => {
               dataArr.itemcd_s.push(itemcd);
               dataArr.itemnm_s.push(itemnm);
               dataArr.glpyn_s.push(glpyn);
-              dataArr.startdt_s.push(startdt);
-              dataArr.enddt_s.push(enddt);
+              dataArr.startdt_s.push(startdt == "99991231" ? "" : startdt);
+              dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
               dataArr.remark_s.push(remark);
             });
             deletedMainRows2.forEach((item: any, idx: number) => {
@@ -3739,8 +3739,8 @@ const SA_A1000_603W: React.FC = () => {
               dataArr.itemcd_s.push(itemcd);
               dataArr.itemnm_s.push(itemnm);
               dataArr.glpyn_s.push(glpyn);
-              dataArr.startdt_s.push(startdt);
-              dataArr.enddt_s.push(enddt);
+              dataArr.startdt_s.push(startdt == "99991231" ? "" : startdt);
+              dataArr.enddt_s.push(enddt == "99991231" ? "" : enddt);
               dataArr.remark_s.push(remark);
             });
             setParaData({
@@ -4496,7 +4496,7 @@ const SA_A1000_603W: React.FC = () => {
               <Grid
                 style={{
                   height: isMobile
-                    ? deviceHeight - height - height1 - 10
+                    ? deviceHeight - height - height1 
                     : "68vh",
                 }}
                 data={process(
@@ -5802,7 +5802,7 @@ const SA_A1000_603W: React.FC = () => {
                           <Grid
                             style={{
                               height:
-                                deviceHeight - height - height2 - height3 - 40,
+                                deviceHeight - height - height2 - height3 ,
                             }}
                             data={process(
                               mainDataResult2.data.map((row) => ({

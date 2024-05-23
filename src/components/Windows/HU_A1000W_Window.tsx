@@ -23,15 +23,13 @@ import {
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
-import { bytesToBase64 } from "byte-base64";
 import CryptoJS from "crypto-js";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -68,12 +66,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat,
+  getBizCom,
   getGridItemChangedData,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1023,7 +1020,7 @@ const CopyWindow = ({
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
   const [attdatnum2, setAttdatnum2] = useState<string>("");
@@ -3619,7 +3616,7 @@ const pc = UseGetValueFromSessionItem("pc");
       setOrgdivListData(getBizCom(bizComponentData, "L_BA001"));
     }
   }, [bizComponentData]);
-  
+
   const [information, setInformation] = useState<{ [name: string]: any }>({
     orgdiv: sessionOrgdiv,
     prsnnum: "",
@@ -5564,7 +5561,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu251t_job_s.push(job == undefined ? "" : job);
         dataArr.hu251t_compnm_s.push(compnm == undefined ? "" : compnm);
         dataArr.hu251t_postnm_s.push(postnm == undefined ? "" : postnm);
-        dataArr.hu251t_birdt_s.push(birdt == undefined ? "" : birdt);
+        dataArr.hu251t_birdt_s.push(
+          birdt == "99991231" || birdt == undefined ? "" : birdt
+        );
         dataArr.hu251t_sexcd_s.push(sexcd == undefined ? "" : sexcd);
         dataArr.hu251t_payyn_s.push(
           payyn == true ? "Y" : payyn == false ? "N" : payyn
@@ -5621,7 +5620,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu251t_job_s.push(job == undefined ? "" : job);
         dataArr.hu251t_compnm_s.push(compnm == undefined ? "" : compnm);
         dataArr.hu251t_postnm_s.push(postnm == undefined ? "" : postnm);
-        dataArr.hu251t_birdt_s.push(birdt == undefined ? "" : birdt);
+        dataArr.hu251t_birdt_s.push(
+          birdt == "99991231" || birdt == undefined ? "" : birdt
+        );
         dataArr.hu251t_sexcd_s.push(sexcd == undefined ? "" : sexcd);
         dataArr.hu251t_payyn_s.push(
           payyn == true ? "Y" : payyn == false ? "N" : payyn
@@ -5717,9 +5718,11 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu252t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu252t_schdiv_s.push(schdiv == undefined ? "" : schdiv);
         dataArr.hu252t_startdate_s.push(
-          startdate == undefined ? "" : startdate
+          startdate == "99991231" || startdate == undefined ? "" : startdate
         );
-        dataArr.hu252t_enddate_s.push(enddate == undefined ? "" : enddate);
+        dataArr.hu252t_enddate_s.push(
+          enddate == "99991231" || enddate == undefined ? "" : enddate
+        );
         dataArr.hu252t_schnm_s.push(schnm == undefined ? "" : schnm);
         dataArr.hu252t_major_s.push(major == undefined ? "" : major);
         dataArr.hu252t_schgrade_s.push(schgrade == undefined ? "" : schgrade);
@@ -5742,9 +5745,11 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu252t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu252t_schdiv_s.push(schdiv == undefined ? "" : schdiv);
         dataArr.hu252t_startdate_s.push(
-          startdate == undefined ? "" : startdate
+          startdate == "99991231" || startdate == undefined ? "" : startdate
         );
-        dataArr.hu252t_enddate_s.push(enddate == undefined ? "" : enddate);
+        dataArr.hu252t_enddate_s.push(
+          enddate == "99991231" || enddate == undefined ? "" : enddate
+        );
         dataArr.hu252t_schnm_s.push(schnm == undefined ? "" : schnm);
         dataArr.hu252t_major_s.push(major == undefined ? "" : major);
         dataArr.hu252t_schgrade_s.push(schgrade == undefined ? "" : schgrade);
@@ -5806,9 +5811,15 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu254t_qualkind_s.push(qualkind == undefined ? "" : qualkind);
         dataArr.hu254t_qualgrad_s.push(qualgrad == undefined ? "" : qualgrad);
         dataArr.hu254t_qualmach_s.push(qualmach == undefined ? "" : qualmach);
-        dataArr.hu254t_acqdt_s.push(acqdt == undefined ? "" : acqdt);
-        dataArr.hu254t_validt_s.push(validt == undefined ? "" : validt);
-        dataArr.hu254t_renewdt_s.push(renewdt == undefined ? "" : renewdt);
+        dataArr.hu254t_acqdt_s.push(
+          acqdt == "99991231" || acqdt == undefined ? "" : acqdt
+        );
+        dataArr.hu254t_validt_s.push(
+          validt == "99991231" || validt == undefined ? "" : validt
+        );
+        dataArr.hu254t_renewdt_s.push(
+          renewdt == "99991231" || renewdt == undefined ? "" : renewdt
+        );
         dataArr.hu254t_qualnum_s.push(qualnum == undefined ? "" : qualnum);
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
       });
@@ -5831,9 +5842,15 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu254t_qualkind_s.push(qualkind == undefined ? "" : qualkind);
         dataArr.hu254t_qualgrad_s.push(qualgrad == undefined ? "" : qualgrad);
         dataArr.hu254t_qualmach_s.push(qualmach == undefined ? "" : qualmach);
-        dataArr.hu254t_acqdt_s.push(acqdt == undefined ? "" : acqdt);
-        dataArr.hu254t_validt_s.push(validt == undefined ? "" : validt);
-        dataArr.hu254t_renewdt_s.push(renewdt == undefined ? "" : renewdt);
+        dataArr.hu254t_acqdt_s.push(
+          acqdt == "99991231" || acqdt == undefined ? "" : acqdt
+        );
+        dataArr.hu254t_validt_s.push(
+          validt == "99991231" || validt == undefined ? "" : validt
+        );
+        dataArr.hu254t_renewdt_s.push(
+          renewdt == "99991231" || renewdt == undefined ? "" : renewdt
+        );
         dataArr.hu254t_qualnum_s.push(qualnum == undefined ? "" : qualnum);
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
       });
@@ -5905,8 +5922,12 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu253t_rowstatus_s.push(rowstatus);
         dataArr.hu253t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu253t_compnm_s.push(compnm == undefined ? "" : compnm);
-        dataArr.hu253t_frdt_s.push(frdt == undefined ? "" : frdt);
-        dataArr.hu253t_todt_s.push(todt == undefined ? "" : todt);
+        dataArr.hu253t_frdt_s.push(
+          frdt == "99991231" || frdt == undefined ? "" : frdt
+        );
+        dataArr.hu253t_todt_s.push(
+          todt == "99991231" || todt == undefined ? "" : todt
+        );
         dataArr.hu253t_dptnm_s.push(dptnm == undefined ? "" : dptnm);
         dataArr.hu253t_postnm_s.push(postnm == undefined ? "" : postnm);
         dataArr.hu253t_jobnm_s.push(jobnm == undefined ? "" : jobnm);
@@ -5930,8 +5951,12 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu253t_rowstatus_s.push(rowstatus);
         dataArr.hu253t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu253t_compnm_s.push(compnm == undefined ? "" : compnm);
-        dataArr.hu253t_frdt_s.push(frdt == undefined ? "" : frdt);
-        dataArr.hu253t_todt_s.push(todt == undefined ? "" : todt);
+        dataArr.hu253t_frdt_s.push(
+          frdt == "99991231" || frdt == undefined ? "" : frdt
+        );
+        dataArr.hu253t_todt_s.push(
+          todt == "99991231" || todt == undefined ? "" : todt
+        );
         dataArr.hu253t_dptnm_s.push(dptnm == undefined ? "" : dptnm);
         dataArr.hu253t_postnm_s.push(postnm == undefined ? "" : postnm);
         dataArr.hu253t_jobnm_s.push(jobnm == undefined ? "" : jobnm);
@@ -6009,13 +6034,17 @@ const pc = UseGetValueFromSessionItem("pc");
           appointcd == undefined ? "" : appointcd
         );
         dataArr.hu255t_appointdt_s.push(
-          appointdt == undefined ? "" : appointdt
+          appointdt == "99991231" || appointdt == undefined ? "" : appointdt
         );
         dataArr.hu255t_appointrsn_s.push(
           appointrsn == undefined ? "" : appointrsn
         );
-        dataArr.hu255t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu255t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu255t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu255t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.hu255t_remark_s.push(remark == undefined ? "" : remark);
         dataArr.hu255t_dptcd_s.push(dptcd == undefined ? "" : dptcd);
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
@@ -6040,13 +6069,17 @@ const pc = UseGetValueFromSessionItem("pc");
           appointcd == undefined ? "" : appointcd
         );
         dataArr.hu255t_appointdt_s.push(
-          appointdt == undefined ? "" : appointdt
+          appointdt == "99991231" || appointdt == undefined ? "" : appointdt
         );
         dataArr.hu255t_appointrsn_s.push(
           appointrsn == undefined ? "" : appointrsn
         );
-        dataArr.hu255t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu255t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu255t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu255t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.hu255t_remark_s.push(remark == undefined ? "" : remark);
         dataArr.hu255t_dptcd_s.push(dptcd == undefined ? "" : dptcd);
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
@@ -6102,7 +6135,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu256t_rowstatus_s.push(rowstatus);
         dataArr.hu256t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu256t_rnpdiv_s.push(rnpdiv == undefined ? "" : rnpdiv);
-        dataArr.hu256t_reqdt_s.push(reqdt == undefined ? "" : reqdt);
+        dataArr.hu256t_reqdt_s.push(
+          reqdt == "99991231" || reqdt == undefined ? "" : reqdt
+        );
         dataArr.hu256t_reloffice_s.push(
           reloffice == undefined ? "" : reloffice
         );
@@ -6125,7 +6160,9 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu256t_rowstatus_s.push(rowstatus);
         dataArr.hu256t_seq_s.push(seq == undefined ? 0 : seq);
         dataArr.hu256t_rnpdiv_s.push(rnpdiv == undefined ? "" : rnpdiv);
-        dataArr.hu256t_reqdt_s.push(reqdt == undefined ? "" : reqdt);
+        dataArr.hu256t_reqdt_s.push(
+          reqdt == "99991231" || reqdt == undefined ? "" : reqdt
+        );
         dataArr.hu256t_reloffice_s.push(
           reloffice == undefined ? "" : reloffice
         );
@@ -6187,8 +6224,12 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.hu257t_rowstatus_s.push(rowstatus);
         dataArr.hu257t_seq_s.push(seq == undefined ? 0 : seq);
-        dataArr.hu257t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu257t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu257t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu257t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.hu257t_eduterm_s.push(eduterm == undefined ? "" : eduterm);
         dataArr.hu257t_edutime_s.push(edutime == undefined ? "" : edutime);
         dataArr.hu257t_edunm_s.push(edunm == undefined ? "" : edunm);
@@ -6216,8 +6257,12 @@ const pc = UseGetValueFromSessionItem("pc");
         } = item;
         dataArr.hu257t_rowstatus_s.push(rowstatus);
         dataArr.hu257t_seq_s.push(seq == undefined ? 0 : seq);
-        dataArr.hu257t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu257t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu257t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu257t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.hu257t_eduterm_s.push(eduterm == undefined ? "" : eduterm);
         dataArr.hu257t_edutime_s.push(edutime == undefined ? "" : edutime);
         dataArr.hu257t_edunm_s.push(edunm == undefined ? "" : edunm);
@@ -6301,11 +6346,17 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu258t_educd_s.push(educd == undefined ? "" : educd);
         dataArr.hu258t_testnm_s.push(testnm == undefined ? "" : testnm);
         dataArr.hu258t_score_s.push(score == undefined ? "" : score);
-        dataArr.hu258t_testdt_s.push(testdt == undefined ? "" : testdt);
+        dataArr.hu258t_testdt_s.push(
+          testdt == "99991231" || testdt == undefined ? "" : testdt
+        );
         dataArr.hu258t_speaking_s.push(speaking == undefined ? "" : speaking);
         dataArr.hu258t_country_s.push(country == undefined ? "" : country);
-        dataArr.hu258t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu258t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu258t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu258t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
       });
 
@@ -6328,11 +6379,17 @@ const pc = UseGetValueFromSessionItem("pc");
         dataArr.hu258t_educd_s.push(educd == undefined ? "" : educd);
         dataArr.hu258t_testnm_s.push(testnm == undefined ? "" : testnm);
         dataArr.hu258t_score_s.push(score == undefined ? "" : score);
-        dataArr.hu258t_testdt_s.push(testdt == undefined ? "" : testdt);
+        dataArr.hu258t_testdt_s.push(
+          testdt == "99991231" || testdt == undefined ? "" : testdt
+        );
         dataArr.hu258t_speaking_s.push(speaking == undefined ? "" : speaking);
         dataArr.hu258t_country_s.push(country == undefined ? "" : country);
-        dataArr.hu258t_startdt_s.push(startdt == undefined ? "" : startdt);
-        dataArr.hu258t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu258t_startdt_s.push(
+          startdt == "99991231" || startdt == undefined ? "" : startdt
+        );
+        dataArr.hu258t_enddt_s.push(
+          enddt == "99991231" || enddt == undefined ? "" : enddt
+        );
         dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
       });
 

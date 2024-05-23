@@ -51,6 +51,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  handleKeyPressSearch,
   isValidDate,
   numberWithCommas,
   numberWithCommas3,
@@ -500,11 +501,15 @@ const SA_A1100_603W: React.FC = () => {
       if (Information.amtunit != "KRW") {
         const newData = mainDataResult2.data.map((item) => ({
           ...item,
-          wonamt: ThreeNumberceil(item.amt * value),
-          taxamt: ThreeNumberceil(ThreeNumberceil(item.amt * value) * 0.1),
+          wonamt: ThreeNumberceil(Math.ceil(item.amt * value)),
+          taxamt: ThreeNumberceil(
+            Math.ceil(ThreeNumberceil(Math.ceil(item.amt * value)) * 0.1)
+          ),
           totamt:
-            ThreeNumberceil(item.amt * value) +
-            ThreeNumberceil(ThreeNumberceil(item.amt * value) * 0.1),
+            ThreeNumberceil(Math.ceil(item.amt * value)) +
+            ThreeNumberceil(
+              Math.ceil(ThreeNumberceil(Math.ceil(item.amt * value)) * 0.1)
+            ),
           rowstatus: item.rowstatus == "N" ? "N" : "U",
         }));
 
@@ -532,7 +537,7 @@ const SA_A1100_603W: React.FC = () => {
   const filtersComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    setInformation((prev) => ({
+    setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -2034,7 +2039,7 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.seq_s.push(seq);
       dataArr.payment_s.push(payment);
       dataArr.amt_s.push(amt);
-      dataArr.paydt_s.push(paydt);
+      dataArr.paydt_s.push(paydt == "99991231" ? "" : paydt);
       dataArr.remark_s.push(remark);
     });
 
@@ -2052,7 +2057,7 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.seq_s.push(seq);
       dataArr.payment_s.push(payment);
       dataArr.amt_s.push(amt);
-      dataArr.paydt_s.push(paydt);
+      dataArr.paydt_s.push(paydt == "99991231" ? "" : paydt);
       dataArr.remark_s.push(remark);
     });
 
@@ -2498,7 +2503,7 @@ const SA_A1100_603W: React.FC = () => {
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
-            <FilterBox style={{ height: "10%" }}>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
                   <th>계약일자</th>

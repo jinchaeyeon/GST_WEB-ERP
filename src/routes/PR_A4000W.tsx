@@ -2275,7 +2275,7 @@ const PR_A4000W: React.FC = () => {
                       <Grid
                         style={{
                           height:
-                            deviceHeight - height - height2 - height3 - 20,
+                            deviceHeight - height - height2 - height3,
                         }}
                         data={process(
                           detailDataResult.data.map((row) => ({

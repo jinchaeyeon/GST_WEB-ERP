@@ -18,13 +18,15 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -49,7 +51,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -57,9 +58,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -79,9 +79,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 type TdataArr = {
@@ -386,7 +383,7 @@ const HU_A6020W: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [tabSelected, setTabSelected] = useState(0);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -2345,7 +2342,7 @@ FROM HU072T WHERE paycd = '4'`;
               dutycd = "",
             } = item;
             dataArr.rowstatus_s.push(rowstatus);
-            dataArr.dutydt_s.push(dutydt);
+            dataArr.dutydt_s.push(dutydt == "99991231" ? "" : dutydt);
             dataArr.prsnnum_s.push(prsnnum);
             dataArr.wrkday_s.push(wrkday);
             dataArr.wrktime_s.push(wrktime);
@@ -2369,8 +2366,8 @@ FROM HU072T WHERE paycd = '4'`;
             dataArr.locatax_s.push(locatax);
             dataArr.totded_s.push(totded);
             dataArr.rlpayamt_s.push(rlpayamt);
-            dataArr.startdate_s.push(startdate);
-            dataArr.enddate_s.push(enddate);
+            dataArr.startdate_s.push(startdate == "99991231" ? "" : startdate);
+            dataArr.enddate_s.push(enddate == "99991231" ? "" : enddate);
             dataArr.shh_s.push(shh);
             dataArr.smm_s.push(smm);
             dataArr.ehh_s.push(ehh);
@@ -3119,21 +3116,23 @@ FROM HU072T WHERE paycd = '4'`;
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
-                <GridTitleContainer className="ButtonContainer3">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      style={{ marginRight: "5px" }}
-                    >
-                      이전
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="arrow-left"
+                          style={{ marginRight: "5px" }}
+                        >
+                          이전
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <div
                       style={{
                         height: deviceHeight - height2 - height3,
