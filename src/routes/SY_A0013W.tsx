@@ -2007,6 +2007,7 @@ const Page: React.FC = () => {
             />
           )}
         </ButtonContainer>
+        </TitleContainer>
         <FilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
@@ -2081,7 +2082,7 @@ const Page: React.FC = () => {
             </tbody>
           </FilterBox>
         </FilterContainer>
-      </TitleContainer>
+     
       {isMobile ? (
         <>
           <Swiper

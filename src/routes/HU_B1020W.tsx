@@ -389,7 +389,7 @@ const HU_B1020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}>
+      <GridContainer style={{ width: isMobile? `${deviceWidth - 30}px` : "100%", overflow: "auto" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
