@@ -1594,7 +1594,7 @@ const CM_A1600: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
+          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
@@ -1623,7 +1623,7 @@ const CM_A1600: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtime.setDate(strtime.getDate() + 1)))
+          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
       );
       dataArr.finyn_s.push(finyn);
       dataArr.kind1_s.push(kind1);

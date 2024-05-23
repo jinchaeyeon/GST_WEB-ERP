@@ -2225,7 +2225,7 @@ const BA_A0020W_603: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
-        area: information.area,
+        area: information.area == undefined ? "" : information.area,
         custcd: information.custcd,
         custnm: information.custnm,
         custabbr: information.custabbr,
@@ -2237,16 +2237,19 @@ const BA_A0020W_603: React.FC = () => {
         bizdiv: information.bizdiv,
         custdiv: information.custdiv,
         listringyn: information.listringyn == true ? "Y" : "N",
-        listringdiv: information.listringdiv,
+        listringdiv:
+          information.listringdiv == undefined ? "" : information.listringdiv,
         inunpitem: information.inunpitem,
         unpitem: information.unpitem,
-        compclass: information.compclass,
+        compclass:
+          information.compclass == undefined ? "" : information.compclass,
         comptype: information.comptype,
-        countrycd: information.countrycd,
+        countrycd:
+          information.countrycd == undefined ? "" : information.countrycd,
         groupnm: information.groupnm,
-        itemlvl1: information.itemlvl1,
-        itemlvl2: information.itemlvl2,
-        itemlvl3: information.itemlvl3,
+        itemlvl1: information.itemlvl1 == undefined ? "" : information.itemlvl1,
+        itemlvl2: information.itemlvl2 == undefined ? "" : information.itemlvl2,
+        itemlvl3: information.itemlvl3 == undefined ? "" : information.itemlvl3,
         attdatnum: information.attdatnum,
         remark: information.remark,
         auto: information.auto == true ? "Y" : "N",
@@ -4127,6 +4130,7 @@ const BA_A0020W_603: React.FC = () => {
             <TabStripTab title="기본">
               <FormBoxWrap border={true}>
                 <GridTitleContainer>
+                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onSaveClick}
@@ -4691,6 +4695,7 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer>
+                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}
@@ -4806,6 +4811,7 @@ const BA_A0020W_603: React.FC = () => {
             <TabStripTab title="투자" disabled={workType == "N" ? true : false}>
               <GridContainer>
                 <GridTitleContainer>
+                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick3}
@@ -4921,6 +4927,7 @@ const BA_A0020W_603: React.FC = () => {
             >
               <GridContainer>
                 <GridTitleContainer>
+                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick4}

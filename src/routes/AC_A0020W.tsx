@@ -33,9 +33,10 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -4738,6 +4739,7 @@ const AC_A0020W: React.FC = () => {
           </FilterContainer>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <GridTitleContainer className="ButtonContainer">
+              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -4957,6 +4959,7 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer className="ButtonContainer3">
+                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -5094,6 +5097,7 @@ const AC_A0020W: React.FC = () => {
                       }}
                     >
                       <GridTitleContainer className="ButtonContainer4">
+                        <GridTitle></GridTitle>
                         <ButtonContainer>
                           <Button
                             onClick={onAddClick3}
@@ -5267,6 +5271,7 @@ const AC_A0020W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(65% - ${GAP}px)`}>
                   <GridTitleContainer>
+                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}
@@ -5389,6 +5394,7 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer>
+                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick3}
@@ -5538,6 +5544,7 @@ const AC_A0020W: React.FC = () => {
           >
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer5">
+                <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick4}
@@ -5716,6 +5723,7 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer className="ButtonContainer6">
+                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick5}

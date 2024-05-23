@@ -536,6 +536,7 @@ const CopyWindow = ({
       >
         <FormBoxWrap>
           <GridTitleContainer>
+            <GridTitle></GridTitle>
             <ButtonContainer>
               <Button
                 onClick={() => search()}

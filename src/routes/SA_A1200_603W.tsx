@@ -318,14 +318,13 @@ const SA_A1200_603W: React.FC = () => {
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
-    setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-    setTabSelected(1);
     setFilters2((prev) => ({
       ...prev,
       quokey: selectedRowData.quokey,
       isSearch: true,
       pgNum: 1,
     }));
+    setTabSelected(1);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -898,20 +897,6 @@ const SA_A1200_603W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setFilters2((prev) => ({
-      ...prev,
-      quokey: selectedRowData.quokey,
-      isSearch: true,
-      pgNum: 1,
-    }));
-
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
-    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회

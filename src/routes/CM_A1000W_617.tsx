@@ -37,15 +37,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage,
-  getHeight,
+  useSysMessage
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -74,7 +73,7 @@ const CM_A1000W_617: React.FC = () => {
   var height2 = getHeight(".ButtonContainer2");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1000W_617", setMessagesData);
@@ -431,8 +430,16 @@ const pc = UseGetValueFromSessionItem("pc");
       ...prev,
       datnum: "",
       recdt: new Date(),
-      custcd: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
-      custnm: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custcd:
+        defaultOption.find((item: any) => item.id == "custnm")?.valueCode ==
+        "08116"
+          ? ""
+          : defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custnm:
+        defaultOption.find((item: any) => item.id == "custnm")?.valueCode ==
+        "08116"
+          ? ""
+          : defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
       title: "",
       contents: "",
     }));

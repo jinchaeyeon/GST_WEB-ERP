@@ -860,6 +860,7 @@ const Main: React.FC = () => {
                       ) : (
                         <>
                           <GridTitleContainer>
+                          <GridTitle></GridTitle>
                             {customOptionData !== null && (
                               <div>
                                 <CustomOptionComboBox
@@ -1093,6 +1094,7 @@ const Main: React.FC = () => {
                     ) : (
                       <>
                         <GridTitleContainer>
+                        <GridTitle></GridTitle>
                           {customOptionData !== null && (
                             <div>
                               <CustomOptionComboBox

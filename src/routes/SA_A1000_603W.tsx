@@ -4588,6 +4588,7 @@ const SA_A1000_603W: React.FC = () => {
           {isMobile ? (
             <>
               <GridTitleContainer className="ButtonContainer2">
+                <GridTitle></GridTitle>
                 <ButtonContainer style={{ gap: "3px" }}>
                   <Button
                     themeColor={"primary"}
@@ -5917,6 +5918,7 @@ const SA_A1000_603W: React.FC = () => {
           ) : (
             <>
               <GridTitleContainer>
+              <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -7568,7 +7570,7 @@ const SA_A1000_603W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="계약가능성관리"
+                    fileName="프로젝트관리"
                   >
                     <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>
@@ -8393,7 +8395,7 @@ const SA_A1000_603W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="계약가능성관리"
+                      fileName="프로젝트관리"
                     >
                       <GridTitleContainer>
                         <GridTitle>코멘트</GridTitle>

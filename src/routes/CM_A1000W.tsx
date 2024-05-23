@@ -264,11 +264,6 @@ const CM_A1000W: React.FC = () => {
     const { name, value } = e;
 
     if (name == "custnm") {
-      const defaultOption = GetPropertyValueByName(
-        customOptionData.menuCustomDefaultOptions,
-        "new"
-      );
-
       setInfomation((prev) => ({
         ...prev,
         custcd: value,
@@ -1045,7 +1040,8 @@ const CM_A1000W: React.FC = () => {
         ...prev,
         isSearch: true,
         pgNum: 1,
-        find_row_value: datas.orgdiv + "|" + datas.datnum,
+        find_row_value:
+          datas == undefined ? "" : datas.orgdiv + "|" + datas.datnum,
       }));
       setMemoParaData((prev) => ({
         ...prev,
@@ -1149,8 +1145,16 @@ const CM_A1000W: React.FC = () => {
       amt: 0,
       attdatnum: "",
       contents: "",
-      custcd: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
-      custnm: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custcd:
+        defaultOption.find((item: any) => item.id == "custnm")?.valueCode ==
+        "08116"
+          ? ""
+          : defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custnm:
+        defaultOption.find((item: any) => item.id == "custnm")?.valueCode ==
+        "08116"
+          ? ""
+          : defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
       custperson: "",
       datnum: "",
       enddt: filters.todt,

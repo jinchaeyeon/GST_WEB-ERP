@@ -16,6 +16,7 @@ import "swiper/css";
 import {
   ButtonContainer,
   FilterBox,
+  GridTitle,
   GridTitleContainer,
   Title,
   TitleContainer
@@ -411,6 +412,7 @@ const SY_A0060W: React.FC = () => {
               </FilterContainer>
               <Box className="overflow_scrollhidden" style={{ height: "78vh" }}>
                 <GridTitleContainer>
+                <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onNewClick}

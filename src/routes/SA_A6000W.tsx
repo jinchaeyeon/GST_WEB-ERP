@@ -3074,6 +3074,7 @@ const SA_A6000W: React.FC = () => {
                 </FormContext.Provider>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
                   <GridTitleContainer>
+                   <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick}

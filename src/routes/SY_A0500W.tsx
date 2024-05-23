@@ -1315,6 +1315,7 @@ const SY_A0500W: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridTitleContainer className="ButtonContainer">
+                <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {

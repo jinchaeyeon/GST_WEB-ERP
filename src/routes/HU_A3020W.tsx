@@ -19,9 +19,10 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
+  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -37,7 +38,7 @@ import {
   UseMessages,
   UsePermissions,
   getGridItemChangedData,
-  getHeight
+  getHeight,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1433,6 +1434,7 @@ const HU_A3020W: React.FC = () => {
       >
         <TabStripTab title="지급항목">
           <GridContainer width="100%">
+            <GridTitle></GridTitle>
             <GridTitleContainer className="ButtonContainer">
               <ButtonContainer>
                 <Button
@@ -1552,6 +1554,7 @@ const HU_A3020W: React.FC = () => {
         <TabStripTab title="공제항목">
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer">
+              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick2}

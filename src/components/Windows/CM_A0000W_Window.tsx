@@ -360,6 +360,7 @@ const pc = UseGetValueFromSessionItem("pc");
         const rows = data.tables[0].Rows.map((item: any) => ({
           ...item,
           rowstatus: "",
+          readok : workType == "N" ? "N" : item.readok
         }));
 
         setMainDataResult(() => {
@@ -382,7 +383,11 @@ const pc = UseGetValueFromSessionItem("pc");
 
       if (data.isSuccess == true) {
         const totalRowCnt = data.tables[0].RowCount;
-        const rows = data.tables[0].Rows;
+        const rows = data.tables[0].Rows.map((item: any) => ({
+          ...item,
+          rowstatus: "",
+          readok : workType == "N" ? "N" : item.readok
+        }))
 
         setMainDataResult(() => {
           return {

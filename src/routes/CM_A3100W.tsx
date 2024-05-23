@@ -728,6 +728,7 @@ const CM_A3100W: React.FC = () => {
               style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
+                <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
@@ -894,6 +895,7 @@ const CM_A3100W: React.FC = () => {
             >
               <GridContainer>
                 <GridTitleContainer>
+                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       //onClick={onSaveClick}

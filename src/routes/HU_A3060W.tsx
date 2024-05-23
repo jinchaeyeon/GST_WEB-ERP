@@ -3435,6 +3435,7 @@ const HU_A3060W: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -4221,6 +4222,7 @@ const HU_A3060W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
                   <GridTitleContainer>
+                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}

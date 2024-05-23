@@ -1197,6 +1197,7 @@ const AC_B5040W: React.FC = () => {
           </FormBoxWrap>
           <GridContainer width="100%">
             <GridTitleContainer>
+              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onDeleteClick}
