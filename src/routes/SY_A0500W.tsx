@@ -18,7 +18,7 @@ import React, {
   useMemo,
   useRef,
   useState,
-  type CSSProperties
+  type CSSProperties,
 } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -49,7 +49,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1315,7 +1315,6 @@ const SY_A0500W: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {

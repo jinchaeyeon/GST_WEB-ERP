@@ -4495,9 +4495,7 @@ const SA_A1000_603W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile
-                    ? deviceHeight - height - height1 
-                    : "68vh",
+                  height: isMobile ? deviceHeight - height - height1 : "68vh",
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -5801,8 +5799,7 @@ const SA_A1000_603W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height:
-                                deviceHeight - height - height2 - height3 ,
+                              height: deviceHeight - height - height2 - height3,
                             }}
                             data={process(
                               mainDataResult2.data.map((row) => ({
@@ -5920,7 +5917,6 @@ const SA_A1000_603W: React.FC = () => {
           ) : (
             <>
               <GridTitleContainer>
-                <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}

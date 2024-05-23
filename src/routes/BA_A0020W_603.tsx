@@ -4127,7 +4127,6 @@ const BA_A0020W_603: React.FC = () => {
             <TabStripTab title="기본">
               <FormBoxWrap border={true}>
                 <GridTitleContainer>
-                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onSaveClick}
@@ -4692,7 +4691,6 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer>
-                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}
@@ -4808,7 +4806,6 @@ const BA_A0020W_603: React.FC = () => {
             <TabStripTab title="투자" disabled={workType == "N" ? true : false}>
               <GridContainer>
                 <GridTitleContainer>
-                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick3}
@@ -4924,7 +4921,6 @@ const BA_A0020W_603: React.FC = () => {
             >
               <GridContainer>
                 <GridTitleContainer>
-                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick4}

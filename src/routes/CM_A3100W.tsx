@@ -28,6 +28,9 @@ import {
 } from "@progress/kendo-react-scheduler";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   GridContainer,
@@ -41,12 +44,11 @@ import TopButtons from "../components/Buttons/TopButtons";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime,
   findMessage,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
@@ -58,9 +60,6 @@ import {
   loginResultState,
 } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 let temp = 0;
 const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
@@ -89,7 +88,7 @@ const CM_A3100W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [data, setData] = React.useState<any[]>([]);
   const [group, setGroup] = useState(initialGroup);
   const [total, setTotal] = useState(0);
@@ -659,8 +658,12 @@ const pc = UseGetValueFromSessionItem("pc");
           }}
         >
           <SwiperSlide key={0}>
-          <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto", height: deviceHeight }}
+            <GridContainer
+              style={{
+                width: `${deviceWidth - 30}px`,
+                overflow: "auto",
+                height: deviceHeight,
+              }}
             >
               {resultState.length > 0
                 ? resultState.map((item: any, index: any) => {
@@ -721,11 +724,10 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-          <GridContainer
+            <GridContainer
               style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
@@ -764,18 +766,18 @@ const pc = UseGetValueFromSessionItem("pc");
                 </div>
               ) : (
                 <Scheduler
-                // id="CM_A3100W_SCHEDULER"
-                data={data}
-                onDataChange={handleDataChange}
-                view={view}
-                onViewChange={handleViewChange}
-                date={date}
-                onDateChange={handleDateChange}
-                editable={true}
-                defaultDate={filters.todt}
-                footer={(props) => <React.Fragment />}
-                group={{
-                  resources: ["전체"],
+                  // id="CM_A3100W_SCHEDULER"
+                  data={data}
+                  onDataChange={handleDataChange}
+                  view={view}
+                  onViewChange={handleViewChange}
+                  date={date}
+                  onDateChange={handleDateChange}
+                  editable={true}
+                  defaultDate={filters.todt}
+                  footer={(props) => <React.Fragment />}
+                  group={{
+                    resources: ["전체"],
                     orientation,
                   }}
                   resources={[
@@ -787,7 +789,7 @@ const pc = UseGetValueFromSessionItem("pc");
                       textField: "text",
                     },
                   ]}
-                  form={FormWithCustomEditor}                  
+                  form={FormWithCustomEditor}
                   height={deviceHeight - height}
                 >
                   <TimelineView showWorkHours={false} />
@@ -892,7 +894,6 @@ const pc = UseGetValueFromSessionItem("pc");
             >
               <GridContainer>
                 <GridTitleContainer>
-                  <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
                       //onClick={onSaveClick}

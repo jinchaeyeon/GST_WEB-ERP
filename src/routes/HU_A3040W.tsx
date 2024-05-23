@@ -17,13 +17,15 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -43,16 +45,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getMonPayQuery,
-  
   numberWithCommas,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -63,12 +63,15 @@ import {
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isFilterheightstate, isLoading, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isFilterHideState,
+  isFilterheightstate,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 type TdataArr = {
@@ -396,32 +399,32 @@ let temp6 = 0;
 
 const HU_A3040W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-    
+
   let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");
-  
+
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
-    const [isFilterheightstates, setIsFilterheightstates] =
+  const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
-    useEffect(() => {
+  useEffect(() => {
     var height = 0;
     var container = document.querySelector(".filterBox");
     if (container?.clientHeight != undefined) {
       height = container == undefined ? 0 : container.clientHeight;
-      setIsFilterheightstates(height);
+      setIsFilterheightstates(isMobile ? height + 30 : height);
     } else {
-      setIsFilterheightstates(0);
+      setIsFilterheightstates(isMobile ? 30 : 0);
     }
-    }, [isFilterHideStates]);
+  }, [isFilterHideStates]);
 
   const [workType, setWorkType] = useState("");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -520,10 +523,10 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {     
+    if (bizComponentData !== null) {
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
-  }, [bizComponentData]); 
+  }, [bizComponentData]);
 
   const resetAllGrid = () => {
     setWorkType("");
@@ -4517,7 +4520,6 @@ const pc = UseGetValueFromSessionItem("pc");
         </>
       ) : (
         <>
-          
           <FormBoxWrap border={true}>
             <FormBox>
               <tbody>

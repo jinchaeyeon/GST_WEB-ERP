@@ -19,10 +19,9 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
-  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -36,10 +35,9 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   getGridItemChangedData,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -137,11 +135,10 @@ const HU_A3020W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".k-tabstrip-items-wrapper");
 
-
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
@@ -1437,7 +1434,6 @@ const pc = UseGetValueFromSessionItem("pc");
         <TabStripTab title="지급항목">
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer">
-              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -1469,7 +1465,9 @@ const pc = UseGetValueFromSessionItem("pc");
               fileName="지급항목"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height - height2 : "77.5vh" }}
+                style={{
+                  height: isMobile ? deviceHeight - height - height2 : "77.5vh",
+                }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1512,39 +1510,41 @@ const pc = UseGetValueFromSessionItem("pc");
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : customField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : checkField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : NameCell
-                          }
-                          headerCell={
-                            requiredField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : customField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : checkField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : NameCell
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>
@@ -1552,7 +1552,6 @@ const pc = UseGetValueFromSessionItem("pc");
         <TabStripTab title="공제항목">
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer">
-              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick2}
@@ -1584,7 +1583,9 @@ const pc = UseGetValueFromSessionItem("pc");
               fileName="지급항목"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height - height2 : "77.5vh" }}
+                style={{
+                  height: isMobile ? deviceHeight - height - height2 : "77.5vh",
+                }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -1627,39 +1628,41 @@ const pc = UseGetValueFromSessionItem("pc");
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : customField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : checkField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : NameCell
-                          }
-                          headerCell={
-                            requiredField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                  customOptionData.menuCustomColumnOptions["grdList2"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : customField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : checkField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : NameCell
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

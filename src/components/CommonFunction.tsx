@@ -19,8 +19,7 @@ export const getBizCom = (bizComponentData: any, id: string) => {
   return bizComponentData.find((item: any) => item.bizComponentId == id) ==
     undefined
     ? []
-    : bizComponentData.find((item: any) => item.bizComponentId == id)
-        .data.Rows;
+    : bizComponentData.find((item: any) => item.bizComponentId == id).data.Rows;
 };
 
 export const getHeight = (className: string) => {
@@ -30,6 +29,8 @@ export const getHeight = (className: string) => {
       ? 0
       : className == ".k-tabstrip-items-wrapper"
       ? container.clientHeight + 32
+      : className == ".k-window-titlebar"
+      ? container.clientHeight + 50
       : container.clientHeight;
   } else {
     return 0;
@@ -910,12 +911,15 @@ export const UseGetValueFromSessionItem = (code: string) => {
     code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
 
   if (sessionItem) {
-    if(sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined) {
+    if (
+      sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined
+    ) {
       resetLocalStorage();
       window.location.href = "/";
       return "";
     } else {
-      return sessionItem.find((sessionItem) => sessionItem.code == codes)!.value
+      return sessionItem.find((sessionItem) => sessionItem.code == codes)!
+        .value;
     }
   } else {
     console.log("sessionItem 오류");

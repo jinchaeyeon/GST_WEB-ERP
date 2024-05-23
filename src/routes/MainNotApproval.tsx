@@ -42,7 +42,7 @@ import {
   convertDateToStr,
   getBizCom,
   getHeight,
-  useGeoLocation
+  useGeoLocation,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
@@ -793,7 +793,6 @@ const Main: React.FC = () => {
                       ) : (
                         <>
                           <GridTitleContainer>
-                            <GridTitle></GridTitle>
                             {customOptionData !== null && (
                               <div>
                                 <CustomOptionComboBox
@@ -992,7 +991,6 @@ const Main: React.FC = () => {
                     ) : (
                       <>
                         <GridTitleContainer>
-                          <GridTitle></GridTitle>
                           {customOptionData !== null && (
                             <div>
                               <CustomOptionComboBox

@@ -33,10 +33,9 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
-  GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -763,7 +762,6 @@ const AC_A0020W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
   var height4 = getHeight(".ButtonContainer4");
   var height5 = getHeight(".ButtonContainer5");
@@ -2209,7 +2207,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if(isMobile) {
+    if (isMobile) {
       setIsFilterHideStates(true);
     }
 
@@ -4740,7 +4738,6 @@ const AC_A0020W: React.FC = () => {
           </FilterContainer>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <GridTitleContainer className="ButtonContainer">
-              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -4890,9 +4887,6 @@ const AC_A0020W: React.FC = () => {
               >
                 <SwiperSlide key={0}>
                   <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                    <GridTitleContainer className="ButtonContainer2">
-                      <GridTitle></GridTitle>
-                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult2.data}
                       ref={(exporter) => {
@@ -4901,7 +4895,7 @@ const AC_A0020W: React.FC = () => {
                       fileName="기준정보"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height7 }}
+                        style={{ height: deviceHeight - height7 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -4963,7 +4957,6 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer className="ButtonContainer3">
-                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -5101,7 +5094,6 @@ const AC_A0020W: React.FC = () => {
                       }}
                     >
                       <GridTitleContainer className="ButtonContainer4">
-                        <GridTitle></GridTitle>
                         <ButtonContainer>
                           <Button
                             onClick={onAddClick3}
@@ -5133,7 +5125,7 @@ const AC_A0020W: React.FC = () => {
                         fileName="기준정보"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height - height7 }}
+                          style={{ height: deviceHeight - height4 - height7 }}
                           data={process(
                             mainDataResult4.data.map((row) => ({
                               ...row,
@@ -5218,9 +5210,6 @@ const AC_A0020W: React.FC = () => {
             <>
               <GridContainerWrap style={{ width: "100%" }}>
                 <GridContainer width={`10%`}>
-                  <GridTitleContainer style={{ marginTop: "18px" }}>
-                    <GridTitle></GridTitle>
-                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -5278,7 +5267,6 @@ const AC_A0020W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(65% - ${GAP}px)`}>
                   <GridTitleContainer>
-                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}
@@ -5401,7 +5389,6 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer>
-                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick3}
@@ -5551,7 +5538,6 @@ const AC_A0020W: React.FC = () => {
           >
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer5">
-                <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick4}
@@ -5730,7 +5716,6 @@ const AC_A0020W: React.FC = () => {
                     }}
                   >
                     <GridTitleContainer className="ButtonContainer6">
-                      <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick5}

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { FilterBoxWrap } from "../../CommonStyled";
 import { isFilterHideState, isFilterheightstate } from "../../store/atoms";
@@ -8,6 +8,8 @@ type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const [isFilterheightstates, setIsFilterheightstates] =
@@ -22,9 +24,9 @@ const FilterContainer = ({ children }: TChildren) => {
     var container = document.querySelector(".filterBox");
     if (container?.clientHeight != undefined) {
       height = container == undefined ? 0 : container.clientHeight;
-      setIsFilterheightstates(height);
+      setIsFilterheightstates(isMobile ? height + 30 : height);
     } else {
-      setIsFilterheightstates(0);
+      setIsFilterheightstates(isMobile ? 30 : 0);
     }
   }, [isFilterHideStates]);
 

@@ -16,16 +16,17 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -48,17 +49,15 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -74,9 +73,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
@@ -246,7 +242,7 @@ const SA_A6000W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const position = loginResult ? loginResult.position : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -338,10 +334,10 @@ const pc = UseGetValueFromSessionItem("pc");
     { dptcd: "", dptnm: "" },
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {  
+    if (bizComponentData !== null) {
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
-  }, [bizComponentData]); 
+  }, [bizComponentData]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -3078,7 +3074,6 @@ const pc = UseGetValueFromSessionItem("pc");
                 </FormContext.Provider>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
                   <GridTitleContainer>
-                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick}

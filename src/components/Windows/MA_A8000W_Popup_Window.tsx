@@ -42,7 +42,7 @@ import {
   findMessage,
   getGridItemChangedData,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -536,7 +536,6 @@ const CopyWindow = ({
       >
         <FormBoxWrap>
           <GridTitleContainer>
-            <GridTitle></GridTitle>
             <ButtonContainer>
               <Button
                 onClick={() => search()}

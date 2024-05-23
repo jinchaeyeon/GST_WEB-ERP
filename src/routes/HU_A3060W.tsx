@@ -17,6 +17,9 @@ import { NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -43,14 +46,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -64,9 +66,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 const DATA_ITEM_KEY = "num";
@@ -197,7 +196,7 @@ const HU_A3060W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A3060W", setCustomOptionData);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   useEffect(() => {
@@ -3497,7 +3496,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>국민연금</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3555,7 +3554,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>고용보험율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3583,7 +3582,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>요양보험보험률</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3599,7 +3598,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>보험대상자보험률</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3615,7 +3614,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>주민세율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3631,7 +3630,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>직과세표준금액</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3647,7 +3646,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>일용직소득세율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3663,7 +3662,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>일용직주민세율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3679,7 +3678,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>근로세액공제율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3695,7 +3694,7 @@ const pc = UseGetValueFromSessionItem("pc");
                             </td>
                           </tr>
                           <tr>
-                          <td></td>
+                            <td></td>
                             <td>일용직고용보험율</td>
                             <td>
                               <th style={{ textAlign: "center" }}>
@@ -3728,155 +3727,156 @@ const pc = UseGetValueFromSessionItem("pc");
               >
                 <SwiperSlide key={0}>
                   <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer  className="ButtonContainer">
-                    <GridTitle>기준일자</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onDeleteClick3}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="delete"
-                      >
-                        삭제
-                      </Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult3.data}
-                    ref={(exporter) => {
-                      _export3 = exporter;
-                    }}
-                    fileName="정산기준"
-                  >
-                    <Grid
-                      style={{ height: deviceHeight - height - height3 }}
-                      data={process(
-                        mainDataResult3.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                        })),
-                        mainDataState3
-                      )}
-                      {...mainDataState3}
-                      onDataStateChange={onMainDataStateChange3}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY3}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>기준일자</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onDeleteClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
                       }}
-                      onSelectionChange={onSelectionChange3}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult3.total}
-                      skip={page3.skip}
-                      take={page3.take}
-                      pageable={true}
-                      onPageChange={pageChange3}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef3}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange3}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
+                      fileName="정산기준"
                     >
-                      <GridColumn
-                        field="payyrmm"
-                        cell={DateCell}
-                        title="기준일자"
-                        width="120px"
-                        footerCell={mainTotalFooterCell3}
-                      />
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
+                      <Grid
+                        style={{ height: deviceHeight - height - height3 }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef3}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        <GridColumn
+                          field="payyrmm"
+                          cell={DateCell}
+                          title="기준일자"
+                          width="120px"
+                          footerCell={mainTotalFooterCell3}
+                        />
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>기본정보</GridTitle>
-                    <ButtonContainer>
-                      <ExcelUploadButton
-                        saveExcel={saveExcel}
-                        permissions={{
-                          view: true,
-                          save: true,
-                          delete: true,
-                          print: true,
-                        }}
-                        style={{ marginLeft: "15px" }}
-                      />
-                      <Button
-                        onClick={onSaveClick3}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult3_1.data}
-                    ref={(exporter) => {
-                      _export4 = exporter;
-                    }}
-                    fileName="정산기준"
-                  >
-                    <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
-                      data={process(
-                        mainDataResult3_1.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState3_1[idGetter3_1(row)], //선택된 데이터
-                        })),
-                        mainDataState3_1
-                      )}
-                      {...mainDataState3_1}
-                      onDataStateChange={onMainDataStateChange3_1}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY3_1}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
+                      <GridTitle>기본정보</GridTitle>
+                      <ButtonContainer>
+                        <ExcelUploadButton
+                          saveExcel={saveExcel}
+                          permissions={{
+                            view: true,
+                            save: true,
+                            delete: true,
+                            print: true,
+                          }}
+                          style={{ marginLeft: "15px" }}
+                        />
+                        <Button
+                          onClick={onSaveClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult3_1.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
                       }}
-                      onSelectionChange={onSelectionChange3_1}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult3_1.total}
-                      skip={page3_1.skip}
-                      take={page3_1.take}
-                      pageable={true}
-                      onPageChange={pageChange3_1}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange3_1}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={onMainItemChange3_1}
-                      cellRender={customCellRender3_1}
-                      rowRender={customRowRender3_1}
-                      editField={EDIT_FIELD}
+                      fileName="정산기준"
                     >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      <GridColumn title="월급여액(비과세소득제외)">
-                        {createColumn()}
-                      </GridColumn>
-                      <GridColumn title="공제대상 가족의 수(본인, 배우자를 각각 1인으로 봄)">
-                        {createColumn2()}
-                      </GridColumn>
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
+                      <Grid
+                        style={{ height: deviceHeight - height2 - height3 }}
+                        data={process(
+                          mainDataResult3_1.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedState3_1[idGetter3_1(row)], //선택된 데이터
+                          })),
+                          mainDataState3_1
+                        )}
+                        {...mainDataState3_1}
+                        onDataStateChange={onMainDataStateChange3_1}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3_1}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3_1}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3_1.total}
+                        skip={page3_1.skip}
+                        take={page3_1.take}
+                        pageable={true}
+                        onPageChange={pageChange3_1}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3_1}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange3_1}
+                        cellRender={customCellRender3_1}
+                        rowRender={customRowRender3_1}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <GridColumn title="월급여액(비과세소득제외)">
+                          {createColumn()}
+                        </GridColumn>
+                        <GridColumn title="공제대상 가족의 수(본인, 배우자를 각각 1인으로 봄)">
+                          {createColumn2()}
+                        </GridColumn>
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
                 </SwiperSlide>
-                </Swiper>
+              </Swiper>
             </TabStripTab>
             <TabStripTab title="계산공식">
               <FilterContainer>
@@ -4221,7 +4221,6 @@ const pc = UseGetValueFromSessionItem("pc");
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
                   <GridTitleContainer>
-                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}

@@ -158,9 +158,9 @@ const PanelBarNavContainer = (props: any) => {
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
       if(isMobile) {
-        setIsFilterheightstates(0);
+        setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 170);
+        setDeviceHeight(document.documentElement.clientHeight - 150);
       }
     };
   }, [
@@ -376,9 +376,9 @@ const PanelBarNavContainer = (props: any) => {
 
     if (route) {
       if (isMobile) {
-        setIsFilterheightstates(0);
+        setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 170);
+        setDeviceHeight(document.documentElement.clientHeight - 150);
       }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);

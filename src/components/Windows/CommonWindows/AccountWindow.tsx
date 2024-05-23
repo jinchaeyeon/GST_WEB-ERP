@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -24,7 +24,10 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import {
+  isFilterheightstate,
+  isLoading
+} from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
@@ -51,8 +54,13 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate); //필터박스 높이
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".ButtonContainer");
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -285,7 +293,7 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title />
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -321,12 +329,19 @@ const KendoWindow = ({
       </FilterContainer>
       <GridContainer
         style={{
-          height: isMobile? "auto" : `calc(100% - 170px)`,
-          overflow: isMobile? "auto" : "hidden",
+          overflow: isMobile ? "auto" : "hidden",
         }}
       >
         <Grid
-          style={{ height: isMobile ? deviceHeight - height - 170 : `calc(100% - 10px)` }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height2 - height3 - height4
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -379,7 +394,7 @@ const KendoWindow = ({
           <GridColumn field="mngitemnm6" title="관리항목명6" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer className="ButtonContainer">
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인
