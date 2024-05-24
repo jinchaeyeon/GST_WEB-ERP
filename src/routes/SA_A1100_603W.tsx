@@ -2638,7 +2638,7 @@ const SA_A1100_603W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - 27 : "67vh",
+                  height: isMobile ? deviceHeight - height : "67vh",
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({

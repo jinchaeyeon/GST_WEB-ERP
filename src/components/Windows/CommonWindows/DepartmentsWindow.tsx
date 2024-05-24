@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -24,12 +24,13 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import { isFilterHideState, isFilterheightstate, isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  getHeight,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
@@ -51,6 +52,19 @@ const DepartmentsWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate); //필터박스 높이
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+    useEffect(() => {
+      if (!isFilterHideStates) {
+        setIsFilterHideStates(true);
+      }
+    }, []);
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -299,7 +313,7 @@ const DepartmentsWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -345,9 +359,21 @@ const DepartmentsWindow = ({
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "100%" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height2 - height3 - height4
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -401,7 +427,7 @@ const DepartmentsWindow = ({
           />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
