@@ -927,53 +927,12 @@ const SA_A6000W: React.FC = () => {
       });
       setSelectedState3(newSelectedState);
 
-      if (datas.rowstatus != "N") {
-        const newData = mainDataResult3.data.map((item) =>
-          item[DATA_ITEM_KEY3] == datas[DATA_ITEM_KEY3]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "",
-                amt: predata == undefined ? item.amt : predata.amt,
-                dif: predata == undefined ? item.dif : predata.dif,
-              }
-            : {
-                ...item,
-              }
-        );
-        setTempResult3((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult3((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      } else {
-        const newData = mainDataResult3.data.filter(
-          (item) => item[DATA_ITEM_KEY3] != datas[DATA_ITEM_KEY3]
-        );
+      const selectedRowData2 = event.dataItems[selectedIdx];
 
-        setTempResult3((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult3((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
-
-      setFilters4((prev) => ({
+      setFilters3((prev) => ({
         ...prev,
-        person: selectedRowData.person,
+        person: selectedRowData2.person,
+        find_row_value: selectedRowData2.person,
         isSearch: true,
       }));
       if (swiper && isMobile) {

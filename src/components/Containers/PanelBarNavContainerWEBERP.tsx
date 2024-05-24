@@ -223,7 +223,7 @@ const PanelBarNavContainer = (props: any) => {
       if(isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 150);
+        setDeviceHeight(document.documentElement.clientHeight - 170);
       }
     };
   }, [
@@ -458,7 +458,7 @@ const PanelBarNavContainer = (props: any) => {
       if (isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 150);
+        setDeviceHeight(document.documentElement.clientHeight - 170);
       }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);

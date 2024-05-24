@@ -91,6 +91,7 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -431,7 +432,7 @@ const SA_A1100_603W: React.FC = () => {
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-
+    setIsFilterHideStates(true);
     setChecked(true);
     setSubFilters((prev) => ({
       ...prev,
@@ -1189,7 +1190,10 @@ const SA_A1100_603W: React.FC = () => {
     setSelectedState6(newSelectedState);
   };
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
+    setIsFilterHideStates(true);
     if (e.selected == 0) {
       setChecked(false);
       setFilters((prev) => ({
