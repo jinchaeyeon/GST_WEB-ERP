@@ -21,7 +21,7 @@ const WindowFilterContainer = ({ children }: TChildren) => {
 
   useEffect(() => {
     var height = 0;
-    var container = document.querySelector(".filterBox");
+    var container = document.querySelector(".filterBox2");
     if (container?.clientHeight != undefined) {
       height = container == undefined ? 0 : container.clientHeight;
       setIsFilterheightstates2(isMobile ? height + 30 : height);

@@ -34,12 +34,11 @@ import { useApi } from "../../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import {
   deletedNameState,
-  isFilterheightstate,
-  isFilterheightstate2,
   isFilterHideState2,
+  isFilterheightstate2,
   isLoading,
   loginResultState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
@@ -138,10 +137,8 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
-  const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //웹 필터박스 높이
   const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
+    useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   let isMobile = deviceWidth <= 1200;
@@ -151,6 +148,7 @@ const KendoWindow = ({
   var height4 = getHeight(".WindowButtonContainer");
   var height5 = getHeight(".WindowButtonContainer2");
   var height6 = getHeight(".WindowButtonContainer3");
+  var height7 = getHeight(".visible-mobile-only2"); //필터 모바일
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({
@@ -1630,8 +1628,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      isFilterheightstates2 -
-                      height4,
+                      height4 -
+                      height7,
                   }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
@@ -1756,8 +1754,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      isFilterheightstates2 -
-                      height5,
+                      height5 -
+                      height7,
                   }}
                   onSelectionChange={onSelectionChange2}
                   //스크롤 조회 기능
@@ -1847,8 +1845,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      isFilterheightstates2 -
-                      height6,
+                      height6 -
+                      height7,
                   }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
@@ -1998,11 +1996,7 @@ const KendoWindow = ({
                 }}
                 style={{
                   height:
-                    (position.height -
-                      height -
-                      height2 -
-                      height3 -
-                      isFilterheightstates) /
+                    (position.height - height - height2 - height3 - height7) /
                       2 -
                     height4,
                 }}
@@ -2095,11 +2089,7 @@ const KendoWindow = ({
                 }}
                 style={{
                   height:
-                    (position.height -
-                      height -
-                      height2 -
-                      height3 -
-                      isFilterheightstates) /
+                    (position.height - height - height2 - height3 - height7) /
                       2 -
                     height5,
                 }}
@@ -2188,11 +2178,7 @@ const KendoWindow = ({
                 )}
                 style={{
                   height:
-                    (position.height -
-                      height -
-                      height2 -
-                      height3 -
-                      isFilterheightstates) /
+                    (position.height - height - height2 - height3 - height7) /
                       2 -
                     height6,
                 }}

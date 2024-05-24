@@ -26,10 +26,9 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   isFilterHideState2,
-  isFilterheightstate,
   isFilterheightstate2,
   isLoading,
-  loginResultState,
+  loginResultState
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
@@ -67,22 +66,21 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //웹 필터박스 높이
   const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
+    useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-
+  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+  
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true ? deviceWidth : 1200,
+    width: isMobile == true ? deviceWidth : 1500,
     height: isMobile == true ? deviceHeight : 800,
   });
 
@@ -143,7 +141,9 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    setisFilterHideStates2(true);
+    if(isMobile) {
+      setisFilterHideStates2(true);
+    }
     setVisible(false);
   };
 
@@ -412,12 +412,12 @@ const KendoWindow = ({
                 height -
                 height2 -
                 height3 -
-                isFilterheightstates2
+                height4
               : position.height -
                 height -
                 height2 -
                 height3 -
-                isFilterheightstates,
+                isFilterheightstates2,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
