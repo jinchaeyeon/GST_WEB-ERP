@@ -235,8 +235,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 </div>
               )}
             </fieldset>
-            <BottomContainer>
-              <ButtonContainer className="BottomContainer">
+            <BottomContainer className="BottomContainer">
+              <ButtonContainer>
                 {pwExpInfo &&
                   pwExpInfo.useChangeNext &&
                   pwExpInfo.useExpiration &&

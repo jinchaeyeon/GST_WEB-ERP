@@ -46,7 +46,7 @@ export const getHeight = (className: string) => {
   if (container?.clientHeight != undefined) {
     return container == undefined
       ? 0
-      : className == ".k-tabstrip-items-wrapper"
+      : className == ".k-tabstrip-items-wrapper" || className == ".k-window-titlebar"
       ? getElementHeight(container) + 32
       : getElementHeight(container);
   } else {

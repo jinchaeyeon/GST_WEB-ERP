@@ -407,7 +407,7 @@ const KendoWindow = ({
           style={{
             height: isMobile
               ? deviceHeight - height - height2 - height4
-              : (position.height - height) / 2 - height2,
+              : (position.height - height - height4) / 2 - height2,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
@@ -472,7 +472,7 @@ const KendoWindow = ({
           style={{
             height: isMobile
               ? deviceHeight - height - height3 - height4
-              : (position.height - height) / 2 - height3,
+              : (position.height - height - height4) / 2 - height3,
           }}
           data={process(
             keepingDataResult.data.map((row) => ({
