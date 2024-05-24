@@ -373,21 +373,15 @@ const KendoWindow = ({
           //더블클릭
           onRowDoubleClick={onRowDoubleClick}
         >
-          {isMobile ? (
-            <GridColumn field="stdrmknm1" title="단축계정명" width="150px" />
-          ) : (
-            <>
-              <GridColumn
-                field="stdrmkcd"
-                title="단축코드"
-                width="100px"
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="stdrmknm1" title="단축계정명" width="150px" />
-              <GridColumn field="acntcd" title="계정코드" width="100px" />
-              <GridColumn field="acntnm" title="계정명" width="150px" />
-            </>
-          )}
+          <GridColumn
+            field="stdrmkcd"
+            title="단축코드"
+            width="100px"
+            footerCell={mainTotalFooterCell}
+          />
+          <GridColumn field="stdrmknm1" title="단축계정명" width="150px" />
+          <GridColumn field="acntcd" title="계정코드" width="100px" />
+          <GridColumn field="acntnm" title="계정명" width="150px" />
         </Grid>
       </GridContainer>
       <BottomContainer className="BottomContainer">
