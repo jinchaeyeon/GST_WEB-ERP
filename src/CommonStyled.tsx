@@ -256,6 +256,10 @@ export const BottomContainer = styled(TitleContainer)`
     width: 100px;
     height: 40px;
   }
+
+  @media (max-width: 1200px) {
+    padding-top: 5px;
+  }
 `;
 
 export const FilterBoxWrap = styled.div`
