@@ -22,15 +22,24 @@ export const getBizCom = (bizComponentData: any, id: string) => {
     : bizComponentData.find((item: any) => item.bizComponentId == id).data.Rows;
 };
 
-
 export const getHeight = (className: string) => {
+  function getElementHeight(node: Element) {
+    const list = ["margin-top", "margin-bottom"];
+
+    const style = window.getComputedStyle(node);
+    return list
+      .map((k) => parseInt(style.getPropertyValue(k), 10))
+      .reduce((prev, cur) => prev + cur);
+  }
+
   var container = document.querySelector(className);
   if (container?.clientHeight != undefined) {
     return container == undefined
       ? 0
-      : className == ".k-tabstrip-items-wrapper" || className == ".k-window-titlebar"
-      ? container?.clientHeight + 35
-      : container?.clientHeight;
+      : className == ".k-tabstrip-items-wrapper" ||
+        className == ".k-window-titlebar"
+      ? container?.clientHeight + getElementHeight(container) + 35
+      : container?.clientHeight + getElementHeight(container);
   } else {
     return 0;
   }

@@ -1,9 +1,10 @@
-import { DataResult, getter, process } from "@progress/kendo-data-query";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridHeaderCellProps,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
@@ -59,26 +60,17 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  var height = getHeight(".k-window-titlebar");
+  var height2 = getHeight(".TitleContainer");
+  var height3 = getHeight(".example");
+  var height4 = getHeight(".BottomContainer");
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceHeight : 810,
+    height: isMobile == true ? deviceHeight : 800,
   });
-  const [gridHeight, setGridHeight] = useState(0);
-  React.useLayoutEffect(() => {
-    const calculateHeight = () => {
-      var height = getHeight(".k-window-titlebar");
-      var height2 = getHeight(".TitleContainer");
-      var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-      const calculatedGridHeight = isMobile
-        ? deviceHeight - height - height2 - height3
-        : position.height - height - height2 - height3 - 100;
-      setGridHeight(calculatedGridHeight);
-    };
-    calculateHeight();
-  }, [position.height]);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [attachmentNumber, setAttachmentNumber] = useState(para);
@@ -101,9 +93,22 @@ const KendoWindow = ({
   };
 
   const processApi = useApi();
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], {})
+    process([], mainDataState)
   );
+
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
 
   useEffect(() => {
     fetchGrid();
@@ -311,18 +316,15 @@ const KendoWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  const onSelectionChange = React.useCallback(
-    (event: GridSelectionChangeEvent) => {
-      const newSelectedState = getSelectedState({
-        event,
-        selectedState: selectedState,
-        dataItemKey: DATA_ITEM_KEY,
-      });
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
 
-      setSelectedState(newSelectedState);
-    },
-    [selectedState]
-  );
+    setSelectedState(newSelectedState);
+  };
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files == null) return false;
@@ -518,35 +520,35 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      {isMobile
-        ? ""
-        : (!permission || (permission && permission.upload)) && (
-            <div
-              onDrop={(event: React.DragEvent<HTMLInputElement>) => {
-                event.preventDefault();
-                const files = event.dataTransfer.files;
-                handleFileUpload(files);
-              }}
-              onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
-                e.preventDefault();
-              }}
-              style={{
-                width: "100% ",
-                lineHeight: "100px",
-                border: "solid 1px rgba(0, 0, 0, 0.08)",
-                marginBottom: "5px",
-                textAlign: "center",
-                color: "rgba(0,0,0,0.8)",
-              }}
-              className="example"
-            >
-              <span
-                className="k-icon k-i-file-add"
-                style={{ marginRight: "5px" }}
-              ></span>
-              업로드할 파일을 마우스로 끌어오세요.
-            </div>
-          )}
+      {!isMobile ? (
+        <div
+          onDrop={(event: React.DragEvent<HTMLInputElement>) => {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            handleFileUpload(files);
+          }}
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
+            e.preventDefault();
+          }}
+          style={{
+            width: "100% ",
+            lineHeight: "100px",
+            border: "solid 1px rgba(0, 0, 0, 0.08)",
+            paddingBottom: "5px",
+            textAlign: "center",
+            color: "rgba(0,0,0,0.8)",
+          }}
+          className="example"
+        >
+          <span
+            className="k-icon k-i-file-add"
+            style={{ marginRight: "5px" }}
+          ></span>
+          업로드할 파일을 마우스로 끌어오세요.
+        </div>
+      ) : (
+        ""
+      )}
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -554,7 +556,9 @@ const KendoWindow = ({
       >
         <Grid
           style={{
-            height: gridHeight,
+            height: !isMobile
+              ? position.height - height - height2 - height3 - height4
+              : deviceHeight - height - height2 - height4,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
@@ -562,15 +566,11 @@ const KendoWindow = ({
               insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
-            {}
+            mainDataState
           )}
-          sortable={true}
-          groupable={false}
-          reorderable={true}
-          //onDataStateChange={dataStateChange}
-          fixedScroll={true}
-          total={mainDataResult.total}
-          //onScroll={scrollHandler}
+          onDataStateChange={onMainDataStateChange}
+          {...mainDataState}
+          dataItemKey={DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}
           selectable={{
             enabled: true,
@@ -579,6 +579,13 @@ const KendoWindow = ({
             mode: "single",
           }}
           onSelectionChange={onSelectionChange}
+          fixedScroll={true}
+          total={mainDataResult.total}
+          sortable={true}
+          onSortChange={onMainSortChange}
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
           onItemChange={onMainItemChange}
           cellRender={customCellRender}
           rowRender={customRowRender}
