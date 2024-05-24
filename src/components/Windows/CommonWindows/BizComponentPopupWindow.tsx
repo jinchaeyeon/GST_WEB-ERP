@@ -27,6 +27,7 @@ import {
   isFilterheightstate,
   isFilterheightstate2,
   isLoading,
+  isFilterHideState2
 } from "../../../store/atoms";
 import {
   UseBizComponent,
@@ -60,6 +61,8 @@ const KendoWindow = ({
     useRecoilState(isFilterheightstate); //웹 필터박스 높이
   const [isFilterheightstates2, setIsFilterheightstates2] =
     useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
@@ -115,7 +118,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    setIsFilterheightstates2(true);
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 

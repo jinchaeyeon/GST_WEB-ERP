@@ -36,6 +36,7 @@ import {
   deletedNameState,
   isFilterheightstate,
   isFilterheightstate2,
+  isFilterHideState2,
   isLoading,
   loginResultState,
   unsavedNameState,
@@ -141,6 +142,8 @@ const KendoWindow = ({
     useRecoilState(isFilterheightstate); //웹 필터박스 높이
   const [isFilterheightstates2, setIsFilterheightstates2] =
     useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
@@ -235,7 +238,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    setIsFilterheightstates2(true);
+    setisFilterHideStates2(true);
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }

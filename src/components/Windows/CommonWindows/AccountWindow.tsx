@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -28,6 +28,7 @@ import {
   isFilterheightstate,
   isFilterheightstate2,
   isLoading,
+  isFilterHideState2
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
@@ -58,11 +59,13 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate); //웹 필터박스 높이
   const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이 var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-
+    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이 
+    const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -108,7 +111,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    setIsFilterheightstates2(true);
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
