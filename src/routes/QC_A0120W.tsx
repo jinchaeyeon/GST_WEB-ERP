@@ -56,7 +56,7 @@ import {
   getBizCom,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1113,7 +1113,6 @@ const QC_A0120: React.FC = () => {
                 <GridContainer
                   style={{
                     width: "60%",
-                    height: deviceHeight - height2,
                   }}
                 >
                   <GridContainerWrap>

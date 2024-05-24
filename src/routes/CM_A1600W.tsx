@@ -61,7 +61,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1594,7 +1594,9 @@ const CM_A1600: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
+          : convertDateToStr(
+              new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
+            )
       );
       dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
@@ -1623,7 +1625,9 @@ const CM_A1600: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
+          : convertDateToStr(
+              new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
+            )
       );
       dataArr.finyn_s.push(finyn);
       dataArr.kind1_s.push(kind1);
@@ -2202,52 +2206,53 @@ const CM_A1600: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer">
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>작성자</th>
-                            <td>
-                              {bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="person"
-                                  value={schedulerFilter.person}
-                                  bizComponentId="L_sysUserMaster_001"
-                                  bizComponentData={bizComponentData}
-                                  changeData={filterComboBoxChange}
-                                  valueField="user_id"
-                                  textField="user_name"
-                                  className="required"
-                                />
-                              )}
-                            </td>
-                            <th>계획구분</th>
-                            <td>
-                              {bizComponentData !== null && (
-                                <BizComponentRadioGroup
-                                  name="rdoplandiv"
-                                  value={schedulerFilter.rdoplandiv}
-                                  bizComponentId="R_PLANDIV_YN"
-                                  bizComponentData={bizComponentData}
-                                  changeData={filterRadioChange}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-
-                    <GridTitle>개인 스케줄(표)</GridTitle>
-                  </GridTitleContainer>
+                  {!isMobile && (
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>개인 스케줄(표)</GridTitle>
+                    </GridTitleContainer>
+                  )}
+                  <FilterContainer>
+                    <FilterBox
+                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                    >
+                      <tbody>
+                        <tr>
+                          <th>작성자</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={schedulerFilter.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={filterComboBoxChange}
+                                valueField="user_id"
+                                textField="user_name"
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>계획구분</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="rdoplandiv"
+                                value={schedulerFilter.rdoplandiv}
+                                bizComponentId="R_PLANDIV_YN"
+                                bizComponentData={bizComponentData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
                   {osstate == true ? (
                     <div
                       style={{
                         backgroundColor: "#ccc",
-                        height: "73vh",
+                        height: isMobile ? deviceHeight - height : "73vh",
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -2906,7 +2911,7 @@ const CM_A1600: React.FC = () => {
           </GridTitleContainer>
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer3">
-              <GridTitle>개인 스케줄(표)</GridTitle>
+             { !isMobile && <GridTitle>개인 스케줄(표)</GridTitle>}
 
               {permissions && (
                 <ButtonContainer>

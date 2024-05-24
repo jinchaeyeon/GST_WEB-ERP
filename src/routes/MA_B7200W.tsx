@@ -2763,7 +2763,7 @@ const MA_B7200W: React.FC = () => {
                       <GridTitle>제공품재고</GridTitle>
                     </GridTitleContainer>
                     <Grid
-                      style={{ height: "69vh" }}
+                      style={{ height: "68.5vh" }}
                       data={newData2.map((item: { items: any[] }) => ({
                         ...item,
                         items: item.items.map((row: any) => ({
@@ -2839,7 +2839,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{ height: "32.5vh" }}
+                        style={{ height: "32vh" }}
                         data={process(
                           detailDataResult3.data.map((row) => ({
                             ...row,

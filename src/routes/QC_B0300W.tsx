@@ -581,8 +581,8 @@ const QC_B0300W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <FormBoxWrap border={true} className="ButtonContainer">
-        <FormBox>
+      <FormBoxWrap border={true}>
+        <FormBox className="ButtonContainer">
           {isMobile ? (
             <table style={{ width: "100%" }}>
               <tbody>
