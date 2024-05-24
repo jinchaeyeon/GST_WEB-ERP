@@ -74,10 +74,6 @@ iframe#webpack-dev-server-client-overlay {
   min-height: 150px !important;
 }
 
-.visible-mobile-only {
-  display: none !important;
-}
-
 .k-grid .k-grid-header .k-header .k-cell-inner>.k-link {
   justify-content: center !important;
   /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
@@ -596,6 +592,10 @@ div.k-animation-container {
   display: none !important;
 }
 
+.visible-mobile-only2 {
+  display: none !important;
+}
+
 .k-animation-container-relative {
   display: block !important;
 }
@@ -684,7 +684,9 @@ input.readonly {
   .visible-mobile-only {
     display: block !important;
   }
-
+  .visible-mobile-only2 {
+    display: block !important;
+  }
   .preview-grid-container {
     display: none !important;
   }

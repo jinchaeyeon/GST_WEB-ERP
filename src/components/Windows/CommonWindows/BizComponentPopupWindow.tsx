@@ -23,14 +23,18 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isFilterheightstate, isLoading } from "../../../store/atoms";
+import {
+  isFilterheightstate,
+  isFilterheightstate2,
+  isLoading,
+} from "../../../store/atoms";
 import {
   UseBizComponent,
   getHeight,
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -53,11 +57,12 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //필터박스 높이
+    useRecoilState(isFilterheightstate); //웹 필터박스 높이
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -110,6 +115,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    setIsFilterheightstates2(true);
     setVisible(false);
   };
 
@@ -438,22 +444,20 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <div className="filter">
-        <FilterContainer>
-          <FilterBox
-            style={{ border: "0px" }}
-            onKeyPress={(e) => handleKeyPressSearch(e, search)}
-          >
-            <tbody>
-              <>
-                {drawFilters(4).map((value) => {
-                  return value;
-                })}
-              </>
-            </tbody>
-          </FilterBox>
-        </FilterContainer>
-      </div>
+      <WindowFilterContainer>
+        <FilterBox
+          style={{ border: "0px" }}
+          onKeyPress={(e) => handleKeyPressSearch(e, search)}
+        >
+          <tbody>
+            <>
+              {drawFilters(4).map((value) => {
+                return value;
+              })}
+            </>
+          </tbody>
+        </FilterBox>
+      </WindowFilterContainer>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -462,7 +466,11 @@ const KendoWindow = ({
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4
+              ? deviceHeight -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates2
               : position.height -
                 height -
                 height2 -

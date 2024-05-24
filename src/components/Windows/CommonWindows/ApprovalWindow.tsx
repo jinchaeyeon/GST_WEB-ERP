@@ -35,6 +35,7 @@ import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import {
   deletedNameState,
   isFilterheightstate,
+  isFilterheightstate2,
   isLoading,
   loginResultState,
   unsavedNameState,
@@ -64,7 +65,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 
@@ -137,15 +138,16 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //필터박스 높이
+    useRecoilState(isFilterheightstate); //웹 필터박스 높이
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
-  var height5 = getHeight(".WindowButtonContainer");
-  var height6 = getHeight(".WindowButtonContainer2");
-  var height7 = getHeight(".WindowButtonContainer3");
+  var height4 = getHeight(".WindowButtonContainer");
+  var height5 = getHeight(".WindowButtonContainer2");
+  var height6 = getHeight(".WindowButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({
@@ -233,6 +235,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    setIsFilterheightstates2(true);
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }
@@ -1477,7 +1480,7 @@ const KendoWindow = ({
         </ButtonContainer>
       </TitleContainer>
       <div className="filter">
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -1523,7 +1526,7 @@ const KendoWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
+        </WindowFilterContainer>
       </div>
       {isMobile ? (
         <>
@@ -1624,8 +1627,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      height4 -
-                      height5,
+                      isFilterheightstates2 -
+                      height4,
                   }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
@@ -1750,8 +1753,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      height4 -
-                      height6,
+                      isFilterheightstates2 -
+                      height5,
                   }}
                   onSelectionChange={onSelectionChange2}
                   //스크롤 조회 기능
@@ -1841,8 +1844,8 @@ const KendoWindow = ({
                       height -
                       height2 -
                       height3 -
-                      height4 -
-                      height7,
+                      isFilterheightstates2 -
+                      height6,
                   }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
@@ -1998,7 +2001,7 @@ const KendoWindow = ({
                       height3 -
                       isFilterheightstates) /
                       2 -
-                    height5,
+                    height4,
                 }}
                 onSelectionChange={onSelectionChange}
                 //스크롤 조회 기능
@@ -2095,7 +2098,7 @@ const KendoWindow = ({
                       height3 -
                       isFilterheightstates) /
                       2 -
-                    height6,
+                    height5,
                 }}
                 onSelectionChange={onSelectionChange2}
                 //스크롤 조회 기능
@@ -2188,7 +2191,7 @@ const KendoWindow = ({
                       height3 -
                       isFilterheightstates) /
                       2 -
-                    height7,
+                    height6,
                 }}
                 sortable={true}
                 groupable={false}

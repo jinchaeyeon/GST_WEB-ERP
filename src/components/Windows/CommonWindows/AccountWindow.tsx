@@ -21,10 +21,14 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
+import WindowFilterContainer from "../../../components/Containers/WindowFilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import {
+  isFilterheightstate,
+  isFilterheightstate2,
+  isLoading,
+} from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
@@ -54,8 +58,11 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".filter"); //필터
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate); //웹 필터박스 높이
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이 var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -101,6 +108,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    setIsFilterheightstates2(true);
     setVisible(false);
   };
 
@@ -296,34 +304,32 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <div className="filter">
-        <FilterContainer>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>계정코드</th>
-                <td>
-                  <Input
-                    name="acntcd"
-                    type="text"
-                    value={filters.acntcd}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>계정명</th>
-                <td>
-                  <Input
-                    name="acntnm"
-                    type="text"
-                    value={filters.acntnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FilterBox>
-        </FilterContainer>
-      </div>
+      <WindowFilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>계정코드</th>
+              <td>
+                <Input
+                  name="acntcd"
+                  type="text"
+                  value={filters.acntcd}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>계정명</th>
+              <td>
+                <Input
+                  name="acntnm"
+                  type="text"
+                  value={filters.acntnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </WindowFilterContainer>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -332,8 +338,16 @@ const KendoWindow = ({
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4
-              : position.height - height - height2 - height3 - height4,
+              ? deviceHeight -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates2
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates,
           }}
           data={process(
             mainDataResult.data.map((row) => ({

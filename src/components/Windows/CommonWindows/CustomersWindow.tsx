@@ -21,11 +21,12 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
+import WindowFilterContainer from "../../../components/Containers/WindowFilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   isFilterheightstate,
+  isFilterheightstate2,
   isLoading,
   loginResultState,
 } from "../../../store/atoms";
@@ -66,11 +67,12 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //필터박스 높이
+    useRecoilState(isFilterheightstate); //웹 필터박스 높이
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({
@@ -137,6 +139,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    setIsFilterheightstates2(true);
     setVisible(false);
   };
 
@@ -343,58 +346,56 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <div className="filter">
-        <FilterContainer>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
+      <WindowFilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>업체코드</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>업체구분</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="custdiv"
+                    value={filters.custdiv}
+                    bizComponentId="L_BA026"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
                   />
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
+                )}
+              </td>
+              <th>사용여부</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="useyn"
+                    value={filters.useyn}
+                    bizComponentId="R_USEYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
                   />
-                </td>
-                <th>업체구분</th>
-                <td>
-                  {bizComponentData !== null && (
-                    <BizComponentComboBox
-                      name="custdiv"
-                      value={filters.custdiv}
-                      bizComponentId="L_BA026"
-                      bizComponentData={bizComponentData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-                <th>사용여부</th>
-                <td>
-                  {bizComponentData !== null && (
-                    <BizComponentRadioGroup
-                      name="useyn"
-                      value={filters.useyn}
-                      bizComponentId="R_USEYN"
-                      bizComponentData={bizComponentData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </FilterBox>
-        </FilterContainer>
-      </div>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </WindowFilterContainer>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -403,7 +404,11 @@ const KendoWindow = ({
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4
+              ? deviceHeight -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates2
               : position.height -
                 height -
                 height2 -
