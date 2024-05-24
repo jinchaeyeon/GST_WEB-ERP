@@ -48,8 +48,6 @@ export const getHeight = (className: string) => {
       ? 0
       : className == ".k-tabstrip-items-wrapper"
       ? getElementHeight(container) + 32
-      : className == ".k-window-titlebar"
-      ? getElementHeight(container) + 50
       : getElementHeight(container);
   } else {
     return 0;
