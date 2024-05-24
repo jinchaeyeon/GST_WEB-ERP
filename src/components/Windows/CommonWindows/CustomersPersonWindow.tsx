@@ -27,6 +27,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -53,6 +54,8 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -321,17 +324,17 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
-        <Title />
-        <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
-            조회
-          </Button>
-        </ButtonContainer>
-      </TitleContainer>
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "100%" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height3
+              : position.height - height - height3,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -385,7 +388,7 @@ const KendoWindow = ({
         </Grid>
       </GridContainer>
       <BottomContainer>
-        <ButtonContainer>
+        <ButtonContainer className="BottomContainer">
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인
           </Button>

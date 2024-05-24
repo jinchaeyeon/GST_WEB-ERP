@@ -31,6 +31,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -71,6 +72,8 @@ const Badwindow = ({
   UseMessages(pathname, setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -506,9 +509,17 @@ const Badwindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <GridContainer>
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "500px" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height3
+              : position.height - height - height3,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -570,7 +581,7 @@ const Badwindow = ({
           />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onSaveClick}>
             확인

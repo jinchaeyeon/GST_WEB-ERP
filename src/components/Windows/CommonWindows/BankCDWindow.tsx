@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,8 +23,12 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { chkScrollHandler, handleKeyPressSearch } from "../../CommonFunction";
+import { isFilterheightstate, isLoading } from "../../../store/atoms";
+import {
+  chkScrollHandler,
+  getHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 
@@ -38,6 +42,12 @@ const DATA_ITEM_KEY = "sub_code";
 const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  const [isFilterheightstates, setIsFilterheightstates] =
+    useRecoilState(isFilterheightstate); //필터박스 높이
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -211,7 +221,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
       onResize={handleResize}
       onClose={onClose}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title />
         <ButtonContainer>
           <Button
@@ -252,9 +262,21 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "100%" }}
+          style={{
+            height: isMobile
+              ? deviceHeight - height - height2 - height3 - height4
+              : position.height -
+                height -
+                height2 -
+                height3 -
+                isFilterheightstates,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -295,7 +317,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
           <GridColumn field="code_name" title="은행명" width="150px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인

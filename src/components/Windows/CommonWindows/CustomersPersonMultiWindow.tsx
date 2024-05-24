@@ -29,6 +29,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -62,7 +63,10 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
-
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".WindowButtonContainer"); //grid title부분
+  var height3 = getHeight(".WindowButtonContainer2"); //grid title부분
+  var height4 = getHeight(".BottomContainer"); //하단 버튼부분
   const setLoading = useSetRecoilState(isLoading);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -393,20 +397,20 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
-        <Title />
-        <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
-            조회
-          </Button>
-        </ButtonContainer>
-      </TitleContainer>
-      <GridContainer height="calc(100% - 470px)">
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
+        <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>사용자 리스트</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 42px)" }}
+          style={{
+            height: isMobile
+              ? (deviceHeight - height - height2 - height3 - height4) / 2
+              : (position.height - height - height2 - height3 - height4) / 2,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -459,11 +463,15 @@ const KendoWindow = ({
         </Grid>
       </GridContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "250px" }}
+          style={{
+            height: isMobile
+              ? (deviceHeight - height - height2 - height3 - height4) / 2
+              : (position.height - height - height2 - height3 - height4) / 2,
+          }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
@@ -509,7 +517,7 @@ const KendoWindow = ({
           <GridColumn field="email" title="메일주소" width="150px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인

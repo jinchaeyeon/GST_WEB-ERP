@@ -17,7 +17,7 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { passwordExpirationInfoState } from "../../../store/atoms";
 import { TPasswordRequirements } from "../../../store/types";
-import { validator } from "../../CommonFunction";
+import { getHeight, validator } from "../../CommonFunction";
 import { FormInput } from "../../Editors";
 
 type TKendoWindow = {
@@ -31,7 +31,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -109,10 +110,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const handleSubmit = (dataItem: { [name: string]: any }) => {
     const { old_password, new_password, check_new_password } = dataItem;
 
-    if(new_password != check_new_password) {
+    if (new_password != check_new_password) {
       alert("비밀번호 확인이 다릅니다.");
-    } else if(new_password.length < 4) {
-      alert("비밀번호 최소 4자리를 입력해주세요.")
+    } else if (new_password.length < 4) {
+      alert("비밀번호 최소 4자리를 입력해주세요.");
     } else {
       setParaData((prev) => ({
         ...prev,
@@ -174,7 +175,15 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
+            <fieldset
+              className={"k-form-fieldset"}
+              style={{
+                overflow: isMobile ? "auto" : "hidden",
+                height: isMobile
+                  ? deviceHeight - height - height3
+                  : position.height - height - height3,
+              }}
+            >
               <FieldWrap fieldWidth="100%">
                 <Field
                   name={"old_password"}
@@ -205,29 +214,29 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                   type={"password"}
                 />
               </FieldWrap>
+              {pwReq && (
+                <div
+                  style={{
+                    fontSize: "12px",
+                    textAlign: "right",
+                    marginTop: "10px",
+                    color: "#ff6358",
+                  }}
+                >
+                  {pwExpInfo && pwExpInfo.status == "Initial" && (
+                    <p>- 초기 비밀번호를 변경해주세요.</p>
+                  )}
+                  <p>
+                    - 비밀번호는 최소 {pwReq.minimumLength}자리를 입력해주세요.
+                  </p>
+                  {pwReq.useSpecialChar && (
+                    <p>- 비밀번호는 영문자, 숫자, 특수문자를 포함해주세요.</p>
+                  )}
+                </div>
+              )}
             </fieldset>
-            {pwReq && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  textAlign: "right",
-                  marginTop: "10px",
-                  color: "#ff6358",
-                }}
-              >
-                {pwExpInfo && pwExpInfo.status == "Initial" && (
-                  <p>- 초기 비밀번호를 변경해주세요.</p>
-                )}
-                <p>
-                  - 비밀번호는 최소 {pwReq.minimumLength}자리를 입력해주세요.
-                </p>
-                {pwReq.useSpecialChar && (
-                  <p>- 비밀번호는 영문자, 숫자, 특수문자를 포함해주세요.</p>
-                )}
-              </div>
-            )}
             <BottomContainer>
-              <ButtonContainer>
+              <ButtonContainer className="BottomContainer">
                 {pwExpInfo &&
                   pwExpInfo.useChangeNext &&
                   pwExpInfo.useExpiration &&

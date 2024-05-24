@@ -14,6 +14,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
+  BottomContainer,
   ButtonContainer,
   GridContainer,
   TitleContainer,
@@ -27,6 +28,7 @@ import NumberCell from "../../Cells/NumberCell";
 import {
   convertDateToStrWithTime2,
   getGridItemChangedData,
+  getHeight,
 } from "../../CommonFunction";
 import { EDIT_FIELD, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
@@ -64,6 +66,20 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 810,
   });
+  const [gridHeight, setGridHeight] = useState(0);
+  React.useLayoutEffect(() => {
+    const calculateHeight = () => {
+      var height = getHeight(".k-window-titlebar");
+      var height2 = getHeight(".TitleContainer");
+      var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      const calculatedGridHeight = isMobile
+        ? deviceHeight - height - height2 - height3
+        : position.height - height - height2 - height3 - 100;
+      setGridHeight(calculatedGridHeight);
+    };
+    calculateHeight();
+  }, [position.height]);
+
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [attachmentNumber, setAttachmentNumber] = useState(para);
   const setLoading = useSetRecoilState(isLoading);
@@ -310,7 +326,7 @@ const KendoWindow = ({
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files == null) return false;
-    setLoading(true)
+    setLoading(true);
 
     let newAttachmentNumber = "";
     const promises = [];
@@ -343,7 +359,7 @@ const KendoWindow = ({
         fetchGrid();
       }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -442,7 +458,7 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <ButtonContainer>
           <Button
             onClick={upload}
@@ -522,6 +538,7 @@ const KendoWindow = ({
                 textAlign: "center",
                 color: "rgba(0,0,0,0.8)",
               }}
+              className="example"
             >
               <span
                 className="k-icon k-i-file-add"
@@ -530,9 +547,15 @@ const KendoWindow = ({
               업로드할 파일을 마우스로 끌어오세요.
             </div>
           )}
-      <GridContainer height="calc(100% - 170px)">
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <Grid
-          style={{ height: "100%" }}
+          style={{
+            height: gridHeight,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -584,12 +607,14 @@ const KendoWindow = ({
           <GridColumn
             field="insert_time"
             title="등록일자"
-            width="200"
+            width="180"
             cell={CenterCell}
           />
         </Grid>
       </GridContainer>
-      <p>※ 최대 파일 크기 (400MB)</p>
+      <BottomContainer className="BottomContainer">
+        <p>※ 최대 파일 크기 (400MB)</p>
+      </BottomContainer>
     </Window>
   );
 };
