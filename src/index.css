@@ -20,6 +20,17 @@ code {
     monospace !important;
 }
 
+.k-window-content .k-grid {
+  margin : 0px !important;
+}
+
+
+@media (max-width: 1200px) {
+  .k-window-content .k-grid {
+    margin : 5px 0px 5px 5px !important;
+  }
+}
+
 iframe#webpack-dev-server-client-overlay {
   display: none !important
 }
