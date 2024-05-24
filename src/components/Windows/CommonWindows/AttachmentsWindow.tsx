@@ -147,7 +147,16 @@ const KendoWindow = ({
   const fetchGrid = async () => {
     let data: any;
 
-    if (attachmentNumber == "") return false;
+    if (attachmentNumber == "") {
+      setMainDataResult((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
+
+      return false;
+    }
     const parameters = {
       attached: "list?attachmentNumber=" + attachmentNumber,
     };
