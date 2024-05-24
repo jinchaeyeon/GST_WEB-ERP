@@ -1897,7 +1897,7 @@ const CM_A5000W: React.FC = () => {
               fileName="컨설팅(문의·답변)관리"
             >
               <Grid
-                style={{ height: deviceHeight - height - height1 }}
+                style={{ height: isMobile ? deviceHeight - height - height1 : "58vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

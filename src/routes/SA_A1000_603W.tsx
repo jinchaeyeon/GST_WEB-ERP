@@ -541,10 +541,10 @@ const SA_A1000_603W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2") - 14;
+  var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4") - 14;
-  var height5 = getHeight(".ButtonContainer5") - 19;
+  var height4 = getHeight(".ButtonContainer4");
+  var height5 = getHeight(".ButtonContainer5");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 

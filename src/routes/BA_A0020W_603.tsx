@@ -244,9 +244,6 @@ const BA_A0020W_603: React.FC = () => {
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -3676,7 +3673,7 @@ const BA_A0020W_603: React.FC = () => {
                   }}
                 >
                   <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                    <GridTitleContainer className="ButtonContainer3">
+                    <GridTitleContainer className="ButtonContainer2">
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -3708,7 +3705,7 @@ const BA_A0020W_603: React.FC = () => {
                       fileName="고객정보관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: deviceHeight - height - height2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3796,7 +3793,7 @@ const BA_A0020W_603: React.FC = () => {
                 disabled={workType == "N" ? true : false}
               >
                 <GridContainer>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer2">
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick3}
@@ -3828,7 +3825,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height4 }}
+                      style={{ height: deviceHeight - height - height2 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3911,7 +3908,7 @@ const BA_A0020W_603: React.FC = () => {
                 disabled={workType == "N" ? true : false}
               >
                 <GridContainer>
-                  <GridTitleContainer className="ButtonContainer5">
+                  <GridTitleContainer className="ButtonContainer2">
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick4}
@@ -3943,7 +3940,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height5 }}
+                      style={{ height: deviceHeight - height - height2 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
