@@ -142,7 +142,7 @@ const KendoWindow = ({
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   var height5 = getHeight(".WindowButtonContainer");
   var height6 = getHeight(".WindowButtonContainer2");
   var height7 = getHeight(".WindowButtonContainer3");
@@ -1476,53 +1476,55 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>결재번호</th>
-              <td>
-                <Input type="text" value="자동부여" className="readonly" />
-              </td>
-              <th>작성일자</th>
-              <td>
-                <DatePicker
-                  name="recdt"
-                  value={information.recdt}
-                  format="yyyy-MM-dd"
-                  className="required"
-                  onChange={InputChange}
-                  placeholder=""
-                />
-              </td>
-              <th>종류</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="pgmgb"
-                    value={filters.pgmgb}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    disabled={true}
-                    className="readonly"
+      <div className="filter">
+        <FilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+            <tbody>
+              <tr>
+                <th>결재번호</th>
+                <td>
+                  <Input type="text" value="자동부여" className="readonly" />
+                </td>
+                <th>작성일자</th>
+                <td>
+                  <DatePicker
+                    name="recdt"
+                    value={information.recdt}
+                    format="yyyy-MM-dd"
+                    className="required"
+                    onChange={InputChange}
+                    placeholder=""
                   />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>결재제목</th>
-              <td colSpan={5}>
-                <Input
-                  name="appnm"
-                  type="text"
-                  value={information.appnm}
-                  onChange={InputChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+                </td>
+                <th>종류</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="pgmgb"
+                      value={filters.pgmgb}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      disabled={true}
+                      className="readonly"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>결재제목</th>
+                <td colSpan={5}>
+                  <Input
+                    name="appnm"
+                    type="text"
+                    value={information.appnm}
+                    onChange={InputChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      </div>
       {isMobile ? (
         <>
           <Swiper

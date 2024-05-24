@@ -47,7 +47,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -236,6 +236,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
+      <div className="filter">
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
@@ -262,6 +263,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
           </tbody>
         </FilterBox>
       </FilterContainer>
+      </div>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",

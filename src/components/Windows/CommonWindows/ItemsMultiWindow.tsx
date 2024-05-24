@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -26,7 +26,7 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
-import { isFilterheightstate, isLoading } from "../../../store/atoms";
+import { isLoading } from "../../../store/atoms";
 import {
   UseBizComponent,
   getHeight,
@@ -48,13 +48,11 @@ let temp = 0;
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
-  const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //필터박스 높이
   let isMobile = deviceWidth <= 1200;
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height4 = getHeight(".filter"); //필터
   var height5 = getHeight(".WindowButtonContainer");
   var height6 = getHeight(".WindowButtonContainer2");
 
@@ -444,55 +442,57 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용여부</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
+      <div className="filter">
+        <FilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+            <tbody>
+              <tr>
+                <th>품목코드</th>
+                <td>
+                  <Input
+                    name="itemcd"
+                    type="text"
+                    value={filters.itemcd}
+                    onChange={filterInputChange}
                   />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+                </td>
+
+                <th>품목명</th>
+                <td>
+                  <Input
+                    name="itemnm"
+                    type="text"
+                    value={filters.itemnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+
+                <th>규격</th>
+                <td>
+                  <Input
+                    name="insiz"
+                    type="text"
+                    value={filters.insiz}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>사용여부</th>
+                <td>
+                  {bizComponentData !== null && (
+                    <BizComponentRadioGroup
+                      name="useyn"
+                      value={filters.useyn}
+                      bizComponentId="R_USEYN"
+                      bizComponentData={bizComponentData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      </div>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -504,18 +504,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight -
-                height -
-                height2 -
-                height3 -
-                height4 -
-                height5
-              : (position.height -
-                  height -
-                  height2 -
-                  height3 -
-                  isFilterheightstates) /
-                  2 -
+              ? deviceHeight - height - height2 - height3 - height4 - height5
+              : (position.height - height - height2 - height3 - height4) / 2 -
                 height5,
           }}
           data={process(
@@ -587,18 +577,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight -
-                height -
-                height2 -
-                height3 -
-                height4 -
-                height6
-              : (position.height -
-                  height -
-                  height2 -
-                  height3 -
-                  isFilterheightstates) /
-                  2 -
+              ? deviceHeight - height - height2 - height3 - height4 - height6
+              : (position.height - height - height2 - height3 - height4) / 2 -
                 height6,
           }}
           data={process(

@@ -57,7 +57,7 @@ const KendoWindow = ({
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -438,20 +438,22 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox
-          style={{ border: "0px" }}
-          onKeyPress={(e) => handleKeyPressSearch(e, search)}
-        >
-          <tbody>
-            <>
-              {drawFilters(4).map((value) => {
-                return value;
-              })}
-            </>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+      <div className="filter">
+        <FilterContainer>
+          <FilterBox
+            style={{ border: "0px" }}
+            onKeyPress={(e) => handleKeyPressSearch(e, search)}
+          >
+            <tbody>
+              <>
+                {drawFilters(4).map((value) => {
+                  return value;
+                })}
+              </>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      </div>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",

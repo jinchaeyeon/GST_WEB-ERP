@@ -22,16 +22,35 @@ export const getBizCom = (bizComponentData: any, id: string) => {
     : bizComponentData.find((item: any) => item.bizComponentId == id).data.Rows;
 };
 
+
 export const getHeight = (className: string) => {
+
+  function getElementHeight(node: Element) {
+    const list = [
+        'margin-top',
+        'margin-bottom',
+        'border-top',
+        'border-bottom',
+        'padding-top',
+        'padding-bottom',
+        'height'
+    ]
+  
+    const style = window.getComputedStyle(node)
+    return list
+        .map(k => parseInt(style.getPropertyValue(k), 10))
+        .reduce((prev, cur) => prev + cur)
+  }
+
   var container = document.querySelector(className);
   if (container?.clientHeight != undefined) {
     return container == undefined
       ? 0
       : className == ".k-tabstrip-items-wrapper"
-      ? container.clientHeight + 32
+      ? getElementHeight(container) + 32
       : className == ".k-window-titlebar"
-      ? container.clientHeight + 50
-      : container.clientHeight;
+      ? getElementHeight(container) + 50
+      : getElementHeight(container);
   } else {
     return 0;
   }

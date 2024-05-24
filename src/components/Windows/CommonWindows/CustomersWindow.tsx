@@ -70,7 +70,7 @@ const KendoWindow = ({
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  var height4 = getHeight(".filter"); //모바일에서만 존재하는 조회조건버튼
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({
@@ -343,56 +343,58 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>업체구분</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="custdiv"
-                    value={filters.custdiv}
-                    bizComponentId="L_BA026"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
+      <div className="filter">
+        <FilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+            <tbody>
+              <tr>
+                <th>업체코드</th>
+                <td>
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    onChange={filterInputChange}
                   />
-                )}
-              </td>
-              <th>사용여부</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
+                </td>
+                <th>업체명</th>
+                <td>
+                  <Input
+                    name="custnm"
+                    type="text"
+                    value={filters.custnm}
+                    onChange={filterInputChange}
                   />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
+                </td>
+                <th>업체구분</th>
+                <td>
+                  {bizComponentData !== null && (
+                    <BizComponentComboBox
+                      name="custdiv"
+                      value={filters.custdiv}
+                      bizComponentId="L_BA026"
+                      bizComponentData={bizComponentData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+                <th>사용여부</th>
+                <td>
+                  {bizComponentData !== null && (
+                    <BizComponentRadioGroup
+                      name="useyn"
+                      value={filters.useyn}
+                      bizComponentId="R_USEYN"
+                      bizComponentData={bizComponentData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
+      </div>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
