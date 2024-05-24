@@ -24,12 +24,6 @@ code {
   margin : 0px !important;
 }
 
-@media (max-width: 1200px) {
-  .k-window-content .k-grid {
-    margin : 5px 0px 5px 0px !important;
-  }
-}
-
 iframe#webpack-dev-server-client-overlay {
   display: none !important
 }
