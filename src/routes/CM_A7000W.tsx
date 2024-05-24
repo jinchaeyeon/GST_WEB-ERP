@@ -925,15 +925,6 @@ const CM_A7000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-
-    setFilters2((prev) => ({
-      ...prev,
-      meetingnum: selectedRowData.meetingnum,
-      isSearch: true,
-    }));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회

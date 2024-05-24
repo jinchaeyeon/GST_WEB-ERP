@@ -18,8 +18,6 @@ import {
   GridContainer,
   GridTitle,
   GridTitleContainer,
-  Title,
-  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -408,8 +406,8 @@ const KendoWindow = ({
         <Grid
           style={{
             height: isMobile
-              ? (deviceHeight - height - height2 - height3 - height4) / 2
-              : (position.height - height - height2 - height3 - height4) / 2,
+              ? deviceHeight - height - height2 - height4
+              : (position.height - height) / 2 - height2,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
@@ -462,15 +460,19 @@ const KendoWindow = ({
           <GridColumn field="email" title="메일주소" width="150px" />
         </Grid>
       </GridContainer>
-      <GridContainer>
+      <GridContainer
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
         </GridTitleContainer>
         <Grid
           style={{
             height: isMobile
-              ? (deviceHeight - height - height2 - height3 - height4) / 2
-              : (position.height - height - height2 - height3 - height4) / 2,
+              ? deviceHeight - height - height3 - height4
+              : (position.height - height) / 2 - height3,
           }}
           data={process(
             keepingDataResult.data.map((row) => ({

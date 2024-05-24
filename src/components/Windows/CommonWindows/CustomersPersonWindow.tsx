@@ -387,8 +387,8 @@ const KendoWindow = ({
           <GridColumn field="email" title="메일주소" width="150px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
-        <ButtonContainer className="BottomContainer">
+      <BottomContainer className="BottomContainer">
+        <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인
           </Button>

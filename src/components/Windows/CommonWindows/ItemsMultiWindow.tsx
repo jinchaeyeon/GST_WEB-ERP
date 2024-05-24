@@ -504,12 +504,18 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4 - height5
-              : position.height -
+              ? deviceHeight -
                 height -
                 height2 -
                 height3 -
-                isFilterheightstates -
+                height4 -
+                height5
+              : (position.height -
+                  height -
+                  height2 -
+                  height3 -
+                  isFilterheightstates) /
+                  2 -
                 height5,
           }}
           data={process(
@@ -581,12 +587,18 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4 - height6
-              : position.height -
+              ? deviceHeight -
                 height -
                 height2 -
                 height3 -
-                isFilterheightstates -
+                height4 -
+                height6
+              : (position.height -
+                  height -
+                  height2 -
+                  height3 -
+                  isFilterheightstates) /
+                  2 -
                 height6,
           }}
           data={process(
