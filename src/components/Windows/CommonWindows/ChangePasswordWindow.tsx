@@ -160,8 +160,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   return (
     <Window
       title={"비밀번호 변경"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

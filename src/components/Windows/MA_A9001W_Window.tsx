@@ -788,8 +788,8 @@ const pc = UseGetValueFromSessionItem("pc");
     <>
       <Window
         title={"지급처리"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

@@ -94,8 +94,8 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
     <>
       <Window
         title={"지출결의서 미리보기"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

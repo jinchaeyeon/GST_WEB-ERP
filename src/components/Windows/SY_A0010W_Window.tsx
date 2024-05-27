@@ -1185,8 +1185,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={workType == "N" ? "공통코드 생성" : "공통코드 정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

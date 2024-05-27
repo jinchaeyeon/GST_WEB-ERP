@@ -169,8 +169,8 @@ const pc = UseGetValueFromSessionItem("pc");
     <>
       <Window
         title={"감가상각비현황팝업"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

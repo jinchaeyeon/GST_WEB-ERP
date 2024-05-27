@@ -1319,8 +1319,8 @@ const DetailWindow = ({
   return (
     <Window
       title={"상세정보등록"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

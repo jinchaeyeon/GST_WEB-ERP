@@ -462,8 +462,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"파일첨부관리"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

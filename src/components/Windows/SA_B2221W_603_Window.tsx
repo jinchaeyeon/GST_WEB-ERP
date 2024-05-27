@@ -301,8 +301,8 @@ const CopyWindow = ({
     <>
       <Window
         title={"수주내역조회"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

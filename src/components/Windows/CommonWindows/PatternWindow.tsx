@@ -526,8 +526,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"패턴공정도 참조"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

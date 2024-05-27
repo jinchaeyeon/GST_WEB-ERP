@@ -107,8 +107,8 @@ const SA_A1000_603W_Window = ({
   return (
     <Window
       title={"시험의뢰서출력"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

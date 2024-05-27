@@ -1727,8 +1727,8 @@ const pc = UseGetValueFromSessionItem("pc");
     <>
       <Window
         title={workType == "N" ? "수금처리생성" : "수금처리수정"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

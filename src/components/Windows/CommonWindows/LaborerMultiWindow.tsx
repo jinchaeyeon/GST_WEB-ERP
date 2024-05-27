@@ -394,8 +394,8 @@ const LaborerMultiWindow = ({
   return (
     <Window
       title={"일용직사원리스트(멀티)"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

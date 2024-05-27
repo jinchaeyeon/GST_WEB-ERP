@@ -278,8 +278,8 @@ const StandardWindow = ({
   return (
     <Window
       title={"기준정보팝업"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

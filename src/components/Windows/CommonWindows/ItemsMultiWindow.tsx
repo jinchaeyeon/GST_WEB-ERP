@@ -427,8 +427,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <Window
       title={"품목참조(멀티)"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

@@ -1325,8 +1325,8 @@ const KendoWindow = ({
           ? "지출결의서복사"
           : "지출결의서정보"
       }
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

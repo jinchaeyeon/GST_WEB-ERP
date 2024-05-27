@@ -69,8 +69,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     <>
       <Window
         title={"금액입력"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

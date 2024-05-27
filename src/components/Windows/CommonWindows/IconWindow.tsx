@@ -283,8 +283,8 @@ const KendoWindow = ({
     <div>
       <Window
         title={"아이콘 등록/변경"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

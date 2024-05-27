@@ -528,8 +528,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"이전 요청 참조"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

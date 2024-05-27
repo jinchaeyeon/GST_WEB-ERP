@@ -684,8 +684,8 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   return (
     <Window
       title={"미팅 참석자 등록"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

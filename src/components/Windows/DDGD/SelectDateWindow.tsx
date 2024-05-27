@@ -130,8 +130,8 @@ const KendoWindow = ({
   return (
     <Window
       title={`등원 변경 신청`}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

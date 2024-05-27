@@ -376,8 +376,8 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   return (
     <Window
       title={"입고상세정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

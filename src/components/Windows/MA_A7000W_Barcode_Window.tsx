@@ -190,8 +190,8 @@ const CopyWindow = ({
     <>
       <Window
         title={"바코드 출력"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

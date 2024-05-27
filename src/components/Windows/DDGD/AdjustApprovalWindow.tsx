@@ -440,8 +440,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={"변경 신청 리스트"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

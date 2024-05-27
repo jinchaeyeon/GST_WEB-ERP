@@ -565,8 +565,8 @@ const pc = UseGetValueFromSessionItem("pc");
     <>
       <Window
         title={"투입LOT선택"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

@@ -2410,8 +2410,8 @@ const CopyWindow = ({
     <>
       <Window
         title={workType == "N" ? "직접입고생성" : "직접입고정보"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

@@ -2022,8 +2022,8 @@ const CopyWindow = ({
     <>
       <Window
         title={workType == "N" ? "고정자산생성" : "고정자산정보"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

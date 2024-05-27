@@ -101,8 +101,8 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
     <>
       <Window
         title={"출력형태"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

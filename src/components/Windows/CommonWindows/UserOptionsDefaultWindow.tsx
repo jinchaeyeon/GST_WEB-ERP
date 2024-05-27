@@ -878,8 +878,8 @@ const pc = UseGetValueFromSessionItem("pc");
           ? "사용자 옵션 기본값 생성 (관리자)"
           : "사용자 옵션 기본값 수정 (관리자)"
       }
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

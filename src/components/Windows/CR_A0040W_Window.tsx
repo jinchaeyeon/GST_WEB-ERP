@@ -453,8 +453,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={workType == "N" ? "회원권 등록" : "회원권 정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

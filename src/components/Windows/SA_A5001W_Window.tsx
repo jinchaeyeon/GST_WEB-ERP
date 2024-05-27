@@ -2354,8 +2354,8 @@ const CopyWindow = ({
     <>
       <Window
         title={workType == "N" ? "판매처리(수출)생성" : "판매처리(수출)정보"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

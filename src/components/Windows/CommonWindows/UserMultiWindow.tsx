@@ -438,8 +438,8 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <Window
       title={"사용자리스트(멀티)"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

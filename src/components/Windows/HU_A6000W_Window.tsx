@@ -795,8 +795,8 @@ const CopyWindow = ({
     <>
       <Window
         title={workType == "N" ? "일용직 인사생성" : "일용직 인사수정"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

@@ -1253,8 +1253,8 @@ const pc = UseGetValueFromSessionItem("pc");
     <>
       <Window
         title={"시험디자인설계상세"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

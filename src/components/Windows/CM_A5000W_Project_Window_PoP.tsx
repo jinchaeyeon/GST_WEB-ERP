@@ -425,8 +425,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"프로젝트 참조"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

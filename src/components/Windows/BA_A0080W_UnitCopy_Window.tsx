@@ -668,8 +668,8 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     <>
       <Window
         title={"단가복사"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

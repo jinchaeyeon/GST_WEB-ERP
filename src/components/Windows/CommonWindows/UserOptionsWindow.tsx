@@ -1997,8 +1997,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={"사용자 옵션 설정"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

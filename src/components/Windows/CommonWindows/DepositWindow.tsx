@@ -235,8 +235,8 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   return (
     <Window
       title={"예적금 관리 팝업"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

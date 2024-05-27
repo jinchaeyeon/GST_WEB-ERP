@@ -819,8 +819,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={"Messenger"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

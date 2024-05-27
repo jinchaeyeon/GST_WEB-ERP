@@ -532,8 +532,8 @@ const CopyWindow = ({
     <>
       <Window
         title={workType == "N" ? "NCR생성" : "NCR정보"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

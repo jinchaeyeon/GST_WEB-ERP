@@ -64,8 +64,8 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   return (
     <Window
       title={"일괄생성"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

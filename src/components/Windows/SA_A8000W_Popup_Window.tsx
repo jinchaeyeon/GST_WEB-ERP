@@ -549,8 +549,8 @@ const CopyWindow = ({
     <>
       <Window
         title={"매출자료참조 팝업"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

@@ -354,8 +354,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={workType == "N" ? "반려견 등록" : "반려견 정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

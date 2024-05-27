@@ -3310,8 +3310,8 @@ const CopyWindow = ({
             ? "대체전표복사"
             : "대체전표정보"
         }
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

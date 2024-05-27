@@ -324,8 +324,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={workType == "N" ? "공지생성" : "공지정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

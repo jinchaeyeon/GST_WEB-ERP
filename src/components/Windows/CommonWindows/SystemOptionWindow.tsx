@@ -189,8 +189,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   return (
     <Window
       title={"시스템 옵션 (관리자)"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

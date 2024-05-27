@@ -317,8 +317,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"업체담당자팝업"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

@@ -206,8 +206,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={"비가동 입력"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

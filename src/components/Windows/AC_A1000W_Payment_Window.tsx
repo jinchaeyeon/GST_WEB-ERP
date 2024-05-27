@@ -755,8 +755,8 @@ const CopyWindow = ({
     <>
       <Window
         title={"지급어음 대체처리"}
-        width={position.width}
-        height={position.height}
+        initialWidth={position.width}
+        initialHeight={position.height}
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}

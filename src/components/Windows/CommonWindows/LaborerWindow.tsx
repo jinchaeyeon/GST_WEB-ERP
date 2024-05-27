@@ -255,8 +255,8 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <Window
       title={"일용직 사원LIST"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

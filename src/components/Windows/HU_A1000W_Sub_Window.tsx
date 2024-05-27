@@ -615,8 +615,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"연장시간 관리"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

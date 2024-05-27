@@ -230,8 +230,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <Window
       title={workType == "N" ? "사용자그룹 생성" : "사용자그룹 정보"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

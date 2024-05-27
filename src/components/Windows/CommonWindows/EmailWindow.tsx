@@ -146,8 +146,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"Email"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

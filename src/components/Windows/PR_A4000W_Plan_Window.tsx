@@ -560,8 +560,8 @@ const PlanWindow = ({
   return (
     <Window
       title={"생산계획참조"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

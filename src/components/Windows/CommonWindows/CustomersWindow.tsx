@@ -335,8 +335,8 @@ const KendoWindow = ({
   return (
     <Window
       title={"업체마스터"}
-      width={position.width}
-      height={position.height}
+      initialWidth={position.width}
+      initialHeight={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
