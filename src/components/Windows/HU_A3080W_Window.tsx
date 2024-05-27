@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -11,7 +10,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -32,7 +30,7 @@ import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  getBizCom
+  getBizCom,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -41,6 +39,7 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
+import Window from "./WindowComponent/Window";
 
 interface IPrsnnumMulti {
   prsnnum: string;
@@ -58,9 +57,6 @@ interface IPrsnnum {
   postcd: string;
 }
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IPrsnnumMulti[]): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -78,8 +74,8 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 830) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -152,18 +148,6 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -422,15 +406,10 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"사용자리스트(멀티)"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"사용자리스트(멀티)"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

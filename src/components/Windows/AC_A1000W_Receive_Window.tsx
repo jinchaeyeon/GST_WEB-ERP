@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -47,7 +46,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -58,10 +57,8 @@ import {
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   data?: Idata;
   setVisible(t: boolean): void;
@@ -124,8 +121,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
     width: isMobile == true ? deviceWidth : 1500,
     height: isMobile == true ? deviceHeight : 700,
   });
@@ -232,18 +229,6 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -775,15 +760,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"받을어음 대체처리"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"받을어음 대체처리"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

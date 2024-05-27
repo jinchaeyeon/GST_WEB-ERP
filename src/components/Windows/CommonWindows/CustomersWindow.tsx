@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -28,7 +27,7 @@ import {
   isFilterHideState2,
   isFilterheightstate2,
   isLoading,
-  loginResultState
+  loginResultState,
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
@@ -44,6 +43,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import Window from "../WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -56,9 +56,6 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "custcd";
 let targetRowIndex: null | number = null;
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   workType,
@@ -77,12 +74,12 @@ const KendoWindow = ({
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-  
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1500,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -131,20 +128,8 @@ const KendoWindow = ({
     }));
   };
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
-
   const onClose = () => {
-    if(isMobile) {
+    if (isMobile) {
       setisFilterHideStates2(true);
     }
     setVisible(false);
@@ -337,15 +322,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"업체마스터"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"업체마스터"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title />
@@ -413,11 +393,7 @@ const KendoWindow = ({
         <Grid
           style={{
             height: isMobile
-              ? deviceHeight -
-                height -
-                height2 -
-                height3 -
-                height4
+              ? deviceHeight - height - height2 - height3 - height4
               : position.height -
                 height -
                 height2 -

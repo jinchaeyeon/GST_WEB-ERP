@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window } from "@progress/kendo-react-dialogs";
 import { EditorUtils } from "@progress/kendo-react-editor";
 import {
   TabStrip,
@@ -9,14 +8,14 @@ import {
 import { Upload, UploadFileInfo } from "@progress/kendo-react-upload";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import Window from "../Windows/WindowComponent/Window";
 import { insertImageFiles } from "./utils";
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 export const InsertImageDialog = (props: any) => {
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  
+
   const [selected, setSelected] = React.useState(0);
   const [files, setFiles] = React.useState([]);
 
@@ -148,14 +147,22 @@ export const InsertImageDialog = (props: any) => {
 
   return ReactDOM.createPortal(
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title="Insert Image"
-      onClose={onClose}
-      initialWidth={500}
-      initialHeight={480}
+      titles="Insert Image"
+      Close={onClose}
+      positions={{
+        width: 500,
+        height: 480,
+        left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+        top: isMobile == true ? 0 : (deviceHeight - 480) / 2,
+      }}
+      modals={false}
     >
-      <TabStrip selected={selected} onSelect={onTabSelect} animation={false} scrollable={isMobile}>
+      <TabStrip
+        selected={selected}
+        onSelect={onTabSelect}
+        animation={false}
+        scrollable={isMobile}
+      >
         {Object.entries(attrs).length == 0 && (
           <TabStripTab title="Upload">
             <div className="k-edit-form-container pt-3 pb-3">

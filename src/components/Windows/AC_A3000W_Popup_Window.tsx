@@ -1,6 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import {
@@ -19,14 +18,11 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
-  convertDateToStr,
+  convertDateToStr
 } from "../CommonFunction";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   reload(arr: any): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -48,8 +44,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 700) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 300) / 2,
     width: isMobile == true ? deviceWidth : 700,
     height: isMobile == true ? deviceHeight : 300,
   });
@@ -105,24 +101,12 @@ const CopyWindow = ({
     }));
   };
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
-
   const onClose = () => {
     setVisible(false);
   };
 
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
@@ -171,15 +155,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"감가상각비현황팝업"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"감가상각비현황팝업"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

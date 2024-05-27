@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   MultiSelect,
   MultiSelectChangeEvent,
@@ -51,7 +50,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -64,6 +63,7 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PrsnnumWindow from "./CommonWindows/PrsnnumWindow";
+import Window from "./WindowComponent/Window";
 
 const DATA_ITEM_KEY = "num";
 const DateField = ["request_date", "finexpdt", "completion_date"];
@@ -108,9 +108,6 @@ interface IUser {
   user_name: string;
 }
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -131,8 +128,8 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1300) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 880) / 2,
     width: isMobile == true ? deviceWidth : 1300,
     height: isMobile == true ? deviceHeight : 880,
   });
@@ -204,19 +201,6 @@ const KendoWindow = ({
       setCompletion_methodListData(getBizCom(bizComponentData, "L_CM503_603"));
     }
   }, [bizComponentData]);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -530,15 +514,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"이전 요청 참조"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"이전 요청 참조"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>

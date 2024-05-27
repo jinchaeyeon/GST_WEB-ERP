@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -35,12 +34,13 @@ import {
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import Window from "./WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -74,9 +74,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -95,23 +92,11 @@ const KendoWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : 350,
-    top: isMobile == true ? 0 : 50,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 750) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 750,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -617,15 +602,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"연장시간 관리"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"연장시간 관리"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>

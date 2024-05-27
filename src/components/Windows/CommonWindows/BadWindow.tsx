@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -40,6 +39,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Window from "../WindowComponent/Window";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -56,9 +56,7 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const Badwindow = ({
   setVisible,
   setData,
@@ -78,8 +76,8 @@ const Badwindow = ({
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 650) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 650,
   });
@@ -120,18 +118,6 @@ const Badwindow = ({
       setBadcdListData(getBizCom(bizComponentData, "L_QC002"));
     }
   }, [bizComponentData]);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -503,15 +489,10 @@ const Badwindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"불량처리"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"불량처리"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridContainer
         style={{

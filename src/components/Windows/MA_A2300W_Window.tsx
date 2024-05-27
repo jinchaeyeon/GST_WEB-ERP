@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -13,9 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -45,14 +43,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   numberWithCommas,
   setDefaultDate,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -64,9 +61,8 @@ import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow1 from "./MA_A2300W_Order_Window";
-const NoneDiv = () => {
-  return <div></div>;
-};
+import Window from "./WindowComponent/Window";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -218,14 +214,14 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -335,18 +331,6 @@ const pc = UseGetValueFromSessionItem("pc");
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -1268,15 +1252,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "자재입고생성" : "자재입고정보"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "자재입고생성" : "자재입고정보"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

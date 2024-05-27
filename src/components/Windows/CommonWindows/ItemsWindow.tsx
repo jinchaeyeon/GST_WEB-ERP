@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -28,6 +27,7 @@ import { isLoading } from "../../../store/atoms";
 import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import Window from "../WindowComponent/Window";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -38,9 +38,7 @@ type IWindow = {
 
 const DATA_ITEM_KEY = "itemcd";
 let targetRowIndex: null | number = null;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const ItemsWindow = ({
   workType,
   setVisible,
@@ -52,8 +50,8 @@ const ItemsWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -90,18 +88,6 @@ const ItemsWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -297,15 +283,10 @@ const ItemsWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"품목마스터"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"품목마스터"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

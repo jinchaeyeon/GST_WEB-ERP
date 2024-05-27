@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Barcode } from "@progress/kendo-react-barcodes";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
@@ -12,6 +11,7 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
+import Window from "./WindowComponent/Window";
 
 type barcode = {
   barcode: string;
@@ -26,9 +26,6 @@ type barcode = {
   qty: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   data: barcode[];
   setVisible(t: boolean): void;
@@ -41,24 +38,13 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -165,15 +151,10 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"바코드 출력"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"바코드 출력"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <ButtonContainer>
           <ReactToPrint

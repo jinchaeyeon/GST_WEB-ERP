@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -11,9 +10,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -39,12 +37,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   getBizCom,
   getGridItemChangedData,
-  setDefaultDate2,
+  setDefaultDate2
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -55,6 +52,7 @@ import {
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import Window from "./WindowComponent/Window";
 
 const DATA_ITEM_KEY = "num";
 
@@ -76,9 +74,6 @@ type TDetailData = {
   readok: string[];
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -95,7 +90,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -110,23 +105,12 @@ const pc = UseGetValueFromSessionItem("pc");
   UseMessages(pathname, setMessagesData);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 550) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -363,7 +347,7 @@ const pc = UseGetValueFromSessionItem("pc");
         const rows = data.tables[0].Rows.map((item: any) => ({
           ...item,
           rowstatus: "",
-          readok : workType == "N" ? "N" : item.readok
+          readok: workType == "N" ? "N" : item.readok,
         }));
 
         setMainDataResult(() => {
@@ -389,8 +373,8 @@ const pc = UseGetValueFromSessionItem("pc");
         const rows = data.tables[0].Rows.map((item: any) => ({
           ...item,
           rowstatus: "",
-          readok : workType == "N" ? "N" : item.readok
-        }))
+          readok: workType == "N" ? "N" : item.readok,
+        }));
 
         setMainDataResult(() => {
           return {
@@ -568,8 +552,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"))
-      setpostcdListData(getBizCom(bizComponentData, "L_HU005"))
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
     }
   }, [bizComponentData]);
 
@@ -680,15 +664,10 @@ const pc = UseGetValueFromSessionItem("pc");
   };
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "공지생성" : "공지정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={workType == "N" ? "공지생성" : "공지정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridContainerWrap>
         <GridContainer width="55%">

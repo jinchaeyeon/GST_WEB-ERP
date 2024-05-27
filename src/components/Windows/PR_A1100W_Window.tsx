@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -44,24 +43,19 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   checkIsDDLValid,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
   getSelectedFirstData,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
-import {
-  EDIT_FIELD,
-  GAP,
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../CommonString";
+import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CopyWindow2 from "./CommonWindows/PatternWindow";
+import Window from "./WindowComponent/Window";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -417,9 +411,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -431,7 +422,7 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -450,23 +441,11 @@ const pc = UseGetValueFromSessionItem("pc");
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     getVisible(false);
@@ -1860,15 +1839,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "계획처리" : "계획처리"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "계획처리" : "계획처리"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <GridContainerWrap>
           <GridContainer width="30%">

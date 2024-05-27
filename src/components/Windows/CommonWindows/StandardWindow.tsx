@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -29,6 +28,7 @@ import {
   UseGetValueFromSessionItem,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import Window from "../WindowComponent/Window";
 interface IMng {
   mngitemcd1: string;
   mngitemcd2: string;
@@ -46,9 +46,7 @@ type IWindow = {
   index: number;
   modal?: boolean;
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const StandardWindow = ({
   workType,
   setVisible,
@@ -61,8 +59,8 @@ const StandardWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -110,18 +108,6 @@ const StandardWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -279,15 +265,10 @@ const StandardWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"기준정보팝업"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"기준정보팝업"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

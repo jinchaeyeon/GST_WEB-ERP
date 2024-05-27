@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -13,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -47,15 +45,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   isValidDate,
   numberWithCommas,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -68,6 +65,7 @@ import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import PlanWindow from "./MA_A2410W_Plan_Window";
 import StockWindow from "./MA_A2410W_Stock_Window";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   workType: "N" | "U";
@@ -132,9 +130,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const DetailWindow = ({
   workType,
   data,
@@ -150,7 +146,7 @@ const DetailWindow = ({
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -207,24 +203,11 @@ const pc = UseGetValueFromSessionItem("pc");
   }, [bizComponentData]);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 800,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
@@ -797,8 +780,7 @@ const pc = UseGetValueFromSessionItem("pc");
             remark: filters.remark,
           }));
 
-          if (dataItem.length == 0 && deletedMainRows.length == 0)
-            return false;
+          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
           let rowsArr: TRowsArr = {
             rowstatus: [],
@@ -1211,15 +1193,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "외주처리생성" : "외주처리정보"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "외주처리생성" : "외주처리정보"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>
@@ -1367,7 +1344,9 @@ const pc = UseGetValueFromSessionItem("pc");
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer style={{height: "calc(100% - 230px)", paddingBottom: "70px"}} >
+        <GridContainer
+          style={{ height: "calc(100% - 230px)", paddingBottom: "70px" }}
+        >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
@@ -1395,7 +1374,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 50px)"}}
+            style={{ height: "calc(100% - 50px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

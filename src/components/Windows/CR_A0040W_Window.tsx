@@ -1,11 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Checkbox,
-  Input,
-  TextArea
-} from "@progress/kendo-react-inputs";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -25,11 +20,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage
 } from "../CommonFunction";
+import Window from "./WindowComponent/Window";
 
 import BizComponentPopupWindow from "./CommonWindows/BizComponentPopupWindow";
 
@@ -62,9 +57,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setFilters,
@@ -77,7 +69,7 @@ const KendoWindow = ({
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
 
@@ -182,23 +174,11 @@ const pc = UseGetValueFromSessionItem("pc");
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 400) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 400,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const [standardWindowVisible, setStandardWindowVisible] =
     useState<boolean>(false);
@@ -455,15 +435,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "회원권 등록" : "회원권 정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={workType == "N" ? "회원권 등록" : "회원권 정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       {/* <GridContainer width={`68%`}> */}
       <FormBoxWrap>

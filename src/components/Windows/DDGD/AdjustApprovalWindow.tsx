@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -29,10 +28,10 @@ import { Iparameters, TColumn } from "../../../store/types";
 import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
-  getGridItemChangedData,
+  getGridItemChangedData
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import Window from "../WindowComponent/Window";
 
 const CustomCheckBoxCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
@@ -83,9 +82,7 @@ type IWindow = {
 const DATA_ITEM_KEY = "membership_key";
 
 let targetRowIndex: null | number = null;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const AdjustApprovalWindow = ({
   setVisible,
   modal = false,
@@ -97,14 +94,14 @@ const AdjustApprovalWindow = ({
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 600,
   });
@@ -151,18 +148,6 @@ const pc = UseGetValueFromSessionItem("pc");
   //     [name]: value,
   //   }));
   // };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -441,15 +426,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"변경 신청 리스트"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"변경 신청 리스트"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

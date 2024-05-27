@@ -1,6 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Checkbox,
   Input,
@@ -8,8 +7,7 @@ import {
   NumericTextBox,
   TextArea,
 } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -34,10 +32,9 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
-  toDate,
-  getBizCom
+  getBizCom,
+  toDate
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
@@ -45,10 +42,8 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import BankCDWindow from "./CommonWindows/BankCDWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import ZipCodeWindow from "./CommonWindows/ZipCodeWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -71,8 +66,8 @@ const CopyWindow = ({
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 750) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
@@ -128,7 +123,6 @@ const CopyWindow = ({
 
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
 
   const setLoading = useSetRecoilState(isLoading);
 
@@ -144,18 +138,6 @@ const CopyWindow = ({
   );
 
   const processApi = useApi();
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -797,15 +779,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "일용직 인사생성" : "일용직 인사수정"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "일용직 인사생성" : "일용직 인사수정"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap border={true}>
           <FormBox>

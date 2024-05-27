@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -24,7 +23,11 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isFilterHideState, isFilterheightstate, isLoading } from "../../../store/atoms";
+import {
+  isFilterHideState,
+  isFilterheightstate,
+  isLoading,
+} from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 import {
@@ -34,6 +37,7 @@ import {
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import Window from "../WindowComponent/Window";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
@@ -42,9 +46,7 @@ type IWindow = {
   modal?: boolean;
 };
 let targetRowIndex: null | number = null;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const DepartmentsWindow = ({
   workType,
   setVisible,
@@ -58,18 +60,18 @@ const DepartmentsWindow = ({
     useRecoilState(isFilterheightstate); //필터박스 높이
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
-    useEffect(() => {
-      if (!isFilterHideStates) {
-        setIsFilterHideStates(true);
-      }
-    }, []);
+  useEffect(() => {
+    if (!isFilterHideStates) {
+      setIsFilterHideStates(true);
+    }
+  }, []);
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -106,18 +108,6 @@ const DepartmentsWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -307,15 +297,10 @@ const DepartmentsWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"부서참조"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"부서참조"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title></Title>

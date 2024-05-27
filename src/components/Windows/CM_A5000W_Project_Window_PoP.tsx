@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -37,7 +36,7 @@ import {
   UseMessages,
   UsePermissions,
   getBizCom,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -47,6 +46,7 @@ import {
 import FilterContainer from "../Containers/FilterContainer";
 import ProjectsWindow from "./CM_A5000W_Project_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import Window from "./WindowComponent/Window";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -58,9 +58,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   quotestnum,
@@ -81,8 +78,8 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1300) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 880) / 2,
     width: isMobile == true ? deviceWidth : 1300,
     height: isMobile == true ? deviceHeight : 880,
   });
@@ -94,19 +91,6 @@ const KendoWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -427,15 +411,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"프로젝트 참조"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"프로젝트 참조"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>

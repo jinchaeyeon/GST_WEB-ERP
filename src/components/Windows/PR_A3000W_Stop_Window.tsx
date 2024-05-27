@@ -1,6 +1,5 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Field,
   Form,
@@ -20,10 +19,10 @@ import { sessionItemState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
-  UseGetValueFromSessionItem,
-  UseParaPc,
+  UseGetValueFromSessionItem
 } from "../CommonFunction";
 import { FormComboBox, FormReadOnly } from "../Editors";
+import Window from "./WindowComponent/Window";
 
 type TData = {
   prodmac: string;
@@ -36,35 +35,20 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
   // 세션 아이템
   const [sessionItem] = useRecoilState(sessionItemState);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -195,15 +179,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"비가동 입력"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={true}
+      titles={"비가동 입력"}
+      positions={position}
+      Close={onClose}
+      modals={true}
     >
       <Form
         onSubmit={handleSubmit}

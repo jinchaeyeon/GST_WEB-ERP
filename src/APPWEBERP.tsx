@@ -176,8 +176,6 @@ const MA_A2500W = lazy(() => import("./routes/MA_A2500W"));
 const MA_A2700W = lazy(() => import("./routes/MA_A2700W"));
 const MA_A3000W = lazy(() => import("./routes/MA_A3000W"));
 const MA_A3300W = lazy(() => import("./routes/MA_A3300W"));
-const MA_A3300W_dajeong = lazy(() => import("./routes/MA_A3300W_dajeong"));
-const MA_A3300W_mihyeon = lazy(() => import("./routes/MA_A3300W_mihyeon"));
 const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
 const MA_A3400_606W = lazy(() => import("./routes/MA_A3400_606W"));
 const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
@@ -195,8 +193,6 @@ const MA_B2800W = lazy(() => import("./routes/MA_B2800W"));
 const MA_B3000W = lazy(() => import("./routes/MA_B3000W"));
 const MA_B3100W = lazy(() => import("./routes/MA_B3100W"));
 const MA_B7000W = lazy(() => import("./routes/MA_B7000W"));
-const MA_B7000W_dajeong = lazy(() => import("./routes/MA_B7000W_dajeong"));
-const MA_B7000W_mihyeon = lazy(() => import("./routes/MA_B7000W_mihyeon"));
 const MA_B7000_606W = lazy(() => import("./routes/MA_B7000_606W"));
 const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
 const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
@@ -666,10 +662,6 @@ const AppInner: React.FC = () => {
       return MA_A8000W;
     } else if (str == "MA_A3300W") {
       return MA_A3300W;
-    } else if (str == "MA_A3300W_dajeong") {
-      return MA_A3300W_dajeong;
-    } else if (str == "MA_A3300W_mihyeon") {
-      return MA_A3300W_mihyeon;
     } else if (str == "MA_A3400W") {
       return MA_A3400W;
     } else if (str == "MA_A3500W") {
@@ -698,10 +690,6 @@ const AppInner: React.FC = () => {
       return MA_B3100W;
     } else if (str == "MA_B7000W") {
       return MA_B7000W;
-    } else if (str == "MA_B7000W_dajeong") {
-      return MA_B7000W_dajeong;
-    } else if (str == "MA_B7000W_mihyeon") {
-      return MA_B7000W_mihyeon;
     } else if (str == "MA_B7000_606W") {
       return MA_B7000_606W;
     } else if (str == "MA_B7200W") {
@@ -1163,16 +1151,6 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
                   <AuthRoute path="/MA_A8000W" component={MA_A8000W} exact />
                   <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
-                  <AuthRoute
-                    path="/MA_A3300W_dajeong"
-                    component={MA_A3300W_dajeong}
-                    exact
-                  />
-                  <AuthRoute
-                    path="/MA_A3300W_mihyeon"
-                    component={MA_A3300W_mihyeon}
-                    exact
-                  />
                   <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
                   <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
                   <AuthRoute
@@ -1190,16 +1168,6 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
                   <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
                   <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
-                  <AuthRoute
-                    path="/MA_B7000W_dajeong"
-                    component={MA_B7000W_dajeong}
-                    exact
-                  />
-                  <AuthRoute
-                    path="/MA_B7000W_mihyeon"
-                    component={MA_B7000W_mihyeon}
-                    exact
-                  />
                   <AuthRoute
                     path="/MA_B7000_606W"
                     component={MA_B7000_606W}

@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -33,13 +32,13 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import {
-  UseParaPc,
+  UseGetValueFromSessionItem,
   getGridItemChangedData,
-  useSysMessage,
-  UseGetValueFromSessionItem
+  useSysMessage
 } from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Window from "../WindowComponent/Window";
 
 const topHeight = 55;
 const bottomHeight = 55;
@@ -55,9 +54,6 @@ const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   reload,
@@ -68,7 +64,7 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -80,8 +76,8 @@ const pc = UseGetValueFromSessionItem("pc");
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -98,18 +94,6 @@ const pc = UseGetValueFromSessionItem("pc");
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -821,15 +805,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"Messenger"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"Messenger"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TabStrip
         selected={tabSelected}

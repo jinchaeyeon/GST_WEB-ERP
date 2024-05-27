@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -32,13 +31,13 @@ import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   getGridItemChangedData,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import Window from "./WindowComponent/Window";
 
 let temp = 0;
 const DATA_ITEM_KEY = "num";
@@ -75,9 +74,6 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   rekey,
@@ -93,29 +89,16 @@ const KendoWindow = ({
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 600,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -675,15 +658,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"불량등록"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"불량등록"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridContainer>
         <GridTitleContainer>

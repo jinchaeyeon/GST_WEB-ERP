@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -34,6 +33,7 @@ import {
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
+import Window from "../WindowComponent/Window";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -44,9 +44,7 @@ const DATA_ITEM_KEY = "itemcd";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -59,8 +57,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   var height6 = getHeight(".WindowButtonContainer2");
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -101,18 +99,6 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -428,15 +414,10 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"품목참조(멀티)"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"품목참조(멀티)"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title></Title>

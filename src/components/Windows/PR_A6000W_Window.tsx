@@ -1,6 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DateTimePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -20,14 +19,12 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStrWithTime2,
-  toDate2,
+  toDate2
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-const NoneDiv = () => {
-  return <div></div>;
-};
+import Window from "./WindowComponent/Window";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -81,14 +78,14 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 350) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 350,
   });
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const processApi = useApi();
 
   //커스텀 옵션 조회
@@ -180,18 +177,6 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -338,15 +323,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "비가동관리생성" : "비가동관리정보"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "비가동관리생성" : "비가동관리정보"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

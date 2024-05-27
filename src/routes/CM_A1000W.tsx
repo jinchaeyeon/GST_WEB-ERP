@@ -2,7 +2,6 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { Calendar, DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window } from "@progress/kendo-react-dialogs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -63,6 +62,7 @@ import DaliyReport from "../components/Prints/DaliyReport";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -2411,13 +2411,25 @@ const CM_A1000W: React.FC = () => {
       )}
       {previewVisible && (
         <Window
-          title={"미리보기"}
-          onClose={() => {
+          titles={"미리보기"}
+          Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          initialHeight={794}
-          initialWidth={1123}
-          modal={true}
+          positions={{
+            width:
+              isMobile == true ? document.documentElement.clientWidth : 1123,
+            height:
+              isMobile == true ? document.documentElement.clientHeight : 764,
+            left:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientWidth - 1123) / 2,
+            top:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientHeight - 794) / 2,
+          }}
+          modals={true}
         >
           <DaliyReport data={filters} />
         </Window>

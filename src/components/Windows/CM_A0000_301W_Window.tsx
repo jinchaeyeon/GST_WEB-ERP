@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import Window from "./WindowComponent/Window";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -38,9 +38,7 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -70,23 +68,14 @@ const pc = UseGetValueFromSessionItem("pc");
   UseMessages(pathname, setMessagesData);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 550) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 550,
   });
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
+  
+  
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -326,15 +315,15 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "공지생성" : "공지정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      
+      
+      titles={workType == "N" ? "공지생성" : "공지정보"}
+      
+      positions={position}
+      
+      
+      Close={onClose}
+      modals={modal}
     >
       <GridContainer>
         <FormBoxWrap>

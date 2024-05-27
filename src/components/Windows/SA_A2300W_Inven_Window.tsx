@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -13,9 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -64,10 +62,8 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -90,8 +86,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -171,7 +167,7 @@ const CopyWindow = ({
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) {   
+    if (bizComponentData !== null) {
       setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
       setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
       setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
@@ -244,17 +240,6 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -931,15 +916,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"재고참조"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"재고참조"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

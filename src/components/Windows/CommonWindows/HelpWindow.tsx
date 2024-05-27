@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -48,6 +47,7 @@ import {
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import FileViewers from "../../Viewer/FileViewers";
+import Window from "../WindowComponent/Window";
 import PopUpAttachmentsWindow from "./PopUpAttachmentsWindow";
 
 type IWindow = {
@@ -148,9 +148,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -171,24 +169,12 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const defaultCulture = loginResult ? loginResult.defaultCulture : "";
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 830) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -821,15 +807,10 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"도움말"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"도움말"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
       className="print-hidden"
     >
       <TitleContainer>

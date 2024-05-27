@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -11,9 +10,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -39,9 +37,9 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  getBizCom,
   handleKeyPressSearch,
   numberWithCommas,
-  getBizCom
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -50,10 +48,8 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -79,8 +75,8 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const [page, setPage] = useState(initialPageState);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 880) / 2,
     width: isMobile == true ? deviceWidth : 1400,
     height: isMobile == true ? deviceHeight : 880,
   });
@@ -201,19 +197,6 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -510,14 +493,10 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"재고참조"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+      titles={"재고참조"}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
       <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>

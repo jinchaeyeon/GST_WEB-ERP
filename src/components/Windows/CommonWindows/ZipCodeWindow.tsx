@@ -1,7 +1,7 @@
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useState } from "react";
 import DaumPostcode from "react-daum-postcode";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import Window from "../WindowComponent/Window";
 
 type IWindow = {
   setVisible(arg: boolean): void;
@@ -11,9 +11,7 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const ZipCodeWindow = ({
   setVisible,
   setData,
@@ -24,23 +22,11 @@ const ZipCodeWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 510) / 2,
     width: isMobile == true ? deviceWidth : 600,
     height: isMobile == true ? deviceHeight : 510,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -72,15 +58,10 @@ const ZipCodeWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"우편번호"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"우편번호"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <DaumPostcode onComplete={handlePostCode} />
     </Window>

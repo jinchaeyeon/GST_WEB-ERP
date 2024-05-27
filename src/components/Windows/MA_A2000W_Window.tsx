@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -21,10 +20,9 @@ import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -57,15 +55,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getGridItemChangedData,
   getItemQuery,
   numberWithCommas,
   setDefaultDate,
-  toDate,
-  getBizCom
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -82,10 +79,8 @@ import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./MA_A2000W_BOM_Window";
 import CopyWindow1 from "./MA_A2700W_BOM_Window";
 import CopyWindow4 from "./MA_A2700W_Orders_Window";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -467,14 +462,14 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const DATA_ITEM_KEY = "num";
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -801,18 +796,6 @@ const pc = UseGetValueFromSessionItem("pc");
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -1851,15 +1834,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "자재발주생성" : "자재발주정보"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "자재발주생성" : "자재발주정보"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

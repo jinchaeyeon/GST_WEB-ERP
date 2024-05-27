@@ -1,6 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -19,10 +18,10 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
-  dateformat,
+  dateformat
 } from "../CommonFunction";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -34,9 +33,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setFilters,
@@ -48,7 +44,7 @@ const KendoWindow = ({
 }: TKendoWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
 
@@ -114,23 +110,11 @@ const pc = UseGetValueFromSessionItem("pc");
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 400) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 400,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -356,15 +340,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "반려견 등록" : "반려견 정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={workType == "N" ? "반려견 등록" : "반려견 정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       {/* <GridContainer width={`68%`}> */}
       <FormBoxWrap>

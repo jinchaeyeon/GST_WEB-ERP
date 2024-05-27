@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -10,7 +9,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -31,13 +29,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  getBizCom
+  getBizCom,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
+import Window from "./WindowComponent/Window";
 
 interface IFilter {
   pgSize: number;
@@ -78,16 +77,13 @@ const numberField2 = [
 ];
 let targetRowIndex: null | number = null;
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 550) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
@@ -127,19 +123,6 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -378,15 +361,10 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"입고상세정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={true}
+      titles={"입고상세정보"}
+      positions={position}
+      Close={onClose}
+      modals={true}
     >
       <GridContainer height="calc(100% - 60px)">
         <Grid

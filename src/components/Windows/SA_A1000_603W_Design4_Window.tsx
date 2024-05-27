@@ -1,8 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -20,17 +18,14 @@ import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   getBizCom,
-  numberWithCommas3,
+  numberWithCommas3
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import SA_A1000_603W_Design4_PopUp_Window from "./SA_A1000_603W_Design4_PopUp_Window ";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
@@ -117,24 +112,13 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 650) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 650,
   });
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -151,7 +135,7 @@ const pc = UseGetValueFromSessionItem("pc");
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) { 
+    if (bizComponentData !== null) {
       setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
       setProdmacListData(getBizCom(bizComponentData, "L_BA173"));
     }
@@ -620,15 +604,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"시험디자인설계상세"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"시험디자인설계상세"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap border={true}>
           <GridTitleContainer>

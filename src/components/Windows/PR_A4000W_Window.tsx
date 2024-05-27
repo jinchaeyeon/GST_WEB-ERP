@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -11,7 +10,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
@@ -38,14 +37,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   getGridItemChangedData,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import StockWindow from "../Windows/PR_A4000W_ProdStock_Window";
+import Window from "./WindowComponent/Window";
 
 let temp = 0;
 const DATA_ITEM_KEY = "num";
@@ -92,9 +91,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 type TKendoWindow = {
   getVisible(t: boolean): void;
   rekey?: string;
@@ -138,7 +135,7 @@ const DetailWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const [isInitSearch, setIsInitSearch] = useState(false);
-  
+
   const [stockWindowVisible, setStockWindowVisible] = useState<boolean>(false);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
@@ -163,24 +160,11 @@ const DetailWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
     width: isMobile == true ? deviceWidth : 1400,
     height: isMobile == true ? deviceHeight : 700,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     getVisible(false);
@@ -1320,15 +1304,10 @@ const DetailWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"상세정보등록"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"상세정보등록"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridContainerWrap>
         <GridContainer width={`50%`}>

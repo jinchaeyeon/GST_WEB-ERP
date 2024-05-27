@@ -4,7 +4,6 @@ import {
   Calendar,
   CalendarChangeEvent,
 } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useState } from "react";
 import { ButtonContainer } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
@@ -14,6 +13,7 @@ import {
   convertDateToStr,
   dateformat4,
 } from "../../CommonFunction";
+import Window from "../WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -29,9 +29,6 @@ type IKendoWindow = {
   show2: boolean;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   data,
@@ -46,8 +43,8 @@ const KendoWindow = ({
   const [shows, setShows] = useState(show);
   const [shows2, setShows2] = useState(show2);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 600,
   });
@@ -117,30 +114,12 @@ const KendoWindow = ({
     }
   };
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
-
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={`등원 변경 신청`}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={true}
+      titles={"등원 변경 신청"}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

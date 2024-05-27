@@ -1,25 +1,24 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-    Grid,
-    GridColumn,
-    GridDataStateChangeEvent,
-    GridFooterCellProps,
-    GridPageChangeEvent,
-    GridSelectionChangeEvent,
-    getSelectedState,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
-    BottomContainer,
-    ButtonContainer,
-    FilterBox,
-    GridContainer,
-    Title,
-    TitleContainer,
+  BottomContainer,
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  Title,
+  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -27,6 +26,7 @@ import { isLoading } from "../../../store/atoms";
 import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
+import Window from "../WindowComponent/Window";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -42,16 +42,14 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 600,
   });
@@ -92,18 +90,6 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -256,15 +242,10 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"일용직 사원LIST"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"일용직 사원LIST"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import {
@@ -14,9 +13,9 @@ import { Iparameters } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
-  findMessage,
+  findMessage
 } from "../CommonFunction";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -30,9 +29,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -45,29 +41,17 @@ const KendoWindow = ({
   pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -232,15 +216,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "사용자그룹 생성" : "사용자그룹 정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={workType == "N" ? "사용자그룹 생성" : "사용자그룹 정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FormBoxWrap>
         <FormBox>

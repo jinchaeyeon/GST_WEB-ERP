@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window } from "@progress/kendo-react-dialogs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -48,8 +47,9 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import TaxReport from "../components/Prints/TaxReport";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -71,7 +71,7 @@ const AC_B5000W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 
@@ -580,33 +580,35 @@ const AC_B5000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : checkField.includes(item.fieldName)
-                          ? CheckBoxReadOnlyCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : checkField.includes(item.fieldName)
+                            ? CheckBoxReadOnlyCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -620,13 +622,25 @@ const AC_B5000W: React.FC = () => {
       )}
       {previewVisible && (
         <Window
-          title={"미리보기"}
-          onClose={() => {
+          titles={"미리보기"}
+          Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          initialHeight={794}
-          initialWidth={1123}
-          modal={true}
+          positions={{
+            width:
+              isMobile == true ? document.documentElement.clientWidth : 1123,
+            height:
+              isMobile == true ? document.documentElement.clientHeight : 764,
+            left:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientWidth - 1123) / 2,
+            top:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientHeight - 794) / 2,
+          }}
+          modals={true}
         >
           <TaxReport data={filters} />
         </Window>

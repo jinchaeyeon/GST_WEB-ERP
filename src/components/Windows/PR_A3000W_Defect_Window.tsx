@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   FieldArray,
   FieldArrayRenderProps,
@@ -37,9 +36,8 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   arrayLengthValidator,
-  getCodeFromValue,
+  getCodeFromValue
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -49,6 +47,7 @@ import {
 } from "../CommonString";
 import { FormComboBoxCell, FormNumberCell } from "../Editors";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import Window from "./WindowComponent/Window";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = createContext<{
@@ -389,9 +388,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const KendoWindow = ({
   setVisible,
   rekey,
@@ -402,29 +399,17 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA000", setBizComponentData);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 600,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -619,15 +604,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"불량유형 입력"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={true}
+      titles={"불량유형 입력"}
+      positions={position}
+      Close={onClose}
+      modals={true}
     >
       <Form
         onSubmit={handleSubmit}

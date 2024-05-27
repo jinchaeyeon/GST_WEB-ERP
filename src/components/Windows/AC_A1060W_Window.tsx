@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -43,16 +42,14 @@ import {
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  numberWithCommas
+  numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import DepositWindow from "./CommonWindows/DepositWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
@@ -316,8 +313,8 @@ const CopyWindow = ({
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 600,
   });
@@ -391,18 +388,6 @@ const CopyWindow = ({
       };
     });
   }, [acntnumnm, acntnum]);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -1171,15 +1156,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"수금전표생성"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"수금전표생성"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap border={true}>
           <FormBox>

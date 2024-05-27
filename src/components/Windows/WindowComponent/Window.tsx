@@ -1,13 +1,13 @@
 import { Button } from "@progress/kendo-react-buttons";
 import {
-    WindowActionsEvent,
-    Window as WindowKendo,
-    WindowMoveEvent,
+  WindowActionsEvent,
+  Window as WindowKendo,
+  WindowMoveEvent,
 } from "@progress/kendo-react-dialogs";
 import {
-    minusIcon,
-    windowIcon,
-    windowRestoreIcon,
+  minusIcon,
+  windowIcon,
+  windowRestoreIcon,
 } from "@progress/kendo-svg-icons";
 import { ReactNode, useState } from "react";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -18,6 +18,7 @@ type TChildren = {
   titles: any;
   modals: any;
   Close(): void;
+  className?: string;
 };
 
 const minButton = (props: any) => {
@@ -65,8 +66,14 @@ const maxRestoreButton = (props: any) => {
 const NoneDiv = () => {
   return <div></div>;
 };
-
-const Window = ({ children, positions, titles, modals, Close }: TChildren) => {
+const Window = ({
+  children,
+  positions,
+  titles,
+  modals,
+  Close,
+  className = "",
+}: TChildren) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [windowStage, setWindowStage] = useState<
@@ -84,7 +91,6 @@ const Window = ({ children, positions, titles, modals, Close }: TChildren) => {
       height: event.height,
     });
   };
-
   const onClose = () => {
     Close();
   };
@@ -141,6 +147,7 @@ const Window = ({ children, positions, titles, modals, Close }: TChildren) => {
       height={position.height}
       top={position.top}
       left={position.left}
+      className={className == "" ? undefined : className}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

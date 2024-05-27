@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -18,11 +17,10 @@ import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -55,7 +53,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -65,7 +62,7 @@ import {
   getUnpQuery,
   isValidDate,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -73,10 +70,8 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import ItemsMultiWindow from "./BA_A0080W_Copy_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -449,8 +444,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 870) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 870,
   });
@@ -465,7 +460,7 @@ const CopyWindow = ({
   );
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -517,7 +512,7 @@ const CopyWindow = ({
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {   
+    if (bizComponentData !== null) {
       setCustcdListData(getBizCom(bizComponentData, "L_CUST"));
     }
   }, [bizComponentData]);
@@ -723,7 +718,7 @@ const CopyWindow = ({
         });
       }
     })();
-  }, [itemInfo]); 
+  }, [itemInfo]);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -1550,18 +1545,6 @@ const CopyWindow = ({
         }
       }
     }
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -2809,15 +2792,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "직접판매처리생성" : "직접판매처리정보"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "직접판매처리생성" : "직접판매처리정보"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

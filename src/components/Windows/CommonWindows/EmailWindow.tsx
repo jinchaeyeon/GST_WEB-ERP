@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { MuiChipsInput, MuiChipsInputChip } from "mui-chips-input";
 import { useRef, useState } from "react";
@@ -17,6 +16,7 @@ import { isLoading } from "../../../store/atoms";
 import { TEditorHandle } from "../../../store/types";
 import { UseGetValueFromSessionItem } from "../../CommonFunction";
 import RichEditor from "../../RichEditor";
+import Window from "../WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
@@ -25,9 +25,6 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   quonum,
@@ -40,23 +37,12 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 780) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 780,
   });
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
   const handleChange = (newValue: MuiChipsInputChip[]) => {
     setFilters((prev) => ({
       ...prev,
@@ -148,15 +134,10 @@ const KendoWindow = ({
   const [placeholder, setPlaceholder] = useState("파일 선택");
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"Email"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"Email"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FormBoxWrap border={true}>
         <FormBox>

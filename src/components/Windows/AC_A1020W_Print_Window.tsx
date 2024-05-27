@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
@@ -7,10 +6,8 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import FileViewers from "../Viewer/FileViewers";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   para: any;
   setVisible(t: boolean): void;
@@ -22,23 +19,11 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 900,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -78,7 +63,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
       const blob = new Blob([byteArray], {
         type: "application/pdf",
       });
-      setUrl(URL.createObjectURL(blob) );
+      setUrl(URL.createObjectURL(blob));
     } else {
       setUrl("");
     }
@@ -96,15 +81,10 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"지출결의서 미리보기"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"지출결의서 미리보기"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
         className="print-hidden"
       >
         <div

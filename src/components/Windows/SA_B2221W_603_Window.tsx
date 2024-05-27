@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -12,8 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -42,9 +40,8 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-const NoneDiv = () => {
-  return <div></div>;
-};
+import Window from "./WindowComponent/Window";
+
 type IWindow = {
   setVisible(t: boolean): void;
   itemcd: string;
@@ -64,24 +61,13 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -203,14 +189,14 @@ const CopyWindow = ({
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((item: any)=> ({
+      const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
         taxamt: Math.ceil(item.taxamt),
         amt: Math.ceil(item.amt),
         totamt: Math.ceil(item.totamt),
         unp: Math.ceil(item.unp),
         wonamt: Math.ceil(item.wonamt),
-      }))
+      }));
 
       setMainDataResult((prev) => {
         return {
@@ -268,7 +254,9 @@ const CopyWindow = ({
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = Math.ceil(item["total_" + props.field])) : ""
+      props.field !== undefined
+        ? (sum = Math.ceil(item["total_" + props.field]))
+        : ""
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
@@ -303,15 +291,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"수주내역조회"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"수주내역조회"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer>
           <Title></Title>

@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -38,7 +37,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   getBizCom,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -48,6 +47,7 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY = "itemcd";
 const DATA_ITEM_KEY2 = "itemcd";
@@ -68,9 +68,6 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   getVisible,
   para = "",
@@ -133,23 +130,11 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     getVisible(false);
@@ -840,15 +825,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"BOM복사"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={true}
+      titles={"BOM복사"}
+      positions={position}
+      Close={onClose}
+      modals={true}
     >
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>

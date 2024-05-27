@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -18,10 +17,8 @@ import {
 } from "../CommonFunction";
 import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
@@ -34,8 +31,8 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 220) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 220,
   });
@@ -79,18 +76,6 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
     }
   }, [customOptionData]);
 
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
-
   const onClose = () => {
     setVisible(false);
   };
@@ -103,15 +88,10 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"출력형태"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"출력형태"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>
@@ -147,14 +127,23 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
       </Window>
       {previewVisible && (
         <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-          title={"미리보기"}
-          onClose={() => {
-            setPreviewVisible((prev) => !prev);
+          titles={"미리보기"}
+          positions={{
+            width:
+              isMobile == true ? document.documentElement.clientWidth : 1123,
+            height:
+              isMobile == true ? document.documentElement.clientHeight : 764,
+            left:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientWidth - 1123) / 2,
+            top:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientHeight - 794) / 2,
           }}
-          initialHeight={794}
-          initialWidth={1123}
+          Close={() => setPreviewVisible((prev) => !prev)}
+          modals={modal}
         >
           <ReplaceTaxReport Type={filters.print} data={data} />
         </Window>

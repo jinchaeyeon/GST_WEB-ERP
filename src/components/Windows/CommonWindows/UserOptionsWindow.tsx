@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -53,10 +52,9 @@ import RadioGroupCell from "../../Cells/RadioGroupCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   chkScrollHandler,
   getGridItemChangedData,
-  getYn,
+  getYn
 } from "../../CommonFunction";
 import {
   EDIT_FIELD,
@@ -65,6 +63,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Window from "../WindowComponent/Window";
 import ColumnWindow from "./UserOptionsColumnWindow";
 import DefaultWindow from "./UserOptionsDefaultWindow";
 
@@ -304,16 +303,13 @@ const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
 const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
 const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -323,7 +319,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const isAdmin = role == "ADMIN";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [columnWindowVisible, setColumnWindowVisible] =
     useState<boolean>(false);
@@ -413,18 +409,6 @@ const pc = UseGetValueFromSessionItem("pc");
     option_name: "",
   });
   const [processType, setProcessType] = useState("");
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -1108,8 +1092,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
   const detailColumnEnterEdit = (dataItem: any, field: string) => {
     const newData = detailColumnDataResult.data.map((item) =>
-      item[DETAIL_COLUMN_DATA_ITEM_KEY] ==
-      dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
+      item[DETAIL_COLUMN_DATA_ITEM_KEY] == dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
         ? {
             ...item,
             rowstatus: item.rowstatus == "N" ? "N" : "U",
@@ -1999,16 +1982,16 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"사용자 옵션 설정"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+      titles={"사용자 옵션 설정"}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
+      <TabStrip
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+        scrollable={isMobile}
+      >
         {isAdmin && (
           <TabStripTab title="컨트롤정보">
             <GridContainerWrap>

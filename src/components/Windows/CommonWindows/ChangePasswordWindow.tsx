@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Field,
   Form,
@@ -19,14 +18,12 @@ import { passwordExpirationInfoState } from "../../../store/atoms";
 import { TPasswordRequirements } from "../../../store/types";
 import { getHeight, validator } from "../../CommonFunction";
 import { FormInput } from "../../Editors";
+import Window from "../WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
@@ -37,23 +34,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     if (
@@ -162,14 +147,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"비밀번호 변경"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+      titles={"비밀번호 변경"}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
       <Form
         onSubmit={handleSubmit}

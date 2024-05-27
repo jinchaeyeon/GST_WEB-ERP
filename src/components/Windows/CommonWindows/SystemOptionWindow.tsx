@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Field,
   Form,
@@ -17,36 +16,22 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { getBooleanFromYn, getYn, validator } from "../../CommonFunction";
 import { FormCheckBox, FormNumericTextBox } from "../../Editors";
+import Window from "../WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 350) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 520) / 2,
     width: isMobile == true ? deviceWidth : 350,
     height: isMobile == true ? deviceHeight : 520,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -191,14 +176,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"시스템 옵션 (관리자)"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+      titles={"시스템 옵션 (관리자)"}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
       <Form
         onSubmit={handleSubmit}

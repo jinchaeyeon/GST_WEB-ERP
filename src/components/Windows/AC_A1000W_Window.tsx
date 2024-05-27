@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -19,12 +18,7 @@ import {
   NumericTextBox,
 } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -59,7 +53,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -70,9 +64,8 @@ import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
-const NoneDiv = () => {
-  return <div></div>;
-};
+import Window from "./WindowComponent/Window";
+
 type IWindow = {
   workType: "N" | "A" | "C";
   data?: Idata;
@@ -623,8 +616,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -1192,18 +1185,6 @@ const CopyWindow = ({
         data: newData,
         total: prev.total,
       };
-    });
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
     });
   };
 
@@ -3306,21 +3287,16 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={
+        titles={
           worktype == "N"
             ? "대체전표생성"
             : worktype == "C"
             ? "대체전표복사"
             : "대체전표정보"
         }
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap>
           <FormBox>

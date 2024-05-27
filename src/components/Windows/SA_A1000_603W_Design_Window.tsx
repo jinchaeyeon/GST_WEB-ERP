@@ -1,8 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -20,15 +18,12 @@ import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseParaPc,
   getBizCom,
-  numberWithCommas3,
+  numberWithCommas3
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
@@ -114,25 +109,14 @@ const CopyWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -663,17 +647,17 @@ const pc = UseGetValueFromSessionItem("pc");
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if(name == "testperiod_base") {
+    if (name == "testperiod_base") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_base: Math.floor(Number(value)/7),
+        experiment_week_base: Math.floor(Number(value) / 7),
       }));
-    } else if(name == "recoverday_ex") {
+    } else if (name == "recoverday_ex") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_ex: Math.floor(Number(value)/7),
+        experiment_week_ex: Math.floor(Number(value) / 7),
       }));
     } else if (name == "experimentqty_base") {
       setInformation((prev) => ({
@@ -699,7 +683,8 @@ const pc = UseGetValueFromSessionItem("pc");
         [name]: Number(value),
         recoverqty_ex: Number(value) + Number(prev.experimentqty_ex),
       }));
-    } if (name == "experimentqty_tk") {
+    }
+    if (name == "experimentqty_tk") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
@@ -1255,15 +1240,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"시험디자인설계상세"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"시험디자인설계상세"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap border={true}>
           <GridTitleContainer>

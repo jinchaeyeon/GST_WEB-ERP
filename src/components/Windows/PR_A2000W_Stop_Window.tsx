@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -18,9 +17,9 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
-  findMessage,
+  findMessage
 } from "../CommonFunction";
+import Window from "./WindowComponent/Window";
 
 type TData = {
   prodmac: string;
@@ -35,9 +34,6 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   data,
@@ -53,7 +49,7 @@ const KendoWindow = ({
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const setLoading = useSetRecoilState(isLoading);
 
   //메시지 조회
@@ -79,24 +75,11 @@ const pc = UseGetValueFromSessionItem("pc");
   }, [customOptionData]);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 330) / 2,
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 330,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -208,15 +191,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"비가동 입력"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"비가동 입력"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FormBoxWrap border={true}>
         <FormBox>

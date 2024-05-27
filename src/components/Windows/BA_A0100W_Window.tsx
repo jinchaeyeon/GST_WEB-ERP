@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { useState } from "react";
 import {
@@ -9,6 +8,7 @@ import {
   FormBoxWrap,
 } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -16,32 +16,17 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 250) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 220) / 2,
     width: isMobile == true ? deviceWidth : 250,
     height: isMobile == true ? deviceHeight : 220,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -66,15 +51,10 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"일괄생성"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"일괄생성"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FormBoxWrap>
         <FormBox>

@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -16,7 +15,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -44,16 +42,16 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   findMessage,
   getBizCom,
-  getGridItemChangedData,
+  getGridItemChangedData
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import Window from "./WindowComponent/Window";
 
 let deletedMainRows: any[] = [];
 
@@ -72,9 +70,7 @@ type TKendoWindow = {
 let targetRowIndex: null | number = null;
 let temp = 0;
 let temp2 = 0;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -85,7 +81,7 @@ const KendoWindow = ({
   pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -166,7 +162,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
   // 그룹 카테고리 조회
   useEffect(() => {
-    if (bizComponentData !== null) {   
+    if (bizComponentData !== null) {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
@@ -176,23 +172,11 @@ const pc = UseGetValueFromSessionItem("pc");
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
@@ -1187,15 +1171,10 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={workType == "N" ? "공통코드 생성" : "공통코드 정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={workType == "N" ? "공통코드 생성" : "공통코드 정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridContainerWrap>
         <GridContainer width={`68%`}>

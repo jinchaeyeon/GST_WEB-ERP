@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window } from "@progress/kendo-react-dialogs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -41,7 +40,7 @@ import {
   getBizCom,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -52,6 +51,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import WorkDailyReport from "../components/Prints/WorkDailyReport";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { heightstate, isLoading, sessionItemState } from "../store/atoms";
@@ -675,13 +675,25 @@ const PR_B3000W: React.FC = () => {
 
       {previewVisible && (
         <Window
-          title={"미리보기"}
-          onClose={() => {
+          titles={"미리보기"}
+          Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          initialHeight={794}
-          initialWidth={1123}
-          modal={true}
+          positions={{
+            width:
+              isMobile == true ? document.documentElement.clientWidth : 1123,
+            height:
+              isMobile == true ? document.documentElement.clientHeight : 764,
+            left:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientWidth - 1123) / 2,
+            top:
+              isMobile == true
+                ? 0
+                : (document.documentElement.clientHeight - 794) / 2,
+          }}
+          modals={true}
         >
           <WorkDailyReport data={filters} />
         </Window>

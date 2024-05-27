@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Field,
   FieldArray,
@@ -17,7 +16,7 @@ import {
   GridEvent,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
 import { useCallback, useEffect, useState } from "react";
@@ -32,12 +31,11 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { Iparameters } from "../../../store/types";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
   arrayLengthValidator,
   chkScrollHandler,
   getCodeFromValue,
   getYn,
-  validator,
+  validator
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -55,6 +53,7 @@ import {
 } from "../../Editors";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Window from "../WindowComponent/Window";
 
 let deletedRows: object[] = [];
 
@@ -477,9 +476,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const KendoWindow = ({
   setVisible,
   workType,
@@ -492,23 +489,11 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -560,7 +545,7 @@ const KendoWindow = ({
 
   const userId = UseGetValueFromSessionItem("user_id");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
@@ -876,18 +861,14 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={
+      titles={
         workType == "N"
           ? "사용자 옵션 기본값 생성 (관리자)"
           : "사용자 옵션 기본값 수정 (관리자)"
       }
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
+      positions={position}
+      Close={onClose}
+      modals={false}
     >
       <Form
         onSubmit={handleSubmit}

@@ -1,12 +1,11 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
@@ -27,13 +26,9 @@ import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import {
-  handleKeyPressSearch
-} from "../../CommonFunction";
-import {
-  FORM_DATA_INDEX, PAGE_SIZE,
-  SELECTED_FIELD
-} from "../../CommonString";
+import { handleKeyPressSearch } from "../../CommonFunction";
+import { FORM_DATA_INDEX, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import Window from "../WindowComponent/Window";
 const SUB_DATA_ITEM_KEY = "edunum";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -55,9 +50,6 @@ type TKendoWindow = {
   // para: TPara;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   getVisible,
   setData,
@@ -71,23 +63,11 @@ TKendoWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 460) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
     width: isMobile == true ? deviceWidth : 460,
     height: isMobile == true ? deviceHeight : 700,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     getVisible(false);
@@ -236,15 +216,10 @@ TKendoWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"교육기준정보"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"교육기준정보"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

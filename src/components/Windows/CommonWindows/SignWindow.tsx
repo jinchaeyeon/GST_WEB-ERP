@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -26,11 +25,15 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
-import { UseGetValueFromSessionItem, UseParaPc, getGridItemChangedData } from "../../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getGridItemChangedData
+} from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Sign from "../../Sign/Sign";
+import Window from "../WindowComponent/Window";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
@@ -43,14 +46,11 @@ const topHeight = 10;
 const bottomHeight = 40;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
@@ -60,8 +60,8 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1050) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1050,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -70,18 +70,6 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     deletedMainRows = [];
@@ -685,15 +673,10 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"미팅 참석자 등록"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"미팅 참석자 등록"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <GridTitleContainer>
         <GridTitle>참석자</GridTitle>

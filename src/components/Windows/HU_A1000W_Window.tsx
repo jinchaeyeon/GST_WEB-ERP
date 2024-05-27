@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -88,7 +87,7 @@ import BankCDWindow from "./CommonWindows/BankCDWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import ZipCodeWindow from "./CommonWindows/ZipCodeWindow";
 import DetailWindow from "./HU_A1000W_Sub_Window";
-
+import Window from "./WindowComponent/Window";
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
@@ -983,9 +982,6 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
   );
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -1016,8 +1012,8 @@ const CopyWindow = ({
   const idGetter7 = getter(DATA_ITEM_KEY7);
   const idGetter8 = getter(DATA_ITEM_KEY8);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 750) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
@@ -1398,18 +1394,6 @@ const CopyWindow = ({
     setPage8({
       skip: page.skip,
       take: initialPageState.take,
-    });
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
     });
   };
 
@@ -8344,15 +8328,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={workType == "N" ? "사용자생성" : "사용자수정"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={workType == "N" ? "사용자생성" : "사용자수정"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TabStrip
           style={{ width: "100%", height: `calc(100% - 55px)` }}

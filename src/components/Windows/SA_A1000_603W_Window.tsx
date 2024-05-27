@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -13,10 +12,8 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState, menuList } from "../../store/atoms";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   quonum: string;
@@ -39,24 +36,12 @@ const SA_A1000_603W_Window = ({
   const defaultCulture = loginResult ? loginResult.defaultCulture : "";
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -94,7 +79,7 @@ const SA_A1000_603W_Window = ({
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob) );
+      setUrl(URL.createObjectURL(blob));
     } else {
       //데이터 없을 경우
       setUrl("");
@@ -109,15 +94,10 @@ const SA_A1000_603W_Window = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"시험의뢰서출력"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"시험의뢰서출력"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
       className="print-hidden"
     >
       <TitleContainer>

@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -30,6 +29,7 @@ import { handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
+import Window from "../WindowComponent/Window";
 
 const DATA_ITEM_KEY = "num";
 
@@ -75,9 +75,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -91,22 +88,11 @@ const KendoWindow = ({
   const processApi = useApi();
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 600,
     height: isMobile == true ? deviceHeight : 800,
   });
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -285,15 +271,10 @@ const KendoWindow = ({
   return (
     <div>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"아이콘 등록/변경"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"아이콘 등록/변경"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer>
           <Title />

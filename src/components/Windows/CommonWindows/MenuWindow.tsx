@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import {
   TreeList,
@@ -20,7 +19,7 @@ import {
   ButtonContainer,
   FilterBox,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -33,6 +32,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
+import Window from "../WindowComponent/Window";
 
 let deletedMainRows: any[] = [];
 
@@ -45,9 +45,6 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -61,22 +58,11 @@ const KendoWindow = ({
   const processApi = useApi();
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 800,
   });
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -278,15 +264,10 @@ const KendoWindow = ({
   return (
     <div onClick={Menus}>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"메뉴 참조"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"메뉴 참조"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer>
           <Title></Title>

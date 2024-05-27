@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs/dist/npm/datepicker/DatePicker";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -43,7 +42,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -53,10 +52,8 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
@@ -92,8 +89,8 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 570) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 570,
   });
@@ -205,17 +202,6 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -670,15 +656,10 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"단가복사"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"단가복사"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

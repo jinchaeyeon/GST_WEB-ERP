@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -38,7 +37,7 @@ import {
   UseCustomOption,
   getBizCom,
   getGridItemChangedData,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -51,10 +50,8 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 type IWindow = {
   itemacnt: string;
   setVisible(t: boolean): void;
@@ -80,8 +77,8 @@ const CopyWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -210,17 +207,6 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -739,15 +725,10 @@ const CopyWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"품목참조(멀티)"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"품목참조(멀티)"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

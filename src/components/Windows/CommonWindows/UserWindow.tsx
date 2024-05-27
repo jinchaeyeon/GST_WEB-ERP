@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -27,6 +26,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import Window from "../WindowComponent/Window";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -42,16 +42,14 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 830) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 890000) / 2,
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -92,18 +90,6 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -261,15 +247,10 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"사원리스트"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"사원리스트"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer>
         <Title></Title>

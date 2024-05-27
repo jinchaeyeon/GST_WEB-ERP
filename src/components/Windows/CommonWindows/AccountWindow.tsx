@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -27,7 +26,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   isFilterHideState2,
   isFilterheightstate2,
-  isLoading
+  isLoading,
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
@@ -36,6 +35,7 @@ import {
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import Window from "../WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -47,9 +47,6 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "acntcd";
 let targetRowIndex: null | number = null;
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -68,8 +65,8 @@ const KendoWindow = ({
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -97,18 +94,6 @@ const KendoWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -292,15 +277,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"계정코드"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"계정코드"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title />

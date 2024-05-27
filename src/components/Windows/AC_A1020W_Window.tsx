@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -58,7 +57,7 @@ import {
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -68,6 +67,7 @@ import PrsnnumWindow from "../Windows/CommonWindows/PrsnnumWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import Window from "./WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -221,9 +221,6 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -237,8 +234,8 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -265,18 +262,6 @@ const KendoWindow = ({
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
@@ -1321,21 +1306,16 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={
+      titles={
         worktype == "N"
           ? "지출결의서생성"
           : worktype == "C"
           ? "지출결의서복사"
           : "지출결의서정보"
       }
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <FormBoxWrap>
         <FormBox>

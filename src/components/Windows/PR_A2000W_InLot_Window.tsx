@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -14,8 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -35,9 +33,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
-  getGridItemChangedData,
-  getBizCom
+  getBizCom,
+  getGridItemChangedData
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -46,6 +43,7 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -57,9 +55,6 @@ type TKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   plankey,
@@ -79,27 +74,14 @@ const KendoWindow = ({
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1100) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
     width: isMobile == true ? deviceWidth : 1100,
     height: isMobile == true ? deviceHeight : 700,
   });
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -567,15 +549,10 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"투입LOT선택"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"투입LOT선택"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <GridContainer height="58vh">
           <GridTitleContainer>

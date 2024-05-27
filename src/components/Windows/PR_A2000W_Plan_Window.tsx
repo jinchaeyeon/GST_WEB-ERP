@@ -1,6 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -12,8 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -38,8 +36,8 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  getBizCom,
   handleKeyPressSearch,
-  getBizCom
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -49,6 +47,7 @@ import {
 import FilterContainer from "../Containers/FilterContainer";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -59,9 +58,6 @@ type TKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -81,8 +77,8 @@ const KendoWindow = ({
   const [page, setPage] = useState(initialPageState);
 
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -133,18 +129,6 @@ const KendoWindow = ({
       setProdmacListData(getBizCom(bizComponentData, "L_fxcode"));
     }
   }, [bizComponentData]);
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setVisible(false);
@@ -387,15 +371,10 @@ const KendoWindow = ({
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"생산계획참조"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"생산계획참조"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

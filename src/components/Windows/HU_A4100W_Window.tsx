@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { useState } from "react";
 import {
@@ -10,9 +9,8 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-const NoneDiv = () => {
-  return <div></div>;
-};
+import Window from "./WindowComponent/Window";
+
 type IWindow = {
   setVisible(t: boolean): void;
   setData(amt: number): void;
@@ -24,8 +22,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 230) / 2,
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 230,
   });
@@ -38,18 +36,6 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -71,15 +57,10 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <>
       <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-        title={"금액입력"}
-        initialWidth={position.width}
-        initialHeight={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
+        titles={"금액입력"}
+        positions={position}
+        Close={onClose}
+        modals={modal}
       >
         <FormBoxWrap style={{ paddingRight: "70px" }}>
           <FormBox>

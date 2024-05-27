@@ -1,7 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridCellProps,
@@ -38,7 +37,7 @@ import {
   isFilterheightstate2,
   isLoading,
   loginResultState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
@@ -68,6 +67,7 @@ import {
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Window from "../WindowComponent/Window";
 
 type TdataArr = {
   postcd: string[];
@@ -127,9 +127,6 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const NoneDiv = () => {
-  return <div></div>;
-};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -155,8 +152,8 @@ const KendoWindow = ({
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
@@ -226,17 +223,6 @@ const KendoWindow = ({
   const [selectedState3, setSelectedState3] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-  };
 
   const onClose = () => {
     setisFilterHideStates2(true);
@@ -1467,15 +1453,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"계정코드"}
-      initialWidth={position.width}
-      initialHeight={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"계정코드"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title />
