@@ -1,9 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  Window,
-  WindowMoveEvent
-} from "@progress/kendo-react-dialogs";
+import Window from "../WindowComponent/Window";
 import {
   Grid,
   GridColumn,
@@ -49,9 +46,7 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "stdrmkcd";
 let targetRowIndex: null | number = null;
-const NoneDiv = () => {
-  return <div></div>;
-};
+
 const KendoWindow = ({
   setVisible,
   setData,
@@ -70,10 +65,10 @@ const KendoWindow = ({
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : "50%",
-    top: isMobile == true ? 0 : "50%",
     width: isMobile == true ? deviceWidth : 600,
     height: isMobile == true ? deviceHeight : 800,
+    left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
   });
 
   const setLoading = useSetRecoilState(isLoading);
@@ -99,18 +94,6 @@ const KendoWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-  };
-  const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
   };
 
   const onClose = () => {
@@ -292,15 +275,10 @@ const KendoWindow = ({
 
   return (
     <Window
-      minimizeButton={NoneDiv}
-      maximizeButton={NoneDiv}
-      title={"단축코드리스트"}
-      width={position.width}
-      height={position.height}
-      onMove={handleMove}
-      onResize={handleResize}
-      onClose={onClose}
-      modal={modal}
+      titles={"단축코드리스트"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
     >
       <TitleContainer className="TitleContainer">
         <Title />
