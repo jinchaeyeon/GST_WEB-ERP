@@ -183,6 +183,18 @@ export const useApi = () => {
   };
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
+    const isSessionValid = !!sessionItem;
+    if (window.location.pathname !== "/") {
+      if (!token && !loginResult) {
+        resetLocalStorage(); // 토큰, 로그인결과가 없을시
+        window.location.href = "/"; // 리다이렉션 처리
+      } else {
+        if (!isSessionValid) {
+          fetchSessionItem();
+        }
+      }
+    }
+    
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
       let url: string | string[] | null = null;
@@ -381,18 +393,6 @@ export const useApi = () => {
             });
         });
       } else {
-        const isSessionValid = !!sessionItem;
-        if (window.location.pathname !== "/") {
-          if (!token && !loginResult) {
-            resetLocalStorage(); // 토큰, 로그인결과가 없을시
-            window.location.href = "/"; // 리다이렉션 처리
-          } else {
-            if (!isSessionValid) {
-              fetchSessionItem();
-            }
-          }
-        }
-        
         url = `${Link}${url}`;
 
         let headers: any = {};
