@@ -1,7 +1,11 @@
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import { resetLocalStorage } from "../components/CommonFunction";
-import { linkState, loginResultState } from "../store/atoms";
+import {
+  UseGetValueFromSessionItem,
+  resetLocalStorage,
+} from "../components/CommonFunction";
+import { linkState, loginResultState, sessionItemState } from "../store/atoms";
+import { Iparameters } from "../store/types";
 
 const cachios = require("cachios");
 const domain: any = {
@@ -141,20 +145,44 @@ const generateGetUrl = () => {
 
 export const useApi = () => {
   const token = localStorage.getItem("accessToken");
-  // const [token] = useRecoilState(accessTokenState);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
   const [Link, setLink] = useRecoilState(linkState);
   generateGetUrl();
+  const pc = UseGetValueFromSessionItem("pc");
 
-  const processApi = <T>(name: string, params: any = null): Promise<T> => {   
-    const sessionItem = localStorage.getItem("sessionItem");
-    const isSessionValid = !!sessionItem;
-    if (!isSessionValid && token && !loginResult) {
-      resetLocalStorage(); // 세션 만료 시 로컬 스토리지 초기화
-      if (window.location.pathname !== "/") {
-        window.location.href = "/"; // 리다이렉션 처리
-      }     
-    } 
+  const fetchSessionItem = async () => {
+    let data;
+    try {
+      const para: Iparameters = {
+        procedureName: "sys_biz_configuration",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_user_id": userId,
+        },
+      };
+
+      data = await processApi<any>("procedure", para);
+
+      if (data.isSuccess == true) {
+        const rows = data.tables[0].Rows;
+        let array = rows
+          .filter((item: any) => item.class == "Session")
+          .map((item: any) => ({
+            code: item.code,
+            value: item.value,
+          }))
+          .concat([{ code: "pc", value: pc }]);
+        setSessionItem(array);
+      }
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  };
+
+  const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
       let url: string | string[] | null = null;
@@ -353,6 +381,18 @@ export const useApi = () => {
             });
         });
       } else {
+        const isSessionValid = !!sessionItem;
+        if (window.location.pathname !== "/") {
+          if (!token && !loginResult) {
+            resetLocalStorage(); // 토큰, 로그인결과가 없을시
+            window.location.href = "/"; // 리다이렉션 처리
+          } else {
+            if (!isSessionValid) {
+              fetchSessionItem();
+            }
+          }
+        }
+        
         url = `${Link}${url}`;
 
         let headers: any = {};
@@ -465,7 +505,7 @@ export const useApi = () => {
                     errResponseStatus = error.response.status;
                     errResponseURL = error.request.responseURL;
                   } catch (e) {}
-                  
+
                   // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
                   if (errResponseURL.includes("auth/login")) {
                     return reject(error);
@@ -542,7 +582,7 @@ export const useApi = () => {
           });
       }
     });
-  };  
+  };
 
   return processApi;
 };
