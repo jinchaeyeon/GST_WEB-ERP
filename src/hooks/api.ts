@@ -146,12 +146,21 @@ export const useApi = () => {
   const [Link, setLink] = useRecoilState(linkState);
   generateGetUrl();
 
-  const processApi = <T>(name: string, params: any = null): Promise<T> => {
+  const processApi = <T>(name: string, params: any = null): Promise<T> => {   
+    const sessionItem = localStorage.getItem("sessionItem");
+    const isSessionValid = !!sessionItem;
+    if (!isSessionValid && token && !loginResult) {
+      resetLocalStorage(); // 세션 만료 시 로컬 스토리지 초기화
+      if (window.location.pathname !== "/") {
+        window.location.href = "/"; // 리다이렉션 처리
+      }     
+    } 
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
       let url: string | string[] | null = null;
       let p = null;
       url = generateUrl(info.url, params);
+
       if (Link == undefined || Link == "" || Link == null) {
         axios.get(`/apiserver.json`).then((res: any) => {
           setLink(res.data[0].url);
@@ -533,7 +542,7 @@ export const useApi = () => {
           });
       }
     });
-  };
+  };  
 
   return processApi;
 };

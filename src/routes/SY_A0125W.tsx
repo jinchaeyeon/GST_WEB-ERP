@@ -62,7 +62,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -130,6 +130,7 @@ const SY_A0125W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1322,6 +1323,25 @@ const SY_A0125W: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
+                <GridTitleContainer className="ButtonContainer3">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      {"부서리스트"}
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   hierarchy={true}
@@ -1329,7 +1349,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight,
+                      height: deviceHeight - height3,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
