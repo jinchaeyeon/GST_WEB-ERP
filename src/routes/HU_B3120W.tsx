@@ -1574,7 +1574,7 @@ const HU_B3120W: React.FC = () => {
                   fileName="개인별 명세"
                 >
                   <Grid
-                    style={{ height: "80vh" }}
+                    style={{ height: "81.3vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1729,7 +1729,7 @@ const HU_B3120W: React.FC = () => {
                       fileName="개인별 명세"
                     >
                       <Grid
-                        style={{ height: "33.5vh" }}
+                        style={{ height: "34.2vh" }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -1806,7 +1806,7 @@ const HU_B3120W: React.FC = () => {
                       fileName="개인별 명세"
                     >
                       <Grid
-                        style={{ height: "33.5vh" }}
+                        style={{ height: "34.2vh" }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -1921,7 +1921,7 @@ const HU_B3120W: React.FC = () => {
                   </FilterContainer>
                   <div
                     style={{
-                      height: "67vh",
+                      height: "69vh",
                       marginBottom: "10px",
                     }}
                   >

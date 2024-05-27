@@ -628,7 +628,7 @@ const SA_B1002_603W: React.FC = () => {
           fileName="견적현황조회"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "70vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "77.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

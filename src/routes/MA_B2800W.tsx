@@ -1105,7 +1105,7 @@ const MA_B2800W: React.FC = () => {
             fileName="발주대비입고현황"
           >
             <Grid
-              style={{ height: !isMobile ? "72.5vh" : deviceHeight }}
+              style={{ height: !isMobile ? "76vh" : deviceHeight }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

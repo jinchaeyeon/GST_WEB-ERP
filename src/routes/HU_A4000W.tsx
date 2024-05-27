@@ -6694,7 +6694,7 @@ const HU_A4000W: React.FC = () => {
                     fileName="인사고과관리"
                   >
                     <Grid
-                      style={{ height: "92vh" }}
+                      style={{ height: "89.8vh" }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -7570,7 +7570,7 @@ const HU_A4000W: React.FC = () => {
                           fileName="인사고과관리"
                         >
                           <Grid
-                            style={{ height: "85vh" }}
+                            style={{ height: "82.5vh" }}
                             data={process(
                               mainDataResult8.data.map((row) => ({
                                 ...row,
@@ -7679,7 +7679,7 @@ const HU_A4000W: React.FC = () => {
                           fileName="인사고과관리"
                         >
                           <Grid
-                            style={{ height: "84vh" }}
+                            style={{ height: "82.5vh" }}
                             data={process(
                               mainDataResult9.data.map((row) => ({
                                 ...row,

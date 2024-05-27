@@ -1831,7 +1831,7 @@ const EA_A2000W: React.FC = () => {
                   fileName="결재관리"
                 >
                   <Grid
-                    style={{ height: "27svh" }}
+                    style={{ height: "25.5vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2130,7 +2130,7 @@ const EA_A2000W: React.FC = () => {
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  height: "79vh",
+                  height: "77.5vh",
                   overflow: "auto",
                   border: "solid 1px #e6e6e6",
                   margin: "5px 0",

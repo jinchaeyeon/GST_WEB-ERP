@@ -1514,7 +1514,7 @@ const HU_A2070W: React.FC = () => {
                 fileName="출퇴근관리"
               >
                 <Grid
-                  style={{ height: "75vh" }}
+                  style={{ height: "77vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1606,7 +1606,7 @@ const HU_A2070W: React.FC = () => {
                 fileName="출퇴근관리"
               >
                 <Grid
-                  style={{ height: "75vh" }}
+                  style={{ height: "77vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,

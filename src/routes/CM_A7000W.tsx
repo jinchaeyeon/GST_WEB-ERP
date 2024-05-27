@@ -1620,7 +1620,7 @@ const CM_A7000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "60vh",
+                  height: isMobile ? deviceHeight - height - height1 : "62vh",
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -2725,7 +2725,7 @@ const CM_A7000W: React.FC = () => {
                   </FormBoxWrap>
                   <GridContainer>
                     <Grid
-                      style={{ height: "18.5vh" }}
+                      style={{ height: "22.5vh" }}
                       data={process(
                         detailDataResult.data.map((row) => ({
                           ...row,

@@ -2295,7 +2295,7 @@ const SA_A1001_603W: React.FC = () => {
                   fileName="견적관리"
                 >
                   <Grid
-                    style={{ height: "60vh" }}
+                    style={{ height: "63.8vh" }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,

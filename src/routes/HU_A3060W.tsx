@@ -4091,7 +4091,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: "75vh" }}
+                    style={{ height: "74.2vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -4687,7 +4687,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: "75vh" }}
+                    style={{ height: "74.2vh" }}
                     data={process(
                       mainDataResult4.data.map((row) => ({
                         ...row,

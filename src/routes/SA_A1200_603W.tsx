@@ -1619,7 +1619,7 @@ const SA_A1200_603W: React.FC = () => {
               fileName="계약가능성관리"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "65vh" }}
+                style={{ height: isMobile ? deviceHeight - height : "73vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2588,7 +2588,7 @@ const SA_A1200_603W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitleContainer>
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: "27vh" }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
