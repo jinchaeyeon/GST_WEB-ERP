@@ -706,7 +706,7 @@ const SA_B2200: React.FC = () => {
           </GridTitleContainer>
           <Grid
             style={{
-              height: isMobile ? deviceHeight - height : "76vh",
+              height: isMobile ? deviceHeight - height : "78vh",
             }}
             data={process(
               mainDataResult.data.map((row) => ({

@@ -2055,7 +2055,7 @@ const SA_B3100W: React.FC = () => {
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ height: "80vh", width: "100%", paddingBottom: "15px" }}
+            style={{ height: "81vh", width: "100%" }}
             scrollable={isMobile}
           >
             <TabStripTab title="전체">
@@ -2109,7 +2109,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "32.5vh" }}
+                      style={{ height: "38vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2192,7 +2192,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "32vh" }}
+                      style={{ height: "36vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2360,7 +2360,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "32vh" }}
+                      style={{ height: "36vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2662,7 +2662,7 @@ const SA_B3100W: React.FC = () => {
                     fileName="매출집계(풀목)"
                   >
                     <Grid
-                      style={{ height: "32vh" }}
+                      style={{ height: "36vh" }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,

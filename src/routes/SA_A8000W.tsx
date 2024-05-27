@@ -1399,7 +1399,7 @@ const SA_A8000W: React.FC = () => {
               </Grid>
             </ExcelExport>
           </GridContainer>
-          <GridContainer style={{ paddingBottom: "15px" }}>
+          <GridContainer>
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
@@ -1411,7 +1411,7 @@ const SA_A8000W: React.FC = () => {
               fileName="수금처리"
             >
               <Grid
-                style={{ height: "37.5vh" }}
+                style={{ height: "38.5vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,

@@ -21,6 +21,7 @@ import {
   GridDataStateChangeEvent,
   GridEvent,
   GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
@@ -146,6 +147,21 @@ const SA_B3101W: React.FC = () => {
   const [gridDataResult, setGridDataResult] = useState<DataResult>(
     process([], gridDataState)
   );
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      ...event.page,
+    });
+  };
 
   const onMonthGridSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -553,6 +569,7 @@ const SA_B3101W: React.FC = () => {
                     total={gridDataResult.total}
                     onScroll={onGridScrollHandler}
                     pageable={true}
+                    onPageChange={pageChange}
                     //정렬기능
                     sortable={true}
                     onSortChange={onGridSortChange}
@@ -667,7 +684,7 @@ const SA_B3101W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
 
-          <GridContainer style={{ height: "35vh" }}>
+          <GridContainer style={{ height: "37vh" }}>
             <GridTitle>차트</GridTitle>
             <Chart style={{ height: !isMobile ? "100%" : "" }}>
               <ChartLegend position="top" orientation="horizontal" />
@@ -713,7 +730,7 @@ const SA_B3101W: React.FC = () => {
               fileName="매입매출현황"
             >
               <Grid
-                style={{ height: "38.5vh" }}
+                style={{ height: "42vh" }}
                 // data={gridDataResult.data}
                 data={process(
                   gridDataResult.data.map((row) => ({
@@ -736,6 +753,8 @@ const SA_B3101W: React.FC = () => {
                 fixedScroll={true}
                 total={gridDataResult.total}
                 onScroll={onGridScrollHandler}
+                pageable={true}
+                onPageChange={pageChange}
                 //정렬기능
                 sortable={true}
                 onSortChange={onGridSortChange}
@@ -799,7 +818,6 @@ const SA_B3101W: React.FC = () => {
                   )}
               </Grid>
             </ExcelExport>
-            <div style={{ paddingBottom: "15px" }} />
           </GridContainer>
         </>
       )}

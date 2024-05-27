@@ -1372,7 +1372,7 @@ const SY_A0500W: React.FC = () => {
                 fileName="레이아웃 설정"
               >
                 <Grid
-                  style={{ height: isMobile ? "40vh" : "80.5vh" }}
+                  style={{ height: isMobile ? "40vh" : "87.5vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

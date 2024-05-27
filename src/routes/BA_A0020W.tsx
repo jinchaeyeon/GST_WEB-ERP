@@ -4170,7 +4170,7 @@ const BA_A0020: React.FC = () => {
                 fileName="업체관리"
               >
                 <Grid
-                  style={{ height: "76vh" }}
+                  style={{ height: "78vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -4242,7 +4242,7 @@ const BA_A0020: React.FC = () => {
               <TabStrip
                 selected={tabSelected}
                 onSelect={handleSelectTab}
-                style={{ width: "100%" }}
+                style={{ width: "100%", height: "81.3vh" }}
                 scrollable={isMobile}
               >
                 <TabStripTab title="상세정보">
@@ -4860,7 +4860,7 @@ const BA_A0020: React.FC = () => {
                         fileName="업체관리"
                       >
                         <Grid
-                          style={{ height: "71.5vh" }}
+                          style={{ height: "69.5vh" }}
                           data={process(
                             subDataResult.data.map((row) => ({
                               ...row,
@@ -4994,7 +4994,7 @@ const BA_A0020: React.FC = () => {
                       fileName="업체관리"
                     >
                       <Grid
-                        style={{ height: "71.5vh" }}
+                        style={{ height: "69.5vh" }}
                         data={process(
                           subDataResult2.data.map((row) => ({
                             ...row,

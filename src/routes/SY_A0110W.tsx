@@ -361,7 +361,7 @@ const SY_A0110: React.FC = () => {
         >
           <Grid
             style={{
-              height: isMobile ? deviceHeight : "81.6vh",
+              height: isMobile ? deviceHeight : "84.5vh",
             }}
             data={process(
               mainDataResult.data.map((row) => ({

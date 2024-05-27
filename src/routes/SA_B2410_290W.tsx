@@ -2130,7 +2130,7 @@ const SA_B2410: React.FC = () => {
               fileName="판매현황"
             >
               <Grid
-                style={{ height: "28vh" }}
+                style={{ height: "29.5vh" }}
                 data={process(
                   detail1DataResult.data.map((row) => ({
                     ...row,
