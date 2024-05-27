@@ -412,7 +412,7 @@ const HU_B3160W: React.FC = () => {
           fileName="급상여이체명부"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight : "81.5vh" }}
+            style={{ height: isMobile ? deviceHeight : "84vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

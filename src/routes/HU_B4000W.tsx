@@ -2379,7 +2379,7 @@ const pc = UseGetValueFromSessionItem("pc");
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: "72vh" }}
+                        style={{ height: "72.5vh" }}
                         data={process(
                           userAdjDataResult.data.map((row) => ({
                             ...row,
@@ -2460,7 +2460,7 @@ const pc = UseGetValueFromSessionItem("pc");
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: "72vh" }}
+                        style={{ height: "72.5vh" }}
                         data={process(
                           adjDetailDataResult.data.map((row) => ({
                             ...row,
@@ -2767,7 +2767,7 @@ const pc = UseGetValueFromSessionItem("pc");
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height4 : "72vh",
+                    height: isMobile ? deviceHeight - height4 : "72.7vh",
                   }}
                   data={process(
                     adjDataResult.data.map((row) => ({

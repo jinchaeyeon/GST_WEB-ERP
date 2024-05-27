@@ -1464,7 +1464,7 @@ const HU_A2140W: React.FC = () => {
           >
             <Grid
               style={{
-                height: isMobile ? deviceHeight - height : "79vh",
+                height: isMobile ? deviceHeight - height : "77vh",
               }}
               data={process(
                 mainDataResult.data.map((row) => ({

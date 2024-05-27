@@ -2671,7 +2671,7 @@ const EA_A1000: React.FC = () => {
                     enabled: true,
                     mode: "single",
                   }}
-                  style={{ height: "78vh" }}
+                  style={{ height: "81vh" }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
@@ -2813,7 +2813,7 @@ const EA_A1000: React.FC = () => {
                       mainDataState2
                     )}
                     {...mainDataState2}
-                    style={{ height: "44vh" }}
+                    style={{ height: "46vh" }}
                     onDataStateChange={onMainDataStateChange2}
                     //선택 기능
                     dataItemKey={DATA_ITEM_KEY2}
@@ -2941,7 +2941,7 @@ const EA_A1000: React.FC = () => {
                         mainDataState3
                       )}
                       {...mainDataState3}
-                      style={{ height: "30vh" }}
+                      style={{ height: "31vh" }}
                       onDataStateChange={onMainDataStateChange3}
                       //선택 기능
                       dataItemKey={DATA_ITEM_KEY3}
@@ -3043,7 +3043,7 @@ const EA_A1000: React.FC = () => {
                         mainDataState4
                       )}
                       {...mainDataState4}
-                      style={{ height: "30vh" }}
+                      style={{ height: "31vh" }}
                       onDataStateChange={onMainDataStateChange4}
                       //선택 기능
                       dataItemKey={DATA_ITEM_KEY4}

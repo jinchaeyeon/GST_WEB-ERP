@@ -1249,7 +1249,7 @@ const CM_A8250W: React.FC = () => {
               fileName="제경비표준"
             >
               <Grid
-                style={{ height: "80vh" }}
+                style={{ height: "81.5vh" }}
                 data={process(
                   subDataResult.data.map((row) => ({
                     ...row,
@@ -1331,7 +1331,7 @@ const CM_A8250W: React.FC = () => {
               fileName="제경비표준"
             >
               <Grid
-                style={{ height: "80vh" }}
+                style={{ height: "81.3vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

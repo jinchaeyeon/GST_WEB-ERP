@@ -1457,7 +1457,7 @@ const HU_A5020W: React.FC = () => {
                 fileName="퇴직연금"
               >
                 <Grid
-                  style={{ height: "78vh" }}
+                  style={{ height: "81.5vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

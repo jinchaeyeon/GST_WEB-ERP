@@ -1076,7 +1076,7 @@ const pc = UseGetValueFromSessionItem("pc");
             fileName="근무시간관리"
           >
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: "81.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

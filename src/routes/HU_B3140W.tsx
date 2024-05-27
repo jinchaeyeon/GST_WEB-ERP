@@ -1997,7 +1997,7 @@ const HU_B3140W: React.FC = () => {
                 fileName="급상여분석정보"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: "31.6vh" }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,

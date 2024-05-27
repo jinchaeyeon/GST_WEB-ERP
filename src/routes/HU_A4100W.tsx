@@ -1145,7 +1145,7 @@ const HU_A4100W: React.FC = () => {
             fileName="복지포인트등록"
           >
             <Grid
-              style={{ height: isMobile ? deviceHeight - height : "78vh" }}
+              style={{ height: isMobile ? deviceHeight - height : "81.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

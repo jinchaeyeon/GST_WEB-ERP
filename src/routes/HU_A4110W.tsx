@@ -1533,7 +1533,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     fileName="POINT ZONE"
                   >
                     <Grid
-                      style={{ height: "40vh" }}
+                      style={{ height: "30.3vh" }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -1602,113 +1602,6 @@ const pc = UseGetValueFromSessionItem("pc");
               </GridContainer>
             </GridContainer>
             <GridContainer width={`calc(80% - ${GAP}px)`}>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: filters.strdt,
-                            end: filters.enddt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              strdt: e.value.start,
-                              enddt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                      <th>사업장</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="location"
-                            value={filters.location}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange2}
-                          />
-                        )}
-                      </td>
-                      <th>사업부</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="position"
-                            value={filters.position}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange2}
-                          />
-                        )}
-                      </td>
-                      <th>결재승인구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="appsts"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange2}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>사번</th>
-                      <td>
-                        <Input
-                          name="prsnnum"
-                          type="text"
-                          value={filters.prsnnum}
-                          onChange={filterInputChange2}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onUserWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>성명</th>
-                      <td>
-                        <Input
-                          name="prsnnm"
-                          type="text"
-                          value={filters.prsnnm}
-                          onChange={filterInputChange2}
-                        />
-                      </td>
-                      <th>비용부서</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="dptcd"
-                            value={filters.dptcd}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange2}
-                            valueField="dptcd"
-                            textField="dptnm"
-                          />
-                        )}
-                      </td>
-                      <th>전표처리구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="acntdiv"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange2}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>요약정보</GridTitle>
@@ -1753,7 +1646,7 @@ const pc = UseGetValueFromSessionItem("pc");
                   fileName="POINT ZONE"
                 >
                   <Grid
-                    style={{ height: "78vh" }}
+                    style={{ height: "77vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,

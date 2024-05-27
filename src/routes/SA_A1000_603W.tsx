@@ -8479,7 +8479,7 @@ const SA_A1000_603W: React.FC = () => {
                         fileName="프로젝트관리"
                       >
                         <Grid
-                          style={{ height: "30vh" }}
+                          style={{ height: "29vh" }}
                           data={process(
                             mainDataResult4.data.map((row) => ({
                               ...row,
@@ -8897,7 +8897,7 @@ const SA_A1000_603W: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: "80vh" }}
+                      style={{ height: "78.9vh" }}
                       data={process(
                         mainDataResult7.data.map((row) => ({
                           ...row,
