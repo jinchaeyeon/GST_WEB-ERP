@@ -75,6 +75,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -282,6 +285,8 @@ const KendoWindow = ({
   return (
     <div>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"아이콘 등록/변경"}
         initialWidth={position.width}
         initialHeight={position.height}

@@ -42,6 +42,9 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   itemcd: string;
@@ -300,6 +303,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"수주내역조회"}
         initialWidth={position.width}
         initialHeight={position.height}

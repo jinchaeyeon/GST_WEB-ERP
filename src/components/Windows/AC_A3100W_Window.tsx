@@ -54,6 +54,9 @@ import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -2021,6 +2024,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "고정자산생성" : "고정자산정보"}
         initialWidth={position.width}
         initialHeight={position.height}

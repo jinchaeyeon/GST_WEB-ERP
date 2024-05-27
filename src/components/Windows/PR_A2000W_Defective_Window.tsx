@@ -75,6 +75,9 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   rekey,
@@ -672,6 +675,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"불량등록"}
       initialWidth={position.width}
       initialHeight={position.height}

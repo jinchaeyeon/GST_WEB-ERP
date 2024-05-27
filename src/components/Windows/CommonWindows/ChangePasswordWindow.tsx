@@ -24,6 +24,9 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
@@ -159,6 +162,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"비밀번호 변경"}
       initialWidth={position.width}
       initialHeight={position.height}

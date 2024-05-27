@@ -38,6 +38,9 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "user_id";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   workType,
@@ -271,6 +274,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"사용자리스트"}
       initialWidth={position.width}
       initialHeight={position.height}

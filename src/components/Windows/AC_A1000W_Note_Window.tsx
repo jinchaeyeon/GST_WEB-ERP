@@ -41,6 +41,9 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -312,6 +315,8 @@ const AC_A1000W_Note_Window = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"기준정보팝업"}
       initialWidth={position.width}
       initialHeight={position.height}

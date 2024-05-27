@@ -127,6 +127,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -1464,6 +1467,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"계정코드"}
       initialWidth={position.width}
       initialHeight={position.height}

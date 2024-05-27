@@ -38,7 +38,9 @@ type IWindow = {
 
 const DATA_ITEM_KEY = "itemcd";
 let targetRowIndex: null | number = null;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const ItemsWindow = ({
   workType,
   setVisible,
@@ -295,6 +297,8 @@ const ItemsWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"품목마스터"}
       initialWidth={position.width}
       initialHeight={position.height}

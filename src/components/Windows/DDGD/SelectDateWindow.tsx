@@ -29,6 +29,9 @@ type IKendoWindow = {
   show2: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   data,
@@ -129,6 +132,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={`등원 변경 신청`}
       initialWidth={position.width}
       initialHeight={position.height}

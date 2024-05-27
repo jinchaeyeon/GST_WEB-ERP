@@ -10,7 +10,9 @@ import { Upload, UploadFileInfo } from "@progress/kendo-react-upload";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { insertImageFiles } from "./utils";
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 export const InsertImageDialog = (props: any) => {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
@@ -146,6 +148,8 @@ export const InsertImageDialog = (props: any) => {
 
   return ReactDOM.createPortal(
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title="Insert Image"
       onClose={onClose}
       initialWidth={500}

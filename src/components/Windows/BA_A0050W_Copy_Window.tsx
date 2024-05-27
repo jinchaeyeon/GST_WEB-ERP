@@ -68,6 +68,9 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   para = "",
@@ -837,6 +840,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"BOM복사"}
       initialWidth={position.width}
       initialHeight={position.height}

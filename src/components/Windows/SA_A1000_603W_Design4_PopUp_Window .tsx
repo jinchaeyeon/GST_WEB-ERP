@@ -33,6 +33,9 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
@@ -229,6 +232,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"시험품목"}
         initialWidth={position.width}
         initialHeight={position.height}

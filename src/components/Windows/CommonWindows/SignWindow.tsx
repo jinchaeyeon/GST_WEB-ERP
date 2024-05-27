@@ -34,7 +34,6 @@ import Sign from "../../Sign/Sign";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
-
 type IWindow = {
   setVisible(t: boolean): void;
   reference_key: string;
@@ -44,6 +43,9 @@ const topHeight = 10;
 const bottomHeight = 40;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
+const NoneDiv = () => {
+  return <div></div>;
+};
 const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
@@ -683,6 +685,8 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"미팅 참석자 등록"}
       initialWidth={position.width}
       initialHeight={position.height}

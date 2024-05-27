@@ -64,6 +64,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import AccountWindow from "./CommonWindows/AccountWindow";
 import DepositWindow from "./CommonWindows/DepositWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: IData[];
@@ -787,6 +790,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"지급처리"}
         initialWidth={position.width}
         initialHeight={position.height}

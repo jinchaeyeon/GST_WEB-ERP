@@ -64,6 +64,9 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   itemacnt?: string | number | undefined;
   setVisible(t: boolean): void;
@@ -758,6 +761,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"재고참조"}
         initialWidth={position.width}
         initialHeight={position.height}

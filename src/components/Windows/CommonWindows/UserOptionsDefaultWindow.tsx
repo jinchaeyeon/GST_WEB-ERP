@@ -477,6 +477,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   workType,
@@ -873,6 +876,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={
         workType == "N"
           ? "사용자 옵션 기본값 생성 (관리자)"

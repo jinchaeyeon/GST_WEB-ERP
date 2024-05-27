@@ -35,6 +35,9 @@ type TKendoWindow = {
   pathname: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   data,
@@ -205,6 +208,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"비가동 입력"}
       initialWidth={position.width}
       initialHeight={position.height}

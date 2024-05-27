@@ -145,6 +145,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -1467,6 +1470,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={
         worktype == "N"
           ? "지출결의서생성"

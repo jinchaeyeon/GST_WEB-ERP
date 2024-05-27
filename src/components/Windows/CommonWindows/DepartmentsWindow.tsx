@@ -42,7 +42,9 @@ type IWindow = {
   modal?: boolean;
 };
 let targetRowIndex: null | number = null;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const DepartmentsWindow = ({
   workType,
   setVisible,
@@ -305,6 +307,8 @@ const DepartmentsWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"부서참조"}
       initialWidth={position.width}
       initialHeight={position.height}

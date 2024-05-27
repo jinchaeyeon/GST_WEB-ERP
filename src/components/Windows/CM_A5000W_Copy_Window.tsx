@@ -108,6 +108,9 @@ interface IUser {
   user_name: string;
 }
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -527,6 +530,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"이전 요청 참조"}
       initialWidth={position.width}
       initialHeight={position.height}

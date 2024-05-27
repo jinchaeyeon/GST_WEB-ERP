@@ -74,6 +74,9 @@ import ItemsMultiWindow from "./BA_A0080W_Copy_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -2806,6 +2809,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "직접판매처리생성" : "직접판매처리정보"}
         initialWidth={position.width}
         initialHeight={position.height}

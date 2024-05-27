@@ -68,6 +68,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import CopyWindow3 from "./BA_A0080W_Copy_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -886,6 +889,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "업무지시생성" : "업무지시정보"}
         initialWidth={position.width}
         initialHeight={position.height}

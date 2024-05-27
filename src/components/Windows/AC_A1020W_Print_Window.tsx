@@ -8,6 +8,9 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import FileViewers from "../Viewer/FileViewers";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   para: any;
   setVisible(t: boolean): void;
@@ -93,6 +96,8 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"지출결의서 미리보기"}
         initialWidth={position.width}
         initialHeight={position.height}

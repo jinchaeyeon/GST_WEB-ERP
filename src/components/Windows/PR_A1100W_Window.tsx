@@ -417,6 +417,9 @@ type TKendoWindow = {
   pathname: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -1857,6 +1860,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "계획처리" : "계획처리"}
         initialWidth={position.width}
         initialHeight={position.height}

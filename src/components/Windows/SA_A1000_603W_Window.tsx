@@ -14,6 +14,9 @@ import { isLoading, loginResultState, menuList } from "../../store/atoms";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   quonum: string;
@@ -106,6 +109,8 @@ const SA_A1000_603W_Window = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"시험의뢰서출력"}
       initialWidth={position.width}
       initialHeight={position.height}

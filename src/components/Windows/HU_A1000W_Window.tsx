@@ -983,6 +983,9 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
   );
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -8341,6 +8344,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "사용자생성" : "사용자수정"}
         initialWidth={position.width}
         initialHeight={position.height}

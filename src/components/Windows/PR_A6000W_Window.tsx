@@ -25,6 +25,9 @@ import {
   toDate2,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -335,6 +338,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "비가동관리생성" : "비가동관리정보"}
         initialWidth={position.width}
         initialHeight={position.height}

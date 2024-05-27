@@ -52,6 +52,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   itemacnt: string;
   setVisible(t: boolean): void;
@@ -736,6 +739,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"품목참조(멀티)"}
         initialWidth={position.width}
         initialHeight={position.height}

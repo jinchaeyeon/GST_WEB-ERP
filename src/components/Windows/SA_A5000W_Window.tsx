@@ -67,6 +67,9 @@ import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./SA_A5000W_Orders_Window";
 import CopyWindow3 from "./SA_A5000W_Ship_Window";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -1570,6 +1573,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "판매처리생성" : "판매처리정보"}
         initialWidth={position.width}
         initialHeight={position.height}

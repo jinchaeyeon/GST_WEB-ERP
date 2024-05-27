@@ -1,6 +1,9 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Window,
+  WindowMoveEvent
+} from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -27,7 +30,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   isFilterHideState2,
   isFilterheightstate2,
-  isLoading
+  isLoading,
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
@@ -36,6 +39,7 @@ import {
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
@@ -45,7 +49,9 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "stdrmkcd";
 let targetRowIndex: null | number = null;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -64,8 +70,8 @@ const KendoWindow = ({
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
   const [position, setPosition] = useState<IWindowPosition>({
-    left: 300,
-    top: 100,
+    left: isMobile == true ? 0 : "50%",
+    top: isMobile == true ? 0 : "50%",
     width: isMobile == true ? deviceWidth : 600,
     height: isMobile == true ? deviceHeight : 800,
   });
@@ -286,9 +292,11 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"단축코드리스트"}
-      initialWidth={position.width}
-      initialHeight={position.height}
+      width={position.width}
+      height={position.height}
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}

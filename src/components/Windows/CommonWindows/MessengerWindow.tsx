@@ -55,6 +55,9 @@ const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   reload,
@@ -818,6 +821,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"Messenger"}
       initialWidth={position.width}
       initialHeight={position.height}

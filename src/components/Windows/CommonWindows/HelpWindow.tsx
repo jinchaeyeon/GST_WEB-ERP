@@ -148,7 +148,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -819,6 +821,8 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"도움말"}
       initialWidth={position.width}
       initialHeight={position.height}

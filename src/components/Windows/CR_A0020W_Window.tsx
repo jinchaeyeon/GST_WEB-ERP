@@ -34,6 +34,9 @@ type TKendoWindow = {
   pathname: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setFilters,
@@ -353,6 +356,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={workType == "N" ? "반려견 등록" : "반려견 정보"}
       initialWidth={position.width}
       initialHeight={position.height}

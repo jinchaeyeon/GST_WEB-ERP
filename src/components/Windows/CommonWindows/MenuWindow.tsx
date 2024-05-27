@@ -45,6 +45,9 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -275,6 +278,8 @@ const KendoWindow = ({
   return (
     <div onClick={Menus}>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"메뉴 참조"}
         initialWidth={position.width}
         initialHeight={position.height}

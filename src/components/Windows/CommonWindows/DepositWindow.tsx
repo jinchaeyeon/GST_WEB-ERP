@@ -37,6 +37,9 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "acntsrtnum";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -234,6 +237,8 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"예적금 관리 팝업"}
       initialWidth={position.width}
       initialHeight={position.height}

@@ -78,6 +78,9 @@ const numberField2 = [
 ];
 let targetRowIndex: null | number = null;
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -375,6 +378,8 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"입고상세정보"}
       initialWidth={position.width}
       initialHeight={position.height}

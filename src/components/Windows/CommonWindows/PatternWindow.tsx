@@ -54,6 +54,9 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   setData,
@@ -525,6 +528,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"패턴공정도 참조"}
       initialWidth={position.width}
       initialHeight={position.height}

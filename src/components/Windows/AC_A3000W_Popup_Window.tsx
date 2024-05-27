@@ -24,6 +24,9 @@ import {
 } from "../CommonFunction";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   reload(arr: any): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -168,6 +171,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"감가상각비현황팝업"}
         initialWidth={position.width}
         initialHeight={position.height}

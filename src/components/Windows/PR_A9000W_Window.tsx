@@ -56,6 +56,9 @@ import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -557,6 +560,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"재공참조"}
         initialWidth={position.width}
         initialHeight={position.height}

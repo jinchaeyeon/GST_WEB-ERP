@@ -74,6 +74,9 @@ type TKendoWindow = {
   pathname: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -614,6 +617,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"연장시간 관리"}
       initialWidth={position.width}
       initialHeight={position.height}

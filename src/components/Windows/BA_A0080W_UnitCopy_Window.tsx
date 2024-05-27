@@ -54,6 +54,9 @@ import {
 import FilterContainer from "../Containers/FilterContainer";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
@@ -667,6 +670,8 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"단가복사"}
         initialWidth={position.width}
         initialHeight={position.height}

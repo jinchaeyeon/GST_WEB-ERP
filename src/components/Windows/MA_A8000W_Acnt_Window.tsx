@@ -47,6 +47,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import AccountWindow from "./CommonWindows/AccountWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -523,6 +526,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"기초잔액 참조"}
         initialWidth={position.width}
         initialHeight={position.height}

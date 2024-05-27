@@ -16,6 +16,9 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -63,6 +66,8 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"일괄생성"}
       initialWidth={position.width}
       initialHeight={position.height}

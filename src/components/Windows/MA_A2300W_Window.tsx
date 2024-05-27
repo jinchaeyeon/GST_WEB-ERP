@@ -64,6 +64,9 @@ import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow1 from "./MA_A2300W_Order_Window";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -1265,6 +1268,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "자재입고생성" : "자재입고정보"}
         initialWidth={position.width}
         initialHeight={position.height}

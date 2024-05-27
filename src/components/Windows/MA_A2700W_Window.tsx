@@ -77,6 +77,9 @@ import CopyWindow5 from "./MA_A2700W_BOM_Window";
 import CopyWindow4 from "./MA_A2700W_Orders_Window";
 import CopyWindow3 from "./MA_A3400W_Inven_Window";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -2409,6 +2412,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "직접입고생성" : "직접입고정보"}
         initialWidth={position.width}
         initialHeight={position.height}

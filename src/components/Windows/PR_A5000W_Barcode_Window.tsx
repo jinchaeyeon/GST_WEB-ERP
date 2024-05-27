@@ -26,6 +26,9 @@ type barcode = {
   qty: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   data: barcode[];
   setVisible(t: boolean): void;
@@ -162,6 +165,8 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"바코드 출력"}
         initialWidth={position.width}
         initialHeight={position.height}

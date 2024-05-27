@@ -72,6 +72,9 @@ type TKendoWindow = {
 let targetRowIndex: null | number = null;
 let temp = 0;
 let temp2 = 0;
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -1254,6 +1257,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={workType == "N" ? "공통코드 생성" : "공통코드 정보"}
       initialWidth={position.width}
       initialHeight={position.height}

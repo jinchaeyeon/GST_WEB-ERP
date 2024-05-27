@@ -10,6 +10,9 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(amt: number): void;
@@ -68,6 +71,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"금액입력"}
         initialWidth={position.width}
         initialHeight={position.height}

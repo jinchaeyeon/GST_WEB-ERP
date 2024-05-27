@@ -55,6 +55,9 @@ type TKendoWindow = {
   // para: TPara;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   setData,
@@ -233,6 +236,8 @@ TKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"교육기준정보"}
       initialWidth={position.width}
       initialHeight={position.height}

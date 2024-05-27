@@ -59,6 +59,9 @@ type TKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -384,6 +387,8 @@ const KendoWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"생산계획참조"}
         initialWidth={position.width}
         initialHeight={position.height}

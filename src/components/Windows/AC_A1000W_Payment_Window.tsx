@@ -59,6 +59,9 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   data?: Idata;
   setVisible(t: boolean): void;
@@ -754,6 +757,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"지급어음 대체처리"}
         initialWidth={position.width}
         initialHeight={position.height}

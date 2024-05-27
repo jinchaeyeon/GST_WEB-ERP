@@ -304,6 +304,9 @@ const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
 const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
 const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -1996,6 +1999,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"사용자 옵션 설정"}
       initialWidth={position.width}
       initialHeight={position.height}

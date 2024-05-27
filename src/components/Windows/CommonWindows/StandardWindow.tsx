@@ -46,7 +46,9 @@ type IWindow = {
   index: number;
   modal?: boolean;
 };
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const StandardWindow = ({
   workType,
   setVisible,
@@ -277,6 +279,8 @@ const StandardWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"기준정보팝업"}
       initialWidth={position.width}
       initialHeight={position.height}

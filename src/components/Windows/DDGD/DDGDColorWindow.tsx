@@ -27,6 +27,9 @@ function PaperComponent(props: PaperProps) {
   );
 }
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;

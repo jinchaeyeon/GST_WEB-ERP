@@ -66,6 +66,9 @@ import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./SA_A2300W_Inven_Window";
 let targetRowIndex: null | number = null;
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -1320,6 +1323,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "출하처리생성" : "출하처리정보"}
         initialWidth={position.width}
         initialHeight={position.height}

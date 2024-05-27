@@ -22,6 +22,9 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -188,6 +191,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"시스템 옵션 (관리자)"}
       initialWidth={position.width}
       initialHeight={position.height}

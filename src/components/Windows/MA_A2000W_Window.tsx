@@ -83,6 +83,9 @@ import CopyWindow2 from "./MA_A2000W_BOM_Window";
 import CopyWindow1 from "./MA_A2700W_BOM_Window";
 import CopyWindow4 from "./MA_A2700W_Orders_Window";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -1848,6 +1851,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "자재발주생성" : "자재발주정보"}
         initialWidth={position.width}
         initialHeight={position.height}

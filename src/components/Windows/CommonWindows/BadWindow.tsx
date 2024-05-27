@@ -56,7 +56,9 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const Badwindow = ({
   setVisible,
   setData,
@@ -501,6 +503,8 @@ const Badwindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"불량처리"}
       initialWidth={position.width}
       initialHeight={position.height}

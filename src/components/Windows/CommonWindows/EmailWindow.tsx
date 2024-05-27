@@ -25,6 +25,9 @@ type TKendoWindow = {
   modal?: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   quonum,
@@ -145,6 +148,8 @@ const KendoWindow = ({
   const [placeholder, setPlaceholder] = useState("파일 선택");
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"Email"}
       initialWidth={position.width}
       initialHeight={position.height}

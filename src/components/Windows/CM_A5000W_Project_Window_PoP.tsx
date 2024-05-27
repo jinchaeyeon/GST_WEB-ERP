@@ -58,6 +58,9 @@ type TKendoWindow = {
   pathname: string;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   quotestnum,
@@ -424,6 +427,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"프로젝트 참조"}
       initialWidth={position.width}
       initialHeight={position.height}

@@ -48,6 +48,9 @@ let targetRowIndex: null | number = null;
 
 let DATA_ITEM_KEY: string;
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   setData,
@@ -431,6 +434,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={title}
       initialWidth={position.width}
       initialHeight={position.height}

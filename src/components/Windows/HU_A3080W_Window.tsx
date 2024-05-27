@@ -58,6 +58,9 @@ interface IPrsnnum {
   postcd: string;
 }
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IPrsnnumMulti[]): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -419,6 +422,8 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"사용자리스트(멀티)"}
       initialWidth={position.width}
       initialHeight={position.height}

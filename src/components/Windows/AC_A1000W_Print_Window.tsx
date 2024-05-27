@@ -19,6 +19,9 @@ import {
 import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
@@ -100,6 +103,8 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"출력형태"}
         initialWidth={position.width}
         initialHeight={position.height}
@@ -142,6 +147,8 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
       </Window>
       {previewVisible && (
         <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
           title={"미리보기"}
           onClose={() => {
             setPreviewVisible((prev) => !prev);

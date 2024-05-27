@@ -46,6 +46,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import AC_A1100W_Indt_Window from "./AC_A1100W_Indt_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -1157,6 +1160,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={worktype == "N" ? "수입신고생성" : "수입신고정보"}
         initialWidth={position.width}
         initialHeight={position.height}

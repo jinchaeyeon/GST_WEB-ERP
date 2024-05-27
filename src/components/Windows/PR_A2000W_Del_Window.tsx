@@ -61,6 +61,9 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let deletedMainRows: object[] = [];
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   gokey,
@@ -609,6 +612,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"생산계획참조"}
       initialWidth={position.width}
       initialHeight={position.height}

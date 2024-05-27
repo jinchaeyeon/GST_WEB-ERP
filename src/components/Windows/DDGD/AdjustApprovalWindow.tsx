@@ -83,7 +83,9 @@ type IWindow = {
 const DATA_ITEM_KEY = "membership_key";
 
 let targetRowIndex: null | number = null;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const AdjustApprovalWindow = ({
   setVisible,
   modal = false,
@@ -439,6 +441,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"변경 신청 리스트"}
       initialWidth={position.width}
       initialHeight={position.height}

@@ -42,7 +42,9 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -254,6 +256,8 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"일용직 사원LIST"}
       initialWidth={position.width}
       initialHeight={position.height}

@@ -92,7 +92,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 type TKendoWindow = {
   getVisible(t: boolean): void;
   rekey?: string;
@@ -1318,6 +1320,8 @@ const DetailWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"상세정보등록"}
       initialWidth={position.width}
       initialHeight={position.height}

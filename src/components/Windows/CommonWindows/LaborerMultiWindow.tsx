@@ -60,7 +60,9 @@ const DATA_ITEM_KEY = "prsnnum";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const LaborerMultiWindow = ({
   setVisible,
   setData,
@@ -393,6 +395,8 @@ const LaborerMultiWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"일용직사원리스트(멀티)"}
       initialWidth={position.width}
       initialHeight={position.height}

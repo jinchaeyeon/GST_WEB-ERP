@@ -65,6 +65,9 @@ import ItemsWindow from "./CommonWindows/ItemsWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./MA_A2500W_Order_Window";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "U" | "R";
   data?: Idata;
@@ -1225,6 +1228,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "검사표준서생성" : "검사표준서정보"}
         initialWidth={position.width}
         initialHeight={position.height}

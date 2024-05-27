@@ -56,6 +56,9 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "custcd";
 let targetRowIndex: null | number = null;
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   workType,
@@ -334,6 +337,8 @@ const KendoWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"업체마스터"}
       initialWidth={position.width}
       initialHeight={position.height}

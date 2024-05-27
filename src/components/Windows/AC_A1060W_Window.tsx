@@ -50,6 +50,9 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import DepositWindow from "./CommonWindows/DepositWindow";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
@@ -1168,6 +1171,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"수금전표생성"}
         initialWidth={position.width}
         initialHeight={position.height}

@@ -84,6 +84,9 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   custcd?: string | undefined;
   custnm?: string | undefined;
@@ -741,6 +744,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"발주참조"}
         initialWidth={position.width}
         initialHeight={position.height}

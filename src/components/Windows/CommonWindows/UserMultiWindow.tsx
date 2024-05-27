@@ -69,7 +69,9 @@ const DATA_ITEM_KEY = "prsnnum";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -437,6 +439,8 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"사용자리스트(멀티)"}
       initialWidth={position.width}
       initialHeight={position.height}

@@ -42,7 +42,9 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -259,6 +261,8 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"사원리스트"}
       initialWidth={position.width}
       initialHeight={position.height}

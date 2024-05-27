@@ -420,6 +420,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -2849,6 +2852,8 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={workType == "N" ? "수주생성" : "수주정보"}
       initialWidth={position.width}
       initialHeight={position.height}

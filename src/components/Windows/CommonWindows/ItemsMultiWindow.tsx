@@ -44,7 +44,9 @@ const DATA_ITEM_KEY = "itemcd";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -426,6 +428,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"품목참조(멀티)"}
       initialWidth={position.width}
       initialHeight={position.height}

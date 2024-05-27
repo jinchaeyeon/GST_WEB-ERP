@@ -76,6 +76,9 @@ type TDetailData = {
   readok: string[];
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -677,6 +680,8 @@ const pc = UseGetValueFromSessionItem("pc");
   };
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={workType == "N" ? "공지생성" : "공지정보"}
       initialWidth={position.width}
       initialHeight={position.height}

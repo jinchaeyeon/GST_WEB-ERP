@@ -70,6 +70,9 @@ import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   workType: "N" | "A" | "C";
   data?: Idata;
@@ -3303,6 +3306,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={
           worktype == "N"
             ? "대체전표생성"

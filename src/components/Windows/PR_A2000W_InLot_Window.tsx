@@ -57,6 +57,9 @@ type TKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 const KendoWindow = ({
   setVisible,
   plankey,
@@ -564,6 +567,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"투입LOT선택"}
         initialWidth={position.width}
         initialHeight={position.height}

@@ -38,6 +38,9 @@ type filters = {
   isSearch: boolean;
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   data: barcode[];
   filter: filters;
@@ -203,6 +206,8 @@ const CopyWindow = ({
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={"바코드 출력"}
         initialWidth={position.width}
         initialHeight={position.height}

@@ -11,7 +11,9 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const ZipCodeWindow = ({
   setVisible,
   setData,
@@ -70,6 +72,8 @@ const ZipCodeWindow = ({
 
   return (
     <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
       title={"우편번호"}
       initialWidth={position.width}
       initialHeight={position.height}

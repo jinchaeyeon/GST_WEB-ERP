@@ -87,6 +87,9 @@ type TdataArr = {
   datnum_s: string[];
 };
 
+const NoneDiv = () => {
+  return <div></div>;
+};
 type IWindow = {
   setVisible(t: boolean): void;
   workType: "N" | "U";
@@ -1726,6 +1729,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "수금처리생성" : "수금처리수정"}
         initialWidth={position.width}
         initialHeight={position.height}

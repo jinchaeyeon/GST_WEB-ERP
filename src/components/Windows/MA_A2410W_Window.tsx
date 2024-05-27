@@ -132,7 +132,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+const NoneDiv = () => {
+  return <div></div>;
+};
 const DetailWindow = ({
   workType,
   data,
@@ -1209,6 +1211,8 @@ const pc = UseGetValueFromSessionItem("pc");
   return (
     <>
       <Window
+      minimizeButton={NoneDiv}
+      maximizeButton={NoneDiv}
         title={workType == "N" ? "외주처리생성" : "외주처리정보"}
         initialWidth={position.width}
         initialHeight={position.height}
