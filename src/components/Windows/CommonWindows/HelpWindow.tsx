@@ -42,6 +42,7 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
@@ -49,6 +50,10 @@ import { CellRender, RowRender } from "../../Renderers/Renderers";
 import FileViewers from "../../Viewer/FileViewers";
 import Window from "../WindowComponent/Window";
 import PopUpAttachmentsWindow from "./PopUpAttachmentsWindow";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -153,6 +158,17 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = 0;
+  var container = document.querySelector(".k-window-titlebar");
+  if (container?.clientHeight != undefined) {
+    height = container == undefined ? 0 : container.clientHeight;
+  }
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".ButtonContainer"); //그리드 title부분
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -521,6 +537,10 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       attdatnum: dataArr.attdatnum.join("|"),
       user_id: dataArr.user_id.join("|"),
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+		}
   };
 
   const paraSaved: Iparameters = {
@@ -749,6 +769,9 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const upload = () => {
     const uploadInput = document.getElementById("uploadAttachmentManual");
     uploadInput!.click();
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+		}
   };
 
   const handleFileUpload = async (files: FileList | null) => {
@@ -803,6 +826,9 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     }
 
     fetchmanualGrid();
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+		}
   };
 
   return (
@@ -813,159 +839,327 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       modals={modal}
       className="print-hidden"
     >
-      <TitleContainer>
-        <Title>메뉴얼</Title>
-      </TitleContainer>
-      <div
-        style={{
-          height: position.height - 570,
-          marginBottom: "10px",
-        }}
-      >
-        {url != "" ? <FileViewers fileUrl={url} /> : ""}
-      </div>
-      <FormContext.Provider
-        value={{
-          attdatnum,
-          is_attached,
-          setAttdatnum,
-          setIs_attached,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
-        }}
-      >
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>코멘트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "300px" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                update_userid: userListData.find(
-                  (items: any) => items.user_id == row.update_userid
-                )?.user_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide
+            key={0}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="contents"
-              title="내용"
-              width="250px"
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="is_attached"
-              title="첨부"
-              width="120px"
-              cell={ColumnCommandCell}
-            />
-            <GridColumn
-              field="update_userid"
-              title="마지막 수정자"
-              width="120px"
-            />
-            <GridColumn
-              field="update_time"
-              title="마지막 수정일시"
-              width="150px"
-            />
-          </Grid>
-        </GridContainer>
-      </FormContext.Provider>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-        {serviceCategory == "MANAGEMENT" ? (
-          <div>
-            <Button
-              themeColor={"primary"}
-              onClick={upload}
-              style={{ marginRight: "10px" }}
+            <TitleContainer className="TitleContainer">
+              <Title>메뉴얼</Title>
+            </TitleContainer>
+            <div
+              style={{
+                height: deviceHeight - height - height2 - height3,
+                width: "100%",
+              }}
             >
-              업로드
-              <input
-                id="uploadAttachmentManual"
-                style={{ display: "none" }}
-                type="file"
-                accept="application/pdf"
-                ref={excelInput}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  handleFileUpload(event.target.files);
+              {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            </div>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <FormContext.Provider
+              value={{
+                attdatnum,
+                is_attached,
+                setAttdatnum,
+                setIs_attached,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer
+                style={{
+                  overflow: isMobile ? "auto" : "hidden",
                 }}
-              />
-            </Button>
+              >
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>코멘트</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{
+                    height: isMobile
+                      ? deviceHeight - height - height2 - height3 - height4
+                      : position.height - height - height2 - height3 - height4,
+                  }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      update_userid: userListData.find(
+                        (items: any) => items.user_id == row.update_userid
+                      )?.user_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="contents"
+                    title="내용"
+                    width="250px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="is_attached"
+                    title="첨부"
+                    width="120px"
+                    cell={ColumnCommandCell}
+                  />
+                  <GridColumn
+                    field="update_userid"
+                    title="마지막 수정자"
+                    width="120px"
+                  />
+                  <GridColumn
+                    field="update_time"
+                    title="마지막 수정일시"
+                    width="150px"
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext.Provider>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <TitleContainer className="TitleContainer">
+            <Title>메뉴얼</Title>
+          </TitleContainer>
+          <div
+            style={{
+              height: isMobile
+                ? deviceHeight - height - height2 - height3
+                : position.height - 570,
+              marginBottom: "10px",
+            }}
+          >
+            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+          </div>
+          <FormContext.Provider
+            value={{
+              attdatnum,
+              is_attached,
+              setAttdatnum,
+              setIs_attached,
+              mainDataState,
+              setMainDataState,
+              // fetchGrid,
+            }}
+          >
+            <GridContainer
+              style={{
+                overflow: isMobile ? "auto" : "hidden",
+              }}
+            >
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>코멘트</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{
+                  height: isMobile
+                    ? deviceHeight - height - height2 - height3 - height4
+                    : position.height - height - height2 - height3 - height4,
+                }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    update_userid: userListData.find(
+                      (items: any) => items.user_id == row.update_userid
+                    )?.user_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="contents"
+                  title="내용"
+                  width="250px"
+                  footerCell={mainTotalFooterCell}
+                />
+                <GridColumn
+                  field="is_attached"
+                  title="첨부"
+                  width="120px"
+                  cell={ColumnCommandCell}
+                />
+                <GridColumn
+                  field="update_userid"
+                  title="마지막 수정자"
+                  width="120px"
+                />
+                <GridColumn
+                  field="update_time"
+                  title="마지막 수정일시"
+                  width="150px"
+                />
+              </Grid>
+            </GridContainer>
+          </FormContext.Provider>
+        </>
+      )}
+
+      <BottomContainer className="BottomContainer">
+        <div
+          style={{
+            justifyContent: isMobile ? "space-evenly" : "right",
+          }}
+        >
+          <ButtonContainer>
+            {serviceCategory == "MANAGEMENT" ? (
+              <div>
+                <Button themeColor={"primary"} onClick={upload}>
+                  업로드
+                  <input
+                    id="uploadAttachmentManual"
+                    style={{ display: "none" }}
+                    type="file"
+                    accept="application/pdf"
+                    ref={excelInput}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      handleFileUpload(event.target.files);
+                    }}
+                  />
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={handleDelete}
+                >
+                  삭제
+                </Button>
+              </div>
+            ) : (
+              ""
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
-              onClick={handleDelete}
+              onClick={onClose}
             >
-              삭제
+              닫기
             </Button>
-          </div>
-        ) : (
-          ""
-        )}
+          </ButtonContainer>
+        </div>
       </BottomContainer>
     </Window>
   );

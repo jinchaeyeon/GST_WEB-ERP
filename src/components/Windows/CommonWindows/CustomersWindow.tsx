@@ -149,7 +149,7 @@ const KendoWindow = ({
     custcd: "",
     custnm: "",
     custdiv: "",
-    useyn: companyCode == "2302BA03" ? "%" : "Y",
+    useyn: "%",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
