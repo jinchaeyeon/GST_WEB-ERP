@@ -1392,52 +1392,61 @@ const SY_A0125W: React.FC = () => {
                 }}
               >
                 <GridTitleContainer className="ButtonContainer">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
+                  <GridTitle>
+                    {" "}
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
                     >
-                      이전
-                    </Button>
-                    <div>
-                      <Button
-                        onClick={onAddClick2}
-                        themeColor={"primary"}
-                        icon="file-add"
-                      >
-                        신규
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick2}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="delete"
-                      >
-                        삭제
-                      </Button>
-                      <Button
-                        onClick={onSaveClick2}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                      >
-                        저장
-                      </Button>
+                      {" "}
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        {"기본정보"}
+                      </ButtonContainer>
                       <Button
                         onClick={() => {
                           if (swiper) {
                             swiper.slideTo(2);
                           }
                         }}
-                        icon="arrow-right"
-                      >
-                        부서인원 정보
-                      </Button>
-                    </div>
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
                 <FormBoxWrap
@@ -1544,18 +1553,22 @@ const SY_A0125W: React.FC = () => {
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>부서인원정보</GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                      icon="arrow-left"
-                    >
-                      이전
-                    </Button>
+                  <GridTitle>
+                    <ButtonContainer style={{ justifyContent: "left" }}>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      {"부서인원정보"}
+                    </ButtonContainer>
+                  </GridTitle>
+                  <ButtonContainer>
                     <Button
                       onClick={onSaveClick}
                       fillMode="outline"

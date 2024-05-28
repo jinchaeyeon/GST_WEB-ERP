@@ -6,6 +6,7 @@ import {
 } from "../components/CommonFunction";
 import { linkState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
+import { useEffect, useState } from "react";
 
 const cachios = require("cachios");
 const domain: any = {
@@ -151,7 +152,11 @@ export const useApi = () => {
   const [Link, setLink] = useRecoilState(linkState);
   generateGetUrl();
   const pc = UseGetValueFromSessionItem("pc");
+  const [sessionItemFetched, setSessionItemFetched] = useState(false);
+  const sessionItemCheck = localStorage.getItem("sessionItem");
+  const isSessionValid = !!sessionItemCheck;
 
+  
   const fetchSessionItem = async () => {
     let data;
     try {
@@ -176,22 +181,29 @@ export const useApi = () => {
           }))
           .concat([{ code: "pc", value: pc }]);
         setSessionItem(array);
+        setSessionItemFetched(true);
       }
     } catch (e: any) {
       console.log("menus error", e);
     }
-  };
+  }
 
-  const processApi = <T>(name: string, params: any = null): Promise<T> => {
-    const isSessionValid = !!sessionItem;
+  useEffect(() => {
+    if (window.location.pathname !== "/") {
+      if (!isSessionValid && !sessionItemFetched ) {
+        console.log("세션아이템없음");     
+        setSessionItemFetched(true);
+        fetchSessionItem();
+        window.location.reload();
+      }  
+    }   
+  }, [isSessionValid, sessionItemFetched]);
+
+  const processApi = async <T>(name: string, params: any = null): Promise<T> => {    
     if (window.location.pathname !== "/") {
       if (!token && !loginResult) {
         resetLocalStorage(); // 토큰, 로그인결과가 없을시
         window.location.href = "/"; // 리다이렉션 처리
-      } else {
-        if (!isSessionValid) {
-          fetchSessionItem();
-        }
       }
     }
     
