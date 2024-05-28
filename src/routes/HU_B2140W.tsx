@@ -831,7 +831,7 @@ const HU_B2140W: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer2">
@@ -909,7 +909,7 @@ const HU_B2140W: React.FC = () => {
             <SwiperSlide key={1}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer2">
@@ -985,7 +985,7 @@ const HU_B2140W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>연장</GridTitle>
                 </GridTitleContainer>
@@ -1061,7 +1061,7 @@ const HU_B2140W: React.FC = () => {
             <SwiperSlide key={3}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer2">

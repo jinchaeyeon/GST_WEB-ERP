@@ -1215,7 +1215,7 @@ const PR_A5000W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1338,7 +1338,7 @@ const PR_A5000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "left" }}>

@@ -846,7 +846,7 @@ const pc = UseGetValueFromSessionItem("pc");
       </FilterContainer>
       <GridContainer
         style={{
-          width: isMobile ? `${deviceWidth - 30}px` : "100%",
+          width: isMobile ? "100%" : "100%",
           overflow: isMobile ? "auto" : undefined,
         }}
       >

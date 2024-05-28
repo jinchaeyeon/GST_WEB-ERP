@@ -1490,7 +1490,7 @@ const HU_B4010W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
@@ -1561,7 +1561,7 @@ const HU_B4010W: React.FC = () => {
             <SwiperSlide key={1}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer">
@@ -1669,7 +1669,7 @@ const HU_B4010W: React.FC = () => {
             <SwiperSlide key={2}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer4">

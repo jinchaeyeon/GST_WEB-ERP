@@ -549,7 +549,7 @@ const Page: React.FC = () => {
       </FilterContainer>
       <GridContainer
         style={{
-          width: isMobile ? `${deviceWidth - 30}px` : "",
+          width: isMobile ? "100%" : "",
           overflow: isMobile ? "auto" : undefined,
           height: isMobile ? "" : "78vh",
         }}

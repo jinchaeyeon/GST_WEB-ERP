@@ -814,7 +814,7 @@ const HU_B3220W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>기본정보</GridTitle>
                 </GridTitleContainer>
@@ -896,7 +896,7 @@ const HU_B3220W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <ExcelExport
                   data={detailDataResult.data}
                   ref={(exporter) => {

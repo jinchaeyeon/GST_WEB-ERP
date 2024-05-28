@@ -1002,7 +1002,7 @@ const PS_A0060_301W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+        style={{ width: "100%", overflow: "auto" }}
       >
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>휴일 리스트</GridTitle>

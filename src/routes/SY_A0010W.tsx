@@ -1287,7 +1287,7 @@ const Page: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >
@@ -1408,7 +1408,7 @@ const Page: React.FC = () => {
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >

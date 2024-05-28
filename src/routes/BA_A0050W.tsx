@@ -2204,7 +2204,7 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
@@ -2279,7 +2279,7 @@ const pc = UseGetValueFromSessionItem("pc");
             >
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >
@@ -2308,7 +2308,7 @@ const pc = UseGetValueFromSessionItem("pc");
                     </Button>
                   </ButtonContainer>
                   <FormBoxWrap border={true}>
-                    <FormBox style={{ width: `${deviceWidth - 30}px` }}>
+                    <FormBox style={{ width: "100%" }}>
                       <tbody style={{ display: "flex", flexDirection: "row" }}>
                         <td>
                           <Input
@@ -2411,7 +2411,7 @@ const pc = UseGetValueFromSessionItem("pc");
               >
                 <GridContainer
                   style={{
-                    width: `${deviceWidth - 30}px`,
+                    width: "100%",
                     overflow: "auto",
                   }}
                 >

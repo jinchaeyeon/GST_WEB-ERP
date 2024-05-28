@@ -1487,7 +1487,7 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>
@@ -1658,7 +1658,7 @@ const pc = UseGetValueFromSessionItem("pc");
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <ExcelExport

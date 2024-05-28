@@ -2421,7 +2421,7 @@ const BA_A0040: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>

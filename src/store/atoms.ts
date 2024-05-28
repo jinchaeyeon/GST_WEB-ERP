@@ -179,3 +179,13 @@ export const isFilterHideState2 = atom<boolean>({
   key: "isFilterHideState2",
   default: document.documentElement.clientWidth <= 1200,
 });
+
+export const isMobileState = atom<boolean>({
+  key: "isMobileState",
+  default: document.documentElement.clientWidth <= 1200,
+});
+
+export const isDeviceWidthState = atom<number>({
+  key: "isDeviceWidthState",
+  default: document.documentElement.clientWidth,
+});

@@ -518,7 +518,7 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>

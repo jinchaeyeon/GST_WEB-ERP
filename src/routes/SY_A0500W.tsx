@@ -1235,7 +1235,7 @@ const SY_A0500W: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                 }}
               >
                 <ExcelExport
@@ -1331,7 +1331,7 @@ const SY_A0500W: React.FC = () => {
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   height: deviceHeight - height,
                   overflow: "auto",
                 }}

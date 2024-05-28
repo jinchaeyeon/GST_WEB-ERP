@@ -1157,7 +1157,7 @@ const EA_A2000W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               {filters.appgb == "B" ? (
                 <GridTitleContainer className="ButtonContainer">
@@ -1418,7 +1418,7 @@ const EA_A2000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1534,7 +1534,7 @@ const EA_A2000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1649,7 +1649,7 @@ const EA_A2000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={3}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <CommentsGrid
                 ref_key={filters2.appnum}
@@ -1661,7 +1661,7 @@ const EA_A2000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={4}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer>
                 <GridTitle>

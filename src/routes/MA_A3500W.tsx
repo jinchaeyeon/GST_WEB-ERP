@@ -2537,7 +2537,7 @@ const MA_A3500W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
@@ -2651,7 +2651,7 @@ const MA_A3500W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <TabStrip
                   style={{
@@ -2879,7 +2879,7 @@ const MA_A3500W: React.FC = () => {
                       <SwiperSlide key={0}>
                         <GridContainer
                           style={{
-                            width: `${deviceWidth - 30}px`,
+                            width: "100%",
                             overflow: "auto",
                           }}
                         >
@@ -3032,7 +3032,7 @@ const MA_A3500W: React.FC = () => {
                       <SwiperSlide key={1}>
                         <GridContainer
                           style={{
-                            width: `${deviceWidth - 30}px`,
+                            width: "100%",
                             overflow: "auto",
                           }}
                         >
@@ -3269,7 +3269,7 @@ const MA_A3500W: React.FC = () => {
 
             <SwiperSlide key={2}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>처리정보</GridTitle>

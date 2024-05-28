@@ -677,7 +677,7 @@ const CM_A1710W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer
-        style={{ width: isMobile? `${deviceWidth - 30}px` : "100%", overflow: "auto" }}
+        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
       >
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>

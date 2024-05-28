@@ -1371,7 +1371,7 @@ const QC_B0200W: React.FC = () => {
       >
         <TabStripTab title="전체">
           <GridContainer
-            style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+            style={{ width: "100%", overflow: "auto" }}
           >
             <GridTitleContainer className="ButtonContainer">
               <GridTitle>검사내역</GridTitle>
@@ -1477,7 +1477,7 @@ const QC_B0200W: React.FC = () => {
               >
                 <SwiperSlide key={0}>
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <GridTitleContainer className="ButtonContainer2">
                       <GridTitle
@@ -1596,7 +1596,7 @@ const QC_B0200W: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle
@@ -1707,7 +1707,7 @@ const QC_B0200W: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={2}>
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <GridTitleContainer className="ButtonContainer4">
                       <GridTitle style={{ marginBottom: "4px" }}>

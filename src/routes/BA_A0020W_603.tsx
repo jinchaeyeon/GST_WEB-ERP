@@ -239,7 +239,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
 const BA_A0020W_603: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
@@ -2985,7 +2985,7 @@ const BA_A0020W_603: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>

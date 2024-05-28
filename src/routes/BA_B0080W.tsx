@@ -602,7 +602,7 @@ const BA_B0080W: React.FC = () => {
       </FilterContainer>
       <GridContainer
         style={{
-          width: isMobile ? `${deviceWidth - 30}px` : "100%",
+          width: isMobile ? "100%" : "100%",
         }}
       >
         <ExcelExport

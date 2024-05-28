@@ -1695,7 +1695,7 @@ const SA_B2410: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>세부정보</GridTitle>

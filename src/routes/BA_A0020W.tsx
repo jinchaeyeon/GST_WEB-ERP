@@ -3190,7 +3190,7 @@ const BA_A0020: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
@@ -3205,7 +3205,7 @@ const BA_A0020: React.FC = () => {
                   <Grid
                     style={{
                       height: deviceHeight - height,
-                      width: `${deviceWidth - 30}px`,
+                      width: "100%",
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({

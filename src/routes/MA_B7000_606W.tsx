@@ -853,7 +853,7 @@ const MA_B7000_606W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
@@ -953,7 +953,7 @@ const MA_B7000_606W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>계정별LOT</GridTitle>

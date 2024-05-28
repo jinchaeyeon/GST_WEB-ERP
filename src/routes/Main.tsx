@@ -802,7 +802,7 @@ const Main: React.FC = () => {
                 </MainWorkStartEndContainer>
               </MainTopContainer>
               <ApprovalBox
-                style={{ width: `${deviceWidth - 30}px`, fontSize: "0.8em" }}
+                style={{ width: "100%", fontSize: "0.8em" }}
                 className="ButtonContainer2"
               >
                 <ApprovalInner>
@@ -829,7 +829,7 @@ const Main: React.FC = () => {
                 </Button>
               </ApprovalBox>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, marginTop: "1vh" }}
+                style={{ width: "100%", marginTop: "1vh" }}
               >
                 <TabStrip
                   style={{ width: "100%" }}

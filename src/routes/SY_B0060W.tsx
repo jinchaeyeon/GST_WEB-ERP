@@ -584,7 +584,7 @@ const pc = UseGetValueFromSessionItem("pc");
                   </MainWorkStartEndContainer>
                   <ApprovalBox
                     style={{
-                      width: `${deviceWidth - 30}px`,
+                      width: "100%",
                       fontSize: "0.8em",
                     }}
                     className="ButtonContainer2"
@@ -618,7 +618,7 @@ const pc = UseGetValueFromSessionItem("pc");
               )}
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   height: deviceHeight - height - height2,
                   marginTop: "2vh",
                 }}
@@ -657,7 +657,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </div>
             <GridContainer
               style={{
-                width: `${deviceWidth - 30}px`,
+                width: "100%",
                 overflow: "auto",
               }}
             >

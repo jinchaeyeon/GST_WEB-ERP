@@ -774,7 +774,7 @@ const HU_B4001W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사원정보</GridTitle>
@@ -903,7 +903,7 @@ const HU_B4001W: React.FC = () => {
                   <GridContainer></GridContainer>
                 </GridTitleContainer>
                 <GridContainer
-                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  style={{ width: "100%", overflow: "auto" }}
                 >
                   <ExcelExport
                     data={useDataResult.data}
@@ -978,7 +978,7 @@ const HU_B4001W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>연차조정</GridTitle>

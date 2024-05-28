@@ -1731,7 +1731,7 @@ const pc = UseGetValueFromSessionItem("pc");
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>대분류</GridTitle>
@@ -1795,7 +1795,7 @@ const pc = UseGetValueFromSessionItem("pc");
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>중분류</GridTitle>
@@ -1872,7 +1872,7 @@ const pc = UseGetValueFromSessionItem("pc");
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>소분류</GridTitle>
@@ -1949,7 +1949,7 @@ const pc = UseGetValueFromSessionItem("pc");
           </SwiperSlide>
           <SwiperSlide key={3}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>

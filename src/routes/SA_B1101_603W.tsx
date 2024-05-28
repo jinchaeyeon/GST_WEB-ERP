@@ -529,7 +529,7 @@ const SA_B1101_603W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+      <GridContainer style={{ width: "100%" }}>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>

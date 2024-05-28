@@ -3055,7 +3055,7 @@ FROM HU072T WHERE paycd = '4'`;
                 }}
               >
                 <SwiperSlide key={0}>
-                  <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                  <GridContainer style={{ width: "100%" }}>
                     <Grid
                       style={{
                         height: deviceHeight - height2,
@@ -3115,7 +3115,7 @@ FROM HU072T WHERE paycd = '4'`;
                   </GridContainer>
                 </SwiperSlide>
                 <SwiperSlide key={1}>
-                  <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+                  <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer3">
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}

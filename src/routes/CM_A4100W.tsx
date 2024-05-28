@@ -2962,7 +2962,7 @@ const CM_A4100W: React.FC = () => {
                   }}
                 >
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>상세정보</GridTitle>

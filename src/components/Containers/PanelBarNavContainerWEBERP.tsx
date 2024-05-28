@@ -77,6 +77,8 @@ import {
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
   unsavedNameState,
+  isMobileState,
+  isDeviceWidthState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -152,7 +154,7 @@ const PanelBarNavContainer = (props: any) => {
   const [formKey, setFormKey] = useState("");
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [routesDeviceHeight, setroutesDeviceHeight] = useRecoilState(heightstate);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
@@ -163,12 +165,18 @@ const PanelBarNavContainer = (props: any) => {
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
 
   // 반응형 처리
-  const [clientWidth, setClientWidth] = useState(
-    document.documentElement.getBoundingClientRect().width
-  );
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   useEffect(() => {
     const handleWindowResize = () => {
-      setClientWidth(document.documentElement.getBoundingClientRect().width);
+      setDeviceWidth(document.documentElement.getBoundingClientRect().width);
+      const newIsMobile = document.documentElement.getBoundingClientRect().width <= 1200;
+      setIsMobile(newIsMobile);
+      if (newIsMobile) {
+        setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
+      } else {        
+        setIsFilterHideStates(false); // 데스크톱 열린 상태로 설정
+      }
     };
     window.addEventListener("resize", handleWindowResize);
     return () => {
@@ -223,7 +231,7 @@ const PanelBarNavContainer = (props: any) => {
       if(isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 170);
+        setroutesDeviceHeight(document.documentElement.clientHeight - 170);
       }
     };
   }, [
@@ -447,8 +455,6 @@ const PanelBarNavContainer = (props: any) => {
     useState<boolean>(false);
   const [systemOptionWindowWindowVisible, setSystemOptionWindowVisible] =
     useState<boolean>(false);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
   const onSelect = (event: PanelBarSelectEventArguments) => {
     const { route, className = "" } = event.target.props;
 
@@ -458,7 +464,7 @@ const PanelBarNavContainer = (props: any) => {
       if (isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setDeviceHeight(document.documentElement.clientHeight - 170);
+        setroutesDeviceHeight(document.documentElement.clientHeight - 170);
       }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);

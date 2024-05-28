@@ -1079,7 +1079,7 @@ const pc = UseGetValueFromSessionItem("pc");
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <FormBoxWrap border={true} className="ButtonContainer">
                   <FormBox>
                     <tbody>
@@ -1254,7 +1254,7 @@ const pc = UseGetValueFromSessionItem("pc");
               <GridContainer>
                 <GridContainer
                   style={{
-                    width: `${deviceWidth - 30}px`,
+                    width: "100%",
                   }}
                 >
                   <GridTitleContainer className="ButtonContainer4">

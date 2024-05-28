@@ -772,7 +772,7 @@ const Main: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                   height: deviceHeight,
                 }}
@@ -981,7 +981,7 @@ const Main: React.FC = () => {
             <SwiperSlide key={1}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                   height: deviceHeight,
                 }}

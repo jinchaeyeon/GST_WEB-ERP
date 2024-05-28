@@ -772,7 +772,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <TitleContainer
                   style={{ marginBottom: "15px" }}
@@ -1040,7 +1040,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             {checkDataResult.total > 0 ? (
               <SwiperSlide key={1}>
                 <GridContainer
-                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  style={{ width: "100%", overflow: "auto" }}
                 >
                   <TitleContainer
                     style={{ marginBottom: "15px" }}

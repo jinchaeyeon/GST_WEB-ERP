@@ -1453,7 +1453,7 @@ const CM_A3000W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
@@ -1497,7 +1497,7 @@ const CM_A3000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>요약정보</GridTitle>

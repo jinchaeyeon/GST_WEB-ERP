@@ -1321,7 +1321,7 @@ const SY_A0125W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>
@@ -1387,7 +1387,7 @@ const SY_A0125W: React.FC = () => {
             >
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >
@@ -1453,7 +1453,7 @@ const SY_A0125W: React.FC = () => {
                   border={true}
                   style={{
                     height: deviceHeight - height,
-                    width: `${deviceWidth - 30}px`,
+                    width: "100%",
                     overflow: "scroll",
                   }}
                 >
@@ -1550,7 +1550,7 @@ const SY_A0125W: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>

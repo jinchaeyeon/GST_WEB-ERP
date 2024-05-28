@@ -1065,7 +1065,7 @@ const MA_B7000: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >
@@ -1273,7 +1273,7 @@ const MA_B7000: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>LOT별 상세이력</GridTitle>

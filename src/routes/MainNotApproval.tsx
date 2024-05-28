@@ -762,7 +762,7 @@ const Main: React.FC = () => {
                 </ButtonContainer>
               </MainTopContainer>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, marginTop: "1vh" }}
+                style={{ width: "100%", marginTop: "1vh" }}
               >
                 <TabStrip
                   style={{ width: "100%" }}

@@ -1149,7 +1149,7 @@ const HU_A1060W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <FormContext.Provider
                   value={{
                     prsnnum,
@@ -1286,7 +1286,7 @@ const HU_A1060W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+              <GridContainer style={{ width: "100%" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button

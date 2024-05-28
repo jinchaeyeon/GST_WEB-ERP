@@ -285,7 +285,7 @@ const SY_A0060W: React.FC = () => {
           </FilterContainer>
           <TabStrip
             style={{
-              width: isMobile ? `${deviceWidth - 30}px` : "100%",
+              width: isMobile ? "100%" : "100%",
               height: deviceHeight,
             }}
             selected={tabSelected}
@@ -381,7 +381,7 @@ const SY_A0060W: React.FC = () => {
           </TitleContainer>
           <TabStrip
             style={{
-              width: isMobile ? `${deviceWidth - 30}px` : "100%",
+              width: isMobile ? "100%" : "100%",
               height: "",
             }}
             selected={tabSelected}

@@ -858,7 +858,7 @@ const CR_A1100W: React.FC = () => {
       </FilterContainer>
       <GridContainer
         style={{
-          width: isMobile ? `${deviceWidth - 30}px` : "",
+          width: isMobile ? "100%" : "",
           overflow: isMobile ? "auto" : undefined,
         }}
       >

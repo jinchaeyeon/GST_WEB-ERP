@@ -424,7 +424,7 @@ const QC_B9020_615W: React.FC = () => {
           <SwiperSlide key={0}>
             <GridContainer
               style={{
-                width: `${deviceWidth - 30}px`,
+                width: "100%",
                 overflow: "scroll",
                 height: deviceHeight,
               }}
@@ -713,7 +713,7 @@ const QC_B9020_615W: React.FC = () => {
           <SwiperSlide key={1}>
             <GridContainer
               style={{
-                width: `${deviceWidth - 30}px`,
+                width: "100%",
                 overflow: "scroll",
               }}
             >

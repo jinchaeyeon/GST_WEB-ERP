@@ -2111,7 +2111,7 @@ const QC_A3000: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>생산실적리스트</GridTitle>
@@ -2203,7 +2203,7 @@ const QC_A3000: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>검사상세정보</GridTitle>
@@ -2318,7 +2318,7 @@ const QC_A3000: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer3">
                   <ButtonContainer

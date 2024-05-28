@@ -621,7 +621,7 @@ const SA_A5000W_615: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer
-                  style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                  style={{ width: "100%", overflow: "auto" }}
                 >
                   <TitleContainer
                     style={{ marginBottom: "15px" }}
@@ -835,7 +835,7 @@ const SA_A5000W_615: React.FC = () => {
               {Information.ordnum != "" ? (
                 <SwiperSlide key={1}>
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <TitleContainer
                       style={{ marginBottom: "15px" }}

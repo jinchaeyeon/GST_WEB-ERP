@@ -2095,7 +2095,7 @@ const Page: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer">
                   {permissions && (
@@ -2214,7 +2214,7 @@ const Page: React.FC = () => {
             >
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
+                  width: "100%",
                   overflow: "auto",
                 }}
               >
@@ -2341,7 +2341,7 @@ const Page: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사용자별 메뉴 권한</GridTitle>
@@ -2422,7 +2422,7 @@ const Page: React.FC = () => {
               style={{ display: "flex", flexDirection: "column" }}
             >
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: "100%", overflow: "auto" }}
               >
                 <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>[참조] 전체 메뉴</GridTitle>

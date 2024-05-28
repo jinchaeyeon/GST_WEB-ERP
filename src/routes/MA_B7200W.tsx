@@ -1831,7 +1831,7 @@ const MA_B7200W: React.FC = () => {
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{
-              width: `${deviceWidth - 30}px`,
+              width: "100%",
             }}
             scrollable={isMobile}
           >
@@ -1846,7 +1846,7 @@ const MA_B7200W: React.FC = () => {
               >
                 <SwiperSlide key={0}>
                   <GridContainer
-                    style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                    style={{ width: "100%", overflow: "auto" }}
                   >
                     <ExcelExport
                       data={newData}

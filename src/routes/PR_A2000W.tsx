@@ -631,7 +631,7 @@ const pc = UseGetValueFromSessionItem("pc");
         >
           <SwiperSlide key={0}>
             <GridContainer
-              style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              style={{ width: "100%", overflow: "auto" }}
             >
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>
@@ -722,7 +722,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+            <GridContainer style={{ width: "100%" }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>
                   <ButtonContainer style={{ justifyContent: "left" }}>

@@ -724,7 +724,7 @@ const SA_B2410: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ width: isMobile? `${deviceWidth - 30}px` : "100%", overflow: "auto" }}
+        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
       >
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>

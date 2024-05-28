@@ -1504,7 +1504,7 @@ const CR_A0010W: React.FC = () => {
               <Grid
                 style={{
                   height: isMobile ? deviceHeight - height : "77.8vh",
-                  width: isMobile ? `${deviceWidth - 30}px` : "100%",
+                  width: isMobile ? "100%" : "100%",
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({

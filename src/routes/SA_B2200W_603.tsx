@@ -633,7 +633,7 @@ const SA_B2200W_603: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+      <GridContainer style={{ width: "100%" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
