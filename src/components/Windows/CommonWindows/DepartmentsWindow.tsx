@@ -25,7 +25,9 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   isFilterHideState,
+  isFilterHideState2,
   isFilterheightstate,
+  isFilterheightstate2,
   isLoading,
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
@@ -34,10 +36,12 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getHeight,
+  handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import Window from "../WindowComponent/Window";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
@@ -56,15 +60,10 @@ const DepartmentsWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  const [isFilterheightstates, setIsFilterheightstates] =
-    useRecoilState(isFilterheightstate); //필터박스 높이
-  const [isFilterHideStates, setIsFilterHideStates] =
-    useRecoilState(isFilterHideState);
-  useEffect(() => {
-    if (!isFilterHideStates) {
-      setIsFilterHideStates(true);
-    }
-  }, []);
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //필터 웹높이
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
@@ -111,6 +110,7 @@ const DepartmentsWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -310,8 +310,8 @@ const DepartmentsWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
-        <FilterBox>
+      <WindowFilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>부서코드</th>
@@ -347,7 +347,7 @@ const DepartmentsWindow = ({
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
+      </WindowFilterContainer>
       <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
@@ -361,7 +361,7 @@ const DepartmentsWindow = ({
                 height -
                 height2 -
                 height3 -
-                isFilterheightstates,
+                isFilterheightstates2,
           }}
           data={process(
             mainDataResult.data.map((row) => ({

@@ -13,7 +13,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { getSelectedState } from "@progress/kendo-react-treelist";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -24,12 +24,17 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { handleKeyPressSearch } from "../../CommonFunction";
+import {
+  isFilterHideState2,
+  isFilterheightstate2,
+  isLoading,
+} from "../../../store/atoms";
+import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import Window from "../WindowComponent/Window";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 const DATA_ITEM_KEY = "num";
 
@@ -83,6 +88,14 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //필터 웹높이
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -95,6 +108,7 @@ const KendoWindow = ({
   });
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -276,7 +290,7 @@ const KendoWindow = ({
         Close={onClose}
         modals={modal}
       >
-        <TitleContainer>
+        <TitleContainer className="TitleContainer">
           <Title />
           <ButtonContainer>
             <Button
@@ -288,7 +302,7 @@ const KendoWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -304,10 +318,22 @@ const KendoWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
-        <GridContainer height="calc(100% - 170px)">
+        </WindowFilterContainer>
+        <GridContainer
+          style={{
+            overflow: isMobile ? "auto" : "hidden",
+          }}
+        >
           <Grid
-            style={{ height: "100%" }}
+            style={{
+              height: isMobile
+                ? deviceHeight - height - height2 - height3 - height4
+                : position.height -
+                  height -
+                  height2 -
+                  height3 -
+                  isFilterheightstates2,
+            }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -356,7 +382,7 @@ const KendoWindow = ({
             />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onConfirmClick}>
               확인

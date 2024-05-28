@@ -10,7 +10,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -25,10 +25,15 @@ import {
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { handleKeyPressSearch } from "../../CommonFunction";
+import {
+  isFilterHideState2,
+  isFilterheightstate2,
+  isLoading,
+} from "../../../store/atoms";
+import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { FORM_DATA_INDEX, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import Window from "../WindowComponent/Window";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 const SUB_DATA_ITEM_KEY = "edunum";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -62,6 +67,15 @@ TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+  var height5 = getHeight(".ButtonContainer"); //그리드 title
+  const [isFilterheightstates2, setIsFilterheightstates2] =
+    useRecoilState(isFilterheightstate2); //필터 웹높이
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 460) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
@@ -70,6 +84,7 @@ TKendoWindow) => {
   });
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     getVisible(false);
   };
 
@@ -221,7 +236,7 @@ TKendoWindow) => {
       Close={onClose}
       modals={modal}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={search} icon="search" themeColor={"primary"}>
@@ -229,7 +244,7 @@ TKendoWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -254,13 +269,27 @@ TKendoWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
-      <GridContainerWrap height="calc(100% - 160px)">
+      </WindowFilterContainer>
+      <GridContainerWrap
+        style={{
+          overflow: isMobile ? "auto" : "hidden",
+        }}
+      >
         <GridContainer width="100%">
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>용어목록</GridTitle>
           </GridTitleContainer>
           <Grid
+            style={{
+              height: isMobile
+                ? deviceHeight - height - height2 - height3 - height4 - height5
+                : position.height -
+                  height -
+                  height2 -
+                  height3 -
+                  isFilterheightstates2 -
+                  height5,
+            }}
             data={detailDataResult.data.map((item: any) => ({
               ...item,
               [SELECTED_FIELD]: selectedState[idGetter(item)],
@@ -282,14 +311,13 @@ TKendoWindow) => {
             ref={gridRef}
             rowHeight={30}
             onRowDoubleClick={onRowDoubleClick}
-            style={{ height: `calc(100% - 40px)` }}
           >
             <GridColumn field="edunum" title="교육번호" width="200px" />
             <GridColumn field="title" title="제목" width="200px" />
           </Grid>
         </GridContainer>
       </GridContainerWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기

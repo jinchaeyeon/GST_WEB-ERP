@@ -2,7 +2,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { MuiChipsInput, MuiChipsInputChip } from "mui-chips-input";
 import { useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -12,9 +12,9 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import { isFilterHideState2, isFilterheightstate2, isLoading } from "../../../store/atoms";
 import { TEditorHandle } from "../../../store/types";
-import { UseGetValueFromSessionItem } from "../../CommonFunction";
+import { UseGetValueFromSessionItem, getHeight } from "../../CommonFunction";
 import RichEditor from "../../RichEditor";
 import Window from "../WindowComponent/Window";
 
@@ -35,6 +35,9 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".FormBoxWrap"); //FormBox부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
@@ -42,7 +45,6 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 780,
   });
-
   const handleChange = (newValue: MuiChipsInputChip[]) => {
     setFilters((prev) => ({
       ...prev,
@@ -139,11 +141,11 @@ const KendoWindow = ({
       Close={onClose}
       modals={modal}
     >
-      <FormBoxWrap border={true}>
+      <FormBoxWrap border={true} className="FormBoxWrap">
         <FormBox>
           <tbody>
             <tr>
-              <th style={{ width: "10%" }}>보내는 사람</th>
+              <th style={{ width: isMobile? "" : "10%" }}>보내는 사람</th>
               <td>
                 <Input
                   name="sender_name"
@@ -154,7 +156,7 @@ const KendoWindow = ({
               </td>
             </tr>
             <tr>
-              <th style={{ width: "10%" }}>받는 사람</th>
+            <th style={{ width: isMobile? "" : "10%" }}>받는 사람</th>
               <td>
                 <MuiChipsInput
                   value={filters.recieveuser}
@@ -166,7 +168,7 @@ const KendoWindow = ({
               </td>
             </tr>
             <tr>
-              <th style={{ width: "10%" }}>제목</th>
+            <th style={{ width: isMobile? "" : "10%" }}>제목</th>
               <td>
                 <Input
                   name="title"
@@ -219,10 +221,16 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <GridContainer height="400px">
+      <GridContainer
+        style={{
+          height: isMobile
+            ? ""
+            : position.height - height - height2 - height3,
+        }}
+      >
         <RichEditor id="docEditor" ref={docEditorRef} />
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onSend}>
             전송
