@@ -152,10 +152,9 @@ export const useApi = () => {
   const [Link, setLink] = useRecoilState(linkState);
   generateGetUrl();
   const pc = UseGetValueFromSessionItem("pc");
-  const [sessionItemFetched, setSessionItemFetched] = useState(false);
+  const [sessionItemFetched, setSessionItemFetched] = useState(false); // 세션 아이템을 가져왔는지 여부
   const sessionItemCheck = localStorage.getItem("sessionItem");
   const isSessionValid = !!sessionItemCheck;
-
   
   const fetchSessionItem = async () => {
     let data;
@@ -181,7 +180,7 @@ export const useApi = () => {
           }))
           .concat([{ code: "pc", value: pc }]);
         setSessionItem(array);
-        setSessionItemFetched(true);
+        setSessionItemFetched(true); // 세션 아이템을 가져왔음을 표시
       }
     } catch (e: any) {
       console.log("menus error", e);
@@ -191,10 +190,9 @@ export const useApi = () => {
   useEffect(() => {
     if (window.location.pathname !== "/") {
       if (!isSessionValid && !sessionItemFetched ) {
-        console.log("세션아이템없음");     
-        setSessionItemFetched(true);
-        fetchSessionItem();
-        window.location.reload();
+        setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
+        fetchSessionItem(); // 세션 아이템 가져오는 함수 호출
+        window.location.reload(); // 페이지 새로고침
       }  
     }   
   }, [isSessionValid, sessionItemFetched]);
