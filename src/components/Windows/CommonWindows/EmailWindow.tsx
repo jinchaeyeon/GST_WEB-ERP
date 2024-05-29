@@ -1,8 +1,8 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import { MuiChipsInput, MuiChipsInputChip } from "mui-chips-input";
-import { useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -12,7 +12,7 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isFilterHideState2, isFilterheightstate2, isLoading } from "../../../store/atoms";
+import { isLoading } from "../../../store/atoms";
 import { TEditorHandle } from "../../../store/types";
 import { UseGetValueFromSessionItem, getHeight } from "../../CommonFunction";
 import RichEditor from "../../RichEditor";
@@ -24,7 +24,9 @@ type TKendoWindow = {
   quorev: number;
   modal?: boolean;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 const KendoWindow = ({
   setVisible,
   quonum,
@@ -35,9 +37,13 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".FormBoxWrap"); //FormBox부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".FormBoxWrap"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
+
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
@@ -68,6 +74,7 @@ const KendoWindow = ({
     recieveuser: [],
     title: "",
   });
+
   const [files, setFiles] = useState<FileList | null>();
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const onSend = async () => {
@@ -134,6 +141,7 @@ const KendoWindow = ({
   };
 
   const [placeholder, setPlaceholder] = useState("파일 선택");
+
   return (
     <Window
       titles={"Email"}
@@ -145,7 +153,7 @@ const KendoWindow = ({
         <FormBox>
           <tbody>
             <tr>
-              <th style={{ width: isMobile? "" : "10%" }}>보내는 사람</th>
+              <th style={{ width: isMobile ? "" : "10%" }}>보내는 사람</th>
               <td>
                 <Input
                   name="sender_name"
@@ -156,7 +164,7 @@ const KendoWindow = ({
               </td>
             </tr>
             <tr>
-            <th style={{ width: isMobile? "" : "10%" }}>받는 사람</th>
+              <th style={{ width: isMobile ? "" : "10%" }}>받는 사람</th>
               <td>
                 <MuiChipsInput
                   value={filters.recieveuser}
@@ -168,7 +176,7 @@ const KendoWindow = ({
               </td>
             </tr>
             <tr>
-            <th style={{ width: isMobile? "" : "10%" }}>제목</th>
+              <th style={{ width: isMobile ? "" : "10%" }}>제목</th>
               <td>
                 <Input
                   name="title"
@@ -224,7 +232,7 @@ const KendoWindow = ({
       <GridContainer
         style={{
           height: isMobile
-            ? ""
+            ? deviceHeight - height - height2 - height3
             : position.height - height - height2 - height3,
         }}
       >
