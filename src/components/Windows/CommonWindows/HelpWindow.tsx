@@ -168,7 +168,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   var height2 = getHeight(".TitleContainer"); //FormBox부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".ButtonContainer"); //필터 모바일
-  var height4 = getHeight(".ButtonContainer2"); //필터 모바일
+  var height5 = getHeight(".ButtonContainer2"); //필터 모바일
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수
