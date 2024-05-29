@@ -21,7 +21,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -42,6 +42,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
+import CenterCell from "../components/Cells/CenterCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
@@ -57,7 +58,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -83,6 +84,7 @@ const numberField = ["amt", "conamt", "dif"];
 const percentField = ["rat"];
 const contextField = ["person"];
 const requireField = ["person"];
+const centerField = ["name"];
 
 let deletedMainRows: object[] = [];
 let temp = 0;
@@ -1201,18 +1203,26 @@ const SA_A6000W: React.FC = () => {
         throw findMessage(messagesData, "SA_A6000W_001");
       } else {
         resetAllGrid();
-        setTabSelected(0);
-        setFilters((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-        setFilters2((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-        if (swiper && isMobile) {
+        if(tabSelected == 0) {
+          setFilters((prev: any) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+          }));
+          setFilters2((prev: any) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+          }));
+        } else {
+          setFilters3((prev) => ({
+            ...prev,
+            pgNum: 1,
+            find_row_value: "",
+            isSearch: true,
+          }));
+        }
+        if(swiper) {
           swiper.slideTo(0);
         }
       }
@@ -1401,7 +1411,7 @@ const SA_A6000W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               rat:
                 item.amt == 0 ? 0 : Math.ceil((item.conamt / item.amt) * 100),
-              dif: item.amt - item.conamt,
+              dif: item.conamt - item.amt,
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1647,7 +1657,7 @@ const SA_A6000W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               rat:
                 item.amt == 0 ? 0 : Math.ceil((item.conamt / item.amt) * 100),
-              dif: item.amt - item.conamt,
+              dif: item.conamt - item.amt,
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -2321,6 +2331,8 @@ const SA_A6000W: React.FC = () => {
                                       ? NumberCell
                                       : percentField.includes(item.fieldName)
                                       ? CustomPercentCell
+                                      : centerField.includes(item.fieldName)
+                                      ? CenterCell
                                       : undefined
                                   }
                                   footerCell={
@@ -2514,6 +2526,8 @@ const SA_A6000W: React.FC = () => {
                                       ? NumberCell
                                       : percentField.includes(item.fieldName)
                                       ? CustomPercentCell
+                                      : centerField.includes(item.fieldName)
+                                      ? CenterCell
                                       : undefined
                                   }
                                   footerCell={
@@ -3033,7 +3047,7 @@ const SA_A6000W: React.FC = () => {
                 </FormContext.Provider>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
                   <GridTitleContainer>
-                   <GridTitle></GridTitle>
+                    <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick}

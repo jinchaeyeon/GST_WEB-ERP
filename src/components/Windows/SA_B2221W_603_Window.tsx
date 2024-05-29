@@ -421,7 +421,7 @@ const CopyWindow = ({
             />
             <GridColumn
               field="taxamt"
-              title="세엑"
+              title="세액"
               width="100px"
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}

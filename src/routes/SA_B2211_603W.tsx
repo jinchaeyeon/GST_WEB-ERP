@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "hammerjs";
 import { Button } from "primereact/button";
@@ -29,7 +29,7 @@ import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutC
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import ScrollTable from "../components/KPIcomponents/Table/ScrollTable";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, isLoading, heightstate } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const SA_B2211_603W: React.FC = () => {
@@ -565,6 +565,9 @@ const SA_B2211_603W: React.FC = () => {
                     label={stackChartLabel}
                     random={false}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <ScrollTable
@@ -573,6 +576,9 @@ const SA_B2211_603W: React.FC = () => {
                     width={getWidth(Column1)}
                     numberCell={Column1.filter((item: any) => item != "구분")}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid
                   item
@@ -608,6 +614,9 @@ const SA_B2211_603W: React.FC = () => {
                     label={stackChartLabel2}
                     random={false}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <ScrollTable
@@ -616,6 +625,9 @@ const SA_B2211_603W: React.FC = () => {
                     width={getWidth(Column2)}
                     numberCell={Column2.filter((item: any) => item != "구분")}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid
                   item
@@ -651,6 +663,9 @@ const SA_B2211_603W: React.FC = () => {
                     label={stackChartLabel3}
                     random={false}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <ScrollTable
@@ -659,6 +674,9 @@ const SA_B2211_603W: React.FC = () => {
                     width={getWidth(Column3)}
                     numberCell={Column3.filter((item: any) => item != "구분")}
                   />
+                  <Typography variant="body2" style={{ textAlign: "right" }}>
+                    (단위 : 억)
+                  </Typography>
                 </Grid>
                 <Grid
                   item

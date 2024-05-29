@@ -226,12 +226,13 @@ const SA_A1001_603W: React.FC = () => {
           rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             ?.valueCode,
-          contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+          confinyn: defaultOption.find((item: any) => item.id == "confinyn")
             ?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -241,7 +242,7 @@ const SA_A1001_603W: React.FC = () => {
           )?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             ?.valueCode,
-          contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+          confinyn: defaultOption.find((item: any) => item.id == "confinyn")
             ?.valueCode,
           rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
@@ -308,7 +309,7 @@ const SA_A1001_603W: React.FC = () => {
         materialtype: data.materialtype,
         requestgb: data.requestgb,
         itemcnt: data.itemcnt,
-        contractyn: data.contractyn,
+        confinyn: data.confinyn,
         quorev: data.quorev,
         pubdt: data.pubdt,
         finalquowonamt: data.finalquowonamt,
@@ -378,7 +379,7 @@ const SA_A1001_603W: React.FC = () => {
     materialtype: "",
     extra_field2: "",
     quocalyn: "",
-    contractyn: "",
+    confinyn: "",
     person: "",
     personnm: "",
     chkperson: "",
@@ -390,6 +391,7 @@ const SA_A1001_603W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
+    query: false,
   });
 
   //조회조건 초기값
@@ -458,7 +460,7 @@ const SA_A1001_603W: React.FC = () => {
     materialtype: "",
     requestgb: "",
     itemcnt: 0,
-    contractyn: "",
+    confinyn: "",
     quorev: 0,
     pubdt: "",
     finalquowonamt: 0,
@@ -537,7 +539,7 @@ const SA_A1001_603W: React.FC = () => {
         "@p_rev": filters.rev,
         "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
         "@p_chkpersonnm": filters.chkpersonnm,
-        "@p_contractyn": filters.contractyn,
+        "@p_confinyn": filters.confinyn,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -602,7 +604,7 @@ const SA_A1001_603W: React.FC = () => {
             materialtype: selectedRow.materialtype,
             requestgb: selectedRow.requestgb,
             itemcnt: selectedRow.itemcnt,
-            contractyn: selectedRow.contractyn,
+            confinyn: selectedRow.confinyn,
             quorev: selectedRow.quorev,
             pubdt: selectedRow.pubdt,
             finalquowonamt: Math.ceil(selectedRow.finalquowonamt),
@@ -610,7 +612,28 @@ const SA_A1001_603W: React.FC = () => {
           }));
 
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if(filters.query == true) {
+            setFilters2((prev) => ({
+              ...prev,
+              quonum: selectedRow.quonum,
+              quorev: selectedRow.quorev,
+              isSearch: true,
+              pgNum: 1,
+            }));
+            setTabSelected(1);
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
         } else {
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
           setInformation((prev) => ({
             ...prev,
             quonum: rows[0].quonum,
@@ -619,7 +642,7 @@ const SA_A1001_603W: React.FC = () => {
             materialtype: rows[0].materialtype,
             requestgb: rows[0].requestgb,
             itemcnt: rows[0].itemcnt,
-            contractyn: rows[0].contractyn,
+            confinyn: rows[0].confinyn,
             quorev: rows[0].quorev,
             pubdt: rows[0].pubdt,
             finalquowonamt: Math.ceil(rows[0].finalquowonamt),
@@ -627,6 +650,14 @@ const SA_A1001_603W: React.FC = () => {
           }));
 
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      } else {
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
         }
       }
     } else {
@@ -675,7 +706,7 @@ const SA_A1001_603W: React.FC = () => {
         "@p_rev": filters.rev,
         "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
         "@p_chkpersonnm": filters.chkpersonnm,
-        "@p_contractyn": filters.contractyn,
+        "@p_confinyn": filters.confinyn,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -940,7 +971,7 @@ const SA_A1001_603W: React.FC = () => {
       materialtype: datas.materialtype,
       requestgb: datas.requestgb,
       itemcnt: datas.itemcnt,
-      contractyn: datas.contractyn,
+      confinyn: datas.confinyn,
       quorev: datas.quorev,
       pubdt: datas.pubdt,
       finalquowonamt: datas.finalquowonamt,
@@ -1670,11 +1701,11 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>계약확정여부</th>
+                  <th>계약전환여부</th>
                   <td>
                     {customOptionData !== null && (
                       <CustomOptionRadioGroup
-                        name="contractyn"
+                        name="confinyn"
                         customOptionData={customOptionData}
                         changeData={filterRadioChange}
                       />
@@ -1984,12 +2015,12 @@ const SA_A1001_603W: React.FC = () => {
                                 style={{ textAlign: "end" }}
                               />
                             </td>
-                            <th>계약확정여부</th>
+                            <th>계약전환여부</th>
                             <td>
                               <Input
-                                name="contractyn"
+                                name="confinyn"
                                 type="text"
-                                value={information.contractyn}
+                                value={information.confinyn}
                                 className="readonly"
                               />
                             </td>
@@ -2270,12 +2301,12 @@ const SA_A1001_603W: React.FC = () => {
                           style={{ textAlign: "end" }}
                         />
                       </td>
-                      <th>계약확정여부</th>
+                      <th>계약전환여부</th>
                       <td>
                         <Input
-                          name="contractyn"
+                          name="confinyn"
                           type="text"
-                          value={information.contractyn}
+                          value={information.confinyn}
                           className="readonly"
                         />
                       </td>

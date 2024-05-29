@@ -55,7 +55,6 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "custcd";
 let targetRowIndex: null | number = null;
-
 const KendoWindow = ({
   setVisible,
   workType,
@@ -70,11 +69,11 @@ const KendoWindow = ({
     useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+
+  var height = getHeight(".k-window-titlebar");
+  var height2 = getHeight(".TitleContainer"); //FormBox부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [position, setPosition] = useState<IWindowPosition>({

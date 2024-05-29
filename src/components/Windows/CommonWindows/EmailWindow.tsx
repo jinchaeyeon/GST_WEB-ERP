@@ -27,6 +27,7 @@ type TKendoWindow = {
 var height = 0;
 var height2 = 0;
 var height3 = 0;
+
 const KendoWindow = ({
   setVisible,
   quonum,
@@ -38,11 +39,17 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".FormBoxWrap"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  });
+
+    setMobileHeight(deviceHeight - height - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
 
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
@@ -149,94 +156,96 @@ const KendoWindow = ({
       Close={onClose}
       modals={modal}
     >
-      <FormBoxWrap border={true} className="FormBoxWrap">
-        <FormBox>
-          <tbody>
-            <tr>
-              <th style={{ width: isMobile ? "" : "10%" }}>보내는 사람</th>
-              <td>
-                <Input
-                  name="sender_name"
-                  type="text"
-                  value={"no-reply@gsti.co.kr"}
-                  className="readonly"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th style={{ width: isMobile ? "" : "10%" }}>받는 사람</th>
-              <td>
-                <MuiChipsInput
-                  value={filters.recieveuser}
-                  onChange={handleChange}
-                  size="small"
-                  placeholder="이메일 입력 후 Enter를 눌러주세요"
-                  hideClearAll
-                />
-              </td>
-            </tr>
-            <tr>
-              <th style={{ width: isMobile ? "" : "10%" }}>제목</th>
-              <td>
-                <Input
-                  name="title"
-                  type="text"
-                  value={filters.title}
-                  onChange={InputChange}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>첨부파일</th>
-              <td>
-                <Button
-                  onClick={upload}
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                  icon={"upload"}
-                  style={{ width: "100%" }}
-                >
-                  {placeholder}
-                  <input
-                    id="uploadAttachment"
-                    style={{ display: "none" }}
-                    type="file"
-                    accept="*"
-                    multiple
-                    ref={excelInput}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setFiles(event.target.files);
-                      if (event.target.files != null) {
-                        if (event.target.files.length > 0) {
-                          setPlaceholder(
-                            "현재 파일 : " +
-                              (event.target.files.length > 1
-                                ? event.target.files[0].name +
-                                  "외 " +
-                                  (event.target.files.length - 1) +
-                                  "건"
-                                : event.target.files[0].name)
-                          );
-                        } else {
-                          setPlaceholder("파일 선택");
-                        }
-                      }
-                    }}
+      <GridContainer style={{ overflow: "auto" }}>
+        <FormBoxWrap border={true} className="FormBoxWrap">
+          <FormBox>
+            <tbody>
+              <tr>
+                <th style={{ width: isMobile ? "" : "10%" }}>보내는 사람</th>
+                <td>
+                  <Input
+                    name="sender_name"
+                    type="text"
+                    value={"no-reply@gsti.co.kr"}
+                    className="readonly"
                   />
-                </Button>
-              </td>
-            </tr>
-          </tbody>
-        </FormBox>
-      </FormBoxWrap>
-      <GridContainer
-        style={{
-          height: isMobile
-            ? deviceHeight - height - height2 - height3
-            : position.height - height - height2 - height3,
-        }}
-      >
-        <RichEditor id="docEditor" ref={docEditorRef} />
+                </td>
+              </tr>
+              <tr>
+                <th style={{ width: isMobile ? "" : "10%" }}>받는 사람</th>
+                <td>
+                  <MuiChipsInput
+                    value={filters.recieveuser}
+                    onChange={handleChange}
+                    size="small"
+                    placeholder="이메일 입력 후 Enter를 눌러주세요"
+                    hideClearAll
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th style={{ width: isMobile ? "" : "10%" }}>제목</th>
+                <td>
+                  <Input
+                    name="title"
+                    type="text"
+                    value={filters.title}
+                    onChange={InputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>첨부파일</th>
+                <td>
+                  <Button
+                    onClick={upload}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"upload"}
+                    style={{ width: "100%" }}
+                  >
+                    {placeholder}
+                    <input
+                      id="uploadAttachment"
+                      style={{ display: "none" }}
+                      type="file"
+                      accept="*"
+                      multiple
+                      ref={excelInput}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        setFiles(event.target.files);
+                        if (event.target.files != null) {
+                          if (event.target.files.length > 0) {
+                            setPlaceholder(
+                              "현재 파일 : " +
+                                (event.target.files.length > 1
+                                  ? event.target.files[0].name +
+                                    "외 " +
+                                    (event.target.files.length - 1) +
+                                    "건"
+                                  : event.target.files[0].name)
+                            );
+                          } else {
+                            setPlaceholder("파일 선택");
+                          }
+                        }
+                      }}
+                    />
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </FormBox>
+        </FormBoxWrap>
+        <GridContainer
+          style={{
+            height: isMobile ? mobileheight : webheight,
+          }}
+        >
+          <RichEditor id="docEditor" ref={docEditorRef} />
+        </GridContainer>
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>

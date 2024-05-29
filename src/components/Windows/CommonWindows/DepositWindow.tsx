@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -22,7 +22,11 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import { isFilterHideState2, isFilterheightstate2, isLoading } from "../../../store/atoms";
+import {
+  isFilterHideState2,
+  isFilterheightstate2,
+  isLoading,
+} from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
@@ -31,9 +35,8 @@ import {
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
-import Window from "../WindowComponent/Window";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
+import Window from "../WindowComponent/Window";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -47,8 +50,8 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height = getHeight(".k-window-titlebar");
+  var height2 = getHeight(".TitleContainer"); //FormBox부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
   const [isFilterheightstates2, setIsFilterheightstates2] =
@@ -283,11 +286,11 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
           </tbody>
         </FilterBox>
       </WindowFilterContainer>
-      <GridContainer 
+      <GridContainer
         style={{
           overflow: isMobile ? "auto" : "hidden",
         }}
-        >
+      >
         <Grid
           style={{
             height: isMobile

@@ -246,6 +246,7 @@ const KendoWindow = ({
       setFilters((prev) => {
         return {
           ...prev,
+          files: row.files,
           datnum: row.datnum == undefined ? "" : row.datnum,
           orgdiv: row.orgdiv,
           category: row.category,

@@ -31,10 +31,9 @@ import {
 } from "../../../store/atoms";
 import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import Window from "../WindowComponent/Window";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 const DATA_ITEM_KEY = "num";
 
@@ -88,8 +87,9 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+
+  var height = getHeight(".k-window-titlebar");
+  var height2 = getHeight(".TitleContainer"); //FormBox부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
   const [isFilterheightstates2, setIsFilterheightstates2] =

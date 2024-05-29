@@ -207,6 +207,7 @@ const CM_A5000W: React.FC = () => {
           )?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -685,6 +686,7 @@ const CM_A5000W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
+    query: false,
   });
 
   const [detailfilters, setDetailFilters] = useState({
@@ -855,7 +857,22 @@ const CM_A5000W: React.FC = () => {
             custprsnnm: selectedRow.custprsnnm,
           });
           fetchHtmlDocument(selectedRow);
+
+          if(filters.query == true) {
+            setTabSelected(1);
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
         } else {
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setWorkType("U");
           setDetailFilters((prev) => ({
@@ -895,6 +912,13 @@ const CM_A5000W: React.FC = () => {
         }
       } else {
         setWorkType("");
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
+        }
         resetAllGrid();
       }
     } else {
