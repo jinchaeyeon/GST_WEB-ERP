@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -126,6 +126,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -142,13 +149,16 @@ const KendoWindow = ({
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".WindowButtonContainer");
-  var height5 = getHeight(".WindowButtonContainer2");
-  var height6 = getHeight(".WindowButtonContainer3");
-  var height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".WindowButtonContainer");
+    height5 = getHeight(".WindowButtonContainer2");
+    height6 = getHeight(".WindowButtonContainer3");
+    height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+  });
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({

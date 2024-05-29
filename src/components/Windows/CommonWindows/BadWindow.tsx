@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -56,7 +56,8 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-
+var height = 0;
+var height3 = 0;
 const Badwindow = ({
   setVisible,
   setData,
@@ -72,8 +73,12 @@ const Badwindow = ({
   UseMessages(pathname, setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
+
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 500) / 2,

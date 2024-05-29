@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { getSelectedState } from "@progress/kendo-react-treelist";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -31,10 +31,9 @@ import {
 } from "../../../store/atoms";
 import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import Window from "../WindowComponent/Window";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 const DATA_ITEM_KEY = "num";
 
@@ -79,7 +78,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </td>
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -88,10 +90,13 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+  });
   const [isFilterheightstates2, setIsFilterheightstates2] =
     useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =

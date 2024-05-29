@@ -2,7 +2,7 @@ import { Box, DialogContent, DialogTitle, Grid } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import Paper, { PaperProps } from "@mui/material/Paper";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import Draggable from "react-draggable";
 import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
@@ -24,13 +24,16 @@ function PaperComponent(props: PaperProps) {
     </Draggable>
   );
 }
-
+var height2 = 0;
+var height3 = 0;
 const KendoWindow = ({ setVisible }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  useLayoutEffect(() => {
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,

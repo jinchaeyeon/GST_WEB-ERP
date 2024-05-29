@@ -5,7 +5,7 @@ import {
   FormElement,
   FormRenderProps,
 } from "@progress/kendo-react-form";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -23,7 +23,8 @@ import Window from "../WindowComponent/Window";
 type TKendoWindow = {
   setVisible(t: boolean): void;
 };
-
+var height = 0;
+var height3 = 0;
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
@@ -31,8 +32,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 320) / 2,

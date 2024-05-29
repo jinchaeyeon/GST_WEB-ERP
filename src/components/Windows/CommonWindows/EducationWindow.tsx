@@ -9,7 +9,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -22,7 +22,6 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
@@ -32,8 +31,8 @@ import {
 } from "../../../store/atoms";
 import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { FORM_DATA_INDEX, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import Window from "../WindowComponent/Window";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
+import Window from "../WindowComponent/Window";
 const SUB_DATA_ITEM_KEY = "edunum";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -54,7 +53,11 @@ type TKendoWindow = {
   modal?: boolean;
   // para: TPara;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const KendoWindow = ({
   getVisible,
   setData,
@@ -67,11 +70,14 @@ TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-  var height5 = getHeight(".ButtonContainer"); //그리드 title
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".ButtonContainer"); //그리드 title
+  });
+
   const [isFilterheightstates2, setIsFilterheightstates2] =
     useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =

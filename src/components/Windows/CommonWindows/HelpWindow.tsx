@@ -12,8 +12,18 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { InputChangeEvent } from "@progress/kendo-react-inputs";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { v4 as uuidv4 } from "uuid";
 import {
   BottomContainer,
@@ -50,10 +60,6 @@ import { CellRender, RowRender } from "../../Renderers/Renderers";
 import FileViewers from "../../Viewer/FileViewers";
 import Window from "../WindowComponent/Window";
 import PopUpAttachmentsWindow from "./PopUpAttachmentsWindow";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -153,7 +159,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -163,11 +173,14 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   if (container?.clientHeight != undefined) {
     height = container == undefined ? 0 : container.clientHeight;
   }
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".ButtonContainer"); //그리드 title부분
-  var height5 = getHeight(".ButtonContainer2"); //pdf부분
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".ButtonContainer"); //필터 모바일
+    height4 = getHeight(".ButtonContainer2"); //필터 모바일
+  });
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수

@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -20,15 +20,12 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
-  isFilterHideState,
   isFilterHideState2,
-  isFilterheightstate,
   isFilterheightstate2,
-  isLoading,
+  isLoading
 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
@@ -39,9 +36,9 @@ import {
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import Window from "../WindowComponent/Window";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
@@ -50,7 +47,10 @@ type IWindow = {
   modal?: boolean;
 };
 let targetRowIndex: null | number = null;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const DepartmentsWindow = ({
   workType,
   setVisible,
@@ -64,10 +64,12 @@ const DepartmentsWindow = ({
     useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only"); //모바일에서만 존재하는 조회조건버튼
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,

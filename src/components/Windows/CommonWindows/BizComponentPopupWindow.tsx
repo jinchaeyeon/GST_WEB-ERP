@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -47,7 +47,9 @@ type IKendoWindow = {
 let targetRowIndex: null | number = null;
 
 let DATA_ITEM_KEY: string;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -63,9 +65,12 @@ const KendoWindow = ({
     useRecoilState(isFilterheightstate2); //모바일 필터박스 높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,

@@ -9,12 +9,12 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer
+  GridContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -42,7 +42,8 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
-
+var height = 0;
+var height3 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -52,8 +53,10 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 750) / 2,
