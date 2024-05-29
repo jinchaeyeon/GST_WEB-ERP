@@ -111,6 +111,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import RevWindow from "../components/Windows/SA_A1000W_REV_Window";
 import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
 import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
@@ -963,7 +964,7 @@ const SA_A1000_603W: React.FC = () => {
     useState<boolean>(false);
   const [designWindowVisible4, setDesignWindowVisible4] =
     useState<boolean>(false);
-
+  const [revWindowVisible, setRevWindowVisible] = useState<boolean>(false);
   const onDesignWndClick = () => {
     const data = mainDataResult2.data.filter(
       (item) =>
@@ -1244,7 +1245,13 @@ const SA_A1000_603W: React.FC = () => {
     if (isMobile) {
       setIsFilterHideStates(true);
     }
-    if (e.selected == 1) {
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: true,
+      }));
+    } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1447,7 +1454,6 @@ const SA_A1000_603W: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
-  const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
   const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -1456,9 +1462,6 @@ const SA_A1000_603W: React.FC = () => {
   };
   const onCustWndClick2 = () => {
     setCustWindowVisible2(true);
-  };
-  const onCustWndClick3 = () => {
-    setCustWindowVisible3(true);
   };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -1506,15 +1509,6 @@ const SA_A1000_603W: React.FC = () => {
         ...prev,
         custcd: data.custcd,
         custnm: data.custnm,
-      };
-    });
-  };
-
-  const setCustData3 = (data: ICustData) => {
-    setInformation((prev: any) => {
-      return {
-        ...prev,
-        rcvcustnm: data.custnm,
       };
     });
   };
@@ -3315,7 +3309,7 @@ const SA_A1000_603W: React.FC = () => {
       numbering_id: defaultOption.find((item: any) => item.id == "numbering_id")
         ?.valueCode,
       ordsts: "",
-      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+      person: userId,
       person1: "",
       pubdt: setDefaultDate2(customOptionData, "pubdt"),
       quodt: setDefaultDate2(customOptionData, "quodt"),
@@ -3838,10 +3832,6 @@ const SA_A1000_603W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      if (worktype == "N") {
-        setTabSelected(0);
-      }
-
       if (
         ParaData.workType == "REV" ||
         ParaData.workType == "DesTran" ||
@@ -4229,13 +4219,7 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const onRevClick = () => {
-    setParaData((prev) => ({
-      ...prev,
-      workType: "REV",
-      orgdiv: sessionOrgdiv,
-      quonum: Information.quonum,
-      quorev: Information.quorev,
-    }));
+    setRevWindowVisible(true);
   };
 
   const onPlanClick = () => {
@@ -4701,31 +4685,18 @@ const SA_A1000_603W: React.FC = () => {
                           </td>
                           <th>등록자</th>
                           <td>
-                            {worktype == "N"
-                              ? customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="person"
-                                    value={Information.person}
-                                    type="new"
-                                    customOptionData={customOptionData}
-                                    textField="user_name"
-                                    valueField="user_id"
-                                    changeData={ComboBoxChange}
-                                    className="required"
-                                  />
-                                )
-                              : bizComponentData !== null && (
-                                  <BizComponentComboBox
-                                    name="person"
-                                    value={Information.person}
-                                    bizComponentId="L_sysUserMaster_001"
-                                    bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                    textField="user_name"
-                                    valueField="user_id"
-                                    className="required"
-                                  />
-                                )}
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={Information.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                textField="user_name"
+                                valueField="user_id"
+                                className="required"
+                              />
+                            )}
                           </td>
                           <th>영업담당자</th>
                           <td>
@@ -4847,9 +4818,9 @@ const SA_A1000_603W: React.FC = () => {
                           <td colSpan={9}>
                             <Input
                               name="rev_reason"
-                              type="number"
+                              type="text"
                               value={Information.rev_reason}
-                              onChange={InputChange}
+                              className="readonly"
                             />
                           </td>
                         </tr>
@@ -5043,14 +5014,6 @@ const SA_A1000_603W: React.FC = () => {
                               value={Information.rcvcustnm}
                               onChange={InputChange}
                             />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onCustWndClick3}
-                                icon="more-horizontal"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
                           </td>
                         </tr>
                         <tr>
@@ -5918,7 +5881,7 @@ const SA_A1000_603W: React.FC = () => {
           ) : (
             <>
               <GridTitleContainer>
-              <GridTitle></GridTitle>
+                <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -6000,31 +5963,18 @@ const SA_A1000_603W: React.FC = () => {
                       </td>
                       <th>등록자</th>
                       <td>
-                        {worktype == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="person"
-                                value={Information.person}
-                                type="new"
-                                customOptionData={customOptionData}
-                                textField="user_name"
-                                valueField="user_id"
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="person"
-                                value={Information.person}
-                                bizComponentId="L_sysUserMaster_001"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                textField="user_name"
-                                valueField="user_id"
-                                className="required"
-                              />
-                            )}
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="person"
+                            value={Information.person}
+                            bizComponentId="L_sysUserMaster_001"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField="user_name"
+                            valueField="user_id"
+                            className="required"
+                          />
+                        )}
                       </td>
                       <th>영업담당자</th>
                       <td>
@@ -6146,9 +6096,9 @@ const SA_A1000_603W: React.FC = () => {
                       <td colSpan={9}>
                         <Input
                           name="rev_reason"
-                          type="number"
+                          type="text"
                           value={Information.rev_reason}
-                          onChange={InputChange}
+                          className="readonly"
                         />
                       </td>
                     </tr>
@@ -6281,14 +6231,6 @@ const SA_A1000_603W: React.FC = () => {
                           value={Information.rcvcustnm}
                           onChange={InputChange}
                         />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onCustWndClick3}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
                       </td>
                     </tr>
                     <tr>
@@ -9011,14 +8953,6 @@ const SA_A1000_603W: React.FC = () => {
           modal={true}
         />
       )}
-      {custWindowVisible3 && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible3}
-          workType={"N"}
-          setData={setCustData3}
-          modal={true}
-        />
-      )}
       {projectWindowVisible && (
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
@@ -9204,6 +9138,21 @@ const SA_A1000_603W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {revWindowVisible && (
+        <RevWindow
+          setVisible={setRevWindowVisible}
+          setLoadings={() => {
+            setFilters((prev) => ({
+              ...prev,
+              isSearch: true,
+              pgNum: 1,
+            }));
+            setTabSelected(0);
+          }}
+          information={Information}
           modal={true}
         />
       )}

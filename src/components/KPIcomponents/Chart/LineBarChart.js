@@ -34,6 +34,7 @@ export default function DoubleChart(props) {
             datalabels: {
               align: "end",
               anchor: "end",
+              color: props.color[1],
             },
           },
           {
@@ -47,6 +48,7 @@ export default function DoubleChart(props) {
             datalabels: {
               align: "end",
               anchor: "end",
+              color: props.color[0],
             },
           },
         ],
@@ -67,13 +69,12 @@ export default function DoubleChart(props) {
             display: true,
           },
           datalabels: {
-            color: "black",
             display: function (context) {
               return context.dataset.data[context.dataIndex] > 0;
             },
             font: {
               weight: "bold",
-              size: 14
+              size: 14,
             },
             formatter: function (value, context) {
               return numberWithCommas3(value);
@@ -99,7 +100,7 @@ export default function DoubleChart(props) {
             grid: {
               color: surfaceBorder,
             },
-            afterDataLimits: scale => {
+            afterDataLimits: (scale) => {
               scale.max = scale.max * 1.2;
             },
           },
@@ -110,7 +111,7 @@ export default function DoubleChart(props) {
             ticks: {
               color: textColorSecondary,
             },
-            afterDataLimits: scale => {
+            afterDataLimits: (scale) => {
               scale.max = scale.max * 1.2;
             },
             grid: {

@@ -138,6 +138,7 @@ const SA_A1200_603W: React.FC = () => {
             ?.valueCode,
           find_row_value: queryParams.get("go") as string,
           isSearch: true,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -234,6 +235,7 @@ const SA_A1200_603W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
+    query: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -699,6 +701,13 @@ const SA_A1200_603W: React.FC = () => {
           }));
           setWorktype("U");
         } else {
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
             ...prev,
@@ -710,6 +719,13 @@ const SA_A1200_603W: React.FC = () => {
         }
       } else {
         setWorktype("N");
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -770,6 +786,13 @@ const SA_A1200_603W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      if (filters.query == true) {
+        setTabSelected(1);
+        setFilters((prev) => ({
+          ...prev,
+          query: false,
+        }));
+      }
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       const totalRowCnt2 = data.tables[1].RowCount;
@@ -2680,7 +2703,7 @@ const SA_A1200_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_A1200W_603"
+          pathname="SA_A1200_603W"
         />
       )}
       {gridList.map((grid: TGrid) =>

@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
@@ -322,7 +323,7 @@ const SA_B2216W: React.FC = () => {
   );
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
@@ -371,6 +372,9 @@ const SA_B2216W: React.FC = () => {
                 label={stackChartLabel}
                 random={false}
               />
+              <Typography variant="body2" style={{ textAlign: "right" }}>
+                (단위 : 억)
+              </Typography>
             </Grid>
           </Grid>
           <Divider />
@@ -391,6 +395,9 @@ const SA_B2216W: React.FC = () => {
                 alllabel={stackChartAllLabel2}
                 label={stackChartLabel2}
               />
+              <Typography variant="body2" style={{ textAlign: "right" }}>
+                (단위 : 억)
+              </Typography>
             </Grid>
           </Grid>
           <Divider />

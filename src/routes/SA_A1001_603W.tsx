@@ -232,6 +232,7 @@ const SA_A1001_603W: React.FC = () => {
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -390,6 +391,7 @@ const SA_A1001_603W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
+    query: false,
   });
 
   //조회조건 초기값
@@ -610,7 +612,28 @@ const SA_A1001_603W: React.FC = () => {
           }));
 
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if(filters.query == true) {
+            setFilters2((prev) => ({
+              ...prev,
+              quonum: selectedRow.quonum,
+              quorev: selectedRow.quorev,
+              isSearch: true,
+              pgNum: 1,
+            }));
+            setTabSelected(1);
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
         } else {
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
           setInformation((prev) => ({
             ...prev,
             quonum: rows[0].quonum,
@@ -627,6 +650,14 @@ const SA_A1001_603W: React.FC = () => {
           }));
 
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      } else {
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
         }
       }
     } else {

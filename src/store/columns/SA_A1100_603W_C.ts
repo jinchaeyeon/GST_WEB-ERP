@@ -36,6 +36,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_contracyn",
+        field: "contracyn",
+        caption: "계약완료여부",
+        width: 120,
+      },
+      {
         id: "col_project_list",
         field: "project",
         caption: "계약명",

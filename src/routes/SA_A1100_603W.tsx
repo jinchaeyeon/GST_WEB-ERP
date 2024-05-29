@@ -299,6 +299,7 @@ const SA_A1100_603W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
+    query: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -642,6 +643,7 @@ const SA_A1100_603W: React.FC = () => {
             ?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -808,8 +810,53 @@ const SA_A1100_603W: React.FC = () => {
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if(filters.query == true) {
+            setIsFilterHideStates(true);
+            setChecked(true);
+            setSubFilters((prev) => ({
+              ...prev,
+              workType: "DETAIL",
+              contractno: selectedRow.contractno,
+              groupgb: "A",
+              pgNum: 1,
+              isSearch: true,
+            }));
+            setSubFilters2((prev) => ({
+              ...prev,
+              workType: "COMMENT",
+              contractno: selectedRow.contractno,
+              pgNum: 1,
+              isSearch: true,
+            }));
+            setSubFilters6((prev) => ({
+              ...prev,
+              workType: "PAYMENT",
+              contractno: selectedRow.contractno,
+              pgNum: 1,
+              isSearch: true,
+            }));
+            setTabSelected(1);
+            if (swiper) {
+              swiper.slideTo(1);
+            }
+          }
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
+        }
+      } else {
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
         }
       }
     } else {
@@ -867,6 +914,10 @@ const SA_A1100_603W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      setFilters((prev)=> ({
+        ...prev,
+        query: false
+      }))
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows.map((item: any) => ({
         ...item,

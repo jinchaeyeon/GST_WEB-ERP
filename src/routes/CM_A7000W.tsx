@@ -418,6 +418,7 @@ const CM_A7000W: React.FC = () => {
             ?.valueCode,
           type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
           find_row_value: queryParams.get("go") as string,
+          query: true,
         }));
       } else {
         setFilters((prev) => ({
@@ -552,6 +553,7 @@ const CM_A7000W: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
+    query: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -682,7 +684,46 @@ const CM_A7000W: React.FC = () => {
             isSearch: true,
           }));
           setWorkType("U");
+          if (filters.query == true) {
+            setInformation({
+              orgdiv: selectedRow.orgdiv,
+              meetingnum: selectedRow.meetingnum,
+              usegb: selectedRow.usegb,
+              person: selectedRow.person,
+              personnm: selectedRow.personnm,
+              recdt: selectedRow.recdt == "" ? null : toDate(selectedRow.recdt),
+              title: selectedRow.title,
+              attdatnum:
+                selectedRow.attdatnum == undefined ? "" : selectedRow.attdatnum,
+              files: selectedRow.files,
+              ref_key: selectedRow.ref_key,
+              custcd: selectedRow.custcd,
+              custnm: selectedRow.custnm,
+              custprsncd: selectedRow.custprsncd,
+              custprsnnm: selectedRow.custprsnnm,
+              postnm: selectedRow.postnm,
+              dptnm: selectedRow.dptnm,
+              address: selectedRow.address,
+              telno: selectedRow.telno,
+              phoneno: selectedRow.phoneno,
+              email: selectedRow.email,
+              testtype: selectedRow.testtype,
+              requestgb: selectedRow.requestgb,
+              materialtype: selectedRow.materialtype,
+              extra_field2: selectedRow.extra_field2,
+              place: selectedRow.place,
+              type: selectedRow.type,
+            });
+            fetchDetail();
+          }
         } else {
+          if (filters.query == true) {
+            alert("해당 데이터가 없습니다.");
+            setFilters((prev) => ({
+              ...prev,
+              query: false,
+            }));
+          }
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
             ...prev,
@@ -693,6 +734,13 @@ const CM_A7000W: React.FC = () => {
         }
       } else {
         setWorkType("");
+        if (filters.query == true) {
+          alert("해당 데이터가 없습니다.");
+          setFilters((prev) => ({
+            ...prev,
+            query: false,
+          }));
+        }
         resetAllGrid();
       }
     } else {
@@ -757,6 +805,13 @@ const CM_A7000W: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      if (filters.query == true) {
+        setTabSelected(1);
+        setFilters((prev) => ({
+          ...prev,
+          query: false,
+        }));
+      }
       if (totalRowCnt > 0) {
         setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
       }
@@ -2210,7 +2265,9 @@ const CM_A7000W: React.FC = () => {
                   </FormBoxWrap>
                   <GridContainer>
                     <Grid
-                      style={{ height: deviceHeight - height - height3 - height5 }}
+                      style={{
+                        height: deviceHeight - height - height3 - height5,
+                      }}
                       data={process(
                         detailDataResult.data.map((row) => ({
                           ...row,

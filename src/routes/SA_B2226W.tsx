@@ -1,4 +1,8 @@
-import { CardContent as CardContentMui, Card as CardMui } from "@mui/material";
+import {
+  CardContent as CardContentMui,
+  Card as CardMui,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -377,7 +381,7 @@ const SA_B2226W: React.FC = () => {
 
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
@@ -532,6 +536,9 @@ const SA_B2226W: React.FC = () => {
                 label={stackChartLabel}
                 random={false}
               />
+              <Typography variant="body2" style={{ textAlign: "right" }}>
+                (단위 : 억)
+              </Typography>
             </Grid>
           </Grid>
           <Divider />
@@ -556,6 +563,9 @@ const SA_B2226W: React.FC = () => {
                 colorName={colorName}
                 borderColor={theme.palette.primary.dark}
               />
+              <Typography variant="body2" style={{ textAlign: "right" }}>
+                (단위 : 억)
+              </Typography>
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8.5} xl={8.5}>
               <PaginatorTable

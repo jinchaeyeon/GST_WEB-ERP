@@ -858,7 +858,7 @@ const BA_A0021W_603: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     const origin = window.location.origin;
-    window.open(origin + `/SA_A1100_603W?go=` + selectedRowData.connum);
+    window.open(origin + `/SA_A1100_603W?go=` + selectedRowData.contractno);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
