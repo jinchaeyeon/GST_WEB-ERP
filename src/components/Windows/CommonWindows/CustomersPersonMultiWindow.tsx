@@ -9,7 +9,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -45,10 +45,7 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "num";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
-var height = 0;
-var height2 = 0;
-var height3 = 0;
-var height4 = 0;
+
 const KendoWindow = ({
   setVisible,
   setData,
@@ -64,12 +61,10 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".WindowButtonContainer"); //FormBox부분
-    height3 = getHeight(".WindowButtonContainer2"); //하단 버튼부분
-    height4 = getHeight(".BottomContainer"); //필터 모바일
-  });
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".WindowButtonContainer"); //grid title부분
+  var height3 = getHeight(".WindowButtonContainer2"); //grid title부분
+  var height4 = getHeight(".BottomContainer"); //하단 버튼부분
   const setLoading = useSetRecoilState(isLoading);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);

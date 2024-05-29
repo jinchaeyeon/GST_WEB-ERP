@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -44,25 +44,18 @@ const DATA_ITEM_KEY = "itemcd";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-var height = 0;
-var height2 = 0;
-var height3 = 0;
-var height4 = 0;
-var height5 = 0;
-var height6 = 0;
+
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  var height = getHeight(".k-window-titlebar"); //공통 해더
+  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".filter"); //필터
+  var height5 = getHeight(".WindowButtonContainer");
+  var height6 = getHeight(".WindowButtonContainer2");
 
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".TitleContainer"); //FormBox부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".filter"); //필터 모바일
-    height5 = getHeight(".WindowButtonContainer");
-    height6 = getHeight(".WindowButtonContainer2");
-  });
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 900) / 2,

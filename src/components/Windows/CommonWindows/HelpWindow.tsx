@@ -16,9 +16,8 @@ import {
   createContext,
   useContext,
   useEffect,
-  useLayoutEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -159,28 +158,17 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-var height = 0;
-var height2 = 0;
-var height3 = 0;
-var height4 = 0;
-var height5 = 0;
+
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = 0;
-  var container = document.querySelector(".k-window-titlebar");
-  if (container?.clientHeight != undefined) {
-    height = container == undefined ? 0 : container.clientHeight;
-  }
 
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".TitleContainer"); //FormBox부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".ButtonContainer"); //필터 모바일
-    height4 = getHeight(".ButtonContainer2"); //필터 모바일
-  });
+  var height = getHeight(".k-window-titlebar");
+  var height2 = getHeight(".TitleContainer"); //FormBox부분
+  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  var height4 = getHeight(".ButtonContainer"); //필터 모바일
+  var height4 = getHeight(".ButtonContainer2"); //필터 모바일
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수

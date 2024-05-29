@@ -27,6 +27,7 @@ type TKendoWindow = {
 var height = 0;
 var height2 = 0;
 var height3 = 0;
+
 const KendoWindow = ({
   setVisible,
   quonum,
@@ -38,11 +39,17 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".FormBoxWrap"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  });
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
 
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
@@ -232,8 +239,8 @@ const KendoWindow = ({
       <GridContainer
         style={{
           height: isMobile
-            ? deviceHeight - height - height2 - height3
-            : position.height - height - height2 - height3,
+            ? mobileheight
+            : webheight,
         }}
       >
         <RichEditor id="docEditor" ref={docEditorRef} />
