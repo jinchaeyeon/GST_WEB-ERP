@@ -167,6 +167,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
   var height3 = getHeight(".BottomContainer"); //하단 버튼부분
   var height4 = getHeight(".ButtonContainer"); //그리드 title부분
+  var height5 = getHeight(".ButtonContainer2"); //pdf부분
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -540,7 +541,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
     if (swiper && isMobile) {
       swiper.slideTo(1);
-		}
+    }
   };
 
   const paraSaved: Iparameters = {
@@ -771,7 +772,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     uploadInput!.click();
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   const handleFileUpload = async (files: FileList | null) => {
@@ -828,7 +829,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     fetchmanualGrid();
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   return (
@@ -995,9 +996,10 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
             style={{
               height: isMobile
                 ? deviceHeight - height - height2 - height3
-                : position.height - 570,
+                : position.height / 2.5,
               marginBottom: "10px",
             }}
+            className="ButtonContainer2"
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
@@ -1045,7 +1047,12 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
                 style={{
                   height: isMobile
                     ? deviceHeight - height - height2 - height3 - height4
-                    : position.height - height - height2 - height3 - height4,
+                    : position.height -
+                      height -
+                      height2 -
+                      height3 -
+                      height4 -
+                      (height5 + 10), // pdf style marginBottom: "10px"
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
