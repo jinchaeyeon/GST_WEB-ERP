@@ -90,6 +90,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -163,8 +164,7 @@ const CM_A5000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const docEditorRef = useRef<TEditorHandle>(null);
   const docEditorRef1 = useRef<TEditorHandle>(null);
 

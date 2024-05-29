@@ -81,6 +81,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -103,8 +104,7 @@ let temp = 0;
 let deletedMainRows: any[] = [];
 
 const CM_A7000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

@@ -63,6 +63,7 @@ import { useApi } from "../hooks/api";
 import {
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -86,9 +87,8 @@ const MA_A2310_606W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   //커스텀 옵션 조회

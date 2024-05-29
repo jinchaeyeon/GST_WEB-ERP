@@ -72,7 +72,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3600W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -302,9 +302,8 @@ const dateField = ["outdt", "indt"];
 const numberField = ["qty", "cnt", "now_qty"];
 const numberField2 = ["qty"];
 const MA_A3600W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

@@ -73,6 +73,7 @@ import {
   deletedNameState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -295,9 +296,8 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
 const HU_A5020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
 
   const processApi = useApi();

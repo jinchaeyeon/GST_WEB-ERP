@@ -28,12 +28,11 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-	let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const processApi = useApi();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

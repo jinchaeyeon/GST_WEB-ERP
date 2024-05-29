@@ -49,7 +49,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2700W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -57,12 +57,11 @@ const dateField = ["strdt", "enddt", "outdt"];
 const centerField = ["finyn"];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
-let deviceWidth = document.documentElement.clientWidth;
-let isMobile = deviceWidth <= 1200;
 const MA_B2700W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

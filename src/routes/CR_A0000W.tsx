@@ -35,7 +35,7 @@ import Calender from "../components/DDGDcomponents/Calender";
 import CardBox from "../components/DDGDcomponents/CardBox";
 import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
+import { isDeviceWidthState, isLoading, isMobileState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 interface Tsize {
   width: number;
@@ -72,8 +72,8 @@ const pc = UseGetValueFromSessionItem("pc");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [changeDate, setChangeDate] = useState<string>("");
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
 
   const [adjnumber, setAdjnumber] = useState<number>(0);
 

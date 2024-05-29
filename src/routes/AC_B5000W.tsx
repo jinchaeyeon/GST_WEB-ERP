@@ -49,7 +49,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -60,9 +60,8 @@ const checkField = ["exceptyn", "prtyn"];
 let targetRowIndex: null | number = null;
 
 const AC_B5000W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
   var height = getHeight(".ButtonContainer");
 
   const setLoading = useSetRecoilState(isLoading);

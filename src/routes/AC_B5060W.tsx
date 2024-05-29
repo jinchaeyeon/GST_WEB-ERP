@@ -40,7 +40,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -50,8 +50,7 @@ const DATA_ITEM_KEY3 = "num";
 const numberField = ["maesu", "amt", "vat"];
 
 const AC_B5060W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-	let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

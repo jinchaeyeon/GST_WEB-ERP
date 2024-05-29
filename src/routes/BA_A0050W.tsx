@@ -72,7 +72,7 @@ import CopyWindow from "../components/Windows/BA_A0050W_Copy_Window";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import CopyWindow2 from "../components/Windows/CommonWindows/PatternWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isDeviceWidthState, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0050W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -418,12 +418,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
 const BA_A0050: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  let isMobile = deviceWidth <= 1200;
-
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);

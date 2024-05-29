@@ -83,6 +83,7 @@ import {
   OSState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_C";
@@ -142,8 +143,7 @@ const requiredField2 = [
 ];
 
 const CM_A1600: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

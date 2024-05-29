@@ -47,7 +47,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -108,10 +108,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

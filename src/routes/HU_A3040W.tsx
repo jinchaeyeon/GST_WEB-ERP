@@ -68,6 +68,7 @@ import {
   isFilterHideState,
   isFilterheightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3040W_C";
@@ -399,10 +400,8 @@ let temp6 = 0;
 
 const HU_A3040W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");

@@ -41,7 +41,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8030W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -51,9 +51,8 @@ const dateField = ["taxdt", "actdt"];
 let targetRowIndex: null | number = null;
 
 const AC_B8030W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
   var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);

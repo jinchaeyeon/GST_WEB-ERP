@@ -69,7 +69,7 @@ import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
@@ -78,9 +78,8 @@ const numberField = ["sumslipamt_1", "sumslipamt_2", "sumslipamt"];
 let targetRowIndex: null | number = null;
 
 const AC_A1000W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
 
   const setLoading = useSetRecoilState(isLoading);

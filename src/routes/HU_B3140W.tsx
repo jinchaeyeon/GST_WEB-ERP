@@ -68,7 +68,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -108,9 +108,8 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const HU_B3140W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   var height = getHeight(".k-tabstrip-items-wrapper");
 

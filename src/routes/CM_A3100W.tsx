@@ -57,6 +57,7 @@ import {
   OSState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
@@ -77,8 +78,7 @@ const CM_A3100W: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A3100W", setMessagesData);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

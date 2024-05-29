@@ -45,6 +45,7 @@ import { useApi } from "../hooks/api";
 import {
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -84,8 +85,7 @@ const Main: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [cardOptionState, setCardOptionState] = useState<State>({
     sort: [],

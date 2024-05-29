@@ -35,7 +35,7 @@ import InLotWindow from "../components/Windows/PR_A2000W_InLot_Window";
 import PlanWindow from "../components/Windows/PR_A2000W_Plan_Window";
 import StopWindow from "../components/Windows/PR_A2000W_Stop_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,8 +45,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 const DATA_ITEM_KEY = "num";
 
 const PR_A2000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var index = 0;

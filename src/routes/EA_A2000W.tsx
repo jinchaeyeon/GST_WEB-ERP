@@ -66,7 +66,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import WordText from "../components/WordText";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -76,8 +76,7 @@ const DATA_ITEM_KEY3 = "num";
 const dateField = ["recdt", "time"];
 
 const EA_A2000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

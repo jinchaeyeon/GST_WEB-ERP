@@ -50,7 +50,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import DetailWindow from "../components/Windows/HU_A6000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, heightstate, isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -66,9 +66,8 @@ let targetRowIndex: null | number = null;
 const dateField = ["regorgdt", "rtrdt"];
 
 const HU_A6000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   var height = getHeight(".ButtonContainer");
 

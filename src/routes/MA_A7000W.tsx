@@ -76,7 +76,7 @@ import CopyWindow2 from "../components/Windows/BA_A0080W_Copy_Window";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import BarcodeWindow from "../components/Windows/MA_A7000W_Barcode_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A7000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -403,11 +403,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-let deviceWidth = document.documentElement.clientWidth;
-let isMobile = deviceWidth <= 1200;
 
 const MA_A7000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);

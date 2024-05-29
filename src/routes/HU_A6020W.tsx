@@ -76,7 +76,7 @@ import FileViewers from "../components/Viewer/FileViewers";
 import LaborerMultiWindow from "../components/Windows/CommonWindows/LaborerMultiWindow";
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -367,9 +367,8 @@ const defaultPrsnInfo = {
 
 const HU_A6020W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".k-tabstrip-items-wrapper");
   var height3 = getHeight(".ButtonContainer3");

@@ -73,6 +73,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4110W_C";
@@ -89,9 +90,8 @@ let targetRowIndex: null | number = null;
 const HU_A4110W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

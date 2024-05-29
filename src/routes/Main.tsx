@@ -55,6 +55,7 @@ import { useApi } from "../hooks/api";
 import {
   OSState,
   heightstate,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -77,10 +78,8 @@ const containerStyle: CSSProperties = {
 
 const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");

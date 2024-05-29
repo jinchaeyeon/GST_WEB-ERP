@@ -65,7 +65,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -90,10 +90,8 @@ const numberField = [
 const dateField = ["payyrmm"];
 const HU_B3120W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

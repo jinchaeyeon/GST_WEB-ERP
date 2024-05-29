@@ -29,6 +29,8 @@ import { useApi } from "../hooks/api";
 import {
   OSState,
   heightstate,
+  isDeviceWidthState,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -358,9 +360,8 @@ const Main: React.FC = () => {
       />
     );
   };
-
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   return (

@@ -67,6 +67,7 @@ import { useApi } from "../hooks/api";
 import {
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -98,9 +99,8 @@ const MA_A3400_606W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");

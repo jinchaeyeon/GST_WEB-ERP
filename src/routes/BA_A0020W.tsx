@@ -92,6 +92,7 @@ import {
   deletedNameState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -268,7 +269,6 @@ const BA_A0020: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
@@ -276,7 +276,7 @@ const BA_A0020: React.FC = () => {
   var height4 = getHeight(".ButtonContainer4");
   var height5 = getHeight(".ButtonContainer5");
   var height6 = getHeight(".k-tabstrip-items-wrapper");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

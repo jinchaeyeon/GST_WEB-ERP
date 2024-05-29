@@ -64,6 +64,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -81,8 +82,7 @@ let targetRowIndex2: null | number = null;
 var index = 0;
 
 const MA_A1000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

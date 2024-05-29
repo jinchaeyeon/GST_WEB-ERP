@@ -55,7 +55,9 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isDeviceWidthState,
   isLoading,
+  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -238,8 +240,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const BA_A0020W_603: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

@@ -32,11 +32,9 @@ import {
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
-let deviceWidth = document.documentElement.clientWidth;
-let isMobile = deviceWidth <= 1200;
 
 const CR_A1101W: React.FC = () => {
   const processApi = useApi();
@@ -44,7 +42,8 @@ const CR_A1101W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userid = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

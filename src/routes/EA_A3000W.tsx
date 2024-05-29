@@ -31,10 +31,11 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import { GAP } from "../components/CommonString";
+import { isMobileState } from "../store/atoms";
+import { useRecoilState } from "recoil";
 
 const EA_A3000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   return (
     <>

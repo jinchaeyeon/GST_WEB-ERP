@@ -48,7 +48,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -70,10 +70,9 @@ const requiredfield = ["sub_code"];
 let temp = 0;
 let deletedMainRows: object[] = [];
 let targetRowIndex: null | number = null;
-let deviceWidth = document.documentElement.clientWidth;
-let isMobile = deviceWidth <= 1200;
 
 const MA_A0010W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);

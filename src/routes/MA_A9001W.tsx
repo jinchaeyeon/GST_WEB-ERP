@@ -78,7 +78,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import MA_A9001W_IN_Window from "../components/Windows/MA_A9001W_IN_Window";
 import MA_A9001W_Window from "../components/Windows/MA_A9001W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A9001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -139,11 +139,10 @@ type TdataArr2 = {
   pubperson_s: string[];
   advanceinfo_s: string[];
 };
-let deviceWidth = document.documentElement.clientWidth;
-let isMobile = deviceWidth <= 1200;
 var index = 0;
 
 const MA_A9001W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   var height = getHeight(".ButtonContainer");

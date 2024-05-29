@@ -63,7 +63,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import DetailWindow from "../components/Windows/MA_A8000W_Popup_Window";
 import DetailWindow2 from "../components/Windows/MA_A8000W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -101,8 +101,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 
 const MA_A8000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
 

@@ -70,7 +70,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import BarcodeWindow from "../components/Windows/MA_A3000W_Barcode_Window";
 import MA_A3000W_Window from "../components/Windows/MA_A3000W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -177,8 +177,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const MA_A3000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

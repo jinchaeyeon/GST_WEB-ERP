@@ -55,6 +55,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
@@ -111,9 +112,8 @@ const getPositionOrder = (postcd: string): number => {
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const HU_A1000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

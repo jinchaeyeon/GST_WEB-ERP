@@ -38,7 +38,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -48,8 +48,7 @@ const PR_A3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var index = 0;
