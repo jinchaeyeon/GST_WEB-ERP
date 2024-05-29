@@ -1203,17 +1203,26 @@ const SA_A6000W: React.FC = () => {
         throw findMessage(messagesData, "SA_A6000W_001");
       } else {
         resetAllGrid();
-        setFilters((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-        setFilters2((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-        if (swiper && isMobile) {
+        if(tabSelected == 0) {
+          setFilters((prev: any) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+          }));
+          setFilters2((prev: any) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+          }));
+        } else {
+          setFilters3((prev) => ({
+            ...prev,
+            pgNum: 1,
+            find_row_value: "",
+            isSearch: true,
+          }));
+        }
+        if(swiper) {
           swiper.slideTo(0);
         }
       }

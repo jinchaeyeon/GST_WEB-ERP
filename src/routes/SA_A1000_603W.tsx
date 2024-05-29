@@ -3257,8 +3257,7 @@ const SA_A1000_603W: React.FC = () => {
     );
 
     setInformation({
-      chkperson: defaultOption.find((item: any) => item.id == "person")
-        ?.valueCode,
+      chkperson: userId,
       custcd: "",
       custnm: "",
       custprsnnm: "",
