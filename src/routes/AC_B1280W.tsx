@@ -46,10 +46,12 @@ import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
+import { IWindowPosition } from "../hooks/interfaces";
 import {
   heightstate,
+  isDeviceWidthState,
   isLoading,
-  isMobileState
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -61,8 +63,18 @@ let targetRowIndex: null | number = null;
 const AC_B1280W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  let deviceHeightWindow = document.documentElement.clientHeight;
   var height = getHeight(".ButtonContainer");
-
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeightWindow - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeightWindow : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -577,21 +589,9 @@ const AC_B1280W: React.FC = () => {
           Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          positions={{
-            width:
-              isMobile == true ? document.documentElement.clientWidth : 1123,
-            height:
-              isMobile == true ? document.documentElement.clientHeight : 764,
-            left:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientWidth - 1123) / 2,
-            top:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientHeight - 794) / 2,
-          }}
+          positions={position}
           modals={true}
+          onChangePostion={onChangePostion}
         >
           <CodeReport data={filters} />
         </Window>

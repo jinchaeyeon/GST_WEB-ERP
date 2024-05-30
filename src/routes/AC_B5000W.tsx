@@ -49,10 +49,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
+import { IWindowPosition } from "../hooks/interfaces";
 import {
   heightstate,
+  isDeviceWidthState,
   isLoading,
-  isMobileState
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -66,8 +68,17 @@ let targetRowIndex: null | number = null;
 const AC_B5000W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   var height = getHeight(".ButtonContainer");
-
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeight : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -629,21 +640,9 @@ const AC_B5000W: React.FC = () => {
           Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          positions={{
-            width:
-              isMobile == true ? document.documentElement.clientWidth : 1123,
-            height:
-              isMobile == true ? document.documentElement.clientHeight : 764,
-            left:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientWidth - 1123) / 2,
-            top:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientHeight - 794) / 2,
-          }}
+          positions={position}
           modals={true}
+          onChangePostion={onChangePostion}
         >
           <TaxReport data={filters} />
         </Window>
