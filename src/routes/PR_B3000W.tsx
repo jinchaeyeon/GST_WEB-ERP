@@ -53,9 +53,10 @@ import WorkDailyReport from "../components/Prints/WorkDailyReport";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { IItemData } from "../hooks/interfaces";
+import { IItemData, IWindowPosition } from "../hooks/interfaces";
 import {
   heightstate,
+  isDeviceWidthState,
   isLoading,
   isMobileState,
   sessionItemState,
@@ -75,9 +76,20 @@ const PR_B3000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  let deviceHeightWindow = document.documentElement.clientHeight;
   var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeightWindow - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeightWindow : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -683,21 +695,9 @@ const PR_B3000W: React.FC = () => {
           Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          positions={{
-            width:
-              isMobile == true ? document.documentElement.clientWidth : 1123,
-            height:
-              isMobile == true ? document.documentElement.clientHeight : 764,
-            left:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientWidth - 1123) / 2,
-            top:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientHeight - 794) / 2,
-          }}
+          positions={position}
           modals={true}
+          onChangePostion={onChangePostion}
         >
           <WorkDailyReport data={filters} />
         </Window>

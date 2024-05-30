@@ -64,11 +64,12 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { IAttachmentData } from "../hooks/interfaces";
+import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isDeviceWidthState,
   isLoading,
   isMobileState,
   unsavedAttadatnumsState,
@@ -91,6 +92,8 @@ const CM_A1000W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  let deviceHeightWindow = document.documentElement.clientHeight;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
@@ -103,7 +106,15 @@ const CM_A1000W: React.FC = () => {
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1000W", setMessagesData);
-
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeightWindow - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeightWindow : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -2411,21 +2422,9 @@ const CM_A1000W: React.FC = () => {
           Close={() => {
             setPreviewVisible((prev) => !prev);
           }}
-          positions={{
-            width:
-              isMobile == true ? document.documentElement.clientWidth : 1123,
-            height:
-              isMobile == true ? document.documentElement.clientHeight : 764,
-            left:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientWidth - 1123) / 2,
-            top:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientHeight - 794) / 2,
-          }}
+          positions={position}
           modals={true}
+          onChangePostion={onChangePostion}
         >
           <DaliyReport data={filters} />
         </Window>
