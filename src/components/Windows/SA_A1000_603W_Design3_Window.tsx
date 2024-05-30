@@ -404,7 +404,7 @@ const CopyWindow = ({
     teststs_base: "",
     chlditemcd_base: "",
     injectcnt_base: 0,
-    injectcycle_base: "",
+    injectcycle_base: 0,
     chasu_base: 0,
     testperiod_base: 0,
     experiment_week_base: 0,
@@ -450,7 +450,7 @@ const CopyWindow = ({
     injectroute_ex: "",
     teststs_ex: "",
     injectcnt_ex: 0,
-    injectcycle_ex: "",
+    injectcycle_ex: 0,
     genderyn_ex: "",
     experiment_week_ex: 0,
     totqty_ex: 0,
@@ -489,7 +489,7 @@ const CopyWindow = ({
     teststs_base: "",
     chlditemcd_base: "",
     injectcnt_base: 0,
-    injectcycle_base: "",
+    injectcycle_base: 0,
     chasu_base: 0,
     testperiod_base: 0,
     experiment_week_base: 0,
@@ -535,7 +535,7 @@ const CopyWindow = ({
     injectroute_ex: "",
     teststs_ex: "",
     injectcnt_ex: 0,
-    injectcycle_ex: "",
+    injectcycle_ex: 0,
     genderyn_ex: "",
     experiment_week_ex: 0,
     totqty_ex: 0,
@@ -712,7 +712,7 @@ const CopyWindow = ({
     dataArr.seq_s.push(Information.seq_base.toString());
     dataArr.itemcd_s.push(Information.itemcd);
     dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
-    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.injectcycle_s.push(Information.injectcycle_base.toString());
     dataArr.maleqty_s.push(Information.maleqty_base.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_base.toString());
     dataArr.totqty_s.push(Information.totqty_base.toString());
@@ -786,7 +786,7 @@ const CopyWindow = ({
     );
     dataArr.itemcd_s.push(Information.itemcd);
     dataArr.injectcnt_s.push(Information.injectcnt_ex.toString());
-    dataArr.injectcycle_s.push(Information.injectcycle_ex);
+    dataArr.injectcycle_s.push(Information.injectcycle_ex.toString());
     dataArr.maleqty_s.push(Information.maleqty_ex.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_ex.toString());
     dataArr.totqty_s.push(Information.totqty_ex.toString());

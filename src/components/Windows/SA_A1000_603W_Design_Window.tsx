@@ -14,7 +14,6 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
@@ -125,10 +124,7 @@ const CopyWindow = ({
   };
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA171, L_BA173, L_BA174, L_BA008_603",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA171, L_BA173, L_BA174", setBizComponentData);
 
   const [itemlvl1ListData, setItemlvl1ListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -139,16 +135,12 @@ const CopyWindow = ({
   const [injectrouteListData, setInjectrouteListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [injectcycleListData, setInjectcycleListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
       setItemlvl3ListData(getBizCom(bizComponentData, "L_BA173"));
       setInjectrouteListData(getBizCom(bizComponentData, "L_BA174"));
-      setInjectcycleListData(getBizCom(bizComponentData, "L_BA008_603"));
     }
   }, [bizComponentData]);
 
@@ -461,7 +453,7 @@ const CopyWindow = ({
     teststs_base: "",
     chlditemcd_base: "",
     injectcnt_base: 0,
-    injectcycle_base: "",
+    injectcycle_base: 0,
     chasu_base: 0,
     testperiod_base: 0,
     experiment_week_base: 0,
@@ -562,7 +554,7 @@ const CopyWindow = ({
     teststs_base: "",
     chlditemcd_base: "",
     injectcnt_base: 0,
-    injectcycle_base: "",
+    injectcycle_base: 0,
     chasu_base: 0,
     testperiod_base: 0,
     experiment_week_base: 0,
@@ -928,7 +920,7 @@ const CopyWindow = ({
     dataArr.seq_s.push(Information.seq_base.toString());
     dataArr.itemcd_s.push(Information.itemcd);
     dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
-    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.injectcycle_s.push(Information.injectcycle_base.toString());
     dataArr.maleqty_s.push(Information.maleqty_base.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_base.toString());
     dataArr.totqty_s.push(Information.totqty_base.toString());
@@ -1002,7 +994,7 @@ const CopyWindow = ({
     );
     dataArr.itemcd_s.push(Information.itemcd);
     dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
-    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.injectcycle_s.push(Information.injectcycle_base.toString());
     dataArr.maleqty_s.push(Information.maleqty_ex.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_ex.toString());
     dataArr.totqty_s.push(Information.totqty_ex.toString());
@@ -1074,7 +1066,7 @@ const CopyWindow = ({
     );
     dataArr.itemcd_s.push(Information.itemcd);
     dataArr.injectcnt_s.push(Information.injectcnt_base.toString());
-    dataArr.injectcycle_s.push(Information.injectcycle_base);
+    dataArr.injectcycle_s.push(Information.injectcycle_base.toString());
     dataArr.maleqty_s.push(Information.maleqty_tk.toString());
     dataArr.femaleqty_s.push(Information.femaleqty_tk.toString());
     dataArr.totqty_s.push(Information.totqty_tk.toString());
@@ -1362,25 +1354,23 @@ const CopyWindow = ({
                 <th>투여시간</th>
                 <td>
                   {save == true ? (
-                    bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="injectcycle_base"
-                        value={Information.injectcycle_base}
-                        bizComponentId="L_BA008_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )
+                    <Input
+                      name="injectcycle_base"
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.injectcycle_base)}
+                      onChange={InputChange}
+                    />
                   ) : (
                     <Input
                       name="injectcycle_base"
-                      type="text"
-                      value={
-                        injectcycleListData.find(
-                          (item: any) =>
-                            item.sub_code == Information.injectcycle_base
-                        )?.code_name
-                      }
+                      type="number"
+                      style={{
+                        textAlign: "right",
+                      }}
+                      value={numberWithCommas3(Information.injectcycle_base)}
                       className="readonly"
                     />
                   )}
@@ -1744,13 +1734,11 @@ const CopyWindow = ({
                 <td>
                   <Input
                     name="injectcycle_base"
-                    type="text"
-                    value={
-                      injectcycleListData.find(
-                        (item: any) =>
-                          item.sub_code == Information.injectcycle_base
-                      )?.code_name
-                    }
+                    type="number"
+                    style={{
+                      textAlign: "right",
+                    }}
+                    value={numberWithCommas3(Information.injectcycle_base)}
                     className="readonly"
                   />
                 </td>
@@ -2128,13 +2116,11 @@ const CopyWindow = ({
                 <td>
                   <Input
                     name="injectcycle_base"
-                    type="text"
-                    value={
-                      injectcycleListData.find(
-                        (item: any) =>
-                          item.sub_code == Information.injectcycle_base
-                      )?.code_name
-                    }
+                    type="number"
+                    style={{
+                      textAlign: "right",
+                    }}
+                    value={numberWithCommas3(Information.injectcycle_base)}
                     className="readonly"
                   />
                 </td>

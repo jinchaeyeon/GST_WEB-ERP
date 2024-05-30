@@ -1,4 +1,5 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import {
   Chart,
   ChartCategoryAxis,
@@ -23,12 +24,16 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   DDGDcolorList,
   FilterBox,
   GridContainer,
-  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
   WebErpcolorList,
@@ -44,30 +49,27 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  CLIENT_WIDTH,
-  GNV_WIDTH,
-  GRID_MARGIN,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 
 const AC_B1260W: React.FC = () => {
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
+  var height1 = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -534,6 +536,9 @@ const AC_B1260W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -905,910 +910,2075 @@ const AC_B1260W: React.FC = () => {
         scrollable={isMobile}
       >
         <TabStripTab title="제조경비">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer>
-              <Chart
-                seriesColors={
-                  window.location.href.split("/")[2].split(".")[1] == "ddgd"
-                    ? DDGDcolorList
-                    : WebErpcolorList
-                }
-              >
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
-                  ></ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="column"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer
-              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName="단축코드별집계"
-              >
-                <Grid
-                  style={{ height: "28vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: deviceHeight - height - height1 }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="단축코드별집계"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height1 }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="acntnm"
+                        title="계정과목명"
+                        width="120px"
+                        footerCell={gridTotalFooterCell}
+                      />
+                      <GridColumn
+                        field="stdrmkcd"
+                        title="단축코드"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="amt1"
+                        title={dates}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt2"
+                        title={dates2}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt3"
+                        title={dates3}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt4"
+                        title={dates4}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt5"
+                        title={dates5}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt6"
+                        title={dates6}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt7"
+                        title={dates7}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt8"
+                        title={dates8}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt9"
+                        title={dates9}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt10"
+                        title={dates10}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt11"
+                        title={dates11}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt12"
+                        title={dates12}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="totamt"
+                        title="총계"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer width="100%">
+                <GridContainer height="45vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+
+                <ExcelExport
+                  data={gridDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
                   }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="단축코드별집계"
                 >
-                  <GridColumn
-                    field="acntnm"
-                    title="계정과목명"
-                    width="120px"
-                    footerCell={gridTotalFooterCell}
-                  />
-                  <GridColumn field="stdrmkcd" title="단축코드" width="120px" />
-                  <GridColumn
-                    field="amt1"
-                    title={dates}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt2"
-                    title={dates2}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt3"
-                    title={dates3}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt4"
-                    title={dates4}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt5"
-                    title={dates5}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt6"
-                    title={dates6}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt7"
-                    title={dates7}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt8"
-                    title={dates8}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt9"
-                    title={dates9}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt10"
-                    title={dates10}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt11"
-                    title={dates11}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt12"
-                    title={dates12}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totamt"
-                    title="총계"
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onGridSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                      footerCell={gridTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="amt1"
+                      title={dates}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt2"
+                      title={dates2}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt3"
+                      title={dates3}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt4"
+                      title={dates4}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt5"
+                      title={dates5}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt6"
+                      title={dates6}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt7"
+                      title={dates7}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt8"
+                      title={dates8}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt9"
+                      title={dates9}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt10"
+                      title={dates10}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt11"
+                      title={dates11}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt12"
+                      title={dates12}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="totamt"
+                      title="총계"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="판매관리비">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer>
-              <Chart>
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
-                  ></ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="column"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer
-              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export2 = exporter;
-                }}
-                fileName="단축코드별집계"
-              >
-                <Grid
-                  style={{ height: "28vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: deviceHeight - height - height1 }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="단축코드별집계"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height1 }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="acntnm"
+                        title="계정과목명"
+                        width="120px"
+                        footerCell={gridTotalFooterCell}
+                      />
+                      <GridColumn
+                        field="stdrmkcd"
+                        title="단축코드"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="amt1"
+                        title={dates}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt2"
+                        title={dates2}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt3"
+                        title={dates3}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt4"
+                        title={dates4}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt5"
+                        title={dates5}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt6"
+                        title={dates6}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt7"
+                        title={dates7}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt8"
+                        title={dates8}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt9"
+                        title={dates9}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt10"
+                        title={dates10}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt11"
+                        title={dates11}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt12"
+                        title={dates12}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="totamt"
+                        title="총계"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer width="100%">
+                <GridContainer height="45vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+                <ExcelExport
+                  data={gridDataResult.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
                   }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="단축코드별집계"
                 >
-                  <GridColumn
-                    field="acntnm"
-                    title="계정과목명"
-                    width="120px"
-                    footerCell={gridTotalFooterCell}
-                  />
-                  <GridColumn field="stdrmkcd" title="단축코드" width="120px" />
-                  <GridColumn
-                    field="amt1"
-                    title={dates}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt2"
-                    title={dates2}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt3"
-                    title={dates3}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt4"
-                    title={dates4}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt5"
-                    title={dates5}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt6"
-                    title={dates6}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt7"
-                    title={dates7}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt8"
-                    title={dates8}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt9"
-                    title={dates9}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt10"
-                    title={dates10}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt11"
-                    title={dates11}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt12"
-                    title={dates12}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totamt"
-                    title="총계"
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onGridSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                      footerCell={gridTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="amt1"
+                      title={dates}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt2"
+                      title={dates2}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt3"
+                      title={dates3}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt4"
+                      title={dates4}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt5"
+                      title={dates5}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt6"
+                      title={dates6}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt7"
+                      title={dates7}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt8"
+                      title={dates8}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt9"
+                      title={dates9}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt10"
+                      title={dates10}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt11"
+                      title={dates11}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt12"
+                      title={dates12}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="totamt"
+                      title="총계"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="매출액">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer>
-              <Chart>
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
-                  ></ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="column"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer
-              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export3 = exporter;
-                }}
-                fileName="단축코드별집계"
-              >
-                <Grid
-                  style={{ height: "28vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: deviceHeight - height - height1 }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="단축코드별집계"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height1 }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="acntnm"
+                        title="계정과목명"
+                        width="120px"
+                        footerCell={gridTotalFooterCell}
+                      />
+                      <GridColumn
+                        field="stdrmkcd"
+                        title="단축코드"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="amt1"
+                        title={dates}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt2"
+                        title={dates2}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt3"
+                        title={dates3}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt4"
+                        title={dates4}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt5"
+                        title={dates5}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt6"
+                        title={dates6}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt7"
+                        title={dates7}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt8"
+                        title={dates8}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt9"
+                        title={dates9}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt10"
+                        title={dates10}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt11"
+                        title={dates11}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt12"
+                        title={dates12}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="totamt"
+                        title="총계"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer width="100%">
+                <GridContainer height="45vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+                <ExcelExport
+                  data={gridDataResult.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
                   }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="단축코드별집계"
                 >
-                  <GridColumn
-                    field="acntnm"
-                    title="계정과목명"
-                    width="120px"
-                    footerCell={gridTotalFooterCell}
-                  />
-                  <GridColumn field="stdrmkcd" title="단축코드" width="120px" />
-                  <GridColumn
-                    field="amt1"
-                    title={dates}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt2"
-                    title={dates2}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt3"
-                    title={dates3}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt4"
-                    title={dates4}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt5"
-                    title={dates5}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt6"
-                    title={dates6}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt7"
-                    title={dates7}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt8"
-                    title={dates8}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt9"
-                    title={dates9}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt10"
-                    title={dates10}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt11"
-                    title={dates11}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt12"
-                    title={dates12}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totamt"
-                    title="총계"
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onGridSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                      footerCell={gridTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="amt1"
+                      title={dates}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt2"
+                      title={dates2}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt3"
+                      title={dates3}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt4"
+                      title={dates4}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt5"
+                      title={dates5}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt6"
+                      title={dates6}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt7"
+                      title={dates7}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt8"
+                      title={dates8}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt9"
+                      title={dates9}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt10"
+                      title={dates10}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt11"
+                      title={dates11}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt12"
+                      title={dates12}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="totamt"
+                      title="총계"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="영업외손익">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer>
-              <Chart>
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
-                  ></ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="column"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer
-              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export4 = exporter;
-                }}
-                fileName="단축코드별집계"
-              >
-                <Grid
-                  style={{ height: "28vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: deviceHeight - height - height1 }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export4 = exporter;
+                    }}
+                    fileName="단축코드별집계"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height1 }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="acntnm"
+                        title="계정과목명"
+                        width="120px"
+                        footerCell={gridTotalFooterCell}
+                      />
+                      <GridColumn
+                        field="stdrmkcd"
+                        title="단축코드"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="amt1"
+                        title={dates}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt2"
+                        title={dates2}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt3"
+                        title={dates3}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt4"
+                        title={dates4}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt5"
+                        title={dates5}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt6"
+                        title={dates6}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt7"
+                        title={dates7}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt8"
+                        title={dates8}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt9"
+                        title={dates9}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt10"
+                        title={dates10}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt11"
+                        title={dates11}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt12"
+                        title={dates12}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="totamt"
+                        title="총계"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer width="100%">
+                <GridContainer height="45vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+                <ExcelExport
+                  data={gridDataResult.data}
+                  ref={(exporter) => {
+                    _export4 = exporter;
                   }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="단축코드별집계"
                 >
-                  <GridColumn
-                    field="acntnm"
-                    title="계정과목명"
-                    width="120px"
-                    footerCell={gridTotalFooterCell}
-                  />
-                  <GridColumn field="stdrmkcd" title="단축코드" width="120px" />
-                  <GridColumn
-                    field="amt1"
-                    title={dates}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt2"
-                    title={dates2}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt3"
-                    title={dates3}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt4"
-                    title={dates4}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt5"
-                    title={dates5}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt6"
-                    title={dates6}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt7"
-                    title={dates7}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt8"
-                    title={dates8}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt9"
-                    title={dates9}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt10"
-                    title={dates10}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt11"
-                    title={dates11}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt12"
-                    title={dates12}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totamt"
-                    title="총계"
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onGridSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                      footerCell={gridTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="amt1"
+                      title={dates}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt2"
+                      title={dates2}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt3"
+                      title={dates3}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt4"
+                      title={dates4}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt5"
+                      title={dates5}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt6"
+                      title={dates6}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt7"
+                      title={dates7}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt8"
+                      title={dates8}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt9"
+                      title={dates9}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt10"
+                      title={dates10}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt11"
+                      title={dates11}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt12"
+                      title={dates12}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="totamt"
+                      title="총계"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="특별손익">
-          <GridContainerWrap flexDirection="column">
-            <GridContainer>
-              <Chart>
-                <ChartValueAxis>
-                  <ChartValueAxisItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                  />
-                </ChartValueAxis>
-                <ChartCategoryAxis>
-                  <ChartCategoryAxisItem
-                    categories={allChartDataResult.companies}
-                  ></ChartCategoryAxisItem>
-                </ChartCategoryAxis>
-                <ChartSeries>
-                  <ChartSeriesItem
-                    labels={{
-                      visible: true,
-                      content: (e) => numberWithCommas(e.value) + "",
-                    }}
-                    type="column"
-                    data={allChartDataResult.series}
-                  />
-                </ChartSeries>
-              </Chart>
-            </GridContainer>
-
-            <GridContainer
-              width={CLIENT_WIDTH - GNV_WIDTH - GRID_MARGIN - 60 + "px"}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <ExcelExport
-                data={gridDataResult.data}
-                ref={(exporter) => {
-                  _export5 = exporter;
-                }}
-                fileName="단축코드별집계"
-              >
-                <Grid
-                  style={{ height: "28vh" }}
-                  data={process(
-                    gridDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    gridDataState
-                  )}
-                  {...gridDataState}
-                  onDataStateChange={onGridDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: deviceHeight - height - height1 }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={gridDataResult.data}
+                    ref={(exporter) => {
+                      _export5 = exporter;
+                    }}
+                    fileName="단축코드별집계"
+                  >
+                    <Grid
+                      style={{ height: deviceHeight - height - height1 }}
+                      data={process(
+                        gridDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        gridDataState
+                      )}
+                      {...gridDataState}
+                      onDataStateChange={onGridDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onGridSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={gridDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onGridSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn
+                        field="acntnm"
+                        title="계정과목명"
+                        width="120px"
+                        footerCell={gridTotalFooterCell}
+                      />
+                      <GridColumn
+                        field="stdrmkcd"
+                        title="단축코드"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="amt1"
+                        title={dates}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt2"
+                        title={dates2}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt3"
+                        title={dates3}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt4"
+                        title={dates4}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt5"
+                        title={dates5}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt6"
+                        title={dates6}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt7"
+                        title={dates7}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt8"
+                        title={dates8}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt9"
+                        title={dates9}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt10"
+                        title={dates10}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt11"
+                        title={dates11}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="amt12"
+                        title={dates12}
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                      <GridColumn
+                        field="totamt"
+                        title="총계"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={gridSumQtyFooterCell}
+                      />
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer width="100%">
+                <GridContainer height="45vh">
+                  <Chart
+                    seriesColors={
+                      window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                        ? DDGDcolorList
+                        : WebErpcolorList
+                    }
+                    style={{ height: "100%" }}
+                  >
+                    <ChartValueAxis>
+                      <ChartValueAxisItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                      />
+                    </ChartValueAxis>
+                    <ChartCategoryAxis>
+                      <ChartCategoryAxisItem
+                        categories={allChartDataResult.companies}
+                      ></ChartCategoryAxisItem>
+                    </ChartCategoryAxis>
+                    <ChartSeries>
+                      <ChartSeriesItem
+                        labels={{
+                          visible: true,
+                          content: (e) => numberWithCommas(e.value) + "",
+                        }}
+                        type="column"
+                        data={allChartDataResult.series}
+                      />
+                    </ChartSeries>
+                  </Chart>
+                </GridContainer>
+                <ExcelExport
+                  data={gridDataResult.data}
+                  ref={(exporter) => {
+                    _export5 = exporter;
                   }}
-                  onSelectionChange={onGridSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={gridDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onGridSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="단축코드별집계"
                 >
-                  <GridColumn
-                    field="acntnm"
-                    title="계정과목명"
-                    width="120px"
-                    footerCell={gridTotalFooterCell}
-                  />
-                  <GridColumn field="stdrmkcd" title="단축코드" width="120px" />
-                  <GridColumn
-                    field="amt1"
-                    title={dates}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt2"
-                    title={dates2}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt3"
-                    title={dates3}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt4"
-                    title={dates4}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt5"
-                    title={dates5}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt6"
-                    title={dates6}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt7"
-                    title={dates7}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt8"
-                    title={dates8}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt9"
-                    title={dates9}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt10"
-                    title={dates10}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt11"
-                    title={dates11}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="amt12"
-                    title={dates12}
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                  <GridColumn
-                    field="totamt"
-                    title="총계"
-                    width="100px"
-                    cell={NumberCell}
-                    footerCell={gridSumQtyFooterCell}
-                  />
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  <Grid
+                    style={{ height: "28vh" }}
+                    data={process(
+                      gridDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      gridDataState
+                    )}
+                    {...gridDataState}
+                    onDataStateChange={onGridDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onGridSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={gridDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onGridSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                      footerCell={gridTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="amt1"
+                      title={dates}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt2"
+                      title={dates2}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt3"
+                      title={dates3}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt4"
+                      title={dates4}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt5"
+                      title={dates5}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt6"
+                      title={dates6}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt7"
+                      title={dates7}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt8"
+                      title={dates8}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt9"
+                      title={dates9}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt10"
+                      title={dates10}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt11"
+                      title={dates11}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="amt12"
+                      title={dates12}
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                    <GridColumn
+                      field="totamt"
+                      title="총계"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={gridSumQtyFooterCell}
+                    />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
     </>
