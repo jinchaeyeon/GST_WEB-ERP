@@ -10,8 +10,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -22,10 +22,14 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import {
+  UseBizComponent,
+  getHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import Window from "../WindowComponent/Window";
 interface IPrsnnumMulti {
   prsnnum: string;
@@ -42,7 +46,11 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -54,9 +62,27 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 600,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
+
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -97,6 +123,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -252,7 +279,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -260,7 +287,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -285,10 +312,12 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
-      <GridContainer height="calc(100% - 170px)">
+      </WindowFilterContainer>
+      <GridContainer style={{ overflow: "auto" }}>
         <Grid
-          style={{ height: "100%" }}
+          style={{
+            height: isMobile ? mobileheight : webheight,
+          }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -337,7 +366,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="rtrdtFormat" title="퇴사일" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인

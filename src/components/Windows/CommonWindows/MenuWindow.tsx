@@ -12,8 +12,14 @@ import {
   mapTree,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
-import { MouseEvent, useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,8 +29,8 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
-import { handleKeyPressSearch } from "../../CommonFunction";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
@@ -33,6 +39,7 @@ import {
 } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 import Window from "../WindowComponent/Window";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 
 let deletedMainRows: any[] = [];
 
@@ -44,7 +51,11 @@ type TKendoWindow = {
   reloadData(workType: string, groupCode?: string): void;
   modal?: boolean;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -64,11 +75,30 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 800,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
 
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -274,7 +304,7 @@ const KendoWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer>
+        <TitleContainer className="TitleContainer">
           <Title></Title>
           <ButtonContainer>
             <Button
@@ -286,7 +316,7 @@ const KendoWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -312,8 +342,12 @@ const KendoWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
+        </WindowFilterContainer>
         <TreeList
+          style={{
+            height: isMobile ? mobileheight : webheight,
+            overflow: "auto"
+          }}
           data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
@@ -341,7 +375,7 @@ const KendoWindow = ({
           onRowDoubleClick={onRowDoubleClick}
           columns={allMenuColumns}
         ></TreeList>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onConfirmClick}>
               확인

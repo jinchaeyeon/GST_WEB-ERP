@@ -189,11 +189,16 @@ export const useApi = () => {
 
   useEffect(() => {
     if (window.location.pathname !== "/") {
-      if (!isSessionValid && !sessionItemFetched ) {
-        setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
-        fetchSessionItem(); // 세션 아이템 가져오는 함수 호출
-        window.location.reload(); // 페이지 새로고침
-      }  
+      if (!isSessionValid && !sessionItemFetched) {
+        if (token && loginResult) {    
+          setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
+          fetchSessionItem(); // 세션 아이템 가져오는 함수 호출
+          window.location.reload(); // 페이지 새로고침
+        } else {
+          resetLocalStorage(); // 토큰, 로그인결과가 없을시
+          window.location.href = "/"; // 리다이렉션 처리
+        }  
+      }
     }   
   }, [isSessionValid, sessionItemFetched]);
 
