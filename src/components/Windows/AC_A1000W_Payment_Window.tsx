@@ -750,6 +750,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={true}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

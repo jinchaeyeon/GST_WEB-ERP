@@ -222,6 +222,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title />
