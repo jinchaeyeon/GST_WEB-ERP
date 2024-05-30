@@ -62,6 +62,7 @@ type IWindow = {
   custcd: string;
   custnm: string;
   pathname: string;
+  modal?: boolean;
 };
 
 const topHeight = 181.13;
@@ -74,6 +75,7 @@ const CopyWindow = ({
   custcd,
   custnm,
   pathname,
+  modal = false,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -735,7 +737,7 @@ const CopyWindow = ({
         titles={"수주참조"}
         positions={position}
         Close={onClose}
-        modals={false}
+        modals={modal}
         onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>

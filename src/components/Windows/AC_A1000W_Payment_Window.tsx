@@ -749,7 +749,7 @@ const CopyWindow = ({
         titles={"지급어음 대체처리"}
         positions={position}
         Close={onClose}
-        modals={true}
+        modals={modal}
         onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>

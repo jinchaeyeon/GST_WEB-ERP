@@ -1274,6 +1274,7 @@ const AC_A1000W: React.FC = () => {
           }
           setData={(str) => setOK(str)}
           pathname="AC_A1000W"
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

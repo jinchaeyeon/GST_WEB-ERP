@@ -53,7 +53,7 @@ const ItemsWindow = ({
   setVisible,
   setData,
   modal = false,
-  yn = true,
+  yn = false,
 }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;

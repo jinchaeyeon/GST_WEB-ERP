@@ -48,6 +48,7 @@ type IKendoWindow = {
   setVisible(t: boolean): void;
   para: IFilter;
   pathname: string;
+  modal? :boolean;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -77,7 +78,7 @@ const numberField2 = [
 ];
 let targetRowIndex: null | number = null;
 
-const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, para, pathname, modal=false }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -366,7 +367,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
       titles={"입고상세정보"}
       positions={position}
       Close={onClose}
-      modals={true}
+      modals={modal}
       onChangePostion={onChangePostion}
     >
       <GridContainer height="calc(100% - 60px)">

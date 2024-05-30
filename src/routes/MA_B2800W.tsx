@@ -1181,6 +1181,7 @@ const MA_B2800W: React.FC = () => {
           setVisible={setWindowVisible}
           para={detailFilters}
           pathname="MA_B2800W"
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

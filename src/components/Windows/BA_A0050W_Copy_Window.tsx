@@ -832,7 +832,7 @@ const KendoWindow = ({
       titles={"BOM복사"}
       positions={position}
       Close={onClose}
-      modals={true}
+      modals={modal}
       onChangePostion={onChangePostion}
     >
       <FilterContainer>

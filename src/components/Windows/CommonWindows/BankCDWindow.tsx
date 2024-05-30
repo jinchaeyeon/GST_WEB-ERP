@@ -35,6 +35,7 @@ import Window from "../WindowComponent/Window";
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(bankcd: string, banknm: string): void;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "sub_code";
@@ -43,7 +44,7 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
-const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [mobileheight, setMobileHeight] = useState(0);
@@ -221,7 +222,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
       titles={"예적금 관리 팝업"}
       positions={position}
       Close={onClose}
-      modals={false}
+      modals={modal}
       onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">

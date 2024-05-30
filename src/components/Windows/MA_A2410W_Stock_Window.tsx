@@ -58,13 +58,19 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   pathname: string;
+  modal?: boolean;
 };
 
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  pathname,
+  modal = false,
+}: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -506,7 +512,7 @@ const CopyWindow = ({ setVisible, setData, pathname }: IWindow) => {
         titles={"재고참조"}
         positions={position}
         Close={onClose}
-        modals={false}
+        modals={modal}
         onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>

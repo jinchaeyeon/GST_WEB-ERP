@@ -38,6 +38,7 @@ type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
   para?: Iparameters;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "acntsrtnum";
@@ -46,7 +47,12 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
-const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
+const KendoWindow = ({
+  setVisible,
+  setData,
+  para,
+  modal = false,
+}: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -234,7 +240,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       titles={"예적금 관리 팝업"}
       positions={position}
       Close={onClose}
-      modals={false}
+      modals={modal}
       onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
