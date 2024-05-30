@@ -1394,8 +1394,8 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <Chart style={{ height: deviceHeight - height }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1416,8 +1416,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1428,7 +1428,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1496,8 +1496,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={2}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>상세정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1508,7 +1508,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1774,8 +1774,8 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <Chart style={{ height: deviceHeight - height }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1796,8 +1796,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1808,7 +1808,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1876,8 +1876,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={2}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="BiuttonContainer">
                     <GridTitle>상세정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1888,7 +1888,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2154,8 +2154,8 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <Chart style={{ height: deviceHeight - height - height1 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -2176,8 +2176,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2188,7 +2188,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2256,8 +2256,8 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={2}>
-                <GridContainer>
-                  <GridTitleContainer>
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>상세정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2268,7 +2268,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
