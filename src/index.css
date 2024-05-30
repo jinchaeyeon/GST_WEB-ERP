@@ -735,7 +735,7 @@ input.readonly {
 
 .printable.landscape {
   min-height: 19cm !important;
-  width: 27.7cm !important;
+  width: 100% !important;
 }
 
 .printable.barcode {
