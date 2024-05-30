@@ -1512,55 +1512,53 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <div className="filter">
-        <WindowFilterContainer>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>결재번호</th>
-                <td>
-                  <Input type="text" value="자동부여" className="readonly" />
-                </td>
-                <th>작성일자</th>
-                <td>
-                  <DatePicker
-                    name="recdt"
-                    value={information.recdt}
-                    format="yyyy-MM-dd"
-                    className="required"
-                    onChange={InputChange}
-                    placeholder=""
+      <WindowFilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>결재번호</th>
+              <td>
+                <Input type="text" value="자동부여" className="readonly" />
+              </td>
+              <th>작성일자</th>
+              <td>
+                <DatePicker
+                  name="recdt"
+                  value={information.recdt}
+                  format="yyyy-MM-dd"
+                  className="required"
+                  onChange={InputChange}
+                  placeholder=""
+                />
+              </td>
+              <th>종류</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="pgmgb"
+                    value={filters.pgmgb}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    disabled={true}
+                    className="readonly"
                   />
-                </td>
-                <th>종류</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="pgmgb"
-                      value={filters.pgmgb}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      disabled={true}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>결재제목</th>
-                <td colSpan={5}>
-                  <Input
-                    name="appnm"
-                    type="text"
-                    value={information.appnm}
-                    onChange={InputChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FilterBox>
-        </WindowFilterContainer>
-      </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>결재제목</th>
+              <td colSpan={5}>
+                <Input
+                  name="appnm"
+                  type="text"
+                  value={information.appnm}
+                  onChange={InputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </WindowFilterContainer>
       {isMobile ? (
         <>
           <Swiper
