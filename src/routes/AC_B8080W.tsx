@@ -21,6 +21,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -29,12 +30,15 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
 import {
+  heightstate,
   isLoading,
   isMobileState
 } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const processApi = useApi();
 
@@ -392,7 +396,7 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: "76vh",
+                height: isMobile ? deviceHeight - height : "76vh",
                 marginBottom: "10px",
               }}
             >
@@ -404,7 +408,7 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: "76vh",
+                height: isMobile ? deviceHeight - height : "76vh",
                 marginBottom: "10px",
               }}
             >

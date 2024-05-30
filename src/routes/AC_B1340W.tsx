@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -37,7 +37,11 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1340W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -46,6 +50,8 @@ const DATA_ITEM_KEY = "num";
 const numberField = ["dramt", "cramt", "balamt"];
 
 const AC_B1340W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
@@ -332,7 +338,7 @@ const AC_B1340W: React.FC = () => {
           fileName="현금출납장"
         >
           <Grid
-            style={{ height: "80vh" }}
+            style={{ height: isMobile ? deviceHeight : "80vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

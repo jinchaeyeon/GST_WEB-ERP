@@ -19,7 +19,10 @@ import {
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -50,6 +53,7 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
   toDate
 } from "../components/CommonFunction";
@@ -68,7 +72,7 @@ import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import StandardWindow from "../components/Windows/CommonWindows/StandardWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -242,6 +246,13 @@ const ColumnCommandCell = (props: any) => {
 };
 
 const AC_A0070W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const listIdGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(SUB_DATA_ITEM_KEY);
@@ -674,6 +685,10 @@ const AC_A0070W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     FillValuesFromDataRow(selectedRowData);
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -863,6 +878,9 @@ const AC_A0070W: React.FC = () => {
         setSelectedState({ "": false });
 
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true, pgGap: 0 }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -1333,31 +1351,31 @@ const AC_A0070W: React.FC = () => {
             >
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdMaster"]
-                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  ?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            checkBoxField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : mainFooterCell
-                          }
-                        />
-                      )
-                  )}
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          checkBoxField.includes(item.fieldName)
+                            ? CheckBoxCell
+                            : numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : mainFooterCell
+                        }
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1608,46 +1626,46 @@ const AC_A0070W: React.FC = () => {
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdItem"]
-                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    ?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            className={
-                              readOnlyField.includes(item.fieldName)
-                                ? "read-only"
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            cell={
-                              item.fieldName == "mngdata"
-                                ? ColumnCommandCell
-                                : checkBoxField.includes(item.fieldName)
-                                ? CheckBoxCell
-                                : undefined
-                            }
-                            editable={
-                              readOnlyField.includes(item.fieldName)
-                                ? false
-                                : true
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? detailTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          className={
+                            readOnlyField.includes(item.fieldName)
+                              ? "read-only"
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          cell={
+                            item.fieldName == "mngdata"
+                              ? ColumnCommandCell
+                              : checkBoxField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : undefined
+                          }
+                          editable={
+                            readOnlyField.includes(item.fieldName)
+                              ? false
+                              : true
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? detailTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
               </Grid>
             </ExcelExport>
           </GridContainer>
