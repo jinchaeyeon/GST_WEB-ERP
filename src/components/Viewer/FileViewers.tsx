@@ -14,7 +14,7 @@ const FileViewers: React.FC<FloatingToolbarExampleProps> = ({ fileUrl }) => {
   if (isMobile) {
     return (
       <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-        <Viewer fileUrl={fileUrl} />;
+        <Viewer fileUrl={fileUrl} />
       </Worker>
     );
   } else {
