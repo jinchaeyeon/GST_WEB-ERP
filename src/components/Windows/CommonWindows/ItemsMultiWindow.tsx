@@ -11,7 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -24,7 +24,7 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import {
   UseBizComponent,
   getHeight,
@@ -66,6 +66,8 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [webheight, setWebHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
@@ -132,6 +134,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 

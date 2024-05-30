@@ -178,6 +178,7 @@ const LaborerMultiWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
