@@ -29,11 +29,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
@@ -73,6 +69,7 @@ const AC_B8080W: React.FC = () => {
           ?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -94,8 +91,6 @@ const AC_B8080W: React.FC = () => {
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -135,6 +130,7 @@ const AC_B8080W: React.FC = () => {
     reqdt: new Date(),
     gisu: "01",
     chasu: "01",
+    isSearch: false,
   });
 
   const [url, setUrl] = useState<string>("");
@@ -192,6 +188,10 @@ const AC_B8080W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -252,11 +252,10 @@ const AC_B8080W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (filters.isSearch) {
       fetchMainGrid();
-      setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
@@ -397,7 +396,6 @@ const AC_B8080W: React.FC = () => {
             <div
               style={{
                 height: isMobile ? deviceHeight - height : "76vh",
-                marginBottom: "10px",
               }}
             >
               {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -409,7 +407,6 @@ const AC_B8080W: React.FC = () => {
             <div
               style={{
                 height: isMobile ? deviceHeight - height : "76vh",
-                marginBottom: "10px",
               }}
             >
               {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}

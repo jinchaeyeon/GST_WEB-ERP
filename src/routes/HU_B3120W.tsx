@@ -1530,7 +1530,6 @@ const HU_B3120W: React.FC = () => {
                     <div
                       style={{
                         height: deviceHeight - height2 - height3,
-                        marginBottom: "10px",
                       }}
                     >
                       {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -1925,7 +1924,6 @@ const HU_B3120W: React.FC = () => {
                   <div
                     style={{
                       height: "69vh",
-                      marginBottom: "10px",
                     }}
                   >
                     {url != "" ? <FileViewers fileUrl={url} /> : ""}

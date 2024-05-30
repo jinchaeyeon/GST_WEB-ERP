@@ -110,7 +110,6 @@ const SA_A1000_603W_Window = ({
       <div
         style={{
           height: position.height - 220,
-          marginBottom: "10px",
         }}
       >
         {url != "" ? <FileViewers fileUrl={url} /> : ""}

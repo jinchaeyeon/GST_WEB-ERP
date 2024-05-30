@@ -21,7 +21,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -59,7 +59,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1059,7 +1059,7 @@ const HU_A6020W: React.FC = () => {
     setLoading(false);
   };
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1072,7 +1072,7 @@ const HU_A6020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -1085,7 +1085,7 @@ const HU_A6020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (filters3.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -1097,7 +1097,7 @@ const HU_A6020W: React.FC = () => {
   }, [filters3]);
 
   useEffect(() => {
-    if (filters3_1.isSearch && permissions !== null) {
+    if (filters3_1.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3_1);
       setFilters3_1((prev) => ({
@@ -2980,7 +2980,6 @@ FROM HU072T WHERE paycd = '4'`;
           <div
             style={{
               height: isMobile ? deviceHeight - height2 : "75vh",
-              marginBottom: "10px",
             }}
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -3135,7 +3134,6 @@ FROM HU072T WHERE paycd = '4'`;
                     <div
                       style={{
                         height: deviceHeight - height2 - height3,
-                        marginBottom: "10px",
                       }}
                     >
                       {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
@@ -3209,7 +3207,6 @@ FROM HU072T WHERE paycd = '4'`;
                   <div
                     style={{
                       height: "75vh",
-                      marginBottom: "10px",
                     }}
                   >
                     {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}

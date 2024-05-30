@@ -40,10 +40,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1363,7 +1360,6 @@ const AC_B5060W: React.FC = () => {
             <div
               style={{
                 height: "76vh",
-                marginBottom: "10px",
               }}
             >
               {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -1590,7 +1586,6 @@ const AC_B5060W: React.FC = () => {
           <div
             style={{
               height: "76vh",
-              marginBottom: "10px",
             }}
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -1600,7 +1595,6 @@ const AC_B5060W: React.FC = () => {
           <div
             style={{
               height: "76vh",
-              marginBottom: "10px",
             }}
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}
@@ -1610,7 +1604,6 @@ const AC_B5060W: React.FC = () => {
           <div
             style={{
               height: "76vh",
-              marginBottom: "10px",
             }}
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}

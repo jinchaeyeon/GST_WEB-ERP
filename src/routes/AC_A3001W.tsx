@@ -50,6 +50,7 @@ const AC_A3001W: React.FC = () => {
         fxyrmm: setDefaultDate(customOptionData, "fxyrmm"),
         gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -95,10 +96,10 @@ const AC_A3001W: React.FC = () => {
     gubun: "",
     fxdiv: "",
     chk: false,
+    isSearch: false,
   });
   const setLoading = useSetRecoilState(isLoading);
   const [url, setUrl] = useState<string>("");
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const processApi = useApi();
 
   //그리드 데이터 조회
@@ -154,16 +155,19 @@ const AC_A3001W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (filters.isSearch) {
       fetchMainGrid();
-      setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   return (
     <>
@@ -231,7 +235,6 @@ const AC_A3001W: React.FC = () => {
         <div
           style={{
             height: "82vh",
-            marginBottom: "10px",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}

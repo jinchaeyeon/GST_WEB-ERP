@@ -25,11 +25,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8100W: React.FC = () => {
@@ -70,12 +66,12 @@ const AC_B8100W: React.FC = () => {
         taxdt: setDefaultDate(customOptionData, "taxdt"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
 
   const [url, setUrl] = useState<string>("");
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -104,6 +100,7 @@ const AC_B8100W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     taxdt: new Date(),
+    isSearch: false,
   });
 
   //그리드 데이터 조회
@@ -141,16 +138,19 @@ const AC_B8100W: React.FC = () => {
     } else {
       setUrl("");
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (filters.isSearch) {
       fetchMainGrid();
-      setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   const search = () => {
     try {
@@ -258,7 +258,6 @@ const AC_B8100W: React.FC = () => {
         <div
           style={{
             height: isMobile ? deviceHeight * 0.97 : "82vh",
-            marginBottom: "10px",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}

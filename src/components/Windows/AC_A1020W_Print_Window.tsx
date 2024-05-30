@@ -95,8 +95,6 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
         <div
           style={{
             height: position.height - 170,
-            marginBottom: "10px",
-            marginTop: "10px",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}

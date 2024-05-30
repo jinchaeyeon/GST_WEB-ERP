@@ -57,12 +57,12 @@ const AC_B6040W: React.FC = () => {
         actdt: setDefaultDate(customOptionData, "actdt"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
 
   const [url, setUrl] = useState<string>("");
-  const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -89,6 +89,7 @@ const AC_B6040W: React.FC = () => {
     orgdiv: sessionOrgdiv,
     location: sessionLocation,
     actdt: new Date(),
+    isSearch: false,
   });
 
   //그리드 데이터 조회
@@ -139,16 +140,19 @@ const AC_B6040W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (filters.isSearch) {
       fetchMainGrid();
-      setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   const search = () => {
     try {
@@ -218,7 +222,6 @@ const AC_B6040W: React.FC = () => {
         <div
           style={{
             height: "82vh",
-            marginBottom: "10px",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}
