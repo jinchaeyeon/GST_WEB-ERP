@@ -74,7 +74,7 @@ import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWind
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/PR_A9000W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -580,8 +580,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 };
 
 const PR_A9000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

@@ -91,6 +91,7 @@ import { IItemData } from "../hooks/interfaces";
 import {
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -201,8 +202,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const PR_A7000W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

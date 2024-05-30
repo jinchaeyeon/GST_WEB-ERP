@@ -17,9 +17,11 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading, isMobileState } from "../store/atoms";
 
 const SA_B2227W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const processApi = useApi();
@@ -201,10 +203,6 @@ const SA_B2227W: React.FC = () => {
 
     return array;
   }
-
-  let deviceWidth = document.documentElement.clientWidth;
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
 
   return (
     <>

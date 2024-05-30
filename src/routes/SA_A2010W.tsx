@@ -68,6 +68,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -111,8 +112,7 @@ const SA_B2000: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   
   const initialPageState = { skip: 0, take: PAGE_SIZE };
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

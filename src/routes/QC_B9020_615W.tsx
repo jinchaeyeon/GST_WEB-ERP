@@ -51,7 +51,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B9020_615W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -61,8 +61,7 @@ const numberField = ["temperature", "humidity"];
 const centerField = ["insert_date", "insert_time", "defrost"];
 
 const QC_B9020_615W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let gridRef: any = useRef(null);
   const processApi = useApi();

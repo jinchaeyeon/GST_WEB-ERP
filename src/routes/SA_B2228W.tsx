@@ -30,12 +30,11 @@ import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutC
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading, isMobileState } from "../store/atoms";
 
 const SA_B2228W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const processApi = useApi();

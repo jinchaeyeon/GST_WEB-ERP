@@ -47,6 +47,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -102,11 +103,10 @@ const Page: React.FC = () => {
   const [num4, setNum4] = useState("숫자참조4");
   const [num5, setNum5] = useState("숫자참조5");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

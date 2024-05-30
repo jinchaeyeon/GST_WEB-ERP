@@ -75,7 +75,7 @@ import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_De
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
@@ -144,8 +144,7 @@ const iconCell = (props: GridCellProps) => {
 };
 
 const SA_A1001_603W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

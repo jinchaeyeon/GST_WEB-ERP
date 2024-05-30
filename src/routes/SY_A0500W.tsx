@@ -69,6 +69,7 @@ import {
   heightstate,
   infoState,
   isLoading,
+  isMobileState,
   pointsState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
@@ -101,10 +102,9 @@ const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const containerStyle: CSSProperties = {
     width:
       document.documentElement.clientWidth <= 1200

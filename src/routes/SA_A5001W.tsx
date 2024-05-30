@@ -68,6 +68,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A5001W_C";
@@ -132,8 +133,7 @@ const SA_A5001W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

@@ -30,7 +30,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, heightstate, isLoading } from "../store/atoms";
+import { colors, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
 
 const PR_B1103W: React.FC = () => {
   const processApi = useApi();
@@ -53,9 +53,9 @@ const PR_B1103W: React.FC = () => {
       },
     },
   });
-  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

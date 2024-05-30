@@ -53,7 +53,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let targetRowIndex: null | number = null;
@@ -70,10 +70,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const App: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-
-  let isMobile = deviceWidth <= 1200;
-
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");

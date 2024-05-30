@@ -63,6 +63,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -98,12 +99,9 @@ const QC_A2500W: React.FC = () => {
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-
   const [swiper, setSwiper] = useState<SwiperCore>();
-
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
