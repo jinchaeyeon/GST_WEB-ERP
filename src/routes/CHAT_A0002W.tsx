@@ -24,8 +24,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
-  UsePermissions,
+  UsePermissions
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -207,7 +206,7 @@ const CHAT_BOT_MNG: React.FC = () => {
   };
 
   const userid = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const onSaveClick = async () => {
     const flatData: any = treeToFlat(state.data, "question", SUB_ITEMS_FIELD);

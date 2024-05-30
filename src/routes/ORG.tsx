@@ -3,14 +3,13 @@ import {
   TabStripSelectEventArguments,
   TabStripTab,
 } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import { CSSProperties, useCallback, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Title, TitleContainer } from "../CommonStyled";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  getBizCom
+  getBizCom,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
@@ -169,7 +168,7 @@ const ORG: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   const [combinedResult, setCombinedResult] = useState<any[]>([]);
   const [profileImg, setProfileImg] = useState<any[]>([]);
-  
+
   const [dptcdArray, setDptcdArray] = useState<string[]>([]);
   UseBizComponent(
     "L_dptcd_001, L_HU005",

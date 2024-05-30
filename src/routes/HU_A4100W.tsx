@@ -20,7 +20,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -53,7 +53,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  numberWithCommas
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,

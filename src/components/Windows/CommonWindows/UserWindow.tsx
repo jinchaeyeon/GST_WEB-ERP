@@ -54,6 +54,10 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -251,6 +255,7 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

@@ -70,7 +70,12 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0012W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 //그리드 별 키 필드값

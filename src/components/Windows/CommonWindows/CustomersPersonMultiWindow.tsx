@@ -9,7 +9,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -45,7 +45,10 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "num";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -61,13 +64,26 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight((position.height - height - height4) / 2 - height2);
+    setWebHeight2((position.height - height - height4) / 2 - height3);
   };
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".WindowButtonContainer"); //grid title부분
-  var height3 = getHeight(".WindowButtonContainer2"); //grid title부분
-  var height4 = getHeight(".BottomContainer"); //하단 버튼부분
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".WindowButtonContainer"); //grid title부분
+    height3 = getHeight(".WindowButtonContainer2"); //grid title부분
+    height4 = getHeight(".BottomContainer"); //하단 버튼부분
+    setMobileHeight(deviceHeight - height - height2 - height4);
+    setWebHeight((position.height - height - height4) / 2 - height2);
+    setMobileHeight2(deviceHeight - height - height3 - height4);
+    setWebHeight2((position.height - height - height4) / 2 - height3);
+  }, []);
+
   const setLoading = useSetRecoilState(isLoading);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -386,7 +402,7 @@ const KendoWindow = ({
     >
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <GridTitleContainer className="WindowButtonContainer">
@@ -394,9 +410,7 @@ const KendoWindow = ({
         </GridTitleContainer>
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height2 - height4
-              : (position.height - height - height4) / 2 - height2,
+            height: isMobile ? mobileheight : webheight,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
@@ -451,7 +465,7 @@ const KendoWindow = ({
       </GridContainer>
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <GridTitleContainer className="WindowButtonContainer2">
@@ -459,9 +473,7 @@ const KendoWindow = ({
         </GridTitleContainer>
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height3 - height4
-              : (position.height - height - height4) / 2 - height3,
+            height: isMobile ? mobileheight2 : webheight2,
           }}
           data={process(
             keepingDataResult.data.map((row) => ({

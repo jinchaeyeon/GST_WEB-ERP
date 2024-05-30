@@ -82,6 +82,10 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const setLoading = useSetRecoilState(isLoading);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -429,6 +433,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

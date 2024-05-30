@@ -38,7 +38,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  sessionItemState,
+} from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -523,9 +528,7 @@ const PR_A3000W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>
                     <ButtonContainer>
@@ -619,9 +622,7 @@ const PR_A3000W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>
                     <ButtonContainer

@@ -17,7 +17,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  findMessage
+  findMessage,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -80,7 +80,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 330,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     setVisible(false);
   };
@@ -195,6 +197,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <FormBoxWrap border={true}>
         <FormBox>

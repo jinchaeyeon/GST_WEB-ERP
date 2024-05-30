@@ -44,7 +44,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate
+  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1000,9 +1000,7 @@ const PS_A0060_301W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer
-        style={{ width: "100%", overflow: "auto" }}
-      >
+      <GridContainer style={{ width: "100%", overflow: "auto" }}>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>휴일 리스트</GridTitle>
           <ButtonContainer>

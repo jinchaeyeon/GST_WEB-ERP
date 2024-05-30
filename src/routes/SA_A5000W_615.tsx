@@ -29,8 +29,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -53,7 +52,7 @@ const SA_A5000W_615: React.FC = () => {
   var height4 = getHeight(".ButtonContainer4");
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -619,9 +618,7 @@ const SA_A5000W_615: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer
-                  style={{ width: "100%", overflow: "auto" }}
-                >
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <TitleContainer
                     style={{ marginBottom: "15px" }}
                     className="ButtonContainer"
@@ -833,9 +830,7 @@ const SA_A5000W_615: React.FC = () => {
               </SwiperSlide>
               {Information.ordnum != "" ? (
                 <SwiperSlide key={1}>
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <TitleContainer
                       style={{ marginBottom: "15px" }}
                       className="ButtonContainer"
@@ -1020,7 +1015,7 @@ const SA_A5000W_615: React.FC = () => {
                     </Button>
                   </ButtonContainer>
                 </TitleContainer>
-                <GridContainer style={{width: "100%"}}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>바코드스캔</GridTitle>
                   </GridTitleContainer>

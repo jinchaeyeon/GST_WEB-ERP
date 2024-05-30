@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { PanelBar, PanelBarItem } from "@progress/kendo-react-layout";
 import React from "react";
+import { useRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -32,7 +33,6 @@ import {
 } from "../CommonStyled";
 import { GAP } from "../components/CommonString";
 import { isMobileState } from "../store/atoms";
-import { useRecoilState } from "recoil";
 
 const EA_A3000W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);

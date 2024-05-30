@@ -449,6 +449,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 870,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const DATA_ITEM_KEY = "num";
 
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -2796,6 +2799,8 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+onChangePostion={onChangePostion}
+          
       >
         <FormBoxWrap>
           <FormBox>

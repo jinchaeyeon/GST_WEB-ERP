@@ -48,7 +48,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime,
   findMessage,
-  getHeight
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
@@ -724,9 +724,7 @@ const CM_A3100W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>

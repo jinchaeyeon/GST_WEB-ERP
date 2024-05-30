@@ -1844,9 +1844,7 @@ const MA_B7200W: React.FC = () => {
                 }}
               >
                 <SwiperSlide key={0}>
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <ExcelExport
                       data={newData}
                       ref={(exporter) => {

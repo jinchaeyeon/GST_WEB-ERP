@@ -66,6 +66,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
@@ -295,6 +298,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer>
           <Title></Title>

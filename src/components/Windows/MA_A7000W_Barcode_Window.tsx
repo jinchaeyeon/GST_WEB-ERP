@@ -58,7 +58,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 900,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     setVisible(false);
   };
@@ -181,6 +183,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <ButtonContainer>
           <ReactToPrint

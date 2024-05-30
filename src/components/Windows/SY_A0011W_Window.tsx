@@ -13,7 +13,7 @@ import { Iparameters } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  findMessage
+  findMessage,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -52,7 +52,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -220,6 +222,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <FormBoxWrap>
         <FormBox>

@@ -61,7 +61,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1617,7 +1617,9 @@ const CM_A1600W_603: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
+          : convertDateToStr(
+              new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
+            )
       );
       dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
@@ -1646,7 +1648,9 @@ const CM_A1600W_603: React.FC = () => {
       dataArr.endtime_s.push(
         strtime == "99991231"
           ? ""
-          : convertDateToStr(new Date(strtimeDate.setDate(strtimeDate.getDate() + 1)))
+          : convertDateToStr(
+              new Date(strtimeDate.setDate(strtimeDate.getDate() + 1))
+            )
       );
       dataArr.finyn_s.push(finyn);
       dataArr.kind1_s.push(kind1);

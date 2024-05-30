@@ -27,7 +27,9 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 230,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -61,6 +63,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap style={{ paddingRight: "70px" }}>
           <FormBox>

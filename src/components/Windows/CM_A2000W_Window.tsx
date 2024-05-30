@@ -128,6 +128,10 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 920,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -879,6 +883,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <GridContainerWrap>
           <GridContainer width="70%">

@@ -64,6 +64,10 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 800,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -268,6 +272,7 @@ const KendoWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer>
           <Title></Title>

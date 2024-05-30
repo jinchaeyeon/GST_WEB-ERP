@@ -11,17 +11,14 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import Calendar from "../components/Calendars/Calendar";
@@ -35,7 +32,6 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
-  
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -95,7 +91,7 @@ const HU_B1020W: React.FC = () => {
   //#endregion
 
   useEffect(() => {
-    if (bizComponentData !== null) { 
+    if (bizComponentData !== null) {
       setDptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
       setPostcdListData(getBizCom(bizComponentData, "L_HU005"));
       setPaydListData(getBizCom(bizComponentData, "L_HU028"));
@@ -158,9 +154,8 @@ const HU_B1020W: React.FC = () => {
 
         cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
           ?.valueCode,
-        cboLocation: defaultOption.find(
-          (item: any) => item.id == "cboLocation"
-        )?.valueCode,
+        cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
+          ?.valueCode,
         cboPaycd: defaultOption.find((item: any) => item.id == "cboPaycd")
           ?.valueCode,
       }));
@@ -388,7 +383,9 @@ const HU_B1020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}>
+      <GridContainer
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
+      >
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -397,7 +394,7 @@ const HU_B1020W: React.FC = () => {
           fileName="인원명부"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight :  "85vh" }}
+            style={{ height: isMobile ? deviceHeight : "85vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -443,26 +440,28 @@ const HU_B1020W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -7,7 +7,9 @@ import ReactFlow, {
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { useRecoilState } from "recoil";
 import { GridContainer, GridContainerWrap } from "../../CommonStyled";
+import { isMobileState } from "../../store/atoms";
 import {
   UseBizComponent,
   UseCustomOption,
@@ -16,7 +18,6 @@ import {
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import ImageNode from "./ImageNode";
-
 const nodeTypes = {
   customNode: CustomNode,
   groupNode: GroupNode,
@@ -24,8 +25,7 @@ const nodeTypes = {
 };
 
 const FlowChartReadOnly = (props) => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [bizComponentData, setBizComponentData] = useState(null);
   UseBizComponent(
     "L_SY060_COLOR",

@@ -50,10 +50,10 @@ import {
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -268,7 +268,7 @@ const SA_B3101W: React.FC = () => {
     }));
     setLoading(false);
   };
-  
+
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
@@ -473,9 +473,7 @@ const SA_B3101W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>차트</GridTitle>
                 </GridTitleContainer>
@@ -492,7 +490,6 @@ const SA_B3101W: React.FC = () => {
                         content: (e) => numberWithCommas(e.value) + "",
                       }}
                     >
-                      
                       <ChartValueAxisTitle text={unitTitle} />
                     </ChartValueAxisItem>
                   </ChartValueAxis>
@@ -526,9 +523,7 @@ const SA_B3101W: React.FC = () => {
               fileName="매입매출현황"
             >
               <SwiperSlide key={1}>
-                <GridContainer
-                  style={{ width: "100%", overflow: "auto" }}
-                >
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>상세정보</GridTitle>
                     <ButtonContainer
@@ -578,58 +573,60 @@ const SA_B3101W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 &&
-                          (numberField.includes(item.fieldName) ? (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                            >
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 &&
+                            (numberField.includes(item.fieldName) ? (
                               <GridColumn
-                                title={"매입액"}
-                                cell={NumberCell}
-                                field={item.fieldName
-                                  .replace("qty0", "inamt")
-                                  .replace("qty", "inamt")}
-                                footerCell={gridSumQtyFooterCell}
-                                width={item.width}
-                              />
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                              >
+                                <GridColumn
+                                  title={"매입액"}
+                                  cell={NumberCell}
+                                  field={item.fieldName
+                                    .replace("qty0", "inamt")
+                                    .replace("qty", "inamt")}
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                                <GridColumn
+                                  title={"매출액"}
+                                  cell={NumberCell}
+                                  field={item.fieldName
+                                    .replace("qty0", "outamt")
+                                    .replace("qty", "outamt")}
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                                <GridColumn
+                                  title={"%"}
+                                  cell={NumberCell}
+                                  field={item.fieldName
+                                    .replace("qty0", "per")
+                                    .replace("qty", "per")}
+                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                />
+                              </GridColumn>
+                            ) : (
                               <GridColumn
-                                title={"매출액"}
-                                cell={NumberCell}
-                                field={item.fieldName
-                                  .replace("qty0", "outamt")
-                                  .replace("qty", "outamt")}
-                                footerCell={gridSumQtyFooterCell}
-                                width={item.width}
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? gridTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
                               />
-                              <GridColumn
-                                title={"%"}
-                                cell={NumberCell}
-                                field={item.fieldName
-                                  .replace("qty0", "per")
-                                  .replace("qty", "per")}
-                                footerCell={gridSumQtyFooterCell}
-                                width={item.width}
-                              />
-                            </GridColumn>
-                          ) : (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? gridTotalFooterCell
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
-                                  : undefined
-                              }
-                            />
-                          ))
-                      )}
+                            ))
+                        )}
                   </Grid>
                 </GridContainer>
               </SwiperSlide>
@@ -694,7 +691,6 @@ const SA_B3101W: React.FC = () => {
                     content: (e) => numberWithCommas(e.value) + "",
                   }}
                 >
-                  
                   <ChartValueAxisTitle text={unitTitle} />
                 </ChartValueAxisItem>
               </ChartValueAxis>
@@ -763,58 +759,60 @@ const SA_B3101W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 &&
-                      (numberField.includes(item.fieldName) ? (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                        >
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 &&
+                        (numberField.includes(item.fieldName) ? (
                           <GridColumn
-                            title={"매입액"}
-                            cell={NumberCell}
-                            field={item.fieldName
-                              .replace("qty0", "inamt")
-                              .replace("qty", "inamt")}
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
-                          />
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                          >
+                            <GridColumn
+                              title={"매입액"}
+                              cell={NumberCell}
+                              field={item.fieldName
+                                .replace("qty0", "inamt")
+                                .replace("qty", "inamt")}
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+                            <GridColumn
+                              title={"매출액"}
+                              cell={NumberCell}
+                              field={item.fieldName
+                                .replace("qty0", "outamt")
+                                .replace("qty", "outamt")}
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+                            <GridColumn
+                              title={"%"}
+                              cell={NumberCell}
+                              field={item.fieldName
+                                .replace("qty0", "per")
+                                .replace("qty", "per")}
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+                          </GridColumn>
+                        ) : (
                           <GridColumn
-                            title={"매출액"}
-                            cell={NumberCell}
-                            field={item.fieldName
-                              .replace("qty0", "outamt")
-                              .replace("qty", "outamt")}
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            footerCell={
+                              item.sortOrder == 0
+                                ? gridTotalFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
                           />
-                          <GridColumn
-                            title={"%"}
-                            cell={NumberCell}
-                            field={item.fieldName
-                              .replace("qty0", "per")
-                              .replace("qty", "per")}
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
-                          />
-                        </GridColumn>
-                      ) : (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          footerCell={
-                            item.sortOrder == 0
-                              ? gridTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                        />
-                      ))
-                  )}
+                        ))
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

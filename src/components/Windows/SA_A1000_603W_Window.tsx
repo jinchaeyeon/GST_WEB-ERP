@@ -41,6 +41,9 @@ const SA_A1000_603W_Window = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const [menulist, setMenuList] = useRecoilState(menuList);
 
   const onClose = () => {
@@ -98,6 +101,7 @@ const SA_A1000_603W_Window = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
       className="print-hidden"
     >
       <TitleContainer>

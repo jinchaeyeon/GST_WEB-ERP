@@ -65,17 +65,6 @@ var index = 0;
 
 const DATA_ITEM_KEY = "datnum";
 
-const boardStyle: CSSProperties = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexWrap: "wrap",
-};
-const containerStyle: CSSProperties = {
-  width: "100%",
-  height: document.documentElement.clientWidth <= 1200 ? "50vh" : "73vh",
-};
-
 const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
@@ -86,7 +75,16 @@ const Main: React.FC = () => {
   var height4 = getHeight(".ButtonContainer4");
   var height5 = getHeight(".ButtonContainer5");
   var height6 = getHeight(".k-tabstrip-items-wrapper");
-
+  const boardStyle: CSSProperties = {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexWrap: "wrap",
+  };
+  const containerStyle: CSSProperties = {
+    width: "100%",
+    height: isMobile ? "50vh" : "73vh",
+  };
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
@@ -827,9 +825,7 @@ const Main: React.FC = () => {
                   공지
                 </Button>
               </ApprovalBox>
-              <GridContainer
-                style={{ width: "100%", marginTop: "1vh" }}
-              >
+              <GridContainer style={{ width: "100%", marginTop: "1vh" }}>
                 <TabStrip
                   style={{ width: "100%" }}
                   selected={tabSelected}
@@ -859,7 +855,7 @@ const Main: React.FC = () => {
                       ) : (
                         <>
                           <GridTitleContainer>
-                          <GridTitle></GridTitle>
+                            <GridTitle></GridTitle>
                             {customOptionData !== null && (
                               <div>
                                 <CustomOptionComboBox
@@ -1093,7 +1089,7 @@ const Main: React.FC = () => {
                     ) : (
                       <>
                         <GridTitleContainer>
-                        <GridTitle></GridTitle>
+                          <GridTitle></GridTitle>
                           {customOptionData !== null && (
                             <div>
                               <CustomOptionComboBox

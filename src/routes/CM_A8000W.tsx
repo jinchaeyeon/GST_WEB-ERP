@@ -16,6 +16,9 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -37,13 +40,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   findMessage,
   getGridItemChangedData,
-  handleKeyPressSearch,
-  numberWithCommas,
   getHeight,
+  handleKeyPressSearch,
+  numberWithCommas
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -55,12 +57,14 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -150,7 +154,7 @@ const CM_A8000W: React.FC = () => {
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
@@ -767,7 +771,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
     if (swiper && isMobile) {
       swiper.slideTo(1);
-		}
+    }
   };
 
   const ondetailSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -780,7 +784,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
     if (swiper && isMobile) {
       swiper.slideTo(2);
-		}
+    }
   };
 
   const ondetailSelectionChange3 = (event: GridSelectionChangeEvent) => {
@@ -793,7 +797,7 @@ const pc = UseGetValueFromSessionItem("pc");
 
     if (swiper && isMobile) {
       swiper.slideTo(3);
-		}
+    }
   };
 
   //엑셀 내보내기
@@ -954,7 +958,7 @@ const pc = UseGetValueFromSessionItem("pc");
     deletedMainRows = [];
     if (swiper && isMobile) {
       swiper.slideTo(0);
-		}
+    }
   };
 
   const enterEdit = (dataItem: any, field: string) => {
@@ -1729,9 +1733,7 @@ const pc = UseGetValueFromSessionItem("pc");
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>대분류</GridTitle>
               </GridTitleContainer>
@@ -1793,9 +1795,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>중분류</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1870,9 +1870,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={2}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>소분류</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1947,9 +1945,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={3}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>

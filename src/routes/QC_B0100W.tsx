@@ -15,7 +15,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getBizCom,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
@@ -28,7 +28,14 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  colorsName,
+  heightstate,
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 interface TList {
   code_name: string;

@@ -79,7 +79,9 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
@@ -410,6 +412,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

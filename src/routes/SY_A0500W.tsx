@@ -68,6 +68,7 @@ import {
   clickedState,
   heightstate,
   infoState,
+  isDeviceWidthState,
   isLoading,
   isMobileState,
   pointsState,
@@ -105,15 +106,10 @@ const SY_A0500W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const containerStyle: CSSProperties = {
-    width:
-      document.documentElement.clientWidth <= 1200
-        ? `${document.documentElement.clientWidth - 30}px`
-        : "100%",
-    height:
-      document.documentElement.clientWidth <= 1200
-        ? deviceHeight - height
-        : "80vh",
+    width: isMobile ? `${deviceWidth - 30}px` : "100%",
+    height: isMobile ? deviceHeight - height : "80vh",
     border: "1px solid gray",
   };
   //커스텀 옵션 조회

@@ -39,7 +39,7 @@ import {
   UseMessages,
   convertDateToStr,
   getGridItemChangedData,
-  numberWithCommas
+  numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -165,6 +165,10 @@ const DetailWindow = ({
     width: isMobile == true ? deviceWidth : 1400,
     height: isMobile == true ? deviceHeight : 700,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   const onClose = () => {
     getVisible(false);
@@ -1308,6 +1312,7 @@ const DetailWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainerWrap>
         <GridContainer width={`50%`}>

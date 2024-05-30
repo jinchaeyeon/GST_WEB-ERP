@@ -1,6 +1,6 @@
 import { Chat, HeroCard } from "@progress/kendo-react-conversational-ui";
 import AdaptiveCards from "adaptivecards";
-import * as BotChat from 'botframework-directlinejs';
+import * as BotChat from "botframework-directlinejs";
 import React, { useCallback, useEffect, useState } from "react";
 
 const client = new BotChat.DirectLine({

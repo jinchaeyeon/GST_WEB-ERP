@@ -21,12 +21,8 @@ import {
   TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
-import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import {
-  isFilterHideState2,
-  isFilterheightstate2,
-  isLoading,
-} from "../../../store/atoms";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
@@ -45,17 +41,16 @@ type IKendoWindow = {
 };
 
 const DATA_ITEM_KEY = "acntsrtnum";
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar");
-  var height2 = getHeight(".TitleContainer"); //FormBox부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-  const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //필터 웹높이
+
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   const [position, setPosition] = useState<IWindowPosition>({
@@ -64,7 +59,19 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     width: isMobile == true ? deviceWidth : 570,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
   const onChangePostion = (position: any) => {
+    setWebHeight(position.height - height - height2 - height3 - height5);
     setPosition(position);
   };
   const setLoading = useSetRecoilState(isLoading);
@@ -88,24 +95,6 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
-
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
-  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: data.sub_code,
     }));
   };
 
@@ -246,7 +235,6 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
-      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title />
@@ -291,18 +279,12 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       </WindowFilterContainer>
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4
-              : position.height -
-                height -
-                height2 -
-                height3 -
-                isFilterheightstates2,
+            height: isMobile ? mobileheight : webheight,
           }}
           data={process(
             mainDataResult.data.map((row) => ({

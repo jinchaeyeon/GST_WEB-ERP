@@ -92,7 +92,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -862,6 +864,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={false}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

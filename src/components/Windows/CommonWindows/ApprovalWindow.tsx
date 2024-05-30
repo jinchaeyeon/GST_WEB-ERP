@@ -193,7 +193,7 @@ const KendoWindow = ({
       (position.height - height - height2 - height3 - height8) / 2 - height6
     );
   };
-  
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({

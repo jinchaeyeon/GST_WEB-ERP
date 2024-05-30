@@ -1499,7 +1499,11 @@ const MA_B3000W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
 
-          <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            scrollable={isMobile}
+          >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <GridContainer>

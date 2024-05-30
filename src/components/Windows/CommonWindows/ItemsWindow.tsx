@@ -56,6 +56,10 @@ const ItemsWindow = ({
     height: isMobile == true ? deviceHeight : 800,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -287,6 +291,7 @@ const ItemsWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

@@ -34,7 +34,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getBizCom,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
@@ -71,7 +71,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -783,6 +785,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap border={true}>
           <FormBox>

@@ -318,6 +318,11 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [acntcd, setAcntcd] = useState<string>("");
@@ -1160,6 +1165,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap border={true}>
           <FormBox>

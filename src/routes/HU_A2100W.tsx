@@ -33,11 +33,10 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   getGridItemChangedData,
   getHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -48,7 +47,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -114,7 +118,7 @@ const HU_A2100W: React.FC = () => {
 
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -931,9 +935,7 @@ const pc = UseGetValueFromSessionItem("pc");
       </FilterContainer>
 
       {isMobile ? (
-        <GridContainer
-          style={{ width: "100%", overflow: "auto" }}
-        >
+        <GridContainer style={{ width: "100%", overflow: "auto" }}>
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>

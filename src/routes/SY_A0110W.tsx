@@ -16,8 +16,6 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -349,7 +347,7 @@ const SY_A0110: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
       >
         <ExcelExport
           data={mainDataResult.data}
@@ -402,21 +400,23 @@ const SY_A0110: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdAllList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdAllList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

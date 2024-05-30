@@ -28,7 +28,7 @@ import { Iparameters, TColumn } from "../../../store/types";
 import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import Window from "../WindowComponent/Window";
@@ -105,6 +105,11 @@ const AdjustApprovalWindow = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const setLoading = useSetRecoilState(isLoading);
@@ -430,6 +435,7 @@ const AdjustApprovalWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

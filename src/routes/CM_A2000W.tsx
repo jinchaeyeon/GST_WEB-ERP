@@ -687,7 +687,7 @@ const CM_A2000W: React.FC = () => {
         </ButtonContainer>
       </GridTitleContainer>
       <GridContainer
-        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
       >
         <ExcelExport
           data={mainDataResult.data}

@@ -24,8 +24,7 @@ import { useEffect, useState } from "react";
 import { Title, TitleContainer } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
-  convertDateToStrWithTime2,
+  convertDateToStrWithTime2
 } from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
@@ -73,7 +72,7 @@ type TResource = {
 function App() {
   const processApi = useApi();
   const userid = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const [task, setTask] = useState<TTask[]>([]);
   const [assignment, setAssignment] = useState<TAssignment[]>([]);

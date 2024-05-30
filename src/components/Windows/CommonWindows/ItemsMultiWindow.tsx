@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -22,7 +22,6 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IItemData, IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
@@ -32,6 +31,7 @@ import {
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import Window from "../WindowComponent/Window";
 
@@ -44,17 +44,17 @@ const DATA_ITEM_KEY = "itemcd";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
 const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".filter"); //필터
-  var height5 = getHeight(".WindowButtonContainer");
-  var height6 = getHeight(".WindowButtonContainer2");
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
@@ -62,8 +62,35 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".filterBox2"); //필터 웹
+    height5 = getHeight(".WindowButtonContainer");
+    height6 = getHeight(".WindowButtonContainer2");
+    height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+    setMobileHeight(deviceHeight - height - height2 - height3 - height7);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height4) / 2 - height5
+    );
+    setMobileHeight2(deviceHeight - height - height2 - height3 - height7);
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height4) / 2 - height6
+    );
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height4) / 2 - height5
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height4) / 2 - height6
+    );
   };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -431,60 +458,58 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <div className="filter">
-        <FilterContainer>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>품목코드</th>
-                <td>
-                  <Input
-                    name="itemcd"
-                    type="text"
-                    value={filters.itemcd}
-                    onChange={filterInputChange}
-                  />
-                </td>
+      <WindowFilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+              </td>
 
-                <th>품목명</th>
-                <td>
-                  <Input
-                    name="itemnm"
-                    type="text"
-                    value={filters.itemnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
 
-                <th>규격</th>
-                <td>
-                  <Input
-                    name="insiz"
-                    type="text"
-                    value={filters.insiz}
-                    onChange={filterInputChange}
+              <th>규격</th>
+              <td>
+                <Input
+                  name="insiz"
+                  type="text"
+                  value={filters.insiz}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사용여부</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="useyn"
+                    value={filters.useyn}
+                    bizComponentId="R_USEYN"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
                   />
-                </td>
-                <th>사용여부</th>
-                <td>
-                  {bizComponentData !== null && (
-                    <BizComponentRadioGroup
-                      name="useyn"
-                      value={filters.useyn}
-                      bizComponentId="R_USEYN"
-                      bizComponentData={bizComponentData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </FilterBox>
-        </FilterContainer>
-      </div>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </WindowFilterContainer>
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <GridTitleContainer className="WindowButtonContainer">
@@ -492,10 +517,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         </GridTitleContainer>
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4 - height5
-              : (position.height - height - height2 - height3 - height4) / 2 -
-                height5,
+            height: isMobile ? mobileheight : webheight,
           }}
           data={process(
             mainDataResult.data.map((row) => ({
@@ -557,7 +579,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       </GridContainer>
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <GridTitleContainer className="WindowButtonContainer2">
@@ -565,10 +587,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         </GridTitleContainer>
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height2 - height3 - height4 - height6
-              : (position.height - height - height2 - height3 - height4) / 2 -
-                height6,
+            height: isMobile ? mobileheight2 : webheight2,
           }}
           data={process(
             keepingDataResult.data.map((row) => ({

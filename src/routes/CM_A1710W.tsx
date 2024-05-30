@@ -38,7 +38,7 @@ import {
   dateformat,
   getGridItemChangedData,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -676,7 +676,7 @@ const CM_A1710W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer
-        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
       >
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>

@@ -23,12 +23,7 @@ import {
   SchedulerViewSlotProps,
 } from "@progress/kendo-react-scheduler";
 import { checkIcon } from "@progress/kendo-svg-icons";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -63,7 +58,7 @@ import {
   getGridItemChangedData,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,

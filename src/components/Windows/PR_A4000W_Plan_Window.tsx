@@ -93,6 +93,9 @@ const PlanWindow = ({
     width: isMobile == true ? deviceWidth : 1500,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   //메시지 조회
 
@@ -549,6 +552,7 @@ const PlanWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>

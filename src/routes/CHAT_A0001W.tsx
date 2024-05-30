@@ -5,8 +5,7 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useState } from "react";
 import {
-  UseGetValueFromSessionItem,
-  UseParaPc,
+  UseGetValueFromSessionItem
 } from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
 import { Iparameters } from "../store/types";
@@ -64,7 +63,7 @@ const CHAT_BOT: React.FC = () => {
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
   const userid = UseGetValueFromSessionItem("user_id");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";

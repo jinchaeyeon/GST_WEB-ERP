@@ -14,8 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -44,16 +43,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
   numberWithCommas3,
   setDefaultDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -113,7 +110,7 @@ const HU_A4110W: React.FC = () => {
   const userName = loginResult ? loginResult.userName : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -164,7 +161,7 @@ const pc = UseGetValueFromSessionItem("pc");
       setLocationListData(getBizCom(bizComponentData, "L_BA002"));
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
-  }, [bizComponentData]); 
+  }, [bizComponentData]);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [subpage, setSubPage] = useState(initialPageState);

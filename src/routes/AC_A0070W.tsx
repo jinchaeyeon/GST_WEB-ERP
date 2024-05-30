@@ -45,14 +45,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
-  toDate,
+  toDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -247,7 +246,7 @@ const AC_A0070W: React.FC = () => {
   const listIdGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(SUB_DATA_ITEM_KEY);
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1334,31 +1333,31 @@ const pc = UseGetValueFromSessionItem("pc");
             >
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdMaster"]
-                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                ?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          checkBoxField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : mainFooterCell
-                        }
-                      />
-                    )
-                )}
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            checkBoxField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : mainFooterCell
+                          }
+                        />
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -1609,46 +1608,46 @@ const pc = UseGetValueFromSessionItem("pc");
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdItem"]
-                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  ?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          className={
-                            readOnlyField.includes(item.fieldName)
-                              ? "read-only"
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          cell={
-                            item.fieldName == "mngdata"
-                              ? ColumnCommandCell
-                              : checkBoxField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : undefined
-                          }
-                          editable={
-                            readOnlyField.includes(item.fieldName)
-                              ? false
-                              : true
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? detailTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            className={
+                              readOnlyField.includes(item.fieldName)
+                                ? "read-only"
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            cell={
+                              item.fieldName == "mngdata"
+                                ? ColumnCommandCell
+                                : checkBoxField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : undefined
+                            }
+                            editable={
+                              readOnlyField.includes(item.fieldName)
+                                ? false
+                                : true
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? detailTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </ExcelExport>
           </GridContainer>

@@ -28,6 +28,10 @@ const ZipCodeWindow = ({
     height: isMobile == true ? deviceHeight : 510,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -62,6 +66,7 @@ const ZipCodeWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <DaumPostcode onComplete={handlePostCode} />
     </Window>

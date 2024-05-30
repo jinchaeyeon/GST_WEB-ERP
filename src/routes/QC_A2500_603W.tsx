@@ -808,7 +808,7 @@ const BA_A0020_603: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
-      if(isMobile) {
+      if (isMobile) {
         setIsFilterHideStates(true);
       }
     }

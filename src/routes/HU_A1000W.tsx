@@ -1301,9 +1301,7 @@ const HU_A1000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       {isMobile ? (
-        <GridContainer
-          style={{ width: "100%", overflow: "auto" }}
-        >
+        <GridContainer style={{ width: "100%", overflow: "auto" }}>
           <GridTitleContainer className="ButtonContainer">
             <ButtonContainer>
               <Button

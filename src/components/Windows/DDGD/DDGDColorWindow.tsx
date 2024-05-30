@@ -7,7 +7,7 @@ import Draggable from "react-draggable";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { UseGetValueFromSessionItem, UseParaPc } from "../../CommonFunction";
+import { UseGetValueFromSessionItem } from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -41,7 +41,7 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
     height: isMobile == true ? deviceHeight : 800,
   });
   const processApi = useApi();
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   useEffect(() => {

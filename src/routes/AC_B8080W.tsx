@@ -28,7 +28,10 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
@@ -37,7 +40,7 @@ const AC_B8080W: React.FC = () => {
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -177,7 +180,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) );
+        setUrl(URL.createObjectURL(blob));
       } else {
         setUrl("");
       }
@@ -232,7 +235,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl2(URL.createObjectURL(blob) );
+        setUrl2(URL.createObjectURL(blob));
       } else {
         setUrl2("");
       }

@@ -23,10 +23,7 @@ import {
 import WindowFilterContainer from "../../../components/Containers/WindowFilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  isFilterHideState2,
-  isLoading
-} from "../../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
@@ -77,7 +74,7 @@ const KendoWindow = ({
     setPosition(position);
     setWebHeight(position.height - height - height2 - height3 - height5);
   };
-  
+
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   const [position, setPosition] = useState<IWindowPosition>({
@@ -291,11 +288,6 @@ const KendoWindow = ({
     }));
   };
 
-  const onChangePostion = (position: any) => {
-    setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height5);
-  };
-
   return (
     <Window
       titles={"계정코드"}
@@ -340,7 +332,7 @@ const KendoWindow = ({
       </WindowFilterContainer>
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <Grid

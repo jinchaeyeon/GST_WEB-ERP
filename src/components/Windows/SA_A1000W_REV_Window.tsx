@@ -16,7 +16,7 @@ import { UseGetValueFromSessionItem } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 type IKendoWindow = {
   setVisible(t: boolean): void;
-  setLoadings():void;
+  setLoadings(): void;
   information: any;
   modal?: boolean;
 };
@@ -37,6 +37,9 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 250,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
   const [Information, setInformation] = useState<{ [name: string]: any }>(
     information
@@ -79,7 +82,7 @@ const KendoWindow = ({
       orgdiv: sessionOrgdiv,
       quonum: Information.quonum,
       quorev: Information.quorev,
-      rev_reason: Information.rev_reason
+      rev_reason: Information.rev_reason,
     }));
   };
 
@@ -314,12 +317,18 @@ const KendoWindow = ({
   }, [ParaData]);
 
   return (
-    <Window titles={"REV"} positions={position} Close={onClose} modals={modal}>
+    <Window
+      titles={"REV"}
+      positions={position}
+      Close={onClose}
+      modals={modal}
+      onChangePostion={onChangePostion}
+    >
       <FormBoxWrap border={true}>
         <FormBox>
           <tbody>
             <tr>
-              <th style={{width: "15%"}}>개정사유</th>
+              <th style={{ width: "15%" }}>개정사유</th>
               <td>
                 <Input
                   name="rev_reason"

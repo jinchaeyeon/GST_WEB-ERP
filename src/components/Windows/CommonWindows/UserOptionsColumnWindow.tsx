@@ -36,7 +36,7 @@ import {
   UseGetValueFromSessionItem,
   chkScrollHandler,
   getYn,
-  validator
+  validator,
 } from "../../CommonFunction";
 import {
   EDIT_FIELD,
@@ -524,6 +524,10 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 800,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const setLoading = useSetRecoilState(isLoading);
 
   const onClose = () => {
@@ -820,6 +824,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <Form
         onSubmit={handleSubmit}

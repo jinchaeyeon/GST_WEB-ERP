@@ -46,7 +46,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   isValidDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,

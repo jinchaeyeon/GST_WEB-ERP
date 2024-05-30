@@ -1,6 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Window from "./WindowComponent/Window";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -21,12 +20,12 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   convertDateToStr,
-  dateformat,
+  dateformat
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -37,7 +36,6 @@ type TKendoWindow = {
   modal?: boolean;
   pathname: string;
 };
-
 
 const KendoWindow = ({
   getVisible,
@@ -54,7 +52,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -74,8 +72,9 @@ const pc = UseGetValueFromSessionItem("pc");
     height: isMobile == true ? deviceHeight : 550,
   });
 
-  
-  
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -315,15 +314,11 @@ const pc = UseGetValueFromSessionItem("pc");
 
   return (
     <Window
-      
-      
       titles={workType == "N" ? "공지생성" : "공지정보"}
-      
       positions={position}
-      
-      
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainer>
         <FormBoxWrap>

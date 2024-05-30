@@ -12,7 +12,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -32,13 +31,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -50,7 +47,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import DetailWindow from "../components/Windows/HU_A6000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, heightstate, isLoading, isMobileState } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  heightstate,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -77,7 +79,7 @@ const HU_A6000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  
+
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -94,11 +96,11 @@ const HU_A6000W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {    
+    if (bizComponentData !== null) {
       setAbilcdListDate(getBizCom(bizComponentData, "L_HU006"));
     }
   }, [bizComponentData]);
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A6000W", setCustomOptionData);
@@ -667,25 +669,27 @@ const HU_A6000W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

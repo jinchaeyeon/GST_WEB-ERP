@@ -843,9 +843,7 @@ const CM_B1000W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <ButtonContainer className="ButtonContainer3">
                   <Button
                     onClick={() => {
@@ -926,9 +924,7 @@ const CM_B1000W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button

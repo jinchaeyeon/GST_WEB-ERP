@@ -856,8 +856,7 @@ const SA_B2229W: React.FC = () => {
                           fontFamily: "TheJamsil5Bold",
                         }}
                       >
-                        Feasibility : {item.Feasibility} / Weight :
-                        {item.Weight}
+                        Feasibility : {item.Feasibility} / Weight :{item.Weight}
                       </Typography>
                     </CardContent>
                   </Card>

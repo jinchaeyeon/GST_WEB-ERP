@@ -81,6 +81,10 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     height: isMobile == true ? deviceHeight : 880,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -497,6 +501,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>

@@ -3,16 +3,16 @@ import { process } from "@progress/kendo-data-query";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { useApi } from "../../hooks/api";
+import { isMobileState } from "../../store/atoms";
 import {
   UseGetValueFromSessionItem,
   convertDateToStr,
 } from "../CommonFunction";
-
 function App(props) {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const data =
     props.data == undefined
       ? {

@@ -7,7 +7,9 @@ import {
 } from "@progress/kendo-react-layout";
 import { Upload, UploadFileInfo } from "@progress/kendo-react-upload";
 import * as React from "react";
+import { useState } from "react";
 import * as ReactDOM from "react-dom";
+import { IWindowPosition } from "../../hooks/interfaces";
 import Window from "../Windows/WindowComponent/Window";
 import { insertImageFiles } from "./utils";
 
@@ -15,6 +17,15 @@ export const InsertImageDialog = (props: any) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 480) / 2,
+    width: isMobile == true ? deviceWidth : 500,
+    height: isMobile == true ? deviceHeight : 480,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   const [selected, setSelected] = React.useState(0);
   const [files, setFiles] = React.useState([]);
@@ -149,13 +160,9 @@ export const InsertImageDialog = (props: any) => {
     <Window
       titles="Insert Image"
       Close={onClose}
-      positions={{
-        width: 500,
-        height: 480,
-        left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
-        top: isMobile == true ? 0 : (deviceHeight - 480) / 2,
-      }}
+      positions={position}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <TabStrip
         selected={selected}

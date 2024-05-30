@@ -20,7 +20,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -53,7 +53,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  numberWithCommas
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1219,9 +1219,7 @@ const HU_A5020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       {isMobile ? (
-        <GridContainer
-          style={{ width: "100%", overflow: "auto" }}
-        >
+        <GridContainer style={{ width: "100%", overflow: "auto" }}>
           <FormContext.Provider
             value={{
               prsnnum,

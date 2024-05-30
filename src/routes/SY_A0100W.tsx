@@ -86,7 +86,7 @@ const App: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);
-    const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

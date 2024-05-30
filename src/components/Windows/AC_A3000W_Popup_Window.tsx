@@ -18,7 +18,7 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  convertDateToStr
+  convertDateToStr,
 } from "../CommonFunction";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import Window from "./WindowComponent/Window";
@@ -49,6 +49,10 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 700,
     height: isMobile == true ? deviceHeight : 300,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -159,6 +163,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

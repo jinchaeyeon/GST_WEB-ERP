@@ -4,11 +4,12 @@ import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import { Card } from "primereact/card";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import { useApi } from "../../hooks/api";
+import { isMobileState } from "../../store/atoms";
 import { UseBizComponent, getBizCom } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 import DDGDColorWindow from "../Windows/DDGD/DDGDColorWindow";
-
 const CardBox = (props) => {
   const [colors, setColors] = useState(props.backgroundColor);
   const [colorWindowVisible, setColorWindowVisible] = useState(false);
@@ -18,8 +19,7 @@ const CardBox = (props) => {
     //사용여부,
     setBizComponentData
   );
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const processApi = useApi();
   useEffect(() => {

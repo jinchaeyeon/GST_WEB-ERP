@@ -33,7 +33,7 @@ import ReactFlow, {
   useViewport,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FormBox,
@@ -46,7 +46,8 @@ import {
 import { useApi } from "../../hooks/api";
 import {
   deletedAttadatnumsState,
-  isLoading
+  isLoading,
+  isMobileState,
 } from "../../store/atoms";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -54,7 +55,6 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   useSysMessage,
 } from "../CommonFunction";
 import { GAP } from "../CommonString";
@@ -72,9 +72,7 @@ let id = 0;
 const getId = () => `${++id}`;
 
 const FlowChart = (props) => {
-  let deviceWidth = document.documentElement.clientWidth;
-
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   const [bizComponentData, setBizComponentData] = useState(null);
   UseBizComponent(
@@ -86,7 +84,7 @@ const FlowChart = (props) => {
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = useState(null);
   UseCustomOption("SY_A0060W", setCustomOptionData);

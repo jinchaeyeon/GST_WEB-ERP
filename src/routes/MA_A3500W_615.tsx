@@ -29,7 +29,6 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -54,7 +53,7 @@ const MA_A3500W_615: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });

@@ -48,6 +48,11 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };

@@ -50,7 +50,7 @@ import {
   getGridItemChangedData,
   isValidDate,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -197,6 +197,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const DATA_ITEM_KEY = "num";
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1560,6 +1563,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

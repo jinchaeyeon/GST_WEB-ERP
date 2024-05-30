@@ -82,6 +82,10 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 670,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     getVisible(false);
   };
@@ -517,6 +521,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainerWrap>
         <GridContainer width={`45%`}>

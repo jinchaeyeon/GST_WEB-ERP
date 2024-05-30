@@ -28,6 +28,10 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
     height: isMobile == true ? deviceHeight : 220,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
     setInitialVal((prev) => ({
@@ -55,6 +59,7 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <FormBoxWrap>
         <FormBox>

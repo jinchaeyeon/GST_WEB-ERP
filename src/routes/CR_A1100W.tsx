@@ -42,7 +42,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  toDate
+  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -116,7 +116,6 @@ const CR_A1100W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);

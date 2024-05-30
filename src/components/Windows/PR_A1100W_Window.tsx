@@ -49,7 +49,7 @@ import {
   getGridItemChangedData,
   getItemQuery,
   getSelectedFirstData,
-  numberWithCommas
+  numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -446,7 +446,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     getVisible(false);
   };
@@ -1843,6 +1845,7 @@ const KendoWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <GridContainerWrap>
           <GridContainer width="30%">

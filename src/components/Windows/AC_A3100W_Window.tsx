@@ -160,6 +160,11 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 580,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -2014,6 +2019,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TabStrip
           style={{ width: "100%", height: `calc(100% - 80px)` }}

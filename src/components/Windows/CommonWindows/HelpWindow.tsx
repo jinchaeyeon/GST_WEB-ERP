@@ -16,8 +16,9 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -158,17 +159,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-
-  var height = getHeight(".k-window-titlebar");
-  var height2 = getHeight(".TitleContainer"); //FormBox부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".ButtonContainer"); //필터 모바일
-  var height5 = getHeight(".ButtonContainer2"); //필터 모바일
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -192,8 +190,24 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".ButtonContainer");
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight((position.height - height - height2 - height3) / 2);
+    setMobileHeight2(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight2((position.height - height - height2 - height3) / 2 - height4);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight((position.height - height - height2 - height3) / 2);
+    setWebHeight2((position.height - height - height2 - height3) / 2 - height4);
   };
   const [menulist, setMenuList] = useRecoilState(menuList);
 
@@ -842,8 +856,8 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
-      className="print-hidden"
       onChangePostion={onChangePostion}
+      className="print-hidden"
     >
       {isMobile ? (
         <Swiper
@@ -868,7 +882,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
             </TitleContainer>
             <div
               style={{
-                height: deviceHeight - height - height2 - height3,
+                height: mobileheight,
                 width: "100%",
               }}
             >
@@ -889,7 +903,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
             >
               <GridContainer
                 style={{
-                  overflow: isMobile ? "auto" : "hidden",
+                  overflow: "auto",
                 }}
               >
                 <GridTitleContainer className="ButtonContainer">
@@ -918,9 +932,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height: isMobile
-                      ? deviceHeight - height - height2 - height3 - height4
-                      : position.height - height - height2 - height3 - height4,
+                    height: mobileheight2,
                   }}
                   data={process(
                     mainDataResult.data.map((row) => ({
@@ -999,12 +1011,8 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
           </TitleContainer>
           <div
             style={{
-              height: isMobile
-                ? deviceHeight - height - height2 - height3
-                : position.height / 2.5,
-              marginBottom: "10px",
+              height: webheight,
             }}
-            className="ButtonContainer2"
           >
             {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
@@ -1021,7 +1029,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
           >
             <GridContainer
               style={{
-                overflow: isMobile ? "auto" : "hidden",
+                overflow: "auto",
               }}
             >
               <GridTitleContainer className="ButtonContainer">
@@ -1050,14 +1058,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
               </GridTitleContainer>
               <Grid
                 style={{
-                  height: isMobile
-                    ? deviceHeight - height - height2 - height3 - height4
-                    : position.height -
-                      height -
-                      height2 -
-                      height3 -
-                      height4 -
-                      (height5 + 10), // pdf style marginBottom: "10px"
+                  height: webheight2,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({

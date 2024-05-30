@@ -761,9 +761,7 @@ const Main: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </MainTopContainer>
-              <GridContainer
-                style={{ width: "100%", marginTop: "1vh" }}
-              >
+              <GridContainer style={{ width: "100%", marginTop: "1vh" }}>
                 <TabStrip
                   style={{ width: "100%" }}
                   selected={tabSelected}
@@ -793,7 +791,7 @@ const Main: React.FC = () => {
                       ) : (
                         <>
                           <GridTitleContainer>
-                          <GridTitle></GridTitle>
+                            <GridTitle></GridTitle>
                             {customOptionData !== null && (
                               <div>
                                 <CustomOptionComboBox
@@ -992,7 +990,7 @@ const Main: React.FC = () => {
                     ) : (
                       <>
                         <GridTitleContainer>
-                        <GridTitle></GridTitle>
+                          <GridTitle></GridTitle>
                           {customOptionData !== null && (
                             <div>
                               <CustomOptionComboBox

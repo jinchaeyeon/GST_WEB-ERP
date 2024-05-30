@@ -18,7 +18,13 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  colorsName,
+  heightstate,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 const SA_B2220W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
@@ -594,7 +600,7 @@ const SA_B2220W: React.FC = () => {
 
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",

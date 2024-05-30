@@ -13,18 +13,15 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -38,7 +35,6 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
-  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";

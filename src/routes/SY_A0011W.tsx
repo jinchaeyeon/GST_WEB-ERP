@@ -47,12 +47,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   getBizCom,
   getHeight,
   getYn,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -150,7 +149,7 @@ const Page: React.FC = () => {
         ...prev,
         use_yn: defaultOption.find((item: any) => item.id == "use_yn")
           ?.valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);

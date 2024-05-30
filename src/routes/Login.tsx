@@ -10,7 +10,7 @@ import { IComboBoxColumns } from "../hooks/interfaces";
 import {
   accessTokenState,
   loginResultState,
-  passwordExpirationInfoState
+  passwordExpirationInfoState,
 } from "../store/atoms";
 
 import { resetLocalStorage } from "../components/CommonFunction";

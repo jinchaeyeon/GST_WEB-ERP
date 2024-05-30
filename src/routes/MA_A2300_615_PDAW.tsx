@@ -41,8 +41,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
@@ -62,7 +61,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -770,9 +769,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TitleContainer
                   style={{ marginBottom: "15px" }}
                   className="ButtonContainer"
@@ -1038,9 +1035,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             </SwiperSlide>
             {checkDataResult.total > 0 ? (
               <SwiperSlide key={1}>
-                <GridContainer
-                  style={{ width: "100%", overflow: "auto" }}
-                >
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <TitleContainer
                     style={{ marginBottom: "15px" }}
                     className="ButtonContainer"

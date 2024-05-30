@@ -91,6 +91,10 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const DATA_ITEM_KEY = "num";
   const DATA_ITEM_KEY2 = "num";
   const DATA_ITEM_KEY3 = "num";
@@ -920,6 +924,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

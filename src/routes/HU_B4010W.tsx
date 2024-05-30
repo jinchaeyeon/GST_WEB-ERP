@@ -31,8 +31,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -62,7 +61,6 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1944,7 +1942,11 @@ const HU_B4010W: React.FC = () => {
                     </GridMui>
                   </GridMui>
                 </GridContainer>
-                <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
+                <TabStrip
+                  selected={tabSelected}
+                  onSelect={handleSelectTab}
+                  scrollable={isMobile}
+                >
                   <TabStripTab title="월별 평균">
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -2576,7 +2578,11 @@ const HU_B4010W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
+              <TabStrip
+                selected={tabSelected}
+                onSelect={handleSelectTab}
+                scrollable={isMobile}
+              >
                 <TabStripTab title="당월 평가내용">
                   <ExcelExport
                     data={mainDataResult3.data}

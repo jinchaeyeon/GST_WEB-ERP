@@ -40,7 +40,7 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,

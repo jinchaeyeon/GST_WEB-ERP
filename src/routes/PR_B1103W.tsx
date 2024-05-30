@@ -30,7 +30,13 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  heightstate,
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 const PR_B1103W: React.FC = () => {
   const processApi = useApi();

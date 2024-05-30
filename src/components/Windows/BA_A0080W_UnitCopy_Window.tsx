@@ -94,6 +94,11 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 570,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const DATA_ITEM_KEY = "num";
@@ -660,6 +665,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

@@ -22,10 +22,9 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
@@ -83,7 +82,7 @@ const PR_A2200W: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(
     null
   ) as MutableRefObject<HTMLVideoElement>;
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [filters, setFilters] = useState({
@@ -814,9 +813,7 @@ const pc = UseGetValueFromSessionItem("pc");
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <TitleContainer
                 style={{ marginBottom: "15px" }}
                 className="ButtonContainer"
@@ -916,9 +913,7 @@ const pc = UseGetValueFromSessionItem("pc");
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <TitleContainer
                 style={{ marginBottom: "15px" }}
                 className="ButtonContainer"
@@ -1011,9 +1006,7 @@ const pc = UseGetValueFromSessionItem("pc");
             ""
           ) : (
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TitleContainer
                   style={{ marginBottom: "15px" }}
                   className="ButtonContainer5"

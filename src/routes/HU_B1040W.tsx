@@ -12,17 +12,14 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
-  GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
@@ -37,7 +34,6 @@ import {
   UsePermissions,
   getBizCom,
   getGridItemChangedData,
-  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -211,7 +207,7 @@ const HU_B1040W: React.FC = () => {
   const [taxcdListData, setTaxcdListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {   
+    if (bizComponentData !== null) {
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
       setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
       setOrgdivListData(getBizCom(bizComponentData, "L_BA001"));
@@ -512,7 +508,7 @@ const HU_B1040W: React.FC = () => {
       </FilterContainer>
       <GridContainer
         style={{
-          width: isMobile? "100%" : "100%",
+          width: isMobile ? "100%" : "100%",
           overflow: "auto",
         }}
       >
