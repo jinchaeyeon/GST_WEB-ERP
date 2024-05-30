@@ -64,6 +64,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3300W_C";
@@ -94,7 +95,6 @@ let targetRowIndex2: null | number = null;
 var index = 0;
 
 const MA_A3300W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
