@@ -58,7 +58,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -111,7 +111,7 @@ const QC_B0200W: React.FC = () => {
   var height3 = getHeight(".ButtonContainer3");
   var height4 = getHeight(".ButtonContainer4");
   var height5 = getHeight(".k-tabstrip-items-wrapper");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

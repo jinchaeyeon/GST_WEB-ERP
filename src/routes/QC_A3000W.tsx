@@ -75,6 +75,7 @@ import {
   deletedNameState,
   heightstate,
   isLoading,
+  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -132,12 +133,11 @@ const QC_A3000: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

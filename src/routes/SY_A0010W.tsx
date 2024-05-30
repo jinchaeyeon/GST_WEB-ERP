@@ -62,6 +62,7 @@ import {
   deletedAttadatnumsState,
   heightstate,
   isLoading,
+  isMobileState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -105,11 +106,10 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

@@ -125,6 +125,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -537,8 +538,7 @@ const SA_A1000_603W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const idGetter7 = getter(DATA_ITEM_KEY7);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

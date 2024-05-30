@@ -27,7 +27,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
 
 interface TList {
   badcnt?: number;
@@ -317,9 +317,9 @@ const SA_B3600W: React.FC = () => {
       );
     }
   };
-  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   useEffect(() => {
     if (filters.isSearch && customOptionData != null) {

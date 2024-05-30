@@ -28,7 +28,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
 
 interface TList {
   code_name: string;
@@ -68,10 +68,9 @@ const QC_B0100W: React.FC = () => {
 
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-
-  let deviceWidth = document.documentElement.clientWidth;
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

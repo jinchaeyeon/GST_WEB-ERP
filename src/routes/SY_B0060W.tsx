@@ -41,6 +41,7 @@ import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
 import { useApi } from "../hooks/api";
 import {
   heightstate,
+  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
@@ -52,15 +53,13 @@ const DATA_ITEM_KEY = "datnum";
 
 const SY_B0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
   var height4 = getHeight(".ButtonContainer4");
   var height5 = getHeight(".ButtonContainer5");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();

@@ -89,6 +89,7 @@ import {
   deletedNameState,
   heightstate,
   isLoading,
+  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -371,13 +372,12 @@ const QC_A2000: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
   var height4 = getHeight(".k-tabstrip-items-wrapper");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

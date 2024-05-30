@@ -36,7 +36,7 @@ import { PAGE_SIZE } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var index = 0;
@@ -45,8 +45,7 @@ var barcode = "";
 let interval: any;
 
 const SA_A5000W_615: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

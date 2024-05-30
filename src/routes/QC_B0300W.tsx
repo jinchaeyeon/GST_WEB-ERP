@@ -53,7 +53,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -75,11 +75,10 @@ var index = 0;
 const QC_B0300W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

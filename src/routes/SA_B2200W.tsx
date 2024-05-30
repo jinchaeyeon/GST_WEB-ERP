@@ -55,7 +55,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -83,8 +83,7 @@ const SA_B2200: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   //메시지 조회

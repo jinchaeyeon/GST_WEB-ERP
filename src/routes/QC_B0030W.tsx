@@ -57,7 +57,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { ICustData, IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0030W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -85,12 +85,11 @@ const QC_B0030W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

@@ -51,7 +51,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/TO_B0011W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -60,9 +60,8 @@ const numberField = ["stockqty"];
 let targetRowIndex: null | number = null;
 
 const TO_B0011W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);

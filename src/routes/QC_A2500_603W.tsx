@@ -71,6 +71,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500_603W_C";
@@ -115,8 +116,7 @@ const BA_A0020_603: React.FC = () => {
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = 29;

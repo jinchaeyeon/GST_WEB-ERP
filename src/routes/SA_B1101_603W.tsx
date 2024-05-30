@@ -55,7 +55,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1101_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -70,8 +70,7 @@ const SA_B1101_603W: React.FC = () => {
   UseCustomOption("SA_B1101_603W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B1101_603W", setMessagesData);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const initialPageState = { skip: 0, take: PAGE_SIZE };

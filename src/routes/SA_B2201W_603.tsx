@@ -61,7 +61,7 @@ import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2201W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -72,8 +72,7 @@ const numberField2 = ["amt", "stramt", "janamt"];
 const SA_B2201W_603: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");

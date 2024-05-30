@@ -29,7 +29,7 @@ import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutC
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import ScrollTable from "../components/KPIcomponents/Table/ScrollTable";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isLoading } from "../store/atoms";
+import { colors, colorsName, heightstate, isLoading, isMobileState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const SA_B2211_603W: React.FC = () => {
@@ -72,9 +72,8 @@ const SA_B2211_603W: React.FC = () => {
       },
     },
   });
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({

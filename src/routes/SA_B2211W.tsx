@@ -72,7 +72,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2211W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -109,8 +109,7 @@ const SA_B2211W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".k-tabstrip-items-wrapper");

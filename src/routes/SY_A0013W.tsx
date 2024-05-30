@@ -70,7 +70,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0013W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -219,9 +219,7 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-  let deviceWidth = document.documentElement.clientWidth;
-
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();

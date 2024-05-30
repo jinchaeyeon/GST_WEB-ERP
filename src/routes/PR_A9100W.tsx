@@ -70,7 +70,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, sessionItemState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -380,8 +380,7 @@ const PR_A9100W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);

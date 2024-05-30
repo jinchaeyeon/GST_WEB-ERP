@@ -76,7 +76,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import DepartmentsWindow from "../components/Windows/CommonWindows/DepartmentsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, loginResultState } from "../store/atoms";
+import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0125W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -126,12 +126,11 @@ const SY_A0125W: React.FC = () => {
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);

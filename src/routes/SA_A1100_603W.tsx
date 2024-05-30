@@ -93,6 +93,7 @@ import {
   heightstate,
   isFilterHideState,
   isLoading,
+  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -184,8 +185,7 @@ let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 let deletedMainRows6: any[] = [];
 const SA_A1100_603W: React.FC = () => {
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");

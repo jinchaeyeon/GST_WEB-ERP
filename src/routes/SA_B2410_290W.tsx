@@ -59,7 +59,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2410_290W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -90,8 +90,7 @@ const SA_B2410: React.FC = () => {
   const detailId2Getter = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
 
-  let deviceWidth = document.documentElement.clientWidth;
-  let isMobile = deviceWidth <= 1200;
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
   var index2 = 0;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
