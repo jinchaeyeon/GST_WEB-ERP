@@ -257,8 +257,7 @@ const AC_B8100W: React.FC = () => {
       <GridContainer>
         <div
           style={{
-            height: isMobile ? deviceHeight * 0.97 : "82vh",
-            marginBottom: "10px",
+            height: isMobile ? deviceHeight : "82vh",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}

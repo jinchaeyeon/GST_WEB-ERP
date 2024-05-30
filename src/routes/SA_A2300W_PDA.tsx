@@ -29,14 +29,11 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import {
-  OSState,
-  heightstate,
-  isLoading
-} from "../store/atoms";
+import { OSState, heightstate, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const CUSTOMER_ITEM_KEY = "custcd";
@@ -52,7 +49,6 @@ let barcodeString: string;
 
 const SA_A2300_PDA: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -68,6 +64,13 @@ const SA_A2300_PDA: React.FC = () => {
     print: true,
   });
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height1 = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
+  var height4 = getHeight(".ButtonContainer4");
+  var height5 = getHeight(".ButtonContainer5");
+  var height6 = getHeight(".ButtonContainer6");
+  var height7 = getHeight(".ButtonContainer7");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -181,14 +184,14 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage1 = (
     <>
-      <TitleContainer>
+      <TitleContainer className="ButtonContainer4">
         <Title>출고처리(PDA)</Title>
       </TitleContainer>
       {osstate == true ? (
         <div
           style={{
             backgroundColor: "#ccc",
-            height: `${deviceHeight * 0.85}px`,
+            height: deviceHeight + height4,
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -199,7 +202,7 @@ const SA_A2300_PDA: React.FC = () => {
         </div>
       ) : (
         <Scheduler
-          height={deviceHeight * 0.85}
+          height={deviceHeight + height4}
           data={
             schedulerDataResult.length > 0 ? schedulerDataResult : undefined
           }
@@ -481,9 +484,14 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage2 = (
     <>
-      <TitleContainer>
+      <TitleContainer className="ButtonContainer5">
         <Title>업체 선택</Title>
-        <ButtonContainer>
+      </TitleContainer>
+      <GridContainer>
+        <ButtonContainer
+          className="ButtonContainer"
+          style={{ justifyContent: "space-between" }}
+        >
           <Button
             onClick={onClickBefore}
             themeColor={"primary"}
@@ -500,10 +508,8 @@ const SA_A2300_PDA: React.FC = () => {
             다음
           </Button>
         </ButtonContainer>
-      </TitleContainer>
-      <GridContainer>
         <Grid
-          style={{ height: deviceHeight * 0.8 }}
+          style={{ height: deviceHeight - height1 + height5 }}
           data={process(
             customerDataResult.data.map((row) => ({
               ...row,
@@ -756,9 +762,14 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage3 = (
     <>
-      <TitleContainer>
+      <TitleContainer className="ButtonContainer6">
         <Title>품목 리스트</Title>
-        <ButtonContainer>
+      </TitleContainer>
+      <GridContainer>
+        <ButtonContainer
+          className="ButtonContainer2"
+          style={{ justifyContent: "space-between" }}
+        >
           <Button
             onClick={onClickBefore}
             themeColor={"primary"}
@@ -775,10 +786,8 @@ const SA_A2300_PDA: React.FC = () => {
             리딩 목록
           </Button>
         </ButtonContainer>
-      </TitleContainer>
-      <GridContainer>
         <Grid
-          style={{ height: deviceHeight * 0.8 }}
+          style={{ height: deviceHeight - height2 + height6 }}
           data={process(
             orderDataResult.data.map((row) => ({
               ...row,
@@ -1151,9 +1160,14 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage4 = (
     <>
-      <TitleContainer>
+      <TitleContainer className="ButtonContainer7">
         <Title>LOT 목록</Title>
-        <ButtonContainer>
+      </TitleContainer>
+      <GridContainer>
+        <ButtonContainer
+          className="ButtonContainer3"
+          style={{ justifyContent: "space-between" }}
+        >
           <Button
             onClick={onClickBefore}
             themeColor={"primary"}
@@ -1162,26 +1176,26 @@ const SA_A2300_PDA: React.FC = () => {
           >
             이전
           </Button>
-          <Button
-            onClick={onClickDelete}
-            themeColor={"primary"}
-            icon="delete"
-            fillMode="outline"
-          >
-            삭제
-          </Button>
-          <Button
-            onClick={onClickConfirm}
-            themeColor={"primary"}
-            icon="check-circle"
-          >
-            확인
-          </Button>
+          <ButtonContainer>
+            <Button
+              onClick={onClickDelete}
+              themeColor={"primary"}
+              icon="delete"
+              fillMode="outline"
+            >
+              삭제
+            </Button>
+            <Button
+              onClick={onClickConfirm}
+              themeColor={"primary"}
+              icon="check-circle"
+            >
+              확인
+            </Button>
+          </ButtonContainer>
         </ButtonContainer>
-      </TitleContainer>
-      <GridContainer>
         <Grid
-          style={{ height: deviceHeight * 0.8 }}
+          style={{ height: deviceHeight - height3 + height7 }}
           data={process(
             lotDataResult.data.map((row) => ({
               ...row,
