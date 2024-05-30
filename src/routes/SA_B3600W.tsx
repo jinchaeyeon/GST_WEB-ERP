@@ -27,7 +27,14 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  colorsName,
+  heightstate,
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 interface TList {
   badcnt?: number;
@@ -453,7 +460,7 @@ const SA_B3600W: React.FC = () => {
 
   return (
     <>
-    <div
+      <div
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",

@@ -26,15 +26,13 @@ import {
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   findMessage,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-
 
 const CR_A1101W: React.FC = () => {
   const processApi = useApi();

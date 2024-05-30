@@ -12,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -35,15 +34,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
-  
   handleKeyPressSearch,
   setDefaultDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -61,8 +58,7 @@ import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   isLoading,
-  loginResultState,
-  sessionItemState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -94,7 +90,7 @@ const AC_A1020W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -886,33 +882,33 @@ const AC_A1020W: React.FC = () => {
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
-              ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-              ?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -36,6 +36,9 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -71,9 +74,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;

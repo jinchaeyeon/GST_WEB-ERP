@@ -27,7 +27,7 @@ import {
   UseMessages,
   convertDateToStr,
   findMessage,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -103,6 +103,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 700,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const pc = UseGetValueFromSessionItem("pc");
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
@@ -523,6 +526,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

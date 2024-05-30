@@ -56,7 +56,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getYn,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -2005,82 +2005,82 @@ const Page: React.FC = () => {
             />
           )}
         </ButtonContainer>
-        </TitleContainer>
-        <FilterContainer>
-          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>회사구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="cboOrgdiv"
-                      value={filters.cboOrgdiv}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>사업장</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="cboLocation"
-                      value={filters.cboLocation}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>부서코드</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="dptcd"
-                      value={filters.dptcd}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="dptnm"
-                      valueField="dptcd"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>사용자명ID</th>
-                <td>
-                  <Input
-                    name="user_id"
-                    type="text"
-                    value={filters.user_id}
-                    onChange={filterInputChange}
+      </TitleContainer>
+      <FilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>회사구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboOrgdiv"
+                    value={filters.cboOrgdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
                   />
-                </td>
-                <th>사용자명</th>
-                <td>
-                  <Input
-                    name="user_name"
-                    type="text"
-                    value={filters.user_name}
-                    onChange={filterInputChange}
+                )}
+              </td>
+              <th>사업장</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="cboLocation"
+                    value={filters.cboLocation}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
                   />
-                </td>
-                <th>사용자구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="user_category"
-                      value={filters.user_category}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </FilterBox>
-        </FilterContainer>
-     
+                )}
+              </td>
+              <th>부서코드</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dptcd"
+                    value={filters.dptcd}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="dptnm"
+                    valueField="dptcd"
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>사용자명ID</th>
+              <td>
+                <Input
+                  name="user_id"
+                  type="text"
+                  value={filters.user_id}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사용자명</th>
+              <td>
+                <Input
+                  name="user_name"
+                  type="text"
+                  value={filters.user_name}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사용자구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="user_category"
+                    value={filters.user_category}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterContainer>
+
       {isMobile ? (
         <>
           <Swiper
@@ -2092,9 +2092,7 @@ const Page: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   {permissions && (
                     <ButtonContainer>
@@ -2338,9 +2336,7 @@ const Page: React.FC = () => {
               key={2}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사용자별 메뉴 권한</GridTitle>
                   {permissions && (
@@ -2419,9 +2415,7 @@ const Page: React.FC = () => {
               key={3}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>[참조] 전체 메뉴</GridTitle>
                 </GridTitleContainer>

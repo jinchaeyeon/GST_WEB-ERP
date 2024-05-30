@@ -51,6 +51,11 @@ const KendoWindow = ({
     setWebHeight(position.height - height - height2 - height3);
   }, []);
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+  };
+
   const processApi = useApi();
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
@@ -148,11 +153,6 @@ const KendoWindow = ({
   };
 
   const [placeholder, setPlaceholder] = useState("파일 선택");
-
-  const onChangePostion = (position: any) => {
-    setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
-  }
 
   return (
     <Window

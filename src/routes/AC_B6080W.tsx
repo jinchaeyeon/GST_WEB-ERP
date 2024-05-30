@@ -69,7 +69,7 @@ import {
   heightstate,
   isLoading,
   isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B6080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";

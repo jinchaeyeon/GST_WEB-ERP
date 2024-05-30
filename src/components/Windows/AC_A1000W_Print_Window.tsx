@@ -37,6 +37,10 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
     height: isMobile == true ? deviceHeight : 220,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
 
@@ -92,6 +96,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>
@@ -128,22 +133,10 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
       {previewVisible && (
         <Window
           titles={"미리보기"}
-          positions={{
-            width:
-              isMobile == true ? document.documentElement.clientWidth : 1123,
-            height:
-              isMobile == true ? document.documentElement.clientHeight : 764,
-            left:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientWidth - 1123) / 2,
-            top:
-              isMobile == true
-                ? 0
-                : (document.documentElement.clientHeight - 794) / 2,
-          }}
+          positions={position}
           Close={() => setPreviewVisible((prev) => !prev)}
           modals={modal}
+          onChangePostion={onChangePostion}
         >
           <ReplaceTaxReport Type={filters.print} data={data} />
         </Window>

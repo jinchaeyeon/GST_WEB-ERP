@@ -13,12 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -48,7 +43,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -311,6 +306,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 700,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const pc = UseGetValueFromSessionItem("pc");
@@ -776,6 +774,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

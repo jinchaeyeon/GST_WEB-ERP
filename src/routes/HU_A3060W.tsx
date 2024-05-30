@@ -52,7 +52,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,

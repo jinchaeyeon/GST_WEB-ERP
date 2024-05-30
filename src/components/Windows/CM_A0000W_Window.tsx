@@ -41,7 +41,7 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
-  setDefaultDate2
+  setDefaultDate2,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -110,6 +110,10 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -669,6 +673,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainerWrap>
         <GridContainer width="55%">

@@ -2961,9 +2961,7 @@ const CM_A4100W: React.FC = () => {
                     // fetchGrid,
                   }}
                 >
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>상세정보</GridTitle>
                       <ButtonContainer

@@ -53,7 +53,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -68,7 +68,12 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;

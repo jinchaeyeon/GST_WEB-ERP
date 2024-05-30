@@ -43,6 +43,9 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -155,6 +158,7 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <ButtonContainer>
           <ReactToPrint

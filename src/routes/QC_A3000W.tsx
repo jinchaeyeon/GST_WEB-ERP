@@ -54,7 +54,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -2110,9 +2110,7 @@ const QC_A3000: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>생산실적리스트</GridTitle>
                 </GridTitleContainer>
@@ -2202,9 +2200,7 @@ const QC_A3000: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>검사상세정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -2317,9 +2313,7 @@ const QC_A3000: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
                   <ButtonContainer
                     style={{

@@ -16,10 +16,12 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -43,7 +45,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat2,
@@ -53,7 +54,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -75,12 +76,14 @@ import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_De
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
+import {
+  heightstate,
+  isFilterHideState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -314,7 +317,7 @@ const SA_A1001_603W: React.FC = () => {
         finalquowonamt: data.finalquowonamt,
         quocalyn: data.quocalyn,
       }));
-      if(isMobile) {
+      if (isMobile) {
         setIsFilterHideStates(true);
       }
     }
@@ -611,7 +614,7 @@ const SA_A1001_603W: React.FC = () => {
           }));
 
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-          if(filters.query == true) {
+          if (filters.query == true) {
             setFilters2((prev) => ({
               ...prev,
               quonum: selectedRow.quonum,

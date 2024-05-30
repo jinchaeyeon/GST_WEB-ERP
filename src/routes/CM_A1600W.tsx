@@ -2911,7 +2911,7 @@ const CM_A1600: React.FC = () => {
           </GridTitleContainer>
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer3">
-             { !isMobile && <GridTitle>개인 스케줄(표)</GridTitle>}
+              {!isMobile && <GridTitle>개인 스케줄(표)</GridTitle>}
 
               {permissions && (
                 <ButtonContainer>

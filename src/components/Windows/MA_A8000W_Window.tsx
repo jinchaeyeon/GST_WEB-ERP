@@ -43,7 +43,7 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -519,6 +519,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [acntcd, setAcntcd] = useState<string>("");
@@ -1703,6 +1706,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

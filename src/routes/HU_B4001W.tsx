@@ -12,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -50,7 +49,6 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  
   isValidDate,
 } from "../components/CommonFunction";
 import {
@@ -60,7 +58,12 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -138,7 +141,7 @@ const HU_B4001W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) {   
+    if (bizComponentData !== null) {
       setPersonListData(getBizCom(bizComponentData, "L_HU250T"));
       setAdjdivListData(getBizCom(bizComponentData, "L_HU092"));
     }
@@ -772,9 +775,7 @@ const HU_B4001W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사원정보</GridTitle>
                 </GridTitleContainer>
@@ -901,9 +902,7 @@ const HU_B4001W: React.FC = () => {
                   </ButtonContainer>
                   <GridContainer></GridContainer>
                 </GridTitleContainer>
-                <GridContainer
-                  style={{ width: "100%", overflow: "auto" }}
-                >
+                <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <ExcelExport
                     data={useDataResult.data}
                     ref={(exporter) => {
@@ -976,9 +975,7 @@ const HU_B4001W: React.FC = () => {
               </GridContainerWrap>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>연차조정</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>

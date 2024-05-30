@@ -33,6 +33,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     height: isMobile == true ? deviceHeight : 520,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -180,6 +184,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <Form
         onSubmit={handleSubmit}

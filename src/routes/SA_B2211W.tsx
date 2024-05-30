@@ -61,10 +61,10 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  getHeight
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -72,7 +72,12 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2211W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -610,7 +615,7 @@ const SA_B2211W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }
@@ -805,7 +810,7 @@ const SA_B2211W: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer">
-                    <ButtonContainer
+                      <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
                         <Button
@@ -869,33 +874,35 @@ const SA_B2211W: React.FC = () => {
                         resizable={true}
                       >
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdAllList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    numberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdAllList"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -978,31 +985,35 @@ const SA_B2211W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdMonthList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName.replace("qty", "amt")}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    numberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName.replace("qty", "amt")}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -1206,86 +1217,90 @@ const SA_B2211W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdQuarterList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 &&
-                              (item.fieldName !== "custcd" &&
-                              item.fieldName !== "custnm" ? (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                >
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 &&
+                                (item.fieldName !== "custcd" &&
+                                item.fieldName !== "custnm" ? (
                                   <GridColumn
-                                    title={"1/4분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기" ? "jm1" : "dm1"
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : undefined
                                     }
-                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  >
+                                    <GridColumn
+                                      title={"1/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm1" : "dm1"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"2/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm2" : "dm2"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"3/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm3" : "dm3"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"4/4분기"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기" ? "jm4" : "dm4"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                    <GridColumn
+                                      title={"합계"}
+                                      cell={NumberCell}
+                                      field={
+                                        item.caption == "전기"
+                                          ? "jtotal"
+                                          : "dtotal"
+                                      }
+                                      footerCell={gridSumQtyFooterCell}
+                                      width={item.width}
+                                    />
+                                  </GridColumn>
+                                ) : (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? gridTotalFooterCell
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
                                     width={item.width}
                                   />
-                                  <GridColumn
-                                    title={"2/4분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기" ? "jm2" : "dm2"
-                                    }
-                                    footerCell={gridSumQtyFooterCell}
-                                    width={item.width}
-                                  />
-                                  <GridColumn
-                                    title={"3/4분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기" ? "jm3" : "dm3"
-                                    }
-                                    footerCell={gridSumQtyFooterCell}
-                                    width={item.width}
-                                  />
-                                  <GridColumn
-                                    title={"4/4분기"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기" ? "jm4" : "dm4"
-                                    }
-                                    footerCell={gridSumQtyFooterCell}
-                                    width={item.width}
-                                  />
-                                  <GridColumn
-                                    title={"합계"}
-                                    cell={NumberCell}
-                                    field={
-                                      item.caption == "전기"
-                                        ? "jtotal"
-                                        : "dtotal"
-                                    }
-                                    footerCell={gridSumQtyFooterCell}
-                                    width={item.width}
-                                  />
-                                </GridColumn>
-                              ) : (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? gridTotalFooterCell
-                                      : numberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                  width={item.width}
-                                />
-                              ))
-                          )}
+                                ))
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -1662,33 +1677,33 @@ const SA_B2211W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdAllList"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? gridTotalFooterCell
-                                    : numberField.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdAllList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    numberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
@@ -1745,33 +1760,33 @@ const SA_B2211W: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdMonthList"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName.replace("qty", "amt")}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? gridTotalFooterCell
-                                    : numberField.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
+                        customOptionData.menuCustomColumnOptions["grdMonthList"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName.replace("qty", "amt")}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    numberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
@@ -1899,76 +1914,88 @@ const SA_B2211W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdQuarterList"
-                        ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 &&
-                            (item.fieldName !== "custcd" &&
-                            item.fieldName !== "custnm" ? (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? gridTotalFooterCell
-                                    : undefined
-                                }
-                                width={item.width}
-                              >
+                        ]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 &&
+                              (item.fieldName !== "custcd" &&
+                              item.fieldName !== "custnm" ? (
                                 <GridColumn
-                                  title={"1/4분기"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm1" : "dm1"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                                <GridColumn
-                                  title={"2/4분기"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm2" : "dm2"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                                <GridColumn
-                                  title={"3/4분기"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm3" : "dm3"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                                <GridColumn
-                                  title={"4/4분기"}
-                                  cell={NumberCell}
-                                  field={item.caption == "전기" ? "jm4" : "dm4"}
-                                  footerCell={gridSumQtyFooterCell}
-                                  width={item.width}
-                                />
-                                <GridColumn
-                                  title={"합계"}
-                                  cell={NumberCell}
-                                  field={
-                                    item.caption == "전기" ? "jtotal" : "dtotal"
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : undefined
                                   }
-                                  footerCell={gridSumQtyFooterCell}
+                                  width={item.width}
+                                >
+                                  <GridColumn
+                                    title={"1/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm1" : "dm1"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"2/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm2" : "dm2"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"3/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm3" : "dm3"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"4/4분기"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기" ? "jm4" : "dm4"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                  <GridColumn
+                                    title={"합계"}
+                                    cell={NumberCell}
+                                    field={
+                                      item.caption == "전기"
+                                        ? "jtotal"
+                                        : "dtotal"
+                                    }
+                                    footerCell={gridSumQtyFooterCell}
+                                    width={item.width}
+                                  />
+                                </GridColumn>
+                              ) : (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? gridTotalFooterCell
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell
+                                      : undefined
+                                  }
                                   width={item.width}
                                 />
-                              </GridColumn>
-                            ) : (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? gridTotalFooterCell
-                                    : numberField.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell
-                                    : undefined
-                                }
-                                width={item.width}
-                              />
-                            ))
-                        )}
+                              ))
+                          )}
                     </Grid>
                   </ExcelExport>
                 </GridContainer>

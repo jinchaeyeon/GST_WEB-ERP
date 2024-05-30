@@ -5,7 +5,7 @@ import {
   FormElement,
   FormRenderProps,
 } from "@progress/kendo-react-form";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -23,7 +23,8 @@ import Window from "../WindowComponent/Window";
 type TKendoWindow = {
   setVisible(t: boolean): void;
 };
-
+var height = 0;
+var height3 = 0;
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [pwReq, setPwReq] = useState<TPasswordRequirements | null>(null);
@@ -31,16 +32,23 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    setMobileHeight(deviceHeight - height - height3);
+    setWebHeight(position.height - height - height3);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height3);
   };
   const onClose = () => {
     if (
@@ -167,10 +175,8 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
             <fieldset
               className={"k-form-fieldset"}
               style={{
-                overflow: isMobile ? "auto" : "hidden",
-                height: isMobile
-                  ? deviceHeight - height - height3
-                  : position.height - height - height3,
+                overflow: "auto",
+                height: isMobile ? mobileheight : webheight,
               }}
             >
               <FieldWrap fieldWidth="100%">

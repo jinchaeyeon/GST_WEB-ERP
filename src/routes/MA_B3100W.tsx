@@ -78,7 +78,12 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/MA_B3100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -1498,7 +1503,11 @@ const MA_B3100: React.FC = () => {
             </FilterBox>
           </FilterContainer>
 
-          <TabStrip selected={tabSelected} onSelect={handleSelectTab} scrollable={isMobile}>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            scrollable={isMobile}
+          >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <GridContainer>

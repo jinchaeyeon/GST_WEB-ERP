@@ -13,8 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,7 +44,6 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -169,7 +167,7 @@ const HU_B2100W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData !== null) { 
+    if (bizComponentData !== null) {
       setOrdstsListData(getBizCom(bizComponentData, "L_SA002"));
     }
   }, [bizComponentData]);
@@ -552,8 +550,8 @@ const HU_B2100W: React.FC = () => {
           pgNum: 1,
           find_row_value: "",
         }));
-        if(swiper) {
-          swiper.slideTo(0)
+        if (swiper) {
+          swiper.slideTo(0);
         }
       }
     } catch (e) {
@@ -726,9 +724,7 @@ const HU_B2100W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
               </GridTitleContainer>

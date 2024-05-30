@@ -25,6 +25,10 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -85,6 +89,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
         className="print-hidden"
       >
         <div

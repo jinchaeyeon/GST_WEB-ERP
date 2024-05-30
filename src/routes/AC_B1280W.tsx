@@ -46,7 +46,11 @@ import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CodeWindow from "../components/Windows/CommonWindows/CodeWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

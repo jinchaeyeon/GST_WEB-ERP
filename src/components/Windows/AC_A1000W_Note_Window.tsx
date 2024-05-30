@@ -31,7 +31,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -64,6 +64,11 @@ const AC_A1000W_Note_Window = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 800,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -303,6 +308,7 @@ const AC_A1000W_Note_Window = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

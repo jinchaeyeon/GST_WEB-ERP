@@ -76,7 +76,12 @@ import CopyWindow2 from "../components/Windows/BA_A0080W_UnitCopy_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1807,9 +1812,7 @@ const BA_A0080: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>품목계정</GridTitle>
                   <ButtonContainer>

@@ -54,6 +54,10 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 600,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -246,6 +250,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer>
         <Title></Title>

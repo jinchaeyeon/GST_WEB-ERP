@@ -8,6 +8,9 @@ import {
 } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -22,11 +25,10 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
-  getHeight,
+  getHeight
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A2000W_Defective_Window";
@@ -37,9 +39,6 @@ import StopWindow from "../components/Windows/PR_A2000W_Stop_Window";
 import { useApi } from "../hooks/api";
 import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -52,7 +51,7 @@ const PR_A2000W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
@@ -629,9 +628,7 @@ const pc = UseGetValueFromSessionItem("pc");
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>
                   <ButtonContainer>

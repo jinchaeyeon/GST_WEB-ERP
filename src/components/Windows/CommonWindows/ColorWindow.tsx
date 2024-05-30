@@ -8,7 +8,6 @@ import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { colors, colorsName } from "../../../store/atoms";
-import { getHeight } from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -29,8 +28,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,

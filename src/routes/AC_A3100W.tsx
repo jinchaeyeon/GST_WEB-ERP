@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -32,17 +32,16 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
   handleKeyPressSearch,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/AC_A3100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A3100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -62,7 +61,7 @@ const AC_A3100W: React.FC = () => {
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
@@ -690,32 +689,34 @@ const pc = UseGetValueFromSessionItem("pc");
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    />
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>

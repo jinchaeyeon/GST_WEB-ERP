@@ -1,5 +1,5 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // ES2015 module syntax
 import { Grid as GridMui } from "@mui/material";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -11,7 +11,6 @@ import {
   SchedulerItemProps,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import { bytesToBase64 } from "byte-base64";
 import { useRecoilState } from "recoil";
 import { AnswerIcon, GridContainer, GridContainerWrap } from "../CommonStyled";
 import {
@@ -20,7 +19,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  getBizCom
+  getBizCom,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import Card from "../components/KPIcomponents/Card/CardBox";
@@ -97,7 +96,7 @@ const Main: React.FC = () => {
       setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
     }
   }, [bizComponentData]);
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HOME", setCustomOptionData);

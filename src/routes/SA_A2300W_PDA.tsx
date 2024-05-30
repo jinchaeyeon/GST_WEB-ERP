@@ -29,11 +29,14 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading, loginResultState } from "../store/atoms";
+import {
+  OSState,
+  heightstate,
+  isLoading
+} from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const CUSTOMER_ITEM_KEY = "custcd";
@@ -56,8 +59,6 @@ const SA_A2300_PDA: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
 
-  
-
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions);
   const [permissions, setPermissions] = useState<TPermissions | null>({
@@ -66,11 +67,7 @@ const SA_A2300_PDA: React.FC = () => {
     delete: true,
     print: true,
   });
-  const [loginResult] = useRecoilState(loginResultState);
-  const companyCode = loginResult ? loginResult.companyCode : "";
-  let deviceWidth = document.documentElement.clientWidth;
-  let deviceHeight = window.innerHeight;
-  let isMobile = deviceWidth <= 850;
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -446,7 +443,6 @@ const SA_A2300_PDA: React.FC = () => {
     let a = e.timeStamp - lastInputTime;
     elapsed.push(a);
 
-
     if (a > 25) {
       // 25: 스캐너 문자 사이 이벤트 발생 간격
       // 초기화
@@ -459,7 +455,7 @@ const SA_A2300_PDA: React.FC = () => {
         barcodeString = "";
 
         if (elapsed.length > 1) {
-          elapsed[0] = 0;          
+          elapsed[0] = 0;
         }
         lastInputTime = 0;
         return;

@@ -71,7 +71,12 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1202,7 +1207,7 @@ const SA_A6000W: React.FC = () => {
         throw findMessage(messagesData, "SA_A6000W_001");
       } else {
         resetAllGrid();
-        if(tabSelected == 0) {
+        if (tabSelected == 0) {
           setFilters((prev: any) => ({
             ...prev,
             pgNum: 1,
@@ -1221,7 +1226,7 @@ const SA_A6000W: React.FC = () => {
             isSearch: true,
           }));
         }
-        if(swiper) {
+        if (swiper) {
           swiper.slideTo(0);
         }
       }

@@ -48,6 +48,11 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -120,6 +125,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

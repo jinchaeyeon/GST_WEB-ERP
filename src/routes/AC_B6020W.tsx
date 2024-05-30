@@ -37,11 +37,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

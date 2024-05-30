@@ -1,7 +1,7 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -24,7 +24,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_A3001W: React.FC = () => {
@@ -146,7 +146,7 @@ const AC_A3001W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) );
+        setUrl(URL.createObjectURL(blob));
       } else {
         setUrl("");
       }

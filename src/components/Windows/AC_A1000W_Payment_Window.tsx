@@ -126,6 +126,10 @@ const CopyWindow = ({
     height: isMobile == true ? deviceHeight : 700,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const pc = UseGetValueFromSessionItem("pc");
@@ -746,6 +750,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={true}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

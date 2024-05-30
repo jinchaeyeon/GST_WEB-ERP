@@ -58,7 +58,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -104,7 +109,6 @@ const QC_B0200W: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  let deviceWidth = document.documentElement.clientWidth;
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
@@ -1370,9 +1374,7 @@ const QC_B0200W: React.FC = () => {
         scrollable={isMobile}
       >
         <TabStripTab title="전체">
-          <GridContainer
-            style={{ width: "100%", overflow: "auto" }}
-          >
+          <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <GridTitleContainer className="ButtonContainer">
               <GridTitle>검사내역</GridTitle>
             </GridTitleContainer>
@@ -1476,9 +1478,7 @@ const QC_B0200W: React.FC = () => {
                 }}
               >
                 <SwiperSlide key={0}>
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <GridTitleContainer className="ButtonContainer2">
                       <GridTitle
                         style={{
@@ -1595,9 +1595,7 @@ const QC_B0200W: React.FC = () => {
                   </GridContainer>
                 </SwiperSlide>
                 <SwiperSlide key={1}>
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle
                         style={{
@@ -1706,9 +1704,7 @@ const QC_B0200W: React.FC = () => {
                   </GridContainer>
                 </SwiperSlide>
                 <SwiperSlide key={2}>
-                  <GridContainer
-                    style={{ width: "100%", overflow: "auto" }}
-                  >
+                  <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <GridTitleContainer className="ButtonContainer4">
                       <GridTitle style={{ marginBottom: "4px" }}>
                         <div>

@@ -17,10 +17,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { sessionItemState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import {
-  UseBizComponent,
-  UseGetValueFromSessionItem
-} from "../CommonFunction";
+import { UseBizComponent, UseGetValueFromSessionItem } from "../CommonFunction";
 import { FormComboBox, FormReadOnly } from "../Editors";
 import Window from "./WindowComponent/Window";
 
@@ -47,6 +44,9 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   // 세션 아이템
   const [sessionItem] = useRecoilState(sessionItemState);
 
@@ -183,6 +183,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={true}
+      onChangePostion={onChangePostion}
     >
       <Form
         onSubmit={handleSubmit}

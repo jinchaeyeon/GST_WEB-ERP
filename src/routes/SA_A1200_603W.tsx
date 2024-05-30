@@ -68,7 +68,12 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
+import {
+  heightstate,
+  isFilterHideState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1200_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

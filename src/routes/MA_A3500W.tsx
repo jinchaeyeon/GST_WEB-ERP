@@ -69,7 +69,12 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -2534,9 +2539,7 @@ const MA_A3500W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
@@ -2648,9 +2651,7 @@ const MA_A3500W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TabStrip
                   style={{
                     width: "100%",
@@ -3266,9 +3267,7 @@ const MA_A3500W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>처리정보</GridTitle>
                   <div

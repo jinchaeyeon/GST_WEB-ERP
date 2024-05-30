@@ -71,7 +71,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isDeviceWidthState, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
+import {
+  heightstate,
+  isFilterHideState,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

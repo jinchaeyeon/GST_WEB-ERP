@@ -28,7 +28,14 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Timelines from "../components/KPIcomponents/Timeline/Timelines";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  colorsName,
+  heightstate,
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 interface TList {
   planno: string;

@@ -44,7 +44,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -604,9 +604,7 @@ const CM_A1000W_617: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer>
                     <Button
@@ -701,9 +699,7 @@ const CM_A1000W_617: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <ButtonContainer
                   className="ButtonContainer2"
                   style={{ justifyContent: "space-between" }}

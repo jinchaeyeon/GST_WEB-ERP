@@ -403,7 +403,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-
 const MA_A7000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);

@@ -19,7 +19,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  dateformat
+  dateformat,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -115,7 +115,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 400,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     setVisible(false);
   };
@@ -344,6 +346,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       {/* <GridContainer width={`68%`}> */}
       <FormBoxWrap>

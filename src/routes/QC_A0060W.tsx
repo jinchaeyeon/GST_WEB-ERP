@@ -43,7 +43,7 @@ import {
   getBizCom,
   getHeight,
   handleKeyPressSearch,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -988,9 +988,7 @@ const QC_A0060W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>검사표준요약</GridTitle>
                   <ButtonContainer>
@@ -1106,9 +1104,7 @@ const QC_A0060W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>검사표준상세</GridTitle>
                 </GridTitleContainer>

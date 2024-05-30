@@ -136,6 +136,10 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const onClose = () => {
     getVisible(false);
   };
@@ -829,6 +833,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={true}
+      onChangePostion={onChangePostion}
     >
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>

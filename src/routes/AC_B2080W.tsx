@@ -25,6 +25,9 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -57,16 +60,11 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { useApi } from "../hooks/api";
 import {
   heightstate,
-  isDeviceWidthState,
   isLoading,
-  isMobileState,
-  sessionItemState,
+  isMobileState
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";

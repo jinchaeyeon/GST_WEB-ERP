@@ -50,7 +50,7 @@ import {
   getGridItemChangedData,
   isValidDate,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -160,6 +160,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
@@ -1130,6 +1133,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

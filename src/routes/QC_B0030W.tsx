@@ -43,7 +43,7 @@ import {
   getBizCom,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -959,9 +959,7 @@ const QC_B0030W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle
                     style={{
@@ -1131,9 +1129,7 @@ const QC_B0030W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle
                     style={{
@@ -1257,9 +1253,7 @@ const QC_B0030W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle style={{ marginBottom: "4px" }}>
                     <div>

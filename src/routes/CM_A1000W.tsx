@@ -1491,9 +1491,7 @@ const CM_A1000W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
@@ -1886,9 +1884,7 @@ const CM_A1000W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>메모(월 기준)</GridTitle>
                   <ButtonContainer

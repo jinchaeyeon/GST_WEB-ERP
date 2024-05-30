@@ -44,7 +44,7 @@ import {
   getBizCom,
   handleKeyPressSearch,
   setDefaultDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -56,7 +56,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import { isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

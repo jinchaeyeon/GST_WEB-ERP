@@ -82,7 +82,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   //메시지 조회
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -375,6 +377,7 @@ const KendoWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

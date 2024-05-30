@@ -54,7 +54,7 @@ import {
   UseGetValueFromSessionItem,
   chkScrollHandler,
   getGridItemChangedData,
-  getYn
+  getYn,
 } from "../../CommonFunction";
 import {
   EDIT_FIELD,
@@ -313,6 +313,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
 
   const loginResult = useRecoilValue(loginResultState);
   const role = loginResult ? loginResult.role : "";
@@ -1986,6 +1990,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <TabStrip
         selected={tabSelected}

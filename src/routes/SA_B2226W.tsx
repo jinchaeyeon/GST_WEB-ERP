@@ -34,7 +34,14 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import { colors, colorsName, heightstate, isDeviceWidthState, isLoading, isMobileState } from "../store/atoms";
+import {
+  colors,
+  colorsName,
+  heightstate,
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 
 interface TList {
   badcnt?: number;

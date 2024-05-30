@@ -87,7 +87,9 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -365,6 +367,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={true}
+      onChangePostion={onChangePostion}
     >
       <GridContainer height="calc(100% - 60px)">
         <Grid

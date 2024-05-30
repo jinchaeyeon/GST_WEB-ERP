@@ -41,7 +41,12 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let list: any[] = [];

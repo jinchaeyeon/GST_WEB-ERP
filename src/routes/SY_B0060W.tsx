@@ -30,11 +30,10 @@ import CenterCell from "../components/Cells/CenterCell";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc,
   chkScrollHandler,
   convertDateToStr,
   getHeight,
-  useGeoLocation,
+  useGeoLocation
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
@@ -70,7 +69,7 @@ const SY_B0060W: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
 
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -561,8 +560,7 @@ const pc = UseGetValueFromSessionItem("pc");
                 <>
                   <MainWorkStartEndContainer>
                     <TextContainer theme={"#2289c3"}>
-                      {workTimeDataResult.strtime} -
-                      {workTimeDataResult.endtime}
+                      {workTimeDataResult.strtime} -{workTimeDataResult.endtime}
                     </TextContainer>
                     <Button
                       themeColor={"primary"}

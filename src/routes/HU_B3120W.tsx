@@ -65,7 +65,12 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
+import {
+  heightstate,
+  isFilterHideState,
+  isLoading,
+  isMobileState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;

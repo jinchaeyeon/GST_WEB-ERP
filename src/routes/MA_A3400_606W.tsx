@@ -1186,9 +1186,7 @@ const MA_A3400_606W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>Keeping</GridTitle>
                   <ButtonContainer>
@@ -1271,9 +1269,7 @@ const MA_A3400_606W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>입력정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1346,9 +1342,7 @@ const MA_A3400_606W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>

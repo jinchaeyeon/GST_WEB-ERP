@@ -59,7 +59,12 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/MA_B7000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1271,9 +1276,7 @@ const MA_B7000: React.FC = () => {
               key={2}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>LOT별 상세이력</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>

@@ -52,7 +52,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,

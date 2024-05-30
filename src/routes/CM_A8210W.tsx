@@ -65,7 +65,12 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8210W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

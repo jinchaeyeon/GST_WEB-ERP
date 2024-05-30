@@ -21,16 +21,17 @@ import {
   TabStrip,
   TabStripTab,
 } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -57,7 +58,6 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -65,9 +65,8 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -80,12 +79,14 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 var index = 0;
 
 const DATA_ITEM_KEY_USE = "prsnnum";
@@ -246,7 +247,7 @@ const HU_B4000W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
 
   //FormContext받은 데이터 state
   const [prsnnm, setPrsnnm] = useState<string>("");
@@ -1348,7 +1349,7 @@ const pc = UseGetValueFromSessionItem("pc");
           setPage2(initialPageState);
           setPage3(initialPageState);
           setPage4(initialPageState);
-          if(swiper) {
+          if (swiper) {
             swiper.slideTo(0);
           }
         }
@@ -1364,7 +1365,7 @@ const pc = UseGetValueFromSessionItem("pc");
           resetAllGrid2();
           setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
           setPage5(initialPageState); // 페이지 초기화
-          if(swiper) {
+          if (swiper) {
             swiper.slideTo(0);
           }
         }
@@ -1995,34 +1996,36 @@ const pc = UseGetValueFromSessionItem("pc");
                         resizable={true}
                       >
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdUserAdj"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdUserAdj"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2117,30 +2120,34 @@ const pc = UseGetValueFromSessionItem("pc");
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdAdjDetail"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? subTotalFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2334,28 +2341,32 @@ const pc = UseGetValueFromSessionItem("pc");
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdJournalList"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? subTotalFooterCell3
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2416,34 +2427,36 @@ const pc = UseGetValueFromSessionItem("pc");
                         resizable={true}
                       >
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdUserAdj"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? gridSumQtyFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdUserAdj"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2499,30 +2512,34 @@ const pc = UseGetValueFromSessionItem("pc");
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdAdjDetail"
-                          ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? subTotalFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          ]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : NumberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? subTotalFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
@@ -2640,28 +2657,32 @@ const pc = UseGetValueFromSessionItem("pc");
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdJournalList"
-                            ]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <GridColumn
-                                    key={idx}
-                                    id={item.id}
-                                    field={item.fieldName}
-                                    title={item.caption}
-                                    width={item.width}
-                                    cell={
-                                      DateField.includes(item.fieldName)
-                                        ? DateCell
-                                        : undefined
-                                    }
-                                    footerCell={
-                                      item.sortOrder == 0
-                                        ? subTotalFooterCell3
-                                        : undefined
-                                    }
-                                  />
-                                )
-                            )}
+                            ]
+                              ?.sort(
+                                (a: any, b: any) => a.sortOrder - b.sortOrder
+                              )
+                              ?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      id={item.id}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        DateField.includes(item.fieldName)
+                                          ? DateCell
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? subTotalFooterCell3
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
@@ -2823,48 +2844,50 @@ const pc = UseGetValueFromSessionItem("pc");
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            className={
-                              requiredField.includes(item.fieldName)
-                                ? "required"
-                                : undefined
-                            }
-                            headerCell={
-                              requiredField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
-                            }
-                            cell={
-                              YearDateField.includes(item.fieldName)
-                                ? YearDateCell
-                                : DateField.includes(item.fieldName)
-                                ? DateCell
-                                : CustomComboField.includes(item.fieldName)
-                                ? CustomComboBoxCell
-                                : CommandField.includes(item.fieldName)
-                                ? ColumnCommandCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? AdjTotalFooterCell
-                                : NumberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdAdjList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              className={
+                                requiredField.includes(item.fieldName)
+                                  ? "required"
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              cell={
+                                YearDateField.includes(item.fieldName)
+                                  ? YearDateCell
+                                  : DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : CustomComboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : CommandField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? AdjTotalFooterCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </FormContext.Provider>

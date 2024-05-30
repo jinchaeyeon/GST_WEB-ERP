@@ -37,7 +37,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,

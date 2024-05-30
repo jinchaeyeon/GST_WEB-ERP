@@ -73,7 +73,12 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import SA_B2221W_603_Window from "../components/Windows/SA_B2221W_603_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2221W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

@@ -56,6 +56,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 600,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const DATA_ITEM_KEY = "num";
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -220,6 +223,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <GridContainer height={"calc(100% - 80px)"}>
           <Grid

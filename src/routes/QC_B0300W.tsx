@@ -41,7 +41,7 @@ import {
   getBizCom,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -53,7 +53,12 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  sessionItemState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -614,7 +619,7 @@ const QC_B0300W: React.FC = () => {
         </FormBox>
       </FormBoxWrap>
       <GridContainer
-        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
       >
         <ExcelExport
           data={mainDataResult.data}

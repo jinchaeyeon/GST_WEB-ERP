@@ -561,7 +561,7 @@ const KendoWindow = ({
       )}
       <GridContainer
         style={{
-          overflow: isMobile ? "auto" : "hidden",
+          overflow: "auto",
         }}
       >
         <Grid

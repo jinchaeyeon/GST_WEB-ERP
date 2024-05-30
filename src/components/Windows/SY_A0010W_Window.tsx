@@ -44,7 +44,7 @@ import {
   UseMessages,
   findMessage,
   getBizCom,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
@@ -177,7 +177,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
 
@@ -1175,6 +1177,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainerWrap>
         <GridContainer width={`68%`}>

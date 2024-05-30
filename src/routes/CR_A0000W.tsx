@@ -25,17 +25,22 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  UseParaPc,
   convertDateToStr,
   dateformat4,
-  getDayOfWeeks,
+  getDayOfWeeks
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 import Calender from "../components/DDGDcomponents/Calender";
 import CardBox from "../components/DDGDcomponents/CardBox";
 import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isLoading, isMobileState, loginResultState, sessionItemState } from "../store/atoms";
+import {
+  isDeviceWidthState,
+  isLoading,
+  isMobileState,
+  loginResultState,
+  sessionItemState,
+} from "../store/atoms";
 import { Iparameters } from "../store/types";
 interface Tsize {
   width: number;
@@ -60,7 +65,7 @@ const CR_A0000W: React.FC = () => {
   const [schedulerData, setSchedulerData] = useState<DataResult>(
     processQuery([], schedulerState)
   );
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const [selectedState, setSelectedState] = useState<string>("");
   const [ChangeDateVisible, setChangeDateVisible] = useState<boolean>(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
@@ -517,9 +522,7 @@ const pc = UseGetValueFromSessionItem("pc");
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{ width: "100%", overflow: "auto" }}
-              >
+              <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TitleContainer>
                   <Title>
                     우리집 강아지

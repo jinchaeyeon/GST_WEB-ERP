@@ -2627,9 +2627,7 @@ const PR_A1100W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile
-                    ? deviceHeight - height - height1 
-                    : "64vh",
+                  height: isMobile ? deviceHeight - height - height1 : "64vh",
                 }}
                 data={newData.map((item: { items: any[] }) => ({
                   ...item,
@@ -2804,7 +2802,7 @@ const PR_A1100W: React.FC = () => {
                       fileName="계획생산"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height2  }}
+                        style={{ height: deviceHeight - height - height2 }}
                         data={newData2.map((item: { items: any[] }) => ({
                           ...item,
                           items: item.items.map((row: any) => ({
@@ -2967,7 +2965,7 @@ const PR_A1100W: React.FC = () => {
                     fileName="계획생산"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2  }}
+                      style={{ height: deviceHeight - height - height2 }}
                       data={process(
                         materialDataResult.data.map((row) => ({
                           ...row,

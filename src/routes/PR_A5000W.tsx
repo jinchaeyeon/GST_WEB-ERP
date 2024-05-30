@@ -60,7 +60,12 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import BarcodeWindow from "../components/Windows/PR_A5000W_Barcode_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/PR_A5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1213,9 +1218,7 @@ const PR_A5000W: React.FC = () => {
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <GridTitle>생산실적정보</GridTitle>
@@ -1336,9 +1339,7 @@ const PR_A5000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button

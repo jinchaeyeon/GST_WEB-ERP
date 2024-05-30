@@ -27,7 +27,7 @@ import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 import {
   UseGetValueFromSessionItem,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
@@ -65,6 +65,10 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 1050,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
@@ -677,6 +681,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridTitleContainer>
         <GridTitle>참석자</GridTitle>

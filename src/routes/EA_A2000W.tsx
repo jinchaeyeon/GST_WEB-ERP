@@ -1155,9 +1155,7 @@ const EA_A2000W: React.FC = () => {
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               {filters.appgb == "B" ? (
                 <GridTitleContainer className="ButtonContainer">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -1416,9 +1414,7 @@ const EA_A2000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
@@ -1532,9 +1528,7 @@ const EA_A2000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={2}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
@@ -1647,9 +1641,7 @@ const EA_A2000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={3}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <CommentsGrid
                 ref_key={filters2.appnum}
                 form_id={"EA_A2000W"}
@@ -1659,9 +1651,7 @@ const EA_A2000W: React.FC = () => {
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={4}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer>
                 <GridTitle>
                   <WordText

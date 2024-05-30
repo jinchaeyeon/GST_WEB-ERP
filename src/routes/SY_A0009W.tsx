@@ -15,7 +15,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Typography
+  Typography,
 } from "@mui/material";
 import { SvgIcon } from "@progress/kendo-react-common";
 import { Avatar } from "@progress/kendo-react-layout";

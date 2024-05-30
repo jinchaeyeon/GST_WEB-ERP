@@ -18,7 +18,7 @@ import {
   FilterBox,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -35,7 +35,7 @@ import {
   findMessage,
   getBizCom,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -464,7 +464,7 @@ const SY_A0120: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer
-        style={{ width: isMobile? "100%" : "100%", overflow: "auto" }}
+        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
       >
         <ExcelExport
           data={mainDataResult.data}

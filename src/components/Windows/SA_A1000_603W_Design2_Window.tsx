@@ -19,7 +19,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
-  numberWithCommas3
+  numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 import Window from "./WindowComponent/Window";
@@ -115,6 +115,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
@@ -1020,6 +1023,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap border={true}>
           <GridTitleContainer>

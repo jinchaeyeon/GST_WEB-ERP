@@ -55,11 +55,10 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
-  isDeviceWidthState,
   isLoading,
   isMobileState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
@@ -2985,9 +2984,7 @@ const BA_A0020W_603: React.FC = () => {
           }}
         >
           <SwiperSlide key={0}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>

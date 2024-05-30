@@ -23,13 +23,7 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
 import CryptoJS from "crypto-js";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -69,7 +63,7 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1017,6 +1011,10 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const pc = UseGetValueFromSessionItem("pc");
@@ -8332,6 +8330,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <TabStrip
           style={{ width: "100%", height: `calc(100% - 55px)` }}

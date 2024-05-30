@@ -11,8 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -39,7 +38,6 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -54,7 +52,12 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

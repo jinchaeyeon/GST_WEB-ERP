@@ -66,10 +66,12 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   heightstate,
+  isDeviceWidthState,
   isFilterHideState,
   isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
+  isMobileState,
   linkState,
   loginResultState,
   menuList,
@@ -77,8 +79,6 @@ import {
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
   unsavedNameState,
-  isMobileState,
-  isDeviceWidthState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -154,7 +154,8 @@ const PanelBarNavContainer = (props: any) => {
   const [formKey, setFormKey] = useState("");
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
-  const [routesDeviceHeight, setroutesDeviceHeight] = useRecoilState(heightstate);
+  const [routesDeviceHeight, setroutesDeviceHeight] =
+    useRecoilState(heightstate);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
@@ -170,11 +171,12 @@ const PanelBarNavContainer = (props: any) => {
   useEffect(() => {
     const handleWindowResize = () => {
       setDeviceWidth(document.documentElement.getBoundingClientRect().width);
-      const newIsMobile = document.documentElement.getBoundingClientRect().width <= 1200;
+      const newIsMobile =
+        document.documentElement.getBoundingClientRect().width <= 1200;
       setIsMobile(newIsMobile);
       if (newIsMobile) {
         setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
-      } else {        
+      } else {
         setIsFilterHideStates(false); // 데스크톱 열린 상태로 설정
       }
     };
@@ -207,8 +209,7 @@ const PanelBarNavContainer = (props: any) => {
 
   // 새로고침하거나 Path 변경 시
   useEffect(() => {
-    const handleTabClose = (event: BeforeUnloadEvent) => {
-    };
+    const handleTabClose = (event: BeforeUnloadEvent) => {};
 
     const handleUnload = () => {
       // unsavedAttadatnums가 있으면 삭제처리
@@ -228,7 +229,7 @@ const PanelBarNavContainer = (props: any) => {
       unlisten();
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("unload", handleUnload);
-      if(isMobile) {
+      if (isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
         setroutesDeviceHeight(document.documentElement.clientHeight - 170);
@@ -896,8 +897,7 @@ const PanelBarNavContainer = (props: any) => {
             isMobileMenuOpend={isMobileMenuOpend}
             theme={"#2289c3"}
             style={{
-              paddingBottom:
-                document.documentElement.clientWidth <= 1200 ? "100px" : "",
+              paddingBottom: isMobile ? "100px" : "",
             }}
           >
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>

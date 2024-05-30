@@ -189,7 +189,7 @@ const CM_B1101W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -1044,9 +1044,7 @@ const CM_B1101W: React.FC = () => {
             </TabStrip>
           </SwiperSlide>
           <SwiperSlide key={1}>
-            <GridContainer
-              style={{ width: "100%", overflow: "auto" }}
-            >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>

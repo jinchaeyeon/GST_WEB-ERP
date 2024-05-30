@@ -12,8 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -40,7 +39,6 @@ import {
   findMessage,
   getBizCom,
   getHeight,
-  
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";

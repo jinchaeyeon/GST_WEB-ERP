@@ -34,7 +34,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   getBizCom,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -82,7 +82,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1100,
     height: isMobile == true ? deviceHeight : 700,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     setVisible(false);
   };
@@ -553,6 +555,7 @@ const KendoWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <GridContainer height="58vh">
           <GridTitleContainer>

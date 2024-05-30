@@ -1,6 +1,6 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -24,7 +24,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B6040W: React.FC = () => {
@@ -90,7 +90,6 @@ const AC_B6040W: React.FC = () => {
     location: sessionLocation,
     actdt: new Date(),
   });
-  
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
@@ -132,7 +131,7 @@ const AC_B6040W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) );
+        setUrl(URL.createObjectURL(blob));
       } else {
         setUrl("");
       }

@@ -15,8 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -41,15 +40,13 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
   getGridItemChangedData,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -64,7 +61,10 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -159,7 +159,7 @@ const AC_A1060W: React.FC = () => {
 
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //메시지 조회
@@ -215,12 +215,11 @@ const AC_A1060W: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
   useEffect(() => {
-    if (bizComponentData !== null) { 
+    if (bizComponentData !== null) {
       setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
       setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
       setLocationListData(getBizCom(bizComponentData, "L_BA002"));
       setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
-
     }
   }, [bizComponentData]);
 
@@ -1709,34 +1708,36 @@ const AC_A1060W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : checkBoxField.includes(item.fieldName)
-                          ? CheckBoxReadOnlyCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
+              customOptionData.menuCustomColumnOptions["grdList"]
+                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                ?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : checkBoxField.includes(item.fieldName)
+                            ? CheckBoxReadOnlyCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
           </Grid>
         </ExcelExport>
       </GridContainer>
@@ -1792,30 +1793,32 @@ const AC_A1060W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell2
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList2"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell2
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell2
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </TabStripTab>
@@ -1866,34 +1869,36 @@ const AC_A1060W: React.FC = () => {
               editField={EDIT_FIELD}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : radioField.includes(item.fieldName)
-                            ? CustomRadioCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell3
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell3
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList3"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? DateCell
+                              : radioField.includes(item.fieldName)
+                              ? CustomRadioCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell3
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell3
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </TabStripTab>
@@ -1944,32 +1949,34 @@ const AC_A1060W: React.FC = () => {
               editField={EDIT_FIELD}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList4"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : radioField.includes(item.fieldName)
-                            ? CustomRadioCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell4
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell4
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+                customOptionData.menuCustomColumnOptions["grdList4"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : radioField.includes(item.fieldName)
+                              ? CustomRadioCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell4
+                              : numberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell4
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
             </Grid>
           </ExcelExport>
         </TabStripTab>

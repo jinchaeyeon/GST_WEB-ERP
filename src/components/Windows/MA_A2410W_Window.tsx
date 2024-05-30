@@ -52,7 +52,7 @@ import {
   getGridItemChangedData,
   isValidDate,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -208,7 +208,9 @@ const DetailWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 800,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
@@ -1197,6 +1199,7 @@ const DetailWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>

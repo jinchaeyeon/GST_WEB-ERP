@@ -54,7 +54,12 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  sessionItemState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

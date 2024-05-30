@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { getSelectedState } from "@progress/kendo-react-treelist";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -24,11 +24,7 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  isFilterHideState2,
-  isFilterheightstate2,
-  isLoading,
-} from "../../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
@@ -78,7 +74,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </td>
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -88,12 +88,6 @@ const KendoWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
-  var height = getHeight(".k-window-titlebar");
-  var height2 = getHeight(".TitleContainer"); //FormBox부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-  const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -106,7 +100,20 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 600,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
+    setWebHeight(position.height - height - height2 - height3 - height5);
     setPosition(position);
   };
   const onClose = () => {
@@ -324,18 +331,12 @@ const KendoWindow = ({
         </WindowFilterContainer>
         <GridContainer
           style={{
-            overflow: isMobile ? "auto" : "hidden",
+            overflow: "auto",
           }}
         >
           <Grid
             style={{
-              height: isMobile
-                ? deviceHeight - height - height2 - height3 - height4
-                : position.height -
-                  height -
-                  height2 -
-                  height3 -
-                  isFilterheightstates2,
+              height: isMobile ? mobileheight : webheight,
             }}
             data={process(
               mainDataResult.data.map((row) => ({

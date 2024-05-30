@@ -810,7 +810,7 @@ const SA_A1100_603W: React.FC = () => {
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-          if(filters.query == true) {
+          if (filters.query == true) {
             setIsFilterHideStates(true);
             setChecked(true);
             setSubFilters((prev) => ({
@@ -914,10 +914,10 @@ const SA_A1100_603W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      setFilters((prev)=> ({
+      setFilters((prev) => ({
         ...prev,
-        query: false
-      }))
+        query: false,
+      }));
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows.map((item: any) => ({
         ...item,

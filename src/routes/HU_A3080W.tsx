@@ -32,7 +32,7 @@ import {
   GridContainer,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -56,7 +56,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -70,7 +70,12 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import HU_A3080W_Window from "../components/Windows/HU_A3080W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 

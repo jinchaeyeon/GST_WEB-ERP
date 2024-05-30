@@ -858,7 +858,7 @@ const CM_A5000W: React.FC = () => {
           });
           fetchHtmlDocument(selectedRow);
 
-          if(filters.query == true) {
+          if (filters.query == true) {
             setTabSelected(1);
             setFilters((prev) => ({
               ...prev,
@@ -1921,7 +1921,9 @@ const CM_A5000W: React.FC = () => {
               fileName="컨설팅(문의·답변)관리"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height - height1 : "61.5vh" }}
+                style={{
+                  height: isMobile ? deviceHeight - height - height1 : "61.5vh",
+                }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

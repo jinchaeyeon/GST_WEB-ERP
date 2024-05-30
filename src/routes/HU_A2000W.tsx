@@ -13,8 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -38,16 +37,14 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -178,12 +175,11 @@ const CustomColorCell = (props: GridCellProps) => {
 const HU_A2000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight (".ButtonContainer");
-
+  var height = getHeight(".ButtonContainer");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-const pc = UseGetValueFromSessionItem("pc");
+  const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -265,7 +261,7 @@ const pc = UseGetValueFromSessionItem("pc");
           ?.valueCode,
         workcls: defaultOption.find((item: any) => item.id == "workcls")
           ?.valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);

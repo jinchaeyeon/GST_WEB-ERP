@@ -20,7 +20,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStrWithTime2,
-  toDate2
+  toDate2,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import Window from "./WindowComponent/Window";
@@ -83,6 +83,9 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 350,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
@@ -327,6 +330,7 @@ const CopyWindow = ({
         positions={position}
         Close={onClose}
         modals={modal}
+        onChangePostion={onChangePostion}
       >
         <FormBoxWrap>
           <FormBox>
