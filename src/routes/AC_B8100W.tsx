@@ -25,15 +25,21 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8100W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const processApi = useApi();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -131,7 +137,7 @@ const AC_B8100W: React.FC = () => {
       const blob = new Blob([byteArray], {
         type: "application/pdf",
       });
-      setUrl(URL.createObjectURL(blob) );
+      setUrl(URL.createObjectURL(blob));
     } else {
       setUrl("");
     }
@@ -251,7 +257,7 @@ const AC_B8100W: React.FC = () => {
       <GridContainer>
         <div
           style={{
-            height: "82vh",
+            height: isMobile ? deviceHeight : "82vh",
             marginBottom: "10px",
           }}
         >

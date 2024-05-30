@@ -21,6 +21,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -28,16 +29,22 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isLoading, isMobileState, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".k-tabstrip-items-wrapper");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const processApi = useApi();
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -177,7 +184,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob) );
+        setUrl(URL.createObjectURL(blob));
       } else {
         setUrl("");
       }
@@ -232,7 +239,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl2(URL.createObjectURL(blob) );
+        setUrl2(URL.createObjectURL(blob));
       } else {
         setUrl2("");
       }
@@ -389,7 +396,7 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: "76vh",
+                height: isMobile ? deviceHeight - height : "76vh",
                 marginBottom: "10px",
               }}
             >
@@ -401,7 +408,7 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: "76vh",
+                height: isMobile ? deviceHeight - height : "76vh",
                 marginBottom: "10px",
               }}
             >

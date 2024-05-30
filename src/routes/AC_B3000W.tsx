@@ -52,6 +52,8 @@ import { Iparameters, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "idx";
 
 const AC_B3000W: React.FC = () => {
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
 
@@ -367,8 +369,7 @@ const AC_B3000W: React.FC = () => {
       )
     ).substring(0, 4) + "년이전"
   );
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+ 
   return (
     <>
       <TitleContainer>

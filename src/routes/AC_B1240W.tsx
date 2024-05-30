@@ -17,6 +17,9 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -41,7 +44,7 @@ import {
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -53,7 +56,11 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, sessionItemState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1240W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -96,6 +103,10 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 
 const AC_B1240W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -595,6 +606,10 @@ const AC_B1240W: React.FC = () => {
       pgNum: 1,
       acntcd: selectedRowData.acntcd,
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -614,6 +629,10 @@ const AC_B1240W: React.FC = () => {
       pgNum: 1,
       ackey: selectedRowData.ackey,
     }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
@@ -670,6 +689,9 @@ const AC_B1240W: React.FC = () => {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -808,152 +830,167 @@ const AC_B1240W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width="50%">
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="계정과목별보조부"
-          >
-            <Grid
-              style={{ height: "80vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <GridContainer>
-            <ExcelExport
-              data={mainDataResult2.data}
-              ref={(exporter) => {
-                _export2 = exporter;
-              }}
-              fileName="계정과목별보조부"
-            >
-              <Grid
-                style={{ height: "39.5vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
                 }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="계정과목별보조부"
               >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: deviceHeight }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
                   )}
-              </Grid>
-            </ExcelExport>
-          </GridContainer>
-          <GridContainer>
-            <GridContainer>
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
+                                  : undefined
+                              }
+                            ></GridColumn>
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                fileName="계정과목별보조부"
+              >
+                <Grid
+                  style={{ height: deviceHeight }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <ExcelExport
                 data={mainDataResult3.data}
                 ref={(exporter) => {
@@ -962,7 +999,7 @@ const AC_B1240W: React.FC = () => {
                 fileName="계정과목별보조부"
               >
                 <Grid
-                  style={{ height: "39.5vh" }}
+                  style={{ height: deviceHeight }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -1002,38 +1039,277 @@ const AC_B1240W: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"]?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)?.map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : CustomRadioField.includes(item.fieldName)
-                                ? CustomRadioCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell3
-                                : numberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell3
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
+                    customOptionData.menuCustomColumnOptions["grdList3"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : CustomRadioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell3
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell3
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
                 </Grid>
               </ExcelExport>
             </GridContainer>
-          </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width="50%">
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="계정과목별보조부"
+              >
+                <Grid
+                  style={{ height: "80vh" }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
+                                  : undefined
+                              }
+                            ></GridColumn>
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName="계정과목별보조부"
+                >
+                  <Grid
+                    style={{ height: "39.5vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell2
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <GridContainer>
+                <GridContainer>
+                  <ExcelExport
+                    data={mainDataResult3.data}
+                    ref={(exporter) => {
+                      _export3 = exporter;
+                    }}
+                    fileName="계정과목별보조부"
+                  >
+                    <Grid
+                      style={{ height: "39.5vh" }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      ref={gridRef3}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
+                      editField={EDIT_FIELD}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList3"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    numberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : CustomRadioField.includes(
+                                          item.fieldName
+                                        )
+                                      ? CustomRadioCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell3
+                                      : numberField.includes(item.fieldName)
+                                      ? gridSumQtyFooterCell3
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {accountWindowVisible && (
         <AccountWindow
           setVisible={setAccountWindowVisible}
