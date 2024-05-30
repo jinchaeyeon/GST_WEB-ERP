@@ -14,12 +14,17 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -35,6 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -46,9 +52,6 @@ import { useApi } from "../hooks/api";
 import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -88,7 +91,9 @@ const AC_B8040W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
-
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -838,6 +843,22 @@ const AC_B8040W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
@@ -846,7 +867,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -914,6 +935,32 @@ const AC_B8040W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult2.data}
                 ref={(exporter) => {
@@ -922,7 +969,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -992,6 +1039,22 @@ const AC_B8040W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer3">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "left" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult3.data}
                 ref={(exporter) => {
@@ -1000,7 +1063,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,

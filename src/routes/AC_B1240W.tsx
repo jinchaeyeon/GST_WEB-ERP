@@ -26,6 +26,8 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -43,8 +45,9 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -56,11 +59,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1240W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -105,6 +104,9 @@ let targetRowIndex3: null | number = null;
 const AC_B1240W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
+  var height2 = getHeight(".ButtonContainer2");
+  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -841,6 +843,22 @@ const AC_B1240W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
@@ -849,7 +867,7 @@ const AC_B1240W: React.FC = () => {
                 fileName="계정과목별보조부"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -917,6 +935,32 @@ const AC_B1240W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult2.data}
                 ref={(exporter) => {
@@ -925,7 +969,7 @@ const AC_B1240W: React.FC = () => {
                 fileName="계정과목별보조부"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -991,6 +1035,22 @@ const AC_B1240W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer3">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "left" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult3.data}
                 ref={(exporter) => {
@@ -999,7 +1059,7 @@ const AC_B1240W: React.FC = () => {
                 fileName="계정과목별보조부"
               >
                 <Grid
-                  style={{ height: deviceHeight }}
+                  style={{ height: deviceHeight - height3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,

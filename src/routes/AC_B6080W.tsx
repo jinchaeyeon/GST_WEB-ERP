@@ -1101,13 +1101,26 @@ const AC_B6080W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: deviceHeight - height - height1 }}
                   >
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1133,6 +1146,30 @@ const AC_B6080W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                      >
+                        상세정보 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1141,7 +1178,7 @@ const AC_B6080W: React.FC = () => {
                     fileName="미수금/미지급현황"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1290,7 +1327,17 @@ const AC_B6080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>상세정보</GridTitle>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        요약정보 보기
+                      </Button>
+                    </GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -1557,9 +1604,6 @@ const AC_B6080W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
@@ -1716,7 +1760,20 @@ const AC_B6080W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <Chart style={{ height: deviceHeight - height }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart style={{ height: deviceHeight - height - height1 }}>
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -1739,6 +1796,30 @@ const AC_B6080W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                      >
+                        상세정보 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1747,7 +1828,7 @@ const AC_B6080W: React.FC = () => {
                     fileName="미수금/미지급현황"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1896,7 +1977,17 @@ const AC_B6080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>상세정보</GridTitle>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        요약정보 보기
+                      </Button>
+                    </GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -2154,9 +2245,6 @@ const AC_B6080W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
@@ -2325,7 +2413,20 @@ const AC_B6080W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <Chart style={{ height: deviceHeight - height }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart style={{ height: deviceHeight - height - height1 }}>
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2350,6 +2451,30 @@ const AC_B6080W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                      >
+                        상세정보 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2358,7 +2483,7 @@ const AC_B6080W: React.FC = () => {
                     fileName="미수금/미지급현황"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2507,7 +2632,17 @@ const AC_B6080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>상세정보</GridTitle>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        요약정보 보기
+                      </Button>
+                    </GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -2767,9 +2902,6 @@ const AC_B6080W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
@@ -2926,7 +3058,20 @@ const AC_B6080W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <Chart style={{ height: deviceHeight - height }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        테이블 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Chart style={{ height: deviceHeight - height - height1 }}>
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2949,6 +3094,30 @@ const AC_B6080W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                      >
+                        차트 보기
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                      >
+                        상세정보 보기
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2957,7 +3126,7 @@ const AC_B6080W: React.FC = () => {
                     fileName="미수금/미지급현황"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: deviceHeight - height - height1 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3106,7 +3275,17 @@ const AC_B6080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>상세정보</GridTitle>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      >
+                        요약정보 보기
+                      </Button>
+                    </GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -3364,9 +3543,6 @@ const AC_B6080W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
