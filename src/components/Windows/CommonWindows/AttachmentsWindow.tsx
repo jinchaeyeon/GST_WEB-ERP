@@ -11,7 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -50,7 +50,10 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "idx";
 let idx = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -60,17 +63,29 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
-  var height = getHeight(".k-window-titlebar");
-  var height2 = getHeight(".TitleContainer");
-  var height3 = getHeight(".example");
-  var height4 = getHeight(".BottomContainer");
+
   let isMobile = deviceWidth <= 1200;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".TitleContainer");
+    height3 = getHeight(".example");
+    height4 = getHeight(".BottomContainer");
+    setMobileHeight(deviceHeight - height - height2 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height4);
+  }, []);
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height4);
+  };
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [attachmentNumber, setAttachmentNumber] = useState(para);
@@ -453,6 +468,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <ButtonContainer>
@@ -550,9 +566,7 @@ const KendoWindow = ({
       >
         <Grid
           style={{
-            height: !isMobile
-              ? position.height - height - height2 - height3 - height4
-              : deviceHeight - height - height2 - height4,
+            height: !isMobile ? webheight : mobileheight,
           }}
           data={process(
             mainDataResult.data.map((row) => ({

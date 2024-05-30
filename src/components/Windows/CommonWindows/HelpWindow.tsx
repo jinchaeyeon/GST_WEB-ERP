@@ -192,6 +192,9 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const [menulist, setMenuList] = useRecoilState(menuList);
 
   const onClose = () => {
@@ -840,6 +843,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       Close={onClose}
       modals={modal}
       className="print-hidden"
+      onChangePostion={onChangePostion}
     >
       {isMobile ? (
         <Swiper

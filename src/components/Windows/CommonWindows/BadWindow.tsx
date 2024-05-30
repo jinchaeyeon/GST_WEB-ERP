@@ -81,6 +81,11 @@ const Badwindow = ({
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 650,
   });
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -493,6 +498,7 @@ const Badwindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainer
         style={{

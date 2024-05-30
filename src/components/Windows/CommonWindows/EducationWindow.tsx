@@ -83,7 +83,9 @@ TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 460,
     height: isMobile == true ? deviceHeight : 700,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     setisFilterHideStates2(true);
     getVisible(false);
@@ -236,6 +238,7 @@ TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title></Title>

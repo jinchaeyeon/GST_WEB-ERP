@@ -39,7 +39,9 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const onClose = () => {
     if (
       pwExpInfo &&
@@ -151,6 +153,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <Form
         onSubmit={handleSubmit}

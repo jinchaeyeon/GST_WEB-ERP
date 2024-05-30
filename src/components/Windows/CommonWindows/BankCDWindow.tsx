@@ -61,7 +61,9 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
     width: isMobile == true ? deviceWidth : 570,
     height: isMobile == true ? deviceHeight : 800,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -212,6 +214,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
       positions={position}
       Close={onClose}
       modals={false}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title />

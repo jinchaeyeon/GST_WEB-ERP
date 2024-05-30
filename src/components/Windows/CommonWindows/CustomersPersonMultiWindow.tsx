@@ -61,6 +61,9 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   var height = getHeight(".k-window-titlebar"); //공통 해더
   var height2 = getHeight(".WindowButtonContainer"); //grid title부분
   var height3 = getHeight(".WindowButtonContainer2"); //grid title부분
@@ -379,6 +382,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainer
         style={{

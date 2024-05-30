@@ -149,12 +149,18 @@ const KendoWindow = ({
 
   const [placeholder, setPlaceholder] = useState("파일 선택");
 
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+  }
+
   return (
     <Window
       titles={"Email"}
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <GridContainer style={{ overflow: "auto" }}>
         <FormBoxWrap border={true} className="FormBoxWrap">

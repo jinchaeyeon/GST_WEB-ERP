@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -34,7 +34,6 @@ import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
 import {
   deletedNameState,
   isFilterHideState2,
-  isFilterheightstate2,
   isLoading,
   loginResultState,
   unsavedNameState,
@@ -126,7 +125,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -137,18 +143,57 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
-  const [isFilterheightstates2, setIsFilterheightstates2] =
-    useRecoilState(isFilterheightstate2); //필터 웹높이
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   let isMobile = deviceWidth <= 1200;
-  var height = getHeight(".k-window-titlebar"); //공통 해더
-  var height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-  var height3 = getHeight(".BottomContainer"); //하단 버튼부분
-  var height4 = getHeight(".WindowButtonContainer");
-  var height5 = getHeight(".WindowButtonContainer2");
-  var height6 = getHeight(".WindowButtonContainer3");
-  var height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".WindowButtonContainer");
+    height5 = getHeight(".WindowButtonContainer2");
+    height6 = getHeight(".WindowButtonContainer3");
+    height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height8 = getHeight(".filterBox2"); //필터 웹
+    setMobileHeight(
+      deviceHeight - height - height2 - height3 - height4 - height7
+    );
+    setMobileHeight2(
+      deviceHeight - height - height2 - height3 - height5 - height7
+    );
+    setMobileHeight3(
+      deviceHeight - height - height2 - height3 - height6 - height7
+    );
+    setWebHeight(
+      (position.height - height - height2 - height3 - height8) / 2 - height4
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height8) / 2 - height5
+    );
+    setWebHeight3(
+      (position.height - height - height2 - height3 - height8) / 2 - height6
+    );
+  }, []);
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height8) / 2 - height4
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height8) / 2 - height5
+    );
+    setWebHeight3(
+      (position.height - height - height2 - height3 - height8) / 2 - height6
+    );
+  };
+  
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({
@@ -1457,6 +1502,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title />
@@ -1609,13 +1655,7 @@ const KendoWindow = ({
                     mode: "single",
                   }}
                   style={{
-                    height:
-                      deviceHeight -
-                      height -
-                      height2 -
-                      height3 -
-                      height4 -
-                      height7,
+                    height: mobileheight,
                   }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
@@ -1735,13 +1775,7 @@ const KendoWindow = ({
                     mode: "single",
                   }}
                   style={{
-                    height:
-                      deviceHeight -
-                      height -
-                      height2 -
-                      height3 -
-                      height5 -
-                      height7,
+                    height: mobileheight2,
                   }}
                   onSelectionChange={onSelectionChange2}
                   //스크롤 조회 기능
@@ -1826,13 +1860,7 @@ const KendoWindow = ({
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height:
-                      deviceHeight -
-                      height -
-                      height2 -
-                      height3 -
-                      height6 -
-                      height7,
+                    height: mobileheight3,
                   }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
@@ -1981,10 +2009,7 @@ const KendoWindow = ({
                   mode: "single",
                 }}
                 style={{
-                  height:
-                    (position.height - height - height2 - height3 - height7) /
-                      2 -
-                    height4,
+                  height: webheight,
                 }}
                 onSelectionChange={onSelectionChange}
                 //스크롤 조회 기능
@@ -2074,10 +2099,7 @@ const KendoWindow = ({
                   mode: "single",
                 }}
                 style={{
-                  height:
-                    (position.height - height - height2 - height3 - height7) /
-                      2 -
-                    height5,
+                  height: webheight2,
                 }}
                 onSelectionChange={onSelectionChange2}
                 //스크롤 조회 기능
@@ -2163,10 +2185,7 @@ const KendoWindow = ({
                   {}
                 )}
                 style={{
-                  height:
-                    (position.height - height - height2 - height3 - height7) /
-                      2 -
-                    height6,
+                  height: webheight3,
                 }}
                 sortable={true}
                 groupable={false}

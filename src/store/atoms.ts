@@ -165,11 +165,6 @@ export const isFilterheightstate = atom<number>({
   default: 0,
 });
 
-export const isFilterheightstate2 = atom<number>({
-  key: "isFilterheightstate2",
-  default: 0,
-});
-
 export const isFilterHideState = atom<boolean>({
   key: "isFilterHideState",
   default: document.documentElement.clientWidth <= 1200,

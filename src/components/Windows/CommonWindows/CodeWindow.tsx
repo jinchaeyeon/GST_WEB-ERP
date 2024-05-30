@@ -70,7 +70,9 @@ const KendoWindow = ({
     left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
   });
-
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   const setLoading = useSetRecoilState(isLoading);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -279,6 +281,7 @@ const KendoWindow = ({
       positions={position}
       Close={onClose}
       modals={modal}
+      onChangePostion={onChangePostion}
     >
       <TitleContainer className="TitleContainer">
         <Title />

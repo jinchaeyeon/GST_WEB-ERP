@@ -9,7 +9,7 @@ import {
   windowIcon,
   windowRestoreIcon,
 } from "@progress/kendo-svg-icons";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { IWindowPosition } from "../../../hooks/interfaces";
 
 type TChildren = {
@@ -19,6 +19,7 @@ type TChildren = {
   modals: any;
   Close(): void;
   className?: string;
+  onChangePostion(position: any): void;
 };
 
 const minButton = (props: any) => {
@@ -73,6 +74,7 @@ const Window = ({
   modals,
   Close,
   className = "",
+  onChangePostion,
 }: TChildren) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -80,11 +82,26 @@ const Window = ({
     "MINIMIZED" | "full" | "DEFAULT" | undefined
   >("DEFAULT");
   const [position, setPosition] = useState<IWindowPosition>(positions);
+  const [defaultPositions, setDefaultPostions] = useState<IWindowPosition>();
+  useEffect(() => {
+    if (
+      (defaultPositions == undefined || defaultPositions == null) &&
+      positions.width != 0
+    )
+      setDefaultPostions(positions);
+  }, []);
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
+    onChangePostion({ ...position, left: event.left, top: event.top });
   };
   const handleResize = (event: WindowMoveEvent) => {
     setPosition({
+      left: event.left,
+      top: event.top,
+      width: event.width,
+      height: event.height,
+    });
+    onChangePostion({
       left: event.left,
       top: event.top,
       width: event.width,
@@ -98,6 +115,7 @@ const Window = ({
   const handleStageChange = (e: WindowActionsEvent) => {
     if (e.state == "FULLSCREEN" && windowStage != "full") {
       setWindowStage("full");
+      setDefaultPostions(positions);
       setPosition({
         top: 0,
         left: 0,
@@ -112,6 +130,12 @@ const Window = ({
         width: deviceWidth,
         height: deviceHeight,
       }));
+      onChangePostion({
+        top: 0,
+        left: 0,
+        width: deviceWidth,
+        height: deviceHeight,
+      });
     } else if (e.state == "MINIMIZED") {
       setWindowStage("MINIMIZED");
       e.target.setState((prev) => ({
@@ -120,15 +144,41 @@ const Window = ({
       }));
     } else if (windowStage == "full") {
       setWindowStage("DEFAULT");
-      setPosition(positions);
+      setPosition(defaultPositions == undefined ? positions : defaultPositions);
       e.target.setState((prev) => ({
         ...prev,
         stage: "DEFAULT",
-        top: positions.top,
-        left: positions.left,
-        width: positions.width,
-        height: positions.height,
+        top:
+          defaultPositions == undefined ? positions.top : defaultPositions.top,
+        left:
+          defaultPositions == undefined
+            ? positions.left
+            : defaultPositions.left,
+        width:
+          defaultPositions == undefined
+            ? positions.width
+            : defaultPositions.width,
+        height:
+          defaultPositions == undefined
+            ? positions.height
+            : defaultPositions.height,
       }));
+      onChangePostion({
+        top:
+          defaultPositions == undefined ? positions.top : defaultPositions.top,
+        left:
+          defaultPositions == undefined
+            ? positions.left
+            : defaultPositions.left,
+        width:
+          defaultPositions == undefined
+            ? positions.width
+            : defaultPositions.width,
+        height:
+          defaultPositions == undefined
+            ? positions.height
+            : defaultPositions.height,
+      });
     } else if (windowStage == "MINIMIZED") {
       setWindowStage("DEFAULT");
       e.target.setState((prev) => ({
