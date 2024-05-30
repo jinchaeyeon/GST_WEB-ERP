@@ -1,6 +1,6 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -24,12 +24,13 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const AC_B6040W: React.FC = () => {
   const processApi = useApi();
-
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -221,7 +222,7 @@ const AC_B6040W: React.FC = () => {
       <GridContainer>
         <div
           style={{
-            height: "82vh",
+            height: isMobile ? deviceHeight : "82vh",
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}
