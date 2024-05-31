@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import DaumPostcode from "react-daum-postcode";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { getHeight } from "../../CommonFunction";
 import Window from "../WindowComponent/Window";
 
 type IWindow = {
@@ -11,7 +12,7 @@ type IWindow = {
 };
 
 const DATA_ITEM_KEY = "prsnnum";
-
+var height = 0;
 const ZipCodeWindow = ({
   setVisible,
   setData,
@@ -23,10 +24,18 @@ const ZipCodeWindow = ({
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 510) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 530) / 2,
     width: isMobile == true ? deviceWidth : 600,
-    height: isMobile == true ? deviceHeight : 510,
+    height: isMobile == true ? deviceHeight : 530,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+
+    setMobileHeight(deviceHeight - height);
+    setWebHeight(position.height - height);
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -68,7 +77,7 @@ const ZipCodeWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <DaumPostcode onComplete={handlePostCode} />
+      <DaumPostcode onComplete={handlePostCode} style={{ height: isMobile? mobileheight : webheight }} />
     </Window>
   );
 };

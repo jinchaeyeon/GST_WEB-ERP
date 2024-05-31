@@ -14,14 +14,20 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { getBooleanFromYn, getYn, validator } from "../../CommonFunction";
+import {
+  getBooleanFromYn,
+  getHeight,
+  getYn,
+  validator,
+} from "../../CommonFunction";
 import { FormCheckBox, FormNumericTextBox } from "../../Editors";
 import Window from "../WindowComponent/Window";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
 };
-
+var height = 0;
+var height2 = 0;
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -33,8 +39,20 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     height: isMobile == true ? deviceHeight : 520,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  React.useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
   const onClose = () => {
@@ -202,7 +220,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true} className="sys-opt-wnd-form-elem">
-            <fieldset className={"k-form-fieldset"}>
+            <fieldset
+              className={"k-form-fieldset"}
+              style={{ height: isMobile ? mobileheight : webheight }}
+            >
               <button
                 id="valueChanged"
                 style={{ display: "none" }}
@@ -282,7 +303,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 />
               </FieldWrap>
             </fieldset>
-            <BottomContainer>
+            <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"} icon="save">
                   저장
