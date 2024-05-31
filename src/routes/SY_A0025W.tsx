@@ -80,7 +80,12 @@ const SY_A0025W: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const userId = UseGetValueFromSessionItem("user_id");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
 
   UsePermissions(setPermissions);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

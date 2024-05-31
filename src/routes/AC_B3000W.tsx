@@ -45,11 +45,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
@@ -61,7 +57,12 @@ const AC_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -373,7 +374,7 @@ const AC_B3000W: React.FC = () => {
       )
     ).substring(0, 4) + "년이전"
   );
- 
+
   return (
     <>
       <TitleContainer>
@@ -554,7 +555,7 @@ const AC_B3000W: React.FC = () => {
       <LandscapePrint>
         <GridContainer
           style={{
-            height: deviceHeight,
+            height: isMobile ? deviceHeight : "80vh",
             overflow: "auto",
             border: "solid 1px #e6e6e6",
             display: isMobile ? "" : "flex",

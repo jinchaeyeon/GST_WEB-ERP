@@ -196,7 +196,12 @@ const AC_A0090W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   var height = getHeight(".ButtonContainer");
   var height1 = getHeight(".ButtonContainer2");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //엑셀 내보내기
   let _export: any;

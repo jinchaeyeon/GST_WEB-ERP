@@ -102,9 +102,6 @@ const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
 const BA_B0080W = lazy(() => import("./routes/BA_B0080W"));
 const CHAT_A0001W = lazy(() => import("./routes/CHAT_A0001W"));
 const CHAT_A0002W = lazy(() => import("./routes/CHAT_A0002W"));
-const CHAT_TEST_TRAVEL_BOT = lazy(
-  () => import("./routes/CHAT_TEST_TRAVEL_BOT")
-);
 const CM_A0000W = lazy(() => import("./routes/CM_A0000W"));
 const CM_A1000W = lazy(() => import("./routes/CM_A1000W"));
 const CM_A1000W_617 = lazy(() => import("./routes/CM_A1000W_617"));
@@ -895,8 +892,6 @@ const AppInner: React.FC = () => {
       return CHAT_A0001W;
     } else if (str == "CHAT_A0002W") {
       return CHAT_A0002W;
-    } else if (str == "CHAT_TEST_TRAVEL_BOT") {
-      return CHAT_TEST_TRAVEL_BOT;
     } else if (str == "GANTT") {
       return GANTT;
     } else if (str == "SA_B3600W") {
@@ -1157,11 +1152,6 @@ const AppInner: React.FC = () => {
                     <AuthRoute
                       path="/CHAT_A0002W"
                       component={CHAT_A0002W}
-                      exact
-                    />
-                    <AuthRoute
-                      path="/CHAT_TEST_TRAVEL_BOT"
-                      component={CHAT_TEST_TRAVEL_BOT}
                       exact
                     />
                     {/* 연구개발 */}

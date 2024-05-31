@@ -80,7 +80,12 @@ const SA_B1000W_603: React.FC = () => {
   const processApi = useApi();
   let gridRef: any = useRef(null);
   const idGetter = getter(DATA_ITEM_KEY);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   //커스텀 옵션 조회

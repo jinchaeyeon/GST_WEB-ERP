@@ -35,7 +35,12 @@ var index = 0;
 let deletedMainRows: any[] = [];
 
 const PR_A2200W: React.FC = () => {
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);

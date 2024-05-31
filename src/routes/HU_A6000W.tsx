@@ -82,7 +82,12 @@ const HU_A6000W: React.FC = () => {
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(

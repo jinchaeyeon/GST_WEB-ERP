@@ -72,7 +72,12 @@ const QC_B9020_615W: React.FC = () => {
   const processApi = useApi();
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회

@@ -127,7 +127,12 @@ const MA_B7200W: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [group2, setGroup2] = React.useState(initialGroup2);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");

@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
+import logoBIO from "./img/Biotoxtech.png";
 import loginBgSrc from "./img/login_bg.png";
 import logoDDGD from "./img/login_ddgd.png";
-import logoBIO from "./img/Biotoxtech.png";
 import logoWEBERP from "./img/login_web_erp.png";
 import logoSrc from "./img/logo.png";
 import processStsSrc from "./img/process_16.png";
@@ -423,9 +423,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   justify-content: space-between;
   flex-direction: ${(props) => props.flexDirection};
   max-width: ${(props) =>
-    typeof props.maxWidth == "number"
-      ? props.maxWidth + "px"
-      : props.maxWidth};
+    typeof props.maxWidth == "number" ? props.maxWidth + "px" : props.maxWidth};
   height: ${(props) =>
     typeof props.height == "number" ? props.height + "px" : props.height};
 
@@ -529,7 +527,7 @@ export const GridContainer = styled.div<TGridContainer>`
 
   @media (max-width: ${(props) =>
       props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
-    width: auto;
+    width: 100%;
 
     .k-chart.QC_A0120_TAB1 {
       width: 100%;
@@ -548,9 +546,9 @@ export const GridTitle = styled.h3`
   font-weight: 600;
   color: #424242;
   margin-bottom: 10px;
-    @media (max-width: 1200px) {
-      margin-top: 5px;
-      text-align: left;
+  @media (max-width: 1200px) {
+    margin-top: 5px;
+    text-align: left;
   }
 `;
 
@@ -896,13 +894,13 @@ export const Gnv = styled.div<TGnv>`
 
   border-right: 1px solid rgb(235, 235, 235);
   background-color: #fff;
-    /* 메뉴 고정 추가 */
+  /* 메뉴 고정 추가 */
   height: 100vh;
   position: fixed;
   overflow: scroll;
   ::-webkit-scrollbar {
-  display: none;
-}
+    display: none;
+  }
   .logout span {
     color: #656565;
   }
@@ -962,15 +960,13 @@ export const Content = styled.div<ContentType>`
     100% - ${(props) => (props.isMenuOpen ? GNV_WIDTH : CLOSED_GNV_WIDTH)}px
   );
   /* 컨테이너 고정 추가 */
-  left: calc(
-    ${(props) => (props.isMenuOpen ? GNV_WIDTH : '25')}px
-  );;
+  left: calc(${(props) => (props.isMenuOpen ? GNV_WIDTH : "25")}px);
   height: 97vh;
   position: fixed;
   overflow: scroll;
   ::-webkit-scrollbar {
-  display: none;
-}
+    display: none;
+  }
   /*=================================================
   미디어 쿼리
   ##Device = 모바일
@@ -990,10 +986,12 @@ type FilterType = {
 export const PageWrap = styled.div<FilterType>`
   padding: 0 15px;
   height: 100%;
-  
+
   @media (max-width: 1200px) {
     min-height: auto;
-    height: calc(100vh + ${(props) => (props.isMenuOpen ? props.isMenuOpen : 0)}px);
+    height: calc(
+      100vh + ${(props) => (props.isMenuOpen ? props.isMenuOpen : 0)}px
+    );
     position: relative;
     padding-top: 50px;
   }
@@ -1001,7 +999,7 @@ export const PageWrap = styled.div<FilterType>`
 
 export const Footer = styled.div`
   width: 100%;
-  height: 30px; 
+  height: 30px;
   border-top: solid 1px #ebebeb;
   position: fixed;
   bottom: 0;
@@ -1119,7 +1117,7 @@ export const Logo = styled.div<TLogo>`
     props.name == "GST WEB"
       ? logoWEBERP
       : props.name == "CRM_DDGD"
-      ? logoDDGD  
+      ? logoDDGD
       : props.name == "BIO"
       ? logoBIO
       : logoWEBERP});

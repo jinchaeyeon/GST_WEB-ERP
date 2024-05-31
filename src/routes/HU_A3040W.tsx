@@ -442,7 +442,12 @@ const HU_A3040W: React.FC = () => {
   const [prsnnm6, setPrsnnm6] = useState<string>("");
   const [prsnnum6, setPrsnnum6] = useState<string>("");
   const [dptcd6, setDptcd6] = useState<string>("");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

@@ -62,7 +62,12 @@ const PR_A3000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);

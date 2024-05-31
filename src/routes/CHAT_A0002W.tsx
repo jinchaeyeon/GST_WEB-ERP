@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -33,7 +33,7 @@ import {
 } from "../components/CommonString";
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { columns } from "../store/columns/CHAT_A0002_C";
 import { Iparameters, TPermissions } from "../store/types";
 
@@ -73,8 +73,15 @@ const headerSelectionValue = (dataState: any, selectedState: any) => {
 let deletedMainRows: IQnaData[] = [];
 
 const CHAT_BOT_MNG: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const setLoading = useSetRecoilState(isLoading);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const processApi = useApi();
 
@@ -445,40 +452,40 @@ const CHAT_BOT_MNG: React.FC = () => {
     <>
       <TitleContainer>
         <Title>Chatbot 관리</Title>
-
-        {permissions && (
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-              disabled={permissions.save ? false : true}
-            ></Button>
-            <Button
-              onClick={onRemoveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-              disabled={permissions.save ? false : true}
-            ></Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-              title="저장"
-              disabled={permissions.save ? false : true}
-            ></Button>
-          </ButtonContainer>
-        )}
+        <ButtonContainer>
+          <Button
+            onClick={onAddClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="plus"
+            title="행 추가"
+            disabled={permissions.save ? false : true}
+          ></Button>
+          <Button
+            onClick={onRemoveClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="minus"
+            title="행 삭제"
+            disabled={permissions.save ? false : true}
+          ></Button>
+          <Button
+            onClick={onSaveClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="save"
+            title="저장"
+            disabled={permissions.save ? false : true}
+          ></Button>
+        </ButtonContainer>
       </TitleContainer>
 
       <GridContainer>
         <TreeList
-          style={{ maxHeight: "510px", overflow: "auto" }}
+          style={{
+            height: isMobile ? deviceHeight : "90vh",
+            overflow: "auto",
+          }}
           data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
             extendDataItem(item, SUB_ITEMS_FIELD, {
               selected: selectedState[idGetter(item)],

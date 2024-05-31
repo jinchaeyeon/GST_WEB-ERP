@@ -146,7 +146,12 @@ const AC_A0030W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   // const [loginResult] = useRecoilState(loginResultState);
   // const companyCode = loginResult ? loginResult.companyCode : "";
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const PAGE_SIZE = 40;
   let gridRef: any = useRef(null); // 요약정보 그리드

@@ -101,7 +101,12 @@ const SY_A0500W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const layout = useMemo(() => new Layout(), []);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");

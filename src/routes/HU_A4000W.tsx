@@ -430,7 +430,12 @@ const HU_A4000W: React.FC = () => {
   var height3 = getHeight(".k-tabstrip-items-wrapper");
   var height4 = getHeight(".ButtonContainer4");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const idGetter = getter(DATA_ITEM_KEY);

@@ -870,7 +870,12 @@ const SA_A1000_603W: React.FC = () => {
     });
   };
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const [mainDataState, setMainDataState] = useState<State>({

@@ -46,11 +46,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -78,7 +74,12 @@ const AC_B5080W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -1153,7 +1154,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1238,7 +1239,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -1332,7 +1333,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
@@ -1423,7 +1424,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,
@@ -1520,7 +1521,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult5.data.map((row) => ({
                     ...row,
@@ -1608,7 +1609,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult6.data.map((row) => ({
                     ...row,
@@ -1705,7 +1706,7 @@ const AC_B5080W: React.FC = () => {
               fileName="계산서&전표체크"
             >
               <Grid
-                style={{ height: deviceHeight - height }}
+                style={{ height: isMobile ? deviceHeight - height : "75vh" }}
                 data={process(
                   mainDataResult7.data.map((row) => ({
                     ...row,

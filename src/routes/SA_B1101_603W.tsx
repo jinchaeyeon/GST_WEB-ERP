@@ -61,7 +61,12 @@ const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
 const numberField = ["totamt"];
 
 const SA_B1101_603W: React.FC = () => {
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

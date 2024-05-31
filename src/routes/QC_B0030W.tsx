@@ -91,7 +91,12 @@ const QC_B0030W: React.FC = () => {
   var height3 = getHeight(".ButtonContainer3");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   //메시지 조회

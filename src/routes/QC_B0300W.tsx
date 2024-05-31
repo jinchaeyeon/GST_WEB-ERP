@@ -85,7 +85,12 @@ const QC_B0300W: React.FC = () => {
   var height2 = getHeight(".ButtonContainer2");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const pc = UseGetValueFromSessionItem("pc");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

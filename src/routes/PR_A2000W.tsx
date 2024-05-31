@@ -62,7 +62,12 @@ const PR_A2000W: React.FC = () => {
     "start"
   );
   const [stopStartTime, setStopStartTime] = useState(null);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   //커스텀 옵션 조회

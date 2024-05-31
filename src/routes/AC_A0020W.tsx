@@ -783,7 +783,12 @@ const AC_A0020W: React.FC = () => {
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");

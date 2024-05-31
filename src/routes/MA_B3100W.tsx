@@ -116,7 +116,12 @@ const MA_B3100: React.FC = () => {
   const MAX_CHARACTERS = 6;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");

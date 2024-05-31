@@ -38,7 +38,12 @@ const AC_B8080W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const processApi = useApi();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

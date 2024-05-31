@@ -94,7 +94,12 @@ const QC_A0060W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);

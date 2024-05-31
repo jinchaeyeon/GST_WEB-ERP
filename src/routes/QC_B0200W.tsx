@@ -105,7 +105,12 @@ const QC_B0200W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";

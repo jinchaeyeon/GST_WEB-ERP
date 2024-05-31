@@ -193,7 +193,12 @@ const PR_A1100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [group, setGroup] = React.useState(initialGroup);
   const [group2, setGroup2] = React.useState(initialGroup);

@@ -98,7 +98,12 @@ const AC_A5020W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
   const idGetter = getter(DATA_ITEM_KEY);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A5020W", setCustomOptionData);

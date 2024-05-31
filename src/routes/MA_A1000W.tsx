@@ -96,7 +96,12 @@ const MA_A1000W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   // 삭제할 첨부파일 리스트를 담는 함수

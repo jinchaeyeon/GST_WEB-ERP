@@ -74,7 +74,12 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const CM_A3100W: React.FC = () => {
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A3100W", setMessagesData);

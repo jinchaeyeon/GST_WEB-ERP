@@ -114,7 +114,12 @@ const MA_B7000: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   // 권한
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   //커스텀 옵션 조회

@@ -20,6 +20,11 @@ code {
     monospace !important;
 }
 
+.k-chat {
+  margin : 10px !important;
+  max-width: none !important;
+  height: auto !important;
+}
 .k-window-content .k-grid {
   margin : 0px !important;
 }

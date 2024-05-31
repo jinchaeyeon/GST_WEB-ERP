@@ -65,7 +65,12 @@ const HU_B3220W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const processApi = useApi();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);

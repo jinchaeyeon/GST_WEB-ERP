@@ -159,7 +159,12 @@ const SA_A1001_603W: React.FC = () => {
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A1001_603W", setCustomOptionData);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);

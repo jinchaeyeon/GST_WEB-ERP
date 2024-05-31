@@ -97,7 +97,12 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 const Page: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");

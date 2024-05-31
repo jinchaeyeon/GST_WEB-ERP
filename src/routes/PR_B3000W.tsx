@@ -79,7 +79,12 @@ const PR_B3000W: React.FC = () => {
   const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   let deviceHeightWindow = document.documentElement.clientHeight;
   var height = getHeight(".ButtonContainer");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,

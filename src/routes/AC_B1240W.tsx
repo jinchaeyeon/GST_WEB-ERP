@@ -117,7 +117,12 @@ const AC_B1240W: React.FC = () => {
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
   const processApi = useApi();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

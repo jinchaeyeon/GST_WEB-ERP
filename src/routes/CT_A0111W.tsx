@@ -50,7 +50,12 @@ const CT_A0111W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const setLoading = useSetRecoilState(isLoading);
@@ -394,7 +399,7 @@ const CT_A0111W: React.FC = () => {
       <LandscapePrint>
         <GridContainer
           style={{
-            height: deviceHeight,
+            height: isMobile ? deviceHeight : "80vh",
             overflow: "auto",
             border: "solid 1px #e6e6e6",
             display: isMobile ? "" : "flex",

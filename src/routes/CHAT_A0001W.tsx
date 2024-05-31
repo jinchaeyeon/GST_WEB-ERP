@@ -4,10 +4,10 @@ import {
 } from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useState } from "react";
-import {
-  UseGetValueFromSessionItem
-} from "../components/CommonFunction";
+import { useRecoilState } from "recoil";
+import { UseGetValueFromSessionItem } from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
+import { isDeviceWidthState, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 interface IData {
@@ -64,7 +64,9 @@ const CHAT_BOT: React.FC = () => {
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
   const userid = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceHeight = document.documentElement.clientHeight - 50;
+  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";
     const welcomeAnswer = "무엇이든 물어보세요.";
@@ -207,13 +209,19 @@ const CHAT_BOT: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ height: "80vh", display: "flex" }}>
+    <div
+      style={{
+        height: isMobile ? deviceHeight : "90vh",
+        display: "flex",
+        overflow: "auto",
+      }}
+    >
       <Chat
         user={user}
         messages={messages}
         onMessageSend={addNewMessage}
         placeholder={"Type a message..."}
-        width={400}
+        width={deviceWidth}
       />
     </div>
   );

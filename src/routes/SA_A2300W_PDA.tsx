@@ -55,7 +55,12 @@ const SA_A2300_PDA: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
 
-  // const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  //   const [permissions, setPermissions] = useState<TPermissions>({
+//    save: false,
+//    print: false,
+//    view: false,
+//    delete: false,
+//  });
   // UsePermissions(setPermissions);
   const [permissions, setPermissions] = useState<TPermissions | null>({
     save: true,

@@ -68,7 +68,12 @@ const numberField = ["cnt", "amt", "conamt", "stramt", "janamt"];
 const numberField2 = ["amt", "stramt", "janamt"];
 
 const SA_B2201W_603: React.FC = () => {
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);

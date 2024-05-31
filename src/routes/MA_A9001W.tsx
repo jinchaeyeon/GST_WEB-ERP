@@ -168,7 +168,12 @@ const MA_A9001W: React.FC = () => {
 
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [tabSelected, setTabSelected] = React.useState(0);
   //메시지 조회

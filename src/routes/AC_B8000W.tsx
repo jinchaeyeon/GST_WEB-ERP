@@ -215,7 +215,12 @@ const AC_B8000W: React.FC = () => {
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_B8000W", setCustomOptionData);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

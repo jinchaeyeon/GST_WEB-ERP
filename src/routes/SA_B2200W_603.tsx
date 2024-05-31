@@ -78,7 +78,12 @@ const SA_B2200W_603: React.FC = () => {
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);

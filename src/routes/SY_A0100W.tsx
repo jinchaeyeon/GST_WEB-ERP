@@ -82,7 +82,12 @@ const App: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   let gridRef: any = useRef(null);
   const idGetter = getter(DATA_ITEM_KEY);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);

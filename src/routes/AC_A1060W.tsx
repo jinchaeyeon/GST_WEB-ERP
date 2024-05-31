@@ -121,7 +121,12 @@ const AC_A1060W: React.FC = () => {
   var height3 = getHeight(".k-tabstrip-items-wrapper");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

@@ -111,7 +111,12 @@ const AC_B5040W: React.FC = () => {
   var height1 = getHeight(".ButtonContainer");
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();

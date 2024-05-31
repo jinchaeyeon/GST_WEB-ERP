@@ -249,7 +249,12 @@ const SA_A6000W: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const position = loginResult ? loginResult.position : "";
   const pc = UseGetValueFromSessionItem("pc");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+    const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
