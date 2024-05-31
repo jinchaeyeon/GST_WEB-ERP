@@ -295,6 +295,9 @@ const AC_B5040W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
         } else if (tabSelected == 1) {
           setFilters((prev) => ({
             ...prev,
@@ -311,9 +314,6 @@ const AC_B5040W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
-        }
-        if (swiper && isMobile) {
-          swiper.slideTo(0);
         }
       }
     } catch (e) {

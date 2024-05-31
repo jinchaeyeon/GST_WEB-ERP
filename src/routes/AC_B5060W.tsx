@@ -309,6 +309,9 @@ const AC_B5060W: React.FC = () => {
         find_row_value: "",
         isSearch: true,
       }));
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } else if (tabSelected == 1) {
       fetchMainGrid4();
     } else if (tabSelected == 2) {
@@ -333,15 +336,15 @@ const AC_B5060W: React.FC = () => {
         find_row_value: "",
         isSearch: true,
       }));
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } else if (tabSelected == 3) {
       fetchMainGrid5();
     } else if (tabSelected == 4) {
       fetchMainGrid6();
     } else if (tabSelected == 5) {
       fetchMainGrid7();
-    }
-    if (swiper && isMobile) {
-      swiper.slideTo(0);
     }
   };
 

@@ -2329,6 +2329,11 @@ const PR_A1100W: React.FC = () => {
           find_row_value: "",
           pgNum: 1,
         }));
+        if(tabSelected == 1) {
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
+        }
       }
     } catch (e) {
       alert(e);

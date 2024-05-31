@@ -818,6 +818,9 @@ const AC_A0030W: React.FC = () => {
     setSelectedState({ "": false });
 
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true, pgGap: 0 }));
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {

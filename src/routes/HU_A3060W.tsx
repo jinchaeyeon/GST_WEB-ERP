@@ -295,8 +295,10 @@ const HU_A3060W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if (swiper && isMobile) {
-          swiper.slideTo(0);
+        if(tabSelected == 1 || tabSelected == 2) {
+          if (swiper && isMobile) {
+            swiper.slideTo(0);
+          }
         }
       }
     } catch (e) {

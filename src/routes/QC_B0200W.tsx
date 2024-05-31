@@ -1218,9 +1218,9 @@ const QC_B0200W: React.FC = () => {
             find_row_value: "",
             isSearch: true,
           }));
-        }
-        if (swiper) {
-          swiper.slideTo(0);
+          if (swiper) {
+            swiper.slideTo(0);
+          }
         }
       }
     } catch (e) {

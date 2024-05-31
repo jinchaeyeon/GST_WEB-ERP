@@ -1449,7 +1449,6 @@ const QC_A2000: React.FC = () => {
         throw findMessage(messagesData, "QC_A2000W_001");
       } else {
         resetAllGrid();
-        setTabSelected(0);
         if (unsavedName.length > 0) {
           setDeletedName(unsavedName);
         }
@@ -1462,8 +1461,10 @@ const QC_A2000: React.FC = () => {
           find_row_value: "",
           pgNum: 1,
         }));
-        if (swiper) {
-          swiper.slideTo(0);
+        if(tabSelected == 1) {
+          if (swiper) {
+            swiper.slideTo(0);
+          }
         }
       }
     } catch (e) {

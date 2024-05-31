@@ -24,18 +24,18 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
-  getHeight
+  getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading, isMobileState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
 let deletedMainRows: any[] = [];
 
 const PR_A2200W: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -45,7 +45,7 @@ const PR_A2200W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceHeight = document.documentElement.clientHeight - 100;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");

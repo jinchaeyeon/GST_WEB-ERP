@@ -260,7 +260,7 @@ const AC_A0070W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -330,6 +330,9 @@ const AC_A0070W: React.FC = () => {
             ?.valueCode ?? "",
         position:
           defaultOption?.find((item: any) => item.id == "position")
+            ?.valueCode ?? "",
+        bookregyn:
+          defaultOption?.find((item: any) => item.id == "bookregyn")
             ?.valueCode ?? "",
         acntses: acntses,
         isSearch: true,

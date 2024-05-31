@@ -1842,9 +1842,6 @@ const CM_A1600: React.FC = () => {
             width: widths,
             number2: number2,
           }));
-          if (swiper && isMobile) {
-            swiper.slideTo(0);
-          }
         }
       } else if (tabSelected == 2) {
         if (
@@ -1874,9 +1871,6 @@ const CM_A1600: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
-          if (swiper && isMobile) {
-            swiper.slideTo(0);
-          }
         }
       } else {
         setTodoFilter((prev) => ({
@@ -1896,6 +1890,8 @@ const CM_A1600: React.FC = () => {
           number2: number2,
           isSearch: true,
         }));
+      }
+      if(tabSelected == 0) {
         if (swiper && isMobile) {
           swiper.slideTo(0);
         }

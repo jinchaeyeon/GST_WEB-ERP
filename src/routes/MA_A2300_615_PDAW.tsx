@@ -41,11 +41,11 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
-  getHeight
+  getHeight,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
@@ -96,7 +96,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [state, setState] = useState("1");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceHeight = document.documentElement.clientHeight - 100;
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".ButtonContainer3");
@@ -770,10 +770,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <TitleContainer
-                  style={{ marginBottom: "15px" }}
-                  className="ButtonContainer"
-                >
+                <TitleContainer className="ButtonContainer">
                   <Title>원료육입고</Title>
                   <ButtonContainer>
                     <Button
@@ -908,7 +905,6 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   style={{
                     height: deviceHeight - height - height2 - height3,
                     overflowY: "scroll",
-                    marginBottom: "10px",
                     width: "100%",
                   }}
                 >
@@ -1036,10 +1032,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             {checkDataResult.total > 0 ? (
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <TitleContainer
-                    style={{ marginBottom: "15px" }}
-                    className="ButtonContainer"
-                  >
+                  <TitleContainer className="ButtonContainer">
                     <Title>원료육입고</Title>
                     <ButtonContainer>
                       <Button onClick={() => onSaveClick()} icon="save">
@@ -1054,7 +1047,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                       width: "100%",
                     }}
                   >
-                    <GridContainer style={{ marginBottom: "15px" }}>
+                    <GridContainer>
                       <GridTitleContainer>
                         <GridTitle>
                           <ButtonContainer
@@ -1151,9 +1144,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         </GridKendo>
                       )}
                     </GridContainer>
-                    <GridContainer
-                      style={{ marginBottom: "15px", width: "100%" }}
-                    >
+                    <GridContainer style={{ width: "100%" }}>
                       <GridTitleContainer>
                         <GridTitle>
                           <ButtonContainer

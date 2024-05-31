@@ -846,6 +846,9 @@ const HU_B3120W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+    if (swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   const search2 = () => {

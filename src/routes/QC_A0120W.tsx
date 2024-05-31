@@ -339,7 +339,6 @@ const QC_A0120: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setTabSelected(0);
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult([]);
     setDetail1DataResult(process([], detail1DataState));
@@ -652,7 +651,7 @@ const QC_A0120: React.FC = () => {
         throw findMessage(messagesData, "QC_A0120W_001");
       } else {
         resetAllGrid();
-        fetchMainGrid(0);
+        fetchMainGrid(tabSelected);
         setDetailFilters1((prev) => ({
           ...prev,
           pgNum: 1,
