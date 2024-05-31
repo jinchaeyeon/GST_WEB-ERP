@@ -17,9 +17,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
+  GridContainer
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -454,7 +452,7 @@ const AdjustApprovalWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainer style={{ width: "100%" }}>
+      <GridContainer style={{ width: "100%", overflow: "auto" }}>
         <Grid
           style={{ height: isMobile ? mobileheight : webheight }}
           data={process(

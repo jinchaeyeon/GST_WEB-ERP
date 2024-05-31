@@ -148,10 +148,11 @@ const KendoWindow = ({
       <GridContainer
         style={{
           width: "100%",
-          height: isMobile ? mobileheight : webheight, 
+          height: isMobile ? mobileheight : webheight,
           display: "flex",
-          flexDirection: "column", 
-          gap: "10px"         
+          flexDirection: "column",
+          gap: "10px",
+          overflow: "auto",
         }}
       >
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -460,18 +461,12 @@ const KendoWindow = ({
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <BottomContainer className="BottomContainer">
             <ButtonContainer style={{ justifyContent: "space-between" }}>
-            <Button
-              style={{backgroundColor: "#D3D3D3" }}
-              onClick={onClose}
-            >
-              취소
-            </Button>
-            <Button
-              themeColor={"primary"}
-              onClick={onSave}
-            >
-              확인
-            </Button>
+              <Button style={{ backgroundColor: "#D3D3D3" }} onClick={onClose}>
+                취소
+              </Button>
+              <Button themeColor={"primary"} onClick={onSave}>
+                확인
+              </Button>
             </ButtonContainer>
           </BottomContainer>
         </Grid>
