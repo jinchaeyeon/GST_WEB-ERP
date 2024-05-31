@@ -38,9 +38,10 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -57,8 +58,10 @@ import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
+  heightstate,
   isLoading,
-  loginResultState
+  isMobileState,
+  loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -90,6 +93,9 @@ const AC_A1020W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -787,7 +793,7 @@ const AC_A1020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>
             요약정보
             <Button
@@ -837,7 +843,7 @@ const AC_A1020W: React.FC = () => {
           fileName="지출결의서"
         >
           <Grid
-            style={{ height: "75vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "75vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

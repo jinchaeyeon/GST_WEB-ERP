@@ -49,6 +49,7 @@ import {
   convertDateToStrWithTime2,
   findMessage,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -65,7 +66,12 @@ import { CellRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import {
+  heightstate,
+  isLoading,
+  isMobileState,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -134,6 +140,9 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const AC_A1080W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -825,7 +834,7 @@ const AC_A1080W: React.FC = () => {
         }}
       >
         <GridContainer>
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>전표리스트</GridTitle>
             <ButtonContainer>
               <Button
@@ -854,7 +863,7 @@ const AC_A1080W: React.FC = () => {
             fileName="전표결재"
           >
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: isMobile ? deviceHeight - height : "72vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

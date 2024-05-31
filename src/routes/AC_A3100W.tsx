@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -33,15 +33,16 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
+  getHeight,
   handleKeyPressSearch,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/AC_A3100W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A3100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -52,6 +53,9 @@ const dateField = ["indt"];
 const numberField = ["qty", "fxdepyrmm", "rate"];
 
 const AC_A3100W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
@@ -627,7 +631,7 @@ const AC_A3100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
@@ -651,7 +655,7 @@ const AC_A3100W: React.FC = () => {
           fileName="고정자산MASTER"
         >
           <Grid
-            style={{ height: "78vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

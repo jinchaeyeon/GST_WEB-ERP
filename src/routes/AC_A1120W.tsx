@@ -12,7 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -34,6 +34,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -44,7 +45,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -52,6 +53,9 @@ const DATA_ITEM_KEY = "num";
 const numberField = ["slipamt_1", "slipamt_2"];
 
 const AC_A1120W: React.FC = () => {
+  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  var height = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -550,7 +554,7 @@ const AC_A1120W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="ButtonContainer">
           <GridTitle>기본정보</GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -561,7 +565,7 @@ const AC_A1120W: React.FC = () => {
           fileName="전표리스트"
         >
           <Grid
-            style={{ height: "72vh" }}
+            style={{ height: isMobile ? deviceHeight - height : "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
