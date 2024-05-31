@@ -172,7 +172,7 @@ function App() {
   };
 
   useEffect(() => {
-    fetchMain();
+    //fetchMain();
   }, []);
 
   //조회조건 파라미터

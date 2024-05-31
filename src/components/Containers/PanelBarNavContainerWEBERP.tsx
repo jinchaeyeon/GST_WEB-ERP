@@ -618,17 +618,7 @@ const PanelBarNavContainer = (props: any) => {
     ...paths.filter((path) => path.path == "/Home"),
     ...paths.filter((path) => path.menuCategory == "GROUP"),
   ];
-  if (companyCode == "2207A046" && isAdmin) {
-    panelBars.push({
-      path: "/GANTT",
-      menuName: "GANTT",
-      index: "",
-      menuId: "",
-      parentMenuId: "",
-      menuCategory: "",
-      isFavorite: false,
-    });
-  }
+
   panelBars.push({
     path: "/",
     menuName: "설정",
@@ -669,7 +659,7 @@ const PanelBarNavContainer = (props: any) => {
   }
 
   // Parent 그룹 없는 메뉴 Array
-  const singleMenus = ["/Home", "/GANTT"];
+  const singleMenus = ["/Home"];
 
   let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {

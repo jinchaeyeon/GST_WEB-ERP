@@ -182,7 +182,6 @@ const MA_A3600W = lazy(() => import("./routes/MA_A3600W"));
 const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
 const MA_A8000W = lazy(() => import("./routes/MA_A8000W"));
 const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
-const MA_B1000W_603 = lazy(() => import("./routes/MA_B1000W_603"));
 const MA_B2000W = lazy(() => import("./routes/MA_B2000W"));
 const MA_B2100W = lazy(() => import("./routes/MA_B2100W"));
 const MA_B2500W = lazy(() => import("./routes/MA_B2500W"));
@@ -241,7 +240,6 @@ const SA_A5001W = lazy(() => import("./routes/SA_A5001W"));
 const SA_A5010W = lazy(() => import("./routes/SA_A5010W"));
 const SA_A6000W = lazy(() => import("./routes/SA_A6000W"));
 const SA_A8000W = lazy(() => import("./routes/SA_A8000W"));
-const SA_B1000W_603 = lazy(() => import("./routes/SA_B1000W_603"));
 const SA_B1002_603W = lazy(() => import("./routes/SA_B1002_603W"));
 const SA_B1101_603W = lazy(() => import("./routes/SA_B1101_603W"));
 const SA_B2200W = lazy(() => import("./routes/SA_B2200W"));
@@ -256,7 +254,6 @@ const SA_B2221W_603 = lazy(() => import("./routes/SA_B2221W_603"));
 const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
 const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
 const SA_B2228W = lazy(() => import("./routes/SA_B2228W"));
-const SA_B2229W = lazy(() => import("./routes/SA_B2229W"));
 const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
 const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
 const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
@@ -652,8 +649,6 @@ const AppInner: React.FC = () => {
       return MA_A3500W;
     } else if (str == "MA_A9001W") {
       return MA_A9001W;
-    } else if (str == "MA_B1000W_603") {
-      return MA_B1000W_603;
     } else if (str == "MA_B2000W") {
       return MA_B2000W;
     } else if (str == "MA_B2100W") {
@@ -924,8 +919,6 @@ const AppInner: React.FC = () => {
       return SA_A1001_603W;
     } else if (str == "SA_A1100_603W") {
       return SA_A1100_603W;
-    } else if (str == "SA_B1000W_603") {
-      return SA_B1000W_603;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
     } else if (str == "SA_B2226W") {
@@ -1204,18 +1197,7 @@ const AppInner: React.FC = () => {
                       component={SA_A1001_603W}
                       exact
                     />
-                    <AuthRoute
-                      path="/SA_B1000W_603"
-                      component={SA_B1000W_603}
-                      exact
-                    />
                     <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
-
-                    <AuthRoute
-                      path="/MA_B1000W_603"
-                      component={MA_B1000W_603}
-                      exact
-                    />
 
                     {/* PDA */}
                     <AuthRoute
