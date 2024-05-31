@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { SignatureChangeEvent } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -28,12 +28,16 @@ import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
+  getHeight,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Sign from "../../Sign/Sign";
 import Window from "../WindowComponent/Window";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
@@ -46,7 +50,10 @@ const topHeight = 10;
 const bottomHeight = 40;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
-
+var height = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
@@ -65,9 +72,30 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 1050,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".WindowButtonContainer");
+    height5 = getHeight(".WindowButtonContainer2");
+    setMobileHeight(deviceHeight - height - height3 - height4);
+    setMobileHeight2(deviceHeight - height - height3 - height5);
+    setWebHeight((position.height - height - height3) / 2 - height4);
+    setWebHeight2((position.height - height - height3) / 2 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight((position.height - height - height3) / 2 - height4);
+    setWebHeight2((position.height - height - height3) / 2 - height5);
   };
+
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
 
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
@@ -445,6 +473,12 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
     }
   };
 
+  const onRowDoubleClick = (props: any) => {
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
+  };
+
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -683,122 +717,278 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridTitleContainer>
-        <GridTitle>참석자</GridTitle>
-        <ButtonContainer>
-          <Button
-            onClick={onAddClick}
-            themeColor={"primary"}
-            icon="plus"
-            title="행 추가"
-          ></Button>
-          <Button
-            onClick={onDeleteClick}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="minus"
-            title="행 삭제"
-          ></Button>
-        </ButtonContainer>
-      </GridTitleContainer>
-      <GridContainer height="calc(100% - 410px)">
-        <Grid
-          style={{ height: "calc(100% - 5px)" }}
-          data={process(
-            mainDataResult.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-            mainDataState
-          )}
-          onDataStateChange={onMainDataStateChange}
-          {...mainDataState}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
           }}
-          onSelectionChange={onMainSelectionChange}
-          //스크롤 조회기능
-          fixedScroll={true}
-          total={mainDataResult.total}
-          ref={gridRef}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          //더블클릭
-          onItemChange={onMainItemChange3}
-          cellRender={customCellRender3}
-          rowRender={customRowRender3}
-          editField={EDIT_FIELD}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
         >
-          <GridColumn field="rowstatus" title=" " width="48px" />
-          <GridColumn
-            field="part"
-            title="소속 및 부서"
-            width="250px"
-            footerCell={mainTotalFooterCell}
-          />
-          <GridColumn
-            field="name"
-            title="이름"
-            width="200px"
-            headerCell={RequiredHeader}
-          />
-          <GridColumn field="remarks" title="비고" width="350px" />
-          <GridColumn
-            field="is_lock"
-            title="수정 잠금"
-            width="150px"
-            cell={isAdmin ? CheckBoxCell : CheckBoxReadOnlyCell}
-          />
-        </Grid>
-      </GridContainer>
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>서명란</GridTitle>
-        </GridTitleContainer>
-        <GridContainer height="30vh">
-          <Sign
-            value={
-              mainDataResult.data.filter(
-                (item) =>
-                  item.num == Object.getOwnPropertyNames(selectedState)[0]
-              )[0] == undefined
-                ? ""
-                : mainDataResult.data.filter(
-                    (item) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0].signature
-            }
-            disabled={
-              mainDataResult.data.filter(
-                (item) =>
-                  item.num == Object.getOwnPropertyNames(selectedState)[0]
-              )[0] == undefined
-                ? true
-                : mainDataResult.data.filter(
-                    (item) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0].is_lock == "Y" ||
+          <SwiperSlide key={0} style={{ flexDirection: "column" }}>
+            <GridTitleContainer className="WindowButtonContainer">
+              <GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  참석자
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <GridContainer style={{ width: "100%" }}>
+              <Grid
+                style={{ height: mobileheight }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                onDataStateChange={onMainDataStateChange}
+                {...mainDataState}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onMainSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                ref={gridRef}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //더블클릭
+                onRowDoubleClick={onRowDoubleClick}
+                onItemChange={onMainItemChange3}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="48px" />
+                <GridColumn
+                  field="part"
+                  title="소속 및 부서"
+                  width="250px"
+                  footerCell={mainTotalFooterCell}
+                />
+                <GridColumn
+                  field="name"
+                  title="이름"
+                  width="200px"
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn field="remarks" title="비고" width="350px" />
+                <GridColumn
+                  field="is_lock"
+                  title="수정 잠금"
+                  width="150px"
+                  cell={isAdmin ? CheckBoxCell : CheckBoxReadOnlyCell}
+                />
+              </Grid>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <GridTitle>서명란</GridTitle>
+              </GridTitleContainer>
+              <GridContainer style={{ width: "100%", height: mobileheight2 }}>
+                <Sign
+                  value={
+                    mainDataResult.data.filter(
+                      (item) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? ""
+                      : mainDataResult.data.filter(
+                          (item) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].signature
+                  }
+                  disabled={
+                    mainDataResult.data.filter(
+                      (item) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? true
+                      : mainDataResult.data.filter(
+                          (item) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].is_lock == "Y" ||
+                        mainDataResult.data.filter(
+                          (item) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].is_lock == true
+                      ? true
+                      : false
+                  }
+                  onChange={changeSign}
+                />
+              </GridContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridTitleContainer className="WindowButtonContainer">
+            <GridTitle>참석자</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <GridContainer style={{ width: "100%" }}>
+            <Grid
+              style={{ height: webheight }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onMainSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              ref={gridRef}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              //더블클릭
+              onRowDoubleClick={onRowDoubleClick}
+              onItemChange={onMainItemChange3}
+              cellRender={customCellRender3}
+              rowRender={customRowRender3}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="48px" />
+              <GridColumn
+                field="part"
+                title="소속 및 부서"
+                width="250px"
+                footerCell={mainTotalFooterCell}
+              />
+              <GridColumn
+                field="name"
+                title="이름"
+                width="200px"
+                headerCell={RequiredHeader}
+              />
+              <GridColumn field="remarks" title="비고" width="350px" />
+              <GridColumn
+                field="is_lock"
+                title="수정 잠금"
+                width="150px"
+                cell={isAdmin ? CheckBoxCell : CheckBoxReadOnlyCell}
+              />
+            </Grid>
+          </GridContainer>
+          <GridContainer>
+            <GridTitleContainer className="WindowButtonContainer2">
+              <GridTitle>서명란</GridTitle>
+            </GridTitleContainer>
+            <GridContainer style={{ width: "100%", height: webheight2 }}>
+              <Sign
+                value={
                   mainDataResult.data.filter(
                     (item) =>
                       item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0].is_lock == true
-                ? true
-                : false
-            }
-            onChange={changeSign}
-          />
-        </GridContainer>
-      </GridContainer>
-      <BottomContainer>
+                  )[0] == undefined
+                    ? ""
+                    : mainDataResult.data.filter(
+                        (item) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0].signature
+                }
+                disabled={
+                  mainDataResult.data.filter(
+                    (item) =>
+                      item.num == Object.getOwnPropertyNames(selectedState)[0]
+                  )[0] == undefined
+                    ? true
+                    : mainDataResult.data.filter(
+                        (item) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0].is_lock == "Y" ||
+                      mainDataResult.data.filter(
+                        (item) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0].is_lock == true
+                    ? true
+                    : false
+                }
+                onChange={changeSign}
+              />
+            </GridContainer>
+          </GridContainer>
+        </>
+      )}
+
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onSave}>
             확인
