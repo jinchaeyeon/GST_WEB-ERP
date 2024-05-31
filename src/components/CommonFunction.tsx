@@ -28,8 +28,7 @@ export const getHeight = (className: string) => {
     return container == undefined
       ? 0
       : className == ".k-tabstrip-items-wrapper" ||
-        className == ".k-window-titlebar" ||
-        className == ".FormBoxWrap"
+        className == ".k-window-titlebar"
       ? container?.clientHeight + 35
       : container?.clientHeight;
   } else {

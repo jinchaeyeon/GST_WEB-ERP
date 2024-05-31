@@ -19,7 +19,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -34,6 +34,7 @@ import {
   arrayLengthValidator,
   chkScrollHandler,
   getCodeFromValue,
+  getHeight,
   getYn,
   validator,
 } from "../../CommonFunction";
@@ -184,7 +185,7 @@ const sessionItemComboBoxCell = (props: GridCellProps) => {
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey } =
+  const { validationMessage, visited, name, dataItemKey, height } =
     fieldArrayRenderProps;
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [detailPgNum, setDetailPgNum] = useState(1);
@@ -342,9 +343,9 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 
   return (
-    <GridContainer margin={{ top: "30px" }}>
+    <GridContainer>
       {visited && validationMessage && <Error>{validationMessage}</Error>}
-      <ButtonContainer>
+      <ButtonContainer className="WindowButtonContainer">
         <Button
           type={"button"}
           themeColor={"primary"}
@@ -372,7 +373,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         }))}
         total={dataWithIndexes.total}
         dataItemKey={dataItemKey}
-        style={{ height: "550px" }}
+        style={{ height: height }}
         cellRender={customCellRender}
         rowRender={customRowRender}
         onScroll={scrollHandler}
@@ -476,7 +477,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const KendoWindow = ({
   setVisible,
   workType,
@@ -488,6 +492,16 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //탭 부분
+    height3 = getHeight(".k-form-fieldset"); //상단조회조건
+    height4 = getHeight(".WindowButtonContainer");
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height4);
+  }, []);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
@@ -497,6 +511,8 @@ const KendoWindow = ({
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height4);
   };
 
   const onClose = () => {
@@ -897,7 +913,7 @@ const KendoWindow = ({
                   });
                 }}
               ></button>
-              <FieldWrap fieldWidth="25%">
+              <FieldWrap fieldWidth={isMobile ? "100%" : "25%"}>
                 <Field
                   label={"타입"}
                   name={"option_id"}
@@ -914,9 +930,10 @@ const KendoWindow = ({
               dataItemKey={FORM_DATA_INDEX}
               component={FormGrid}
               validator={arrayLengthValidator}
+              height={isMobile ? mobileheight : webheight}
             />
 
-            <BottomContainer>
+            <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"} icon="save">
                   저장

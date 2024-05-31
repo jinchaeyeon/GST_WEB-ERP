@@ -31,8 +31,11 @@ import {
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   GridContainer,
@@ -54,11 +57,13 @@ import {
   UseGetValueFromSessionItem,
   chkScrollHandler,
   getGridItemChangedData,
+  getHeight,
   getYn,
 } from "../../CommonFunction";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
+  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
@@ -302,7 +307,14 @@ const DETAIL_COLUMN_DATA_ITEM_KEY = "column_id";
 // 디폴트 정보 키
 const MAIN_DEFAULT_DATA_ITEM_KEY = "option_id";
 const DETAIL_DEFAULT_DATA_ITEM_KEY = "default_id";
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
 const KendoWindow = ({ setVisible }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -314,9 +326,55 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     height: isMobile == true ? deviceHeight : 800,
   });
 
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height4);
+    setWebHeight3(position.height - height - height2 - height5);
+    setWebHeight4(position.height - height - height2 - height6);
+    setWebHeight5(position.height - height - height2 - height7);
+    setWebHeight6(position.height - height - height2 - height8);
   };
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".k-tabstrip-items-wrapper"); //탭 부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    height5 = getHeight(".WindowButtonContainer3");
+    height6 = getHeight(".WindowButtonContainer4");
+    height7 = getHeight(".WindowButtonContainer5");
+    height8 = getHeight(".WindowButtonContainer6");
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height4);
+    setMobileHeight3(deviceHeight - height - height2 - height5);
+    setMobileHeight4(deviceHeight - height - height2 - height6);
+    setMobileHeight5(deviceHeight - height - height2 - height7);
+    setMobileHeight6(deviceHeight - height - height2 - height8);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height4);
+    setWebHeight3(position.height - height - height2 - height5);
+    setWebHeight4(position.height - height - height2 - height6);
+    setWebHeight5(position.height - height - height2 - height7);
+    setWebHeight6(position.height - height - height2 - height8);
+  }, [tabSelected]);
 
   const loginResult = useRecoilValue(loginResultState);
   const role = loginResult ? loginResult.role : "";
@@ -420,10 +478,6 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const processApi = useApi();
 
-  const [tabSelected, setTabSelected] = React.useState(0);
-  const handleSelectTab = (e: any) => {
-    setTabSelected(e.selected);
-  };
   useEffect(() => {
     fetchControl();
     fetchWord();
@@ -1999,105 +2053,443 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       >
         {isAdmin && (
           <TabStripTab title="컨트롤정보">
-            <GridContainerWrap>
-              <GridContainer clientWidth={1330 - 415}>
-                <GridTitleContainer>
-                  <GridTitle>컨트롤리스트</GridTitle>
+            {isMobile ? (
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0} style={{ flexDirection: "column" }}>
+                  <GridTitleContainer className="WindowButtonContainer">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        컨트롤리스트
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onGetControlClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="file-add"
+                      >
+                        가져오기
+                      </Button>
+                      <Button
+                        onClick={onSaveControl}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <TreeList
+                    style={{
+                      height: mobileheight,
+                      overflow: "auto",
+                      width: "100%",
+                    }}
+                    data={mapTree(
+                      controlDataResult,
+                      subItemsField,
+                      ControlCallback
+                    )}
+                    expandField={EXPANDED_FIELD}
+                    subItemsField={subItemsField}
+                    onExpandChange={onControlExpandChange}
+                    //선택 기능
+                    dataItemKey={CONTROL_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    columns={ControlColumns}
+                    rowRender={controlRowRender}
+                  ></TreeList>
+                </SwiperSlide>
+                <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                  <GridContainer>
+                    <GridTitleContainer className="WindowButtonContainer2">
+                      <GridTitle>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        [참조] 용어정보
+                      </GridTitle>
 
-                  <ButtonContainer>
-                    <Button
-                      onClick={onGetControlClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="file-add"
+                      <div style={{ gap: "2px", display: "flex" }}>
+                        <Input
+                          name="word_id"
+                          type="text"
+                          style={{ width: "110px" }}
+                          placeholder="Word ID"
+                          value={wordFilters.word_id}
+                          onChange={filterInputChange}
+                        />
+                        <Input
+                          name="word_text"
+                          type="text"
+                          style={{ width: "110px" }}
+                          placeholder="텍스트"
+                          value={wordFilters.word_text}
+                          onChange={filterInputChange}
+                        />
+
+                        <Button
+                          onClick={() => {
+                            setWordPgNum(1);
+                            setWordDataResult(process([], wordDataState));
+                            fetchWord();
+                          }}
+                          icon="search"
+                          // fillMode="flat"
+                        />
+                      </div>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: mobileheight2 }}
+                      data={process(
+                        wordDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]:
+                            wordSelectedState[wordIdGetter(row)],
+                        })),
+                        wordDataState
+                      )}
+                      {...wordDataState}
+                      onDataStateChange={onWordDataStateChange}
+                      //선택 기능
+                      dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onWordSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={wordDataResult.total}
+                      onScroll={onWordScrollHandler}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onWordSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      rowRender={wordRowRender}
                     >
-                      가져오기
-                    </Button>
-                    <Button
-                      onClick={onSaveControl}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
+                      <GridColumn field="word_id" title="Word ID" />
+                      <GridColumn field="word_text" title="텍스트" />
+                    </Grid>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            ) : (
+              <>
+                <GridContainerWrap>
+                  <GridContainer width="60%">
+                    <GridTitleContainer className="WindowButtonContainer">
+                      <GridTitle>컨트롤리스트</GridTitle>
+
+                      <ButtonContainer>
+                        <Button
+                          onClick={onGetControlClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="file-add"
+                        >
+                          가져오기
+                        </Button>
+                        <Button
+                          onClick={onSaveControl}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                        >
+                          저장
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <TreeList
+                      style={{
+                        height: webheight,
+                        overflow: "auto",
+                        width: "100%",
+                      }}
+                      data={mapTree(
+                        controlDataResult,
+                        subItemsField,
+                        ControlCallback
+                      )}
+                      expandField={EXPANDED_FIELD}
+                      subItemsField={subItemsField}
+                      onExpandChange={onControlExpandChange}
+                      //선택 기능
+                      dataItemKey={CONTROL_DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      columns={ControlColumns}
+                      rowRender={controlRowRender}
+                    ></TreeList>
+                  </GridContainer>
+
+                  <GridContainer width={`calc(40% - ${GAP}px)`}>
+                    <GridTitleContainer className="WindowButtonContainer2">
+                      <GridTitle>[참조] 용어정보</GridTitle>
+
+                      <div style={{ gap: "2px", display: "flex" }}>
+                        <Input
+                          name="word_id"
+                          type="text"
+                          style={{ width: "110px" }}
+                          placeholder="Word ID"
+                          value={wordFilters.word_id}
+                          onChange={filterInputChange}
+                        />
+                        <Input
+                          name="word_text"
+                          type="text"
+                          style={{ width: "110px" }}
+                          placeholder="텍스트"
+                          value={wordFilters.word_text}
+                          onChange={filterInputChange}
+                        />
+
+                        <Button
+                          onClick={() => {
+                            setWordPgNum(1);
+                            setWordDataResult(process([], wordDataState));
+                            fetchWord();
+                          }}
+                          icon="search"
+                          // fillMode="flat"
+                        />
+                      </div>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: webheight2 }}
+                      data={process(
+                        wordDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]:
+                            wordSelectedState[wordIdGetter(row)],
+                        })),
+                        wordDataState
+                      )}
+                      {...wordDataState}
+                      onDataStateChange={onWordDataStateChange}
+                      //선택 기능
+                      dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onWordSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={wordDataResult.total}
+                      onScroll={onWordScrollHandler}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onWordSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      rowRender={wordRowRender}
                     >
-                      저장
-                    </Button>
-                    {/* 
-                  <Button
-                    onClick={onDeleteDefaultClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button> */}
-                  </ButtonContainer>
+                      <GridColumn field="word_id" title="Word ID" />
+                      <GridColumn field="word_text" title="텍스트" />
+                    </Grid>
+                  </GridContainer>
+                </GridContainerWrap>
+              </>
+            )}
+          </TabStripTab>
+        )}
+
+        <TabStripTab title="기본값">
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
+            >
+              <SwiperSlide key={0} style={{ flexDirection: "column" }}>
+                <GridTitleContainer className="WindowButtonContainer3">
+                  <GridTitle>
+                    {isAdmin && (
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <div>요약정보</div>
+                        <div>
+                          <Button
+                            onClick={onCreateDefaultClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="file-add"
+                          >
+                            신규
+                          </Button>
+                          <Button
+                            onClick={onDeleteDefaultClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="delete"
+                          >
+                            삭제
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                            icon="chevron-right"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                        </div>
+                      </ButtonContainer>
+                    )}
+                  </GridTitle>
                 </GridTitleContainer>
-                <TreeList
-                  style={{ height: "600px", overflow: "auto", width: "100%" }}
-                  data={mapTree(
-                    controlDataResult,
-                    subItemsField,
-                    ControlCallback
+                <Grid
+                  style={{
+                    height: mobileheight3,
+                    overflow: "auto",
+                    width: "100%",
+                  }}
+                  data={process(
+                    mainDefaultDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]:
+                        mainDefaultSelectedState[mainDefaultIdGetter(row)],
+                    })),
+                    mainDefaultDataState
                   )}
-                  expandField={EXPANDED_FIELD}
-                  subItemsField={subItemsField}
-                  onExpandChange={onControlExpandChange}
+                  {...mainDefaultDataState}
+                  onDataStateChange={onMainDefaultDataStateChange}
                   //선택 기능
-                  dataItemKey={CONTROL_DATA_ITEM_KEY}
+                  dataItemKey={MAIN_DEFAULT_DATA_ITEM_KEY}
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
                     mode: "single",
                   }}
-                  columns={ControlColumns}
-                  rowRender={controlRowRender}
-                ></TreeList>
-              </GridContainer>
-
-              <GridContainer maxWidth="400px" inTab={true}>
-                <GridTitleContainer>
-                  <GridTitle>[참조] 용어정보</GridTitle>
-
-                  <div style={{ gap: "2px", display: "flex" }}>
-                    <Input
-                      name="word_id"
-                      type="text"
-                      style={{ width: "110px" }}
-                      placeholder="Word ID"
-                      value={wordFilters.word_id}
-                      onChange={filterInputChange}
+                  onSelectionChange={onMainDefaultSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDefaultDataResult.total}
+                  onScroll={onMainDefaultScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainDefaultSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {isAdmin && (
+                    <GridColumn
+                      title="수정(시스템)"
+                      cell={DefaultCommandCell}
+                      width="100px"
                     />
-                    <Input
-                      name="word_text"
-                      type="text"
-                      style={{ width: "110px" }}
-                      placeholder="텍스트"
-                      value={wordFilters.word_text}
-                      onChange={filterInputChange}
-                    />
-
-                    <Button
-                      onClick={() => {
-                        setWordPgNum(1);
-                        setWordDataResult(process([], wordDataState));
-                        fetchWord();
-                      }}
-                      icon="search"
-                      // fillMode="flat"
-                    />
-                  </div>
+                  )}
+                  <GridColumn field="option_id" title="타입ID" />
+                  <GridColumn field="option_name" title="설명" />
+                </Grid>
+              </SwiperSlide>
+              <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                <GridTitleContainer className="WindowButtonContainer4">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        상세정보
+                      </div>
+                      <div>
+                        <Button
+                          onClick={onInitDefault}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="refresh"
+                        >
+                          기본값 초기화
+                        </Button>
+                        <Button
+                          onClick={onSaveCustomDefault}
+                          themeColor={"primary"}
+                          icon="save"
+                        >
+                          저장
+                        </Button>
+                      </div>
+                    </ButtonContainer>
+                  </GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "600px" }}
+                  style={{
+                    height: mobileheight4,
+                    overflow: "auto",
+                    width: "100%",
+                  }}
                   data={process(
-                    wordDataResult.data.map((row) => ({
+                    detailDefaultDataResult.data.map((row) => ({
                       ...row,
-                      [SELECTED_FIELD]: wordSelectedState[wordIdGetter(row)],
+                      [SELECTED_FIELD]:
+                        detailDefaultSelectedState[detailDefaultIdGetter(row)],
                     })),
-                    wordDataState
+                    detailDefaultDataState
                   )}
-                  {...wordDataState}
-                  onDataStateChange={onWordDataStateChange}
+                  {...detailDefaultDataState}
+                  onDataStateChange={onDetailDefaultDataStateChange}
                   //선택 기능
                   dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
                   selectedField={SELECTED_FIELD}
@@ -2105,378 +2497,651 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                     enabled: true,
                     mode: "single",
                   }}
-                  onSelectionChange={onWordSelectionChange}
+                  onSelectionChange={onDetailDefaultSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
-                  total={wordDataResult.total}
-                  onScroll={onWordScrollHandler}
+                  total={detailDefaultDataResult.total}
+                  onScroll={onDetailDefaultScrollHandler}
                   //정렬기능
                   sortable={true}
-                  onSortChange={onWordSortChange}
+                  onSortChange={onDetailDefaultSortChange}
                   //컬럼순서조정
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  rowRender={wordRowRender}
+                  //incell 수정 기능
+                  onItemChange={onDetailDefaultItemChange}
+                  cellRender={detailDefaultCellRender}
+                  rowRender={detailDefaultRowRender}
+                  editField={EDIT_FIELD}
                 >
-                  <GridColumn field="word_id" title="Word ID" />
-                  <GridColumn field="word_text" title="텍스트" />
-                </Grid>
-              </GridContainer>
-            </GridContainerWrap>
-          </TabStripTab>
-        )}
-
-        <TabStripTab title="기본값">
-          <GridContainerWrap>
-            <GridContainer maxWidth="280px">
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-                {isAdmin && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onCreateDefaultClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      신규
-                    </Button>
-                    <Button
-                      onClick={onDeleteDefaultClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      삭제
-                    </Button>
-                  </ButtonContainer>
-                )}
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "600px" }}
-                data={process(
-                  mainDefaultDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]:
-                      mainDefaultSelectedState[mainDefaultIdGetter(row)],
-                  })),
-                  mainDefaultDataState
-                )}
-                {...mainDefaultDataState}
-                onDataStateChange={onMainDefaultDataStateChange}
-                //선택 기능
-                dataItemKey={MAIN_DEFAULT_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onMainDefaultSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDefaultDataResult.total}
-                onScroll={onMainDefaultScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainDefaultSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {isAdmin && (
                   <GridColumn
-                    title="수정(시스템)"
-                    cell={DefaultCommandCell}
-                    width="100px"
+                    field="rowstatus"
+                    title=" "
+                    width="40px"
+                    editable={false}
                   />
-                )}
-                <GridColumn field="option_id" title="타입ID" />
-                <GridColumn field="option_name" title="설명" />
-              </Grid>
-            </GridContainer>
+                  <GridColumn
+                    field="caption"
+                    title="항목"
+                    width="100px"
+                    editable={false}
+                  />
+                  <GridColumn
+                    field="use_session"
+                    title="세션사용"
+                    width=""
+                    cell={DefaultUseSessioneCell}
+                  />
+                  <GridColumn
+                    field="value_code"
+                    title="기본값"
+                    width="350px"
+                    cell={DefaultValueCell}
+                  />
+                  <GridColumn
+                    field="add_year"
+                    title="연 추가"
+                    width=""
+                    cell={DefaultDateCell}
+                    editor={"numeric"}
+                  />
+                  <GridColumn
+                    field="add_month"
+                    title="월 추가"
+                    width=""
+                    cell={DefaultDateCell}
+                    editor={"numeric"}
+                  />
+                  <GridColumn
+                    field="add_day"
+                    title="일 추가"
+                    width=""
+                    cell={DefaultDateCell}
+                    editor={"numeric"}
+                  />
+                </Grid>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <GridContainer width="25%">
+                  <GridTitleContainer className="WindowButtonContainer3">
+                    <GridTitle>요약정보</GridTitle>
+                    {isAdmin && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={onCreateDefaultClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="file-add"
+                        >
+                          신규
+                        </Button>
+                        <Button
+                          onClick={onDeleteDefaultClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+                  <Grid
+                    style={{
+                      height: webheight3,
+                      overflow: "auto",
+                      width: "100%",
+                    }}
+                    data={process(
+                      mainDefaultDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]:
+                          mainDefaultSelectedState[mainDefaultIdGetter(row)],
+                      })),
+                      mainDefaultDataState
+                    )}
+                    {...mainDefaultDataState}
+                    onDataStateChange={onMainDefaultDataStateChange}
+                    //선택 기능
+                    dataItemKey={MAIN_DEFAULT_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainDefaultSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDefaultDataResult.total}
+                    onScroll={onMainDefaultScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainDefaultSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {isAdmin && (
+                      <GridColumn
+                        title="수정(시스템)"
+                        cell={DefaultCommandCell}
+                        width="100px"
+                      />
+                    )}
+                    <GridColumn field="option_id" title="타입ID" />
+                    <GridColumn field="option_name" title="설명" />
+                  </Grid>
+                </GridContainer>
 
-            <GridContainer
-              clientWidth={1330 - 275} //= 요약정보 200 + margin 15
-              inTab={true}
-            >
-              <GridTitleContainer>
-                <GridTitle>상세정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onInitDefault}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="refresh"
+                <GridContainer width={`calc(75% - ${GAP}px)`}>
+                  <GridTitleContainer className="WindowButtonContainer4">
+                    <GridTitle>상세정보</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onInitDefault}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="refresh"
+                      >
+                        기본값 초기화
+                      </Button>
+                      <Button
+                        onClick={onSaveCustomDefault}
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        저장
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{
+                      height: webheight4,
+                      overflow: "auto",
+                      width: "100%",
+                    }}
+                    data={process(
+                      detailDefaultDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]:
+                          detailDefaultSelectedState[
+                            detailDefaultIdGetter(row)
+                          ],
+                      })),
+                      detailDefaultDataState
+                    )}
+                    {...detailDefaultDataState}
+                    onDataStateChange={onDetailDefaultDataStateChange}
+                    //선택 기능
+                    dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onDetailDefaultSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={detailDefaultDataResult.total}
+                    onScroll={onDetailDefaultScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onDetailDefaultSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onDetailDefaultItemChange}
+                    cellRender={detailDefaultCellRender}
+                    rowRender={detailDefaultRowRender}
+                    editField={EDIT_FIELD}
                   >
-                    기본값 초기화
-                  </Button>
-                  <Button
-                    onClick={onSaveCustomDefault}
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "600px" }}
-                data={process(
-                  detailDefaultDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]:
-                      detailDefaultSelectedState[detailDefaultIdGetter(row)],
-                  })),
-                  detailDefaultDataState
-                )}
-                {...detailDefaultDataState}
-                onDataStateChange={onDetailDefaultDataStateChange}
-                //선택 기능
-                dataItemKey={DETAIL_DEFAULT_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onDetailDefaultSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detailDefaultDataResult.total}
-                onScroll={onDetailDefaultScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetailDefaultSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //incell 수정 기능
-                onItemChange={onDetailDefaultItemChange}
-                cellRender={detailDefaultCellRender}
-                rowRender={detailDefaultRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                />
-                <GridColumn
-                  field="caption"
-                  title="항목"
-                  width="100px"
-                  editable={false}
-                />
-                <GridColumn
-                  field="use_session"
-                  title="세션사용"
-                  width=""
-                  cell={DefaultUseSessioneCell}
-                />
-                <GridColumn
-                  field="value_code"
-                  title="기본값"
-                  width="350px"
-                  cell={DefaultValueCell}
-                />
-                <GridColumn
-                  field="add_year"
-                  title="연 추가"
-                  width=""
-                  cell={DefaultDateCell}
-                  editor={"numeric"}
-                />
-                <GridColumn
-                  field="add_month"
-                  title="월 추가"
-                  width=""
-                  cell={DefaultDateCell}
-                  editor={"numeric"}
-                />
-                <GridColumn
-                  field="add_day"
-                  title="일 추가"
-                  width=""
-                  cell={DefaultDateCell}
-                  editor={"numeric"}
-                />
-              </Grid>
-            </GridContainer>
-          </GridContainerWrap>
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="40px"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="caption"
+                      title="항목"
+                      width="100px"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="use_session"
+                      title="세션사용"
+                      width=""
+                      cell={DefaultUseSessioneCell}
+                    />
+                    <GridColumn
+                      field="value_code"
+                      title="기본값"
+                      width="350px"
+                      cell={DefaultValueCell}
+                    />
+                    <GridColumn
+                      field="add_year"
+                      title="연 추가"
+                      width=""
+                      cell={DefaultDateCell}
+                      editor={"numeric"}
+                    />
+                    <GridColumn
+                      field="add_month"
+                      title="월 추가"
+                      width=""
+                      cell={DefaultDateCell}
+                      editor={"numeric"}
+                    />
+                    <GridColumn
+                      field="add_day"
+                      title="일 추가"
+                      width=""
+                      cell={DefaultDateCell}
+                      editor={"numeric"}
+                    />
+                  </Grid>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="컬럼">
-          <GridContainerWrap>
-            <GridContainer maxWidth="300px">
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-                {isAdmin && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onCreateColumnClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      신규
-                    </Button>
-                    <Button
-                      onClick={onDeleteColumnClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      삭제
-                    </Button>
-                  </ButtonContainer>
-                )}
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "600px" }}
-                data={process(
-                  mainColumnDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]:
-                      mainColumnSelectedState[mainColumnIdGetter(row)],
-                  })),
-                  mainColumnDataState
-                )}
-                {...mainColumnDataState}
-                onDataStateChange={onMainColumnDataStateChange}
-                //선택 기능
-                dataItemKey={MAIN_COLUMN_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onMainColumnSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainColumnDataResult.total}
-                onScroll={onMainColumnScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainColumnSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                {isAdmin && (
-                  <GridColumn cell={ColumnCommandCell} width="55px" />
-                )}
-                <GridColumn field="option_name" title="영역" />
-              </Grid>
-            </GridContainer>
-
-            <GridContainer
-              clientWidth={1330 - 315} //= 요약정보 200 + margin 15
-              inTab={true}
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <GridTitleContainer>
-                <GridTitle>상세정보</GridTitle>
+              <SwiperSlide key={0} style={{ flexDirection: "column" }}>
+                <GridTitleContainer className="WindowButtonContainer5">
+                  <GridTitle>
+                    {isAdmin && (
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
+                      >
+                        <div>요약정보</div>
+                        <div>
+                          <Button
+                            onClick={onCreateColumnClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="file-add"
+                          >
+                            신규
+                          </Button>
+                          <Button
+                            onClick={onDeleteColumnClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="delete"
+                          >
+                            삭제
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (swiper) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                            icon="chevron-right"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                        </div>
+                      </ButtonContainer>
+                    )}
+                  </GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight5 }}
+                  data={process(
+                    mainColumnDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]:
+                        mainColumnSelectedState[mainColumnIdGetter(row)],
+                    })),
+                    mainColumnDataState
+                  )}
+                  {...mainColumnDataState}
+                  onDataStateChange={onMainColumnDataStateChange}
+                  //선택 기능
+                  dataItemKey={MAIN_COLUMN_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainColumnSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainColumnDataResult.total}
+                  onScroll={onMainColumnScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainColumnSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {isAdmin && (
+                    <GridColumn cell={ColumnCommandCell} width="55px" />
+                  )}
+                  <GridColumn field="option_name" title="영역" />
+                </Grid>
+              </SwiperSlide>
+              <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                <GridTitleContainer className="WindowButtonContainer6">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        상세정보
+                      </div>
+                      <div>
+                        <Button
+                          onClick={onInitColumn}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="refresh"
+                        >
+                          컬럼정보 초기화
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            onArrowsBtnClick({
+                              direction: "UP",
+                              dataInfo: arrowBtnClickPara,
+                            })
+                          }
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="chevron-up"
+                        ></Button>
+                        <Button
+                          onClick={() =>
+                            onArrowsBtnClick({
+                              direction: "DOWN",
+                              dataInfo: arrowBtnClickPara,
+                            })
+                          }
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="chevron-down"
+                        ></Button>
 
-                <ButtonContainer>
-                  <Button
-                    onClick={onInitColumn}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="refresh"
+                        <Button
+                          onClick={onSaveCustomColumn}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                        ></Button>
+                      </div>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight6 }}
+                  data={process(
+                    detailColumnDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]:
+                        detailColumnSelectedState[detailColumnIdGetter(row)],
+                    })),
+                    detailColumnDataState
+                  )}
+                  {...detailColumnDataState}
+                  onDataStateChange={onDetailColumnDataStateChange}
+                  //선택 기능
+                  dataItemKey={DETAIL_COLUMN_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onDetailColumnSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailColumnDataResult.total}
+                  onScroll={onDetailColumnScrollHandler}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onDetailColumnSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //incell 수정 기능
+                  onItemChange={onDetailColumnItemChange}
+                  cellRender={detailColumnCellRender}
+                  rowRender={detailColumnRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="40px"
+                    editable={false}
+                  />
+                  <GridColumn field="caption" title="컬럼명" editable={false} />
+                  <GridColumn
+                    field="width"
+                    title="컬럼 너비"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="hidden"
+                    title="컬럼 숨김"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="fixed"
+                    title="컬럼 고정"
+                    cell={CheckBoxCell}
+                  />
+                </Grid>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <GridContainer width="25%">
+                  <GridTitleContainer className="WindowButtonContainer5">
+                    <GridTitle>요약정보</GridTitle>
+                    {isAdmin && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={onCreateColumnClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="file-add"
+                        >
+                          신규
+                        </Button>
+                        <Button
+                          onClick={onDeleteColumnClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: webheight5 }}
+                    data={process(
+                      mainColumnDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]:
+                          mainColumnSelectedState[mainColumnIdGetter(row)],
+                      })),
+                      mainColumnDataState
+                    )}
+                    {...mainColumnDataState}
+                    onDataStateChange={onMainColumnDataStateChange}
+                    //선택 기능
+                    dataItemKey={MAIN_COLUMN_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainColumnSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainColumnDataResult.total}
+                    onScroll={onMainColumnScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainColumnSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
                   >
-                    컬럼정보 초기화
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      onArrowsBtnClick({
-                        direction: "UP",
-                        dataInfo: arrowBtnClickPara,
-                      })
-                    }
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="chevron-up"
-                  ></Button>
-                  <Button
-                    onClick={() =>
-                      onArrowsBtnClick({
-                        direction: "DOWN",
-                        dataInfo: arrowBtnClickPara,
-                      })
-                    }
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="chevron-down"
-                  ></Button>
+                    {isAdmin && (
+                      <GridColumn cell={ColumnCommandCell} width="55px" />
+                    )}
+                    <GridColumn field="option_name" title="영역" />
+                  </Grid>
+                </GridContainer>
 
-                  <Button
-                    onClick={onSaveCustomColumn}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "600px" }}
-                data={process(
-                  detailColumnDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]:
-                      detailColumnSelectedState[detailColumnIdGetter(row)],
-                  })),
-                  detailColumnDataState
-                )}
-                {...detailColumnDataState}
-                onDataStateChange={onDetailColumnDataStateChange}
-                //선택 기능
-                dataItemKey={DETAIL_COLUMN_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onDetailColumnSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detailColumnDataResult.total}
-                onScroll={onDetailColumnScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetailColumnSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //incell 수정 기능
-                onItemChange={onDetailColumnItemChange}
-                cellRender={detailColumnCellRender}
-                rowRender={detailColumnRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                />
-                <GridColumn field="caption" title="컬럼명" editable={false} />
-                <GridColumn field="width" title="컬럼 너비" cell={NumberCell} />
-                <GridColumn
-                  field="hidden"
-                  title="컬럼 숨김"
-                  cell={CheckBoxCell}
-                />
-                <GridColumn
-                  field="fixed"
-                  title="컬럼 고정"
-                  cell={CheckBoxCell}
-                />
-              </Grid>
-            </GridContainer>
-          </GridContainerWrap>
+                <GridContainer width={`calc(75% - ${GAP}px)`}>
+                  <GridTitleContainer className="WindowButtonContainer6">
+                    <GridTitle>상세정보</GridTitle>
+
+                    <ButtonContainer>
+                      <Button
+                        onClick={onInitColumn}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="refresh"
+                      >
+                        컬럼정보 초기화
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          onArrowsBtnClick({
+                            direction: "UP",
+                            dataInfo: arrowBtnClickPara,
+                          })
+                        }
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="chevron-up"
+                      ></Button>
+                      <Button
+                        onClick={() =>
+                          onArrowsBtnClick({
+                            direction: "DOWN",
+                            dataInfo: arrowBtnClickPara,
+                          })
+                        }
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="chevron-down"
+                      ></Button>
+
+                      <Button
+                        onClick={onSaveCustomColumn}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: webheight6 }}
+                    data={process(
+                      detailColumnDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]:
+                          detailColumnSelectedState[detailColumnIdGetter(row)],
+                      })),
+                      detailColumnDataState
+                    )}
+                    {...detailColumnDataState}
+                    onDataStateChange={onDetailColumnDataStateChange}
+                    //선택 기능
+                    dataItemKey={DETAIL_COLUMN_DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onDetailColumnSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={detailColumnDataResult.total}
+                    onScroll={onDetailColumnScrollHandler}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onDetailColumnSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onDetailColumnItemChange}
+                    cellRender={detailColumnCellRender}
+                    rowRender={detailColumnRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="40px"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="caption"
+                      title="컬럼명"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="width"
+                      title="컬럼 너비"
+                      cell={NumberCell}
+                    />
+                    <GridColumn
+                      field="hidden"
+                      title="컬럼 숨김"
+                      cell={CheckBoxCell}
+                    />
+                    <GridColumn
+                      field="fixed"
+                      title="컬럼 고정"
+                      cell={CheckBoxCell}
+                    />
+                  </Grid>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
 

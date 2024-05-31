@@ -208,7 +208,8 @@ type TButtonContainer = {
 export const ButtonContainer = styled.div<TButtonContainer>`
   display: flex;
   justify-content: flex-end;
-
+  padding-top: 5px;
+  padding-bottom: 5px;
   flex-direction: ${(props) =>
     props.flexDirection ? props.flexDirection : "row"};
   align-items: center;
@@ -341,7 +342,6 @@ type TFormBoxWrap = {
   border?: boolean;
 };
 export const FormBoxWrap = styled.div<TFormBoxWrap>`
-  margin: 5px 0 10px;
   width: 100%;
   padding: 10px;
   border: ${(props) =>

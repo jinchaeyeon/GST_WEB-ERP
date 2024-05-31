@@ -68,7 +68,6 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
-var height5 = 0;
 var height6 = 0;
 var height7 = 0;
 var height8 = 0;

@@ -20,7 +20,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -35,6 +35,7 @@ import { Iparameters } from "../../../store/types";
 import {
   UseGetValueFromSessionItem,
   chkScrollHandler,
+  getHeight,
   getYn,
   validator,
 } from "../../CommonFunction";
@@ -86,7 +87,7 @@ type TDetailData = {
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey, option_id } =
+  const { validationMessage, visited, name, dataItemKey, option_id, height } =
     fieldArrayRenderProps;
 
   const [editIndex, setEditIndex] = React.useState<number | undefined>();
@@ -380,7 +381,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 
   return (
-    <GridContainer margin={{ top: "30px" }}>
+    <GridContainer>
       <USER_OPTIONS_COLUMN_WINDOW_FORM_GRID_EDIT_CONTEXT.Provider
         value={{
           editIndex,
@@ -388,7 +389,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         }}
       >
         {visited && validationMessage && <Error>{validationMessage}</Error>}
-        <ButtonContainer>
+        <ButtonContainer className="WindowButtonContainer">
           <Button
             onClick={onArrowsUpBtnClick}
             fillMode="outline"
@@ -437,7 +438,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           }))}
           total={dataWithIndexes.total}
           dataItemKey={dataItemKey}
-          style={{ height: "550px" }}
+          style={{ height: height }}
           cellRender={customCellRender}
           rowRender={customRowRender}
           onScroll={scrollHandler}
@@ -506,6 +507,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const KendoWindow = ({
   setVisible,
   workType,
@@ -516,6 +521,16 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //탭 부분
+    height3 = getHeight(".k-form-fieldset"); //상단조회조건
+    height4 = getHeight(".WindowButtonContainer");
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height4);
+  }, []);
   const { option_id = "", option_name = "" } = parentComponent;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
@@ -526,6 +541,8 @@ const KendoWindow = ({
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height4);
   };
 
   const setLoading = useSetRecoilState(isLoading);
@@ -848,7 +865,7 @@ const KendoWindow = ({
                   });
                 }}
               ></button>
-              <FieldWrap fieldWidth="25%">
+              <FieldWrap fieldWidth={isMobile ? "50%" : "25%"}>
                 <Field
                   label={"영역ID"}
                   name={"option_id"}
@@ -871,9 +888,10 @@ const KendoWindow = ({
               component={FormGrid}
               //validator={arrayLengthValidator}
               option_id={formRenderProps.valueGetter("option_id")}
+              height={isMobile ? mobileheight : webheight}
             />
 
-            <BottomContainer>
+            <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"} icon="save">
                   저장
