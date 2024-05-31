@@ -1288,9 +1288,6 @@ const SA_A1100_603W: React.FC = () => {
         if (unsavedAttadatnums.length > 0) {
           setDeletedAttadatnums(unsavedAttadatnums);
         }
-        if (swiper) {
-          swiper.slideTo(0);
-        }
       }
     } catch (e) {
       alert(e);
