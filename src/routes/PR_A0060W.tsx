@@ -305,7 +305,7 @@ const PR_A0060: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -3553,7 +3553,7 @@ const PR_A0060: React.FC = () => {
                     // fetchGrid,
                   }}
                 >
-                  <GridContainer style={{ height: isMobile ? "45vh" : "36vh" }}>
+                  <GridContainer>
                     <GridTitleContainer>
                       <GridTitle>설비이력관리</GridTitle>
                       <ButtonContainer>
@@ -3587,7 +3587,7 @@ const PR_A0060: React.FC = () => {
                       fileName="설비관리"
                     >
                       <Grid
-                        style={{ height: "33vh" }}
+                        style={{ height: "30vh" }}
                         data={process(
                           subDataResult.data.map((row) => ({
                             ...row,

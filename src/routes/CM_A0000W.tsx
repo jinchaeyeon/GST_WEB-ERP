@@ -101,7 +101,7 @@ const CM_A0000W: React.FC = () => {
     });
   };
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -371,7 +371,7 @@ const CM_A0000W: React.FC = () => {
       "@p_dtgb": filters.cbodtgb,
       "@p_frdt": convertDateToStr(filters.publish_start_date),
       "@p_category": detailFilters.category,
-      "@p_title": "",
+      "@p_title": filters.contents2,
       "@p_yn": filters.radPublish_yn,
       "@p_attdatnum": "",
       "@p_userid": userId,
@@ -396,7 +396,7 @@ const CM_A0000W: React.FC = () => {
         "@p_dtgb": filters.cbodtgb,
         "@p_frdt": convertDateToStr(filters.publish_start_date),
         "@p_category": filters.cbocategory,
-        "@p_title": filters.title,
+        "@p_title": filters.contents2,
         "@p_yn": filters.radPublish_yn,
         "@p_attdatnum": "",
         "@p_userid": userId,
@@ -717,7 +717,7 @@ const CM_A0000W: React.FC = () => {
                 />
               </td>
 
-              <th></th>
+              <th>분류</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
