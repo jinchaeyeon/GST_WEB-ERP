@@ -804,7 +804,7 @@ const CM_A1000W_617: React.FC = () => {
                           <TextArea
                             value={information.contents}
                             name="contents"
-                            style={{ height: `calc(100vh - 550px)` }}
+                            rows={10}
                             onChange={InputChange}
                           />
                         </td>
@@ -1025,7 +1025,7 @@ const CM_A1000W_617: React.FC = () => {
                       value={information.contents}
                       name="contents"
                       onChange={InputChange}
-                      style={{ height: "40vh" }}
+                      style={{ height: "30vh" }}
                     />
                   </td>
                 </tr>

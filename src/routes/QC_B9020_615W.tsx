@@ -1145,7 +1145,7 @@ const QC_B9020_615W: React.FC = () => {
                 fileName="온습도 모니터링"
               >
                 <Grid
-                  style={{ height: "80vh" }}
+                  style={{ height: "75vh" }}
                   data={process(
                     mainDataResult2.data.map((row, idx) => ({
                       ...row,

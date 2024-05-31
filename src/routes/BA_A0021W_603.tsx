@@ -2195,7 +2195,7 @@ const BA_A0021W_603: React.FC = () => {
                       }
                       form_id={"BA_A0021W_603"}
                       table_id={"BA020T"}
-                      style={{ height: "60vh" }}
+                      style={{ height: "55vh" }}
                     />
                   </GridContainer>
                 </TabStripTab>
