@@ -14,7 +14,7 @@ import {
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { getSelectedState } from "@progress/kendo-react-treelist";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -25,20 +25,32 @@ import {
   FormBoxWrap,
   GridContainer,
   GridContainerWrap,
+  GridTitleContainer,
+  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading, loginResultState } from "../../../store/atoms";
+import {
+  isFilterHideState2,
+  isLoading,
+  loginResultState,
+} from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
+  getHeight,
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Window from "../WindowComponent/Window";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
+import { Title } from "chart.js";
 
 const topHeight = 55;
 const bottomHeight = 55;
@@ -53,6 +65,19 @@ type TKendoWindow = {
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+var height10 = 0;
+var height11 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -81,10 +106,59 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 800,
   });
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [mobileheight, setMobileHeight] = useState(0); //탭1그리드
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0); //탭2그리드
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0); //탭3그리드
+  const [webheight3, setWebHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0); //탭3텍스트
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".WindowButtonContainer4"); //조회버튼
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    height6 = getHeight(".k-tabstrip-items-wrapper"); //탭 부분
+    height7 = getHeight(".FormBoxWrap"); //폼박스 부분
+    height8 = getHeight(".FormBoxWrap"); //폼박스 부분2
+    height9 = getHeight(".WindowButtonContainer"); //버튼 부분
+    height10 = getHeight(".WindowButtonContainer2"); //버튼 부분
+    height11 = getHeight(".WindowButtonContainer3"); //버튼 부분
+
+    setMobileHeight(deviceHeight - height - height6);
+    setMobileHeight2(deviceHeight - height - height6);
+    setMobileHeight3(
+      deviceHeight - height - height6 - height2 - height4 - height11
+    );
+    setMobileHeight4(
+      deviceHeight - height - height6 - height2 - height4 - height11 - height3
+    );
+
+    setWebHeight(position.height - height - height6 - height7);
+    setWebHeight2(position.height - height - height6 - height8);
+    setWebHeight3(position.height - height - height6 - height2 - height5);
+    setWebHeight4(
+      position.height - height - height6 - height2 - height5 - height3
+    );
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height6 - height7);
+    setWebHeight2(position.height - height - height6 - height8);
+    setWebHeight3(position.height - height - height6 - height2 - height5);
+    setWebHeight4(
+      position.height - height - height6 - height2 - height5 - height3
+    );
   };
+ 
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
 
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     content: "",
@@ -101,6 +175,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
     reload();
   };
@@ -186,6 +261,9 @@ const KendoWindow = ({
     setInformation({
       content: "",
     });
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   const fetchTodoGridSaved = async () => {
@@ -339,6 +417,10 @@ const KendoWindow = ({
     const selectedRowData = event.dataItems[selectedIdx];
 
     onRead(selectedRowData);
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -349,6 +431,10 @@ const KendoWindow = ({
     });
 
     setSelectedState2(newSelectedState);
+
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -747,6 +833,10 @@ const KendoWindow = ({
         slip_content: selectRows.slip_content,
         sender_id: selectRows.sender_id,
       }));
+
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } else {
       alert("데이터가 없습니다.");
     }
@@ -769,6 +859,10 @@ const KendoWindow = ({
         slip_content: selectRows.slip_content,
         sender_id: selectRows.sender_id,
       }));
+
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } else {
       alert("데이터가 없습니다.");
     }
@@ -818,410 +912,950 @@ const KendoWindow = ({
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: `calc(100% - ${leftOverHeight}px)` }}
         scrollable={isMobile}
       >
         <TabStripTab title="받은 쪽지">
-          <GridContainer height={"270px"}>
-            <Grid
-              style={{ height: "100%" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <GridColumn
-                field="sender_name"
-                title="보낸사람"
-                width="120px"
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="slip_content" title="내용" width="200px" />
-              <GridColumn field="send_time" title="보낸시각" width="150px" />
-              <GridColumn field="read_time" title="읽은시각" width="150px" />
-              <GridColumn field="receivers" title="받는사람" width="120px" />
-            </Grid>
-          </GridContainer>
-          <FormBoxWrap border={true}>
-            <ButtonContainer>
-              <Button onClick={onReceive} themeColor={"primary"} icon={"email"}>
-                답장
-              </Button>
-              <Button
-                onClick={onSearch}
-                themeColor={"primary"}
-                fillMode={"outline"}
-                icon={"refresh"}
-              >
-                재조회
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                themeColor={"primary"}
-                fillMode={"outline"}
-                icon={"delete"}
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th style={{ width: "10%" }}>보낸사람</th>
-                  <td>
-                    <Input
-                      name="sender_name"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <Grid
+                    style={{ height: mobileheight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="sender_name"
+                      title="보낸사람"
+                      width="120px"
+                      footerCell={mainTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="slip_content"
+                      title="내용"
+                      width="200px"
+                    />
+                    <GridColumn
+                      field="send_time"
+                      title="보낸시각"
+                      width="150px"
+                    />
+                    <GridColumn
+                      field="read_time"
+                      title="읽은시각"
+                      width="150px"
+                    />
+                    <GridColumn
+                      field="receivers"
+                      title="받는사람"
+                      width="120px"
+                    />
+                  </Grid>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                <ButtonContainer
+                  className="WindowButtonContainer"
+                  style={{ justifyContent: "space-between", width: "100%" }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onReceive}
+                      themeColor={"primary"}
+                      icon={"email"}
+                    >
+                      답장
+                    </Button>
+                    <Button
+                      onClick={onSearch}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"refresh"}
+                    >
+                      재조회
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"delete"}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </ButtonContainer>
+                <FormBoxWrap
+                  border={true}
+                  className="FormBoxWrap"
+                  style={{
+                    width: "100%",
+                    overflow: "auto",
+                  }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>보낸사람</th>
+                        <td>
+                          <Input
+                            name="sender_name"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY] ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].sender_name
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>받은사람</th>
+                        <td>
+                          <Input
+                            name="receivers"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY] ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].receivers
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>내용</th>
+                        <td>
+                          <TextArea
+                            value={
+                              mainDataResult.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY] ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].slip_content
+                            }
+                            name="slip_content"
+                            rows={3}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>보낸시각</th>
+                        <td>
+                          <Input
+                            name="send_time"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY] ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].send_time
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>읽은시각</th>
+                        <td>
+                          <Input
+                            name="read_time"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY] ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].read_time
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer>
+                <Grid
+                  style={{ height: webheight }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="sender_name"
+                    title="보낸사람"
+                    width="120px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn field="slip_content" title="내용" width="200px" />
+                  <GridColumn
+                    field="send_time"
+                    title="보낸시각"
+                    width="150px"
+                  />
+                  <GridColumn
+                    field="read_time"
+                    title="읽은시각"
+                    width="150px"
+                  />
+                  <GridColumn
+                    field="receivers"
+                    title="받는사람"
+                    width="120px"
+                  />
+                </Grid>
+              </GridContainer>
+              <FormBoxWrap border={true} className="FormBoxWrap">
+                <ButtonContainer>
+                  <Button
+                    onClick={onReceive}
+                    themeColor={"primary"}
+                    icon={"email"}
+                  >
+                    답장
+                  </Button>
+                  <Button
+                    onClick={onSearch}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"refresh"}
+                  >
+                    재조회
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"delete"}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th style={{ width: "10%" }}>보낸사람</th>
+                      <td>
+                        <Input
+                          name="sender_name"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].sender_name
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th style={{ width: "10%" }}>받은사람</th>
-                  <td>
-                    <Input
-                      name="receivers"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].sender_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style={{ width: "10%" }}>받은사람</th>
+                      <td>
+                        <Input
+                          name="receivers"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].receivers
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>내용</th>
-                  <td>
-                    <TextArea
-                      value={
-                        mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].receivers
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>내용</th>
+                      <td>
+                        <TextArea
+                          value={
+                            mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].slip_content
-                      }
-                      name="slip_content"
-                      rows={3}
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>보낸시각</th>
-                  <td>
-                    <Input
-                      name="send_time"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].slip_content
+                          }
+                          name="slip_content"
+                          rows={3}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>보낸시각</th>
+                      <td>
+                        <Input
+                          name="send_time"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].send_time
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>읽은시각</th>
-                  <td>
-                    <Input
-                      name="read_time"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].send_time
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>읽은시각</th>
+                      <td>
+                        <Input
+                          name="read_time"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].read_time
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].read_time
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="보낸 쪽지">
-          <GridContainer height={"270px"}>
-            <Grid
-              style={{ height: "100%" }}
-              data={process(
-                mainDataResult2.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                })),
-                mainDataState2
-              )}
-              {...mainDataState2}
-              onDataStateChange={onMainDataStateChange2}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
               }}
-              onSelectionChange={onSelectionChange2}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult2.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
             >
-              <GridColumn
-                field="receivers"
-                title="받는사람"
-                width="120px"
-                footerCell={mainTotalFooterCell2}
-              />
-              <GridColumn field="slip_content" title="내용" width="200px" />
-              <GridColumn field="send_time" title="보낸시각" width="150px" />
-            </Grid>
-          </GridContainer>
-          <FormBoxWrap border={true}>
-            <ButtonContainer>
-              <Button
-                onClick={onSearch}
-                themeColor={"primary"}
-                fillMode={"outline"}
-                icon={"refresh"}
-              >
-                재조회
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                themeColor={"primary"}
-                fillMode={"outline"}
-                icon={"delete"}
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th style={{ width: "10%" }}>보낸사람</th>
-                  <td>
-                    <Input
-                      name="sender_name"
-                      type="text"
-                      value={
-                        mainDataResult2.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY2] ==
-                            Object.getOwnPropertyNames(selectedState2)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult2.data.filter(
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <Grid
+                    style={{ height: mobileheight2 }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="receivers"
+                      title="받는사람"
+                      width="120px"
+                      footerCell={mainTotalFooterCell2}
+                    />
+                    <GridColumn
+                      field="slip_content"
+                      title="내용"
+                      width="200px"
+                    />
+                    <GridColumn
+                      field="send_time"
+                      title="보낸시각"
+                      width="150px"
+                    />
+                  </Grid>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                <ButtonContainer
+                  className="WindowButtonContainer2"
+                  style={{ justifyContent: "space-between", width: "100%" }}
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onSearch}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"refresh"}
+                    >
+                      재조회
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"delete"}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </ButtonContainer>
+                <FormBoxWrap
+                  border={true}
+                  className="FormBoxWrap"
+                  style={{ width: "100%", overflow: "auto" }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: "10%" }}>보낸사람</th>
+                        <td>
+                          <Input
+                            name="sender_name"
+                            type="text"
+                            value={
+                              mainDataResult2.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY2] ==
+                                  Object.getOwnPropertyNames(selectedState2)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult2.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY2] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState2
+                                      )[0]
+                                  )[0].sender_name
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ width: "10%" }}>받은사람</th>
+                        <td>
+                          <Input
+                            name="receivers"
+                            type="text"
+                            value={
+                              mainDataResult2.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY2] ==
+                                  Object.getOwnPropertyNames(selectedState2)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult2.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY2] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState2
+                                      )[0]
+                                  )[0].receivers
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>내용</th>
+                        <td>
+                          <TextArea
+                            value={
+                              mainDataResult2.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY2] ==
+                                  Object.getOwnPropertyNames(selectedState2)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult2.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY2] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState2
+                                      )[0]
+                                  )[0].slip_content
+                            }
+                            name="slip_content"
+                            rows={3}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>보낸시각</th>
+                        <td>
+                          <Input
+                            name="send_time"
+                            type="text"
+                            value={
+                              mainDataResult2.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY2] ==
+                                  Object.getOwnPropertyNames(selectedState2)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult2.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY2] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState2
+                                      )[0]
+                                  )[0].send_time
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>읽은시각</th>
+                        <td>
+                          <Input
+                            name="read_time"
+                            type="text"
+                            value={
+                              mainDataResult2.data.filter(
+                                (item) =>
+                                  item[DATA_ITEM_KEY2] ==
+                                  Object.getOwnPropertyNames(selectedState2)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult2.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY2] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState2
+                                      )[0]
+                                  )[0].read_time
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainer style={{ width: "100%" }}>
+                <Grid
+                  style={{ height: webheight2 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="receivers"
+                    title="받는사람"
+                    width="120px"
+                    footerCell={mainTotalFooterCell2}
+                  />
+                  <GridColumn field="slip_content" title="내용" width="200px" />
+                  <GridColumn
+                    field="send_time"
+                    title="보낸시각"
+                    width="150px"
+                  />
+                </Grid>
+              </GridContainer>
+              <FormBoxWrap border={true} className="FormBoxWrap">
+                <ButtonContainer>
+                  <Button
+                    onClick={onSearch}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"refresh"}
+                  >
+                    재조회
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon={"delete"}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th style={{ width: "10%" }}>보낸사람</th>
+                      <td>
+                        <Input
+                          name="sender_name"
+                          type="text"
+                          value={
+                            mainDataResult2.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY2] ==
                                 Object.getOwnPropertyNames(selectedState2)[0]
-                            )[0].sender_name
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th style={{ width: "10%" }}>받은사람</th>
-                  <td>
-                    <Input
-                      name="receivers"
-                      type="text"
-                      value={
-                        mainDataResult2.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY2] ==
-                            Object.getOwnPropertyNames(selectedState2)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult2.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult2.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY2] ==
+                                    Object.getOwnPropertyNames(
+                                      selectedState2
+                                    )[0]
+                                )[0].sender_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style={{ width: "10%" }}>받은사람</th>
+                      <td>
+                        <Input
+                          name="receivers"
+                          type="text"
+                          value={
+                            mainDataResult2.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY2] ==
                                 Object.getOwnPropertyNames(selectedState2)[0]
-                            )[0].receivers
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>내용</th>
-                  <td>
-                    <TextArea
-                      value={
-                        mainDataResult2.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY2] ==
-                            Object.getOwnPropertyNames(selectedState2)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult2.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult2.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY2] ==
+                                    Object.getOwnPropertyNames(
+                                      selectedState2
+                                    )[0]
+                                )[0].receivers
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>내용</th>
+                      <td>
+                        <TextArea
+                          value={
+                            mainDataResult2.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY2] ==
                                 Object.getOwnPropertyNames(selectedState2)[0]
-                            )[0].slip_content
-                      }
-                      name="slip_content"
-                      rows={3}
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>보낸시각</th>
-                  <td>
-                    <Input
-                      name="send_time"
-                      type="text"
-                      value={
-                        mainDataResult2.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY2] ==
-                            Object.getOwnPropertyNames(selectedState2)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult2.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult2.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY2] ==
+                                    Object.getOwnPropertyNames(
+                                      selectedState2
+                                    )[0]
+                                )[0].slip_content
+                          }
+                          name="slip_content"
+                          rows={3}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>보낸시각</th>
+                      <td>
+                        <Input
+                          name="send_time"
+                          type="text"
+                          value={
+                            mainDataResult2.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY2] ==
                                 Object.getOwnPropertyNames(selectedState2)[0]
-                            )[0].send_time
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>읽은시각</th>
-                  <td>
-                    <Input
-                      name="read_time"
-                      type="text"
-                      value={
-                        mainDataResult2.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY2] ==
-                            Object.getOwnPropertyNames(selectedState2)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult2.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult2.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY2] ==
+                                    Object.getOwnPropertyNames(
+                                      selectedState2
+                                    )[0]
+                                )[0].send_time
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>읽은시각</th>
+                      <td>
+                        <Input
+                          name="read_time"
+                          type="text"
+                          value={
+                            mainDataResult2.data.filter(
                               (item) =>
                                 item[DATA_ITEM_KEY2] ==
                                 Object.getOwnPropertyNames(selectedState2)[0]
-                            )[0].read_time
-                      }
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult2.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY2] ==
+                                    Object.getOwnPropertyNames(
+                                      selectedState2
+                                    )[0]
+                                )[0].read_time
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </>
+          )}
         </TabStripTab>
         <TabStripTab title="쪽지 보내기">
-          <ButtonContainer>
+          <ButtonContainer className="WindowButtonContainer4">
             <Button
-              onClick={() =>
+              onClick={() => {
                 setFilters3((prev) => ({
                   ...prev,
                   check: false,
                   pgNum: 1,
                   isSearch: true,
-                }))
-              }
+                }));
+                if (swiper && isMobile) {
+                  swiper.slideTo(0);
+                }
+              }}
               icon="search"
               themeColor={"primary"}
             >
               조회
             </Button>
           </ButtonContainer>
-          <FilterBoxWrap>
+          <WindowFilterContainer>
             <FilterBox>
               <tbody>
                 <tr>
@@ -1237,94 +1871,231 @@ const KendoWindow = ({
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterBoxWrap>
-          <GridContainerWrap height={"500px"}>
-            <GridContainer width="50%">
-              <Grid
-                style={{ height: "100%" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef3}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell2}
-                  cell={CheckBoxCell}
-                />
-                <GridColumn
-                  field="user_id"
-                  title="아이디"
-                  width="120px"
-                  footerCell={mainTotalFooterCell3}
-                />
-                <GridColumn field="user_name" title="성명" width="120px" />
-              </Grid>
-            </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
-              <TextArea
-                value={Information.content}
-                name="content"
-                rows={3}
-                onChange={InputChange}
-                style={{ height: "90%" }}
-              />
-              <BottomContainer>
-                <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={onConfirmClick}>
-                    전송
-                  </Button>
-                  <Button
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                    onClick={() =>
-                      setInformation({
-                        content: "",
-                      })
-                    }
+          </WindowFilterContainer>
+          {isMobile ? (
+            <Swiper
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
+              }}
+            >
+              <SwiperSlide key={0}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="WindowButtonContainer3">
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="arrow-right"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        다음
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: mobileheight3 }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef3}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
                   >
-                    초기화
-                  </Button>
-                </ButtonContainer>
-              </BottomContainer>
-            </GridContainer>
-          </GridContainerWrap>
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                    <GridColumn
+                      field="user_id"
+                      title="아이디"
+                      width="120px"
+                      footerCell={mainTotalFooterCell3}
+                    />
+                    <GridColumn field="user_name" title="성명" width="120px" />
+                  </Grid>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="WindowButtonContainer3">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <TextArea
+                    value={Information.content}
+                    name="content"
+                    rows={3}
+                    onChange={InputChange}
+                    style={{ height: mobileheight4 }}
+                  />
+                  <BottomContainer className="BottomContainer">
+                    <ButtonContainer>
+                      <Button themeColor={"primary"} onClick={onConfirmClick}>
+                        전송
+                      </Button>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        onClick={() =>
+                          setInformation({
+                            content: "",
+                          })
+                        }
+                      >
+                        초기화
+                      </Button>
+                    </ButtonContainer>
+                  </BottomContainer>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          ) : (
+            <>
+              <GridContainerWrap>
+                <GridContainer width="50%">
+                  <Grid
+                    style={{ height: webheight3 }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef3}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                    <GridColumn
+                      field="user_id"
+                      title="아이디"
+                      width="120px"
+                      footerCell={mainTotalFooterCell3}
+                    />
+                    <GridColumn field="user_name" title="성명" width="120px" />
+                  </Grid>
+                </GridContainer>
+                <GridContainer width={`calc(50% - ${GAP}px)`}>
+                  <TextArea
+                    value={Information.content}
+                    name="content"
+                    rows={3}
+                    onChange={InputChange}
+                    style={{ height: webheight4 }}
+                  />
+                  <BottomContainer className="BottomContainer">
+                    <ButtonContainer>
+                      <Button themeColor={"primary"} onClick={onConfirmClick}>
+                        전송
+                      </Button>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        onClick={() =>
+                          setInformation({
+                            content: "",
+                          })
+                        }
+                      >
+                        초기화
+                      </Button>
+                    </ButtonContainer>
+                  </BottomContainer>
+                </GridContainer>
+              </GridContainerWrap>
+            </>
+          )}
         </TabStripTab>
       </TabStrip>
     </Window>
