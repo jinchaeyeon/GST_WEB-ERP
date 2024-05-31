@@ -16,17 +16,18 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { getSelectedState } from "@progress/kendo-react-treelist";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
   GridContainerWrap,
   GridTitleContainer,
-  TitleContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -44,13 +45,9 @@ import {
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Window from "../WindowComponent/Window";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
-import { Title } from "chart.js";
 
 const topHeight = 55;
 const bottomHeight = 55;
@@ -114,9 +111,11 @@ const KendoWindow = ({
   const [webheight2, setWebHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0); //탭3그리드
   const [webheight3, setWebHeight3] = useState(0);
-  const [mobileheight4, setMobileHeight4] = useState(0); //탭3텍스트
-  const [webheight4, setWebHeight4] = useState(0);
 
+  const [tabSelected, setTabSelected] = useState(0);
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".WindowButtonContainer4"); //조회버튼
@@ -130,33 +129,28 @@ const KendoWindow = ({
     height10 = getHeight(".WindowButtonContainer2"); //버튼 부분
     height11 = getHeight(".WindowButtonContainer3"); //버튼 부분
 
-    setMobileHeight(deviceHeight - height - height6);
-    setMobileHeight2(deviceHeight - height - height6);
+    setMobileHeight(deviceHeight - height - height6 - height9);
+    setMobileHeight2(deviceHeight - height - height6 - height10);
     setMobileHeight3(
-      deviceHeight - height - height6 - height2 - height4 - height11
-    );
-    setMobileHeight4(
       deviceHeight - height - height6 - height2 - height4 - height11 - height3
     );
 
     setWebHeight(position.height - height - height6 - height7);
     setWebHeight2(position.height - height - height6 - height8);
-    setWebHeight3(position.height - height - height6 - height2 - height5);
-    setWebHeight4(
+    setWebHeight3(
       position.height - height - height6 - height2 - height5 - height3
     );
-  }, []);
+  }, [tabSelected]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(position.height - height - height6 - height7);
     setWebHeight2(position.height - height - height6 - height8);
-    setWebHeight3(position.height - height - height6 - height2 - height5);
-    setWebHeight4(
+    setWebHeight3(
       position.height - height - height6 - height2 - height5 - height3
     );
   };
- 
+
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
 
@@ -320,11 +314,6 @@ const KendoWindow = ({
       alert(data.resultMessage);
     }
     setLoading(false);
-  };
-
-  const [tabSelected, setTabSelected] = useState(0);
-  const handleSelectTab = (e: any) => {
-    setTabSelected(e.selected);
   };
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -927,7 +916,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight }}
+                    style={{ height: mobileheight + height9 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1041,6 +1030,7 @@ const KendoWindow = ({
                   style={{
                     width: "100%",
                     overflow: "auto",
+                    height: mobileheight,
                   }}
                 >
                   <FormBox>
@@ -1401,7 +1391,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight2 }}
+                    style={{ height: mobileheight2 + height10 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
@@ -1495,12 +1485,16 @@ const KendoWindow = ({
                 <FormBoxWrap
                   border={true}
                   className="FormBoxWrap"
-                  style={{ width: "100%", overflow: "auto" }}
+                  style={{
+                    width: "100%",
+                    overflow: "auto",
+                    height: mobileheight2,
+                  }}
                 >
                   <FormBox>
                     <tbody>
                       <tr>
-                        <th style={{ width: "10%" }}>보낸사람</th>
+                        <th>보낸사람</th>
                         <td>
                           <Input
                             name="sender_name"
@@ -1525,7 +1519,7 @@ const KendoWindow = ({
                         </td>
                       </tr>
                       <tr>
-                        <th style={{ width: "10%" }}>받은사람</th>
+                        <th>받은사람</th>
                         <td>
                           <Input
                             name="receivers"
@@ -1900,7 +1894,7 @@ const KendoWindow = ({
                     </ButtonContainer>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: mobileheight3 }}
+                    style={{ height: mobileheight3 + height3 }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,
@@ -1982,7 +1976,7 @@ const KendoWindow = ({
                     name="content"
                     rows={3}
                     onChange={InputChange}
-                    style={{ height: mobileheight4 }}
+                    style={{ height: mobileheight3 }}
                   />
                   <BottomContainer className="BottomContainer">
                     <ButtonContainer>
@@ -2072,7 +2066,7 @@ const KendoWindow = ({
                     name="content"
                     rows={3}
                     onChange={InputChange}
-                    style={{ height: webheight4 }}
+                    style={{ height: webheight3 }}
                   />
                   <BottomContainer className="BottomContainer">
                     <ButtonContainer>
