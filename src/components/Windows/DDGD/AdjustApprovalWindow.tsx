@@ -12,8 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
-import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,12 +23,13 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { isLoading } from "../../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { Iparameters, TColumn } from "../../../store/types";
 import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
+  getHeight,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import Window from "../WindowComponent/Window";
@@ -82,7 +83,8 @@ type IWindow = {
 const DATA_ITEM_KEY = "membership_key";
 
 let targetRowIndex: null | number = null;
-
+var height = 0;
+var height2 = 0;
 const AdjustApprovalWindow = ({
   setVisible,
   modal = false,
@@ -106,10 +108,24 @@ const AdjustApprovalWindow = ({
     height: isMobile == true ? deviceHeight : 600,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const setLoading = useSetRecoilState(isLoading);
@@ -155,6 +171,7 @@ const AdjustApprovalWindow = ({
   // };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -437,17 +454,9 @@ const AdjustApprovalWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer>
-        <Title></Title>
-        <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
-            조회
-          </Button>
-        </ButtonContainer>
-      </TitleContainer>
-      <GridContainer height="calc(100% - 110px)">
+      <GridContainer style={{ width: "100%" }}>
         <Grid
-          style={{ height: "calc(100%)" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -512,7 +521,7 @@ const AdjustApprovalWindow = ({
             })}
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             승인

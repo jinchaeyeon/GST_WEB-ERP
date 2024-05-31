@@ -4,14 +4,19 @@ import {
   Calendar,
   CalendarChangeEvent,
 } from "@progress/kendo-react-dateinputs";
-import { useState } from "react";
-import { ButtonContainer } from "../../../CommonStyled";
+import { useLayoutEffect, useState } from "react";
+import {
+  BottomContainer,
+  ButtonContainer,
+  GridContainer,
+} from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat4,
+  getHeight,
 } from "../../CommonFunction";
 import Window from "../WindowComponent/Window";
 
@@ -28,7 +33,8 @@ type IKendoWindow = {
   show: boolean;
   show2: boolean;
 };
-
+var height = 0;
+var height2 = 0;
 const KendoWindow = ({
   setVisible,
   data,
@@ -49,8 +55,20 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 600,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
   const onClose = () => {
@@ -127,7 +145,15 @@ const KendoWindow = ({
       modals={false}
       onChangePostion={onChangePostion}
     >
-      <Grid container spacing={2}>
+      <GridContainer
+        style={{
+          width: "100%",
+          height: isMobile ? mobileheight : webheight, 
+          display: "flex",
+          flexDirection: "column", 
+          gap: "10px"         
+        }}
+      >
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <Card
             style={{
@@ -432,9 +458,10 @@ const KendoWindow = ({
           ""
         )}
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-          <ButtonContainer>
+          <BottomContainer className="BottomContainer">
+            <ButtonContainer style={{ justifyContent: "space-between" }}>
             <Button
-              style={{ width: "48%", backgroundColor: "#D3D3D3" }}
+              style={{backgroundColor: "#D3D3D3" }}
               onClick={onClose}
             >
               취소
@@ -442,13 +469,13 @@ const KendoWindow = ({
             <Button
               themeColor={"primary"}
               onClick={onSave}
-              style={{ width: "48%" }}
             >
               확인
             </Button>
-          </ButtonContainer>
+            </ButtonContainer>
+          </BottomContainer>
         </Grid>
-      </Grid>
+      </GridContainer>
     </Window>
   );
 };
