@@ -10,7 +10,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -19,15 +20,17 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { isFilterHideState2 } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  getHeight,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import Window from "../WindowComponent/Window";
 interface IMng {
   mngitemcd1: string;
@@ -46,7 +49,11 @@ type IWindow = {
   index: number;
   modal?: boolean;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const StandardWindow = ({
   workType,
   setVisible,
@@ -58,16 +65,33 @@ const StandardWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 800,
   });
+  
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
+
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
 
   const DATA_ITEM_KEY = "item1";
   const idGetter = getter(DATA_ITEM_KEY);
@@ -116,6 +140,7 @@ const StandardWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -276,7 +301,7 @@ const StandardWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button
@@ -295,7 +320,7 @@ const StandardWindow = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -321,10 +346,10 @@ const StandardWindow = ({
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
+      </WindowFilterContainer>
       <GridContainer>
         <Grid
-          style={{ height: "500px" }}
+          style={{ height: isMobile? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -370,7 +395,7 @@ const StandardWindow = ({
           <GridColumn field="item3" title="계좌번호" width="250px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
