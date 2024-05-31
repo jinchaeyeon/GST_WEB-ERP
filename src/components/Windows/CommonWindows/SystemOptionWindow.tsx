@@ -222,7 +222,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
           <FormElement horizontal={true} className="sys-opt-wnd-form-elem">
             <fieldset
               className={"k-form-fieldset"}
-              style={{ height: isMobile ? mobileheight : webheight }}
+              style={{
+                height: isMobile ? mobileheight : webheight,
+                overflow: "auto",
+              }}
             >
               <button
                 id="valueChanged"

@@ -729,7 +729,7 @@ const Main: React.FC = () => {
     return valid;
   }
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceHeight = document.documentElement.clientHeight - 100;
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
@@ -761,7 +761,7 @@ const Main: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </MainTopContainer>
-              <GridContainer style={{ width: "100%", marginTop: "1vh" }}>
+              <GridContainer style={{ width: "100%" }}>
                 <TabStrip
                   style={{ width: "100%" }}
                   selected={tabSelected}

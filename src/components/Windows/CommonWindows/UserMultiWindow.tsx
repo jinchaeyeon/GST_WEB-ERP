@@ -11,7 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -99,7 +99,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [webheight2, setWebHeight2] = useState(0);
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
@@ -529,12 +529,16 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </tbody>
         </FilterBox>
       </WindowFilterContainer>
-      <GridContainer style={{ width: "100%" }}>
+      <GridContainer
+        style={{
+          overflow: "auto",
+        }}
+      >
         <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>사용자 리스트</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: isMobile? mobileheight : webheight }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -592,12 +596,16 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="postcd" title="직위" width="120px" />
         </Grid>
       </GridContainer>
-      <GridContainer style={{ width: "100%" }}>
+      <GridContainer
+        style={{
+          overflow: "auto",
+        }}
+      >
         <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: isMobile? mobileheight2 : webheight2 }}
+          style={{ height: isMobile ? mobileheight2 : webheight2 }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
