@@ -1482,7 +1482,11 @@ const SA_A1000_603W: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
   const onPrint = () => {
-    setPrintWindowVisible(true);
+    if (mainDataResult2.total > 0) {
+      setPrintWindowVisible(true);
+    } else {
+      alert("의뢰품목이 없습니다.");
+    }
   };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInformation((prev) => {
@@ -4234,27 +4238,39 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const onRevClick = () => {
-    setRevWindowVisible(true);
+    if (mainDataResult2.total > 0) {
+      setRevWindowVisible(true);
+    } else {
+      alert("의뢰품목이 없습니다.");
+    }
   };
 
   const onPlanClick = () => {
-    setParaData((prev) => ({
-      ...prev,
-      workType: "DesTran",
-      orgdiv: sessionOrgdiv,
-      quonum: Information.quonum,
-      quorev: Information.quorev,
-    }));
+    if (mainDataResult2.total > 0) {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DesTran",
+        orgdiv: sessionOrgdiv,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+      }));
+    } else {
+      alert("의뢰품목이 없습니다.");
+    }
   };
 
   const onPlanDeleteClick = () => {
-    setParaData((prev) => ({
-      ...prev,
-      workType: "DesTran_d",
-      orgdiv: sessionOrgdiv,
-      quonum: Information.quonum,
-      quorev: Information.quorev,
-    }));
+    if (mainDataResult2.total > 0) {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DesTran_d",
+        orgdiv: sessionOrgdiv,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+      }));
+    } else {
+      alert("의뢰품목이 없습니다.");
+    }
   };
 
   return (
