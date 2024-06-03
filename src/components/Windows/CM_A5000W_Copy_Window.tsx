@@ -657,14 +657,16 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>PJT NO.</th>
+              <th>문의분야</th>
               <td>
-                <Input
-                  name="project"
-                  type="text"
-                  value={filters.project}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="require_type"
+                    value={filters.require_type}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th></th>
               <td></td>
@@ -691,16 +693,14 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th>문의분야</th>
+              <th>PJT NO.</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="require_type"
-                    value={filters.require_type}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
+                <Input
+                  name="project"
+                  type="text"
+                  value={filters.project}
+                  onChange={filterInputChange}
+                />
               </td>
               <th></th>
               <td></td>
