@@ -546,9 +546,9 @@ export const GridTitle = styled.h3`
   font-size: 16px;
   font-weight: 600;
   color: #424242;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
   @media (max-width: 1200px) {
-    margin-top: 5px;
+    padding-top: 5px;
     text-align: left;
   }
 `;
