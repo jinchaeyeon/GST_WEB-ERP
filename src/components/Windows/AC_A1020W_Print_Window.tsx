@@ -1,10 +1,11 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
+import { getHeight } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 import Window from "./WindowComponent/Window";
 
@@ -13,7 +14,8 @@ type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
 };
-
+var height = 0;
+var height2 = 0;
 const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -25,10 +27,20 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
-
   const onClose = () => {
     setVisible(false);
   };
@@ -94,12 +106,12 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
       >
         <div
           style={{
-            height: position.height - 170,
+            height: isMobile ? mobileheight : webheight,
           }}
         >
           {url != "" ? <FileViewers fileUrl={url} /> : ""}
         </div>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button
               themeColor={"primary"}

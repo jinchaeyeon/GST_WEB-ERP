@@ -30,6 +30,8 @@ export const getHeight = (className: string) => {
       : className == ".k-tabstrip-items-wrapper" ||
         className == ".k-window-titlebar"
       ? container?.clientHeight + 35
+      : className.includes("FormBoxWrap")
+      ? container?.clientHeight + 25
       : container?.clientHeight;
   } else {
     return 0;

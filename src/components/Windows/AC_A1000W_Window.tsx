@@ -18,8 +18,17 @@ import {
   NumericTextBox,
 } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -52,6 +61,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   numberWithCommas,
   toDate,
 } from "../CommonFunction";
@@ -604,6 +614,12 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -622,10 +638,34 @@ const CopyWindow = ({
     height: isMobile == true ? deviceHeight : 900,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".FormBoxWrap");
+    height4 = getHeight(".FormBoxWrap2");
+    height5 = getHeight(".WindowButtonContainer");
+
+    setMobileHeight(deviceHeight - height);
+    setMobileHeight2(deviceHeight - height - height5);
+    setMobileHeight3(deviceHeight - height - height2);
+    setWebHeight(
+      position.height - height - height2 - height3 - height4 - height5
+    );
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      position.height - height - height2 - height3 - height4 - height5
+    );
   };
-
+  var index2 = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
@@ -1693,6 +1733,9 @@ const CopyWindow = ({
       creditcd: selectedRowData.creditcd,
       reason_intax_deduction: selectedRowData.reason_intax_deduction,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -3304,472 +3347,2696 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>전표일자</th>
-                <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="acntdt"
-                      value={filters.acntdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
-                </td>
-                <th>사업장</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="location"
-                      value={filters.location}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      className="required"
-                    />
-                  )}
-                </td>
-                <th>사업부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="position"
-                      value={filters.position}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="inoutdiv"
-                      value={filters.inoutdiv}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>첨부파일</th>
-                <td>
-                  <Input
-                    name="files"
-                    type="text"
-                    value={filters.files}
-                    className="readonly"
-                  />
-                  <ButtonInInput>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <FormContext.Provider
-          value={{
-            acntcd,
-            acntnm,
-            setAcntcd,
-            setAcntnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
-          }}
-        >
-          <FormContext2.Provider
-            value={{
-              custcd,
-              custnm,
-              setCustcd,
-              setCustnm,
-              mainDataState,
-              setMainDataState,
-              // fetchGrid,
+        {isMobile ? (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index2 = swiper.activeIndex;
             }}
           >
-            <FormContext3.Provider
-              value={{
-                stdrmkcd,
-                stdrmknm,
-                acntcd,
-                acntnm,
-                setAcntcd,
-                setAcntnm,
-                setStdrmkcd,
-                setStdrmknm,
-                mainDataState,
-                setMainDataState,
-                // fetchGrid,
-              }}
-            >
-              <FormContext4.Provider
+            <SwiperSlide key={0}>
+              <FormBoxWrap
+                className="FormBoxWrap"
+                style={{ height: mobileheight }}
+              >
+                <ButtonContainer style={{ justifyContent: "end" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>전표일자</th>
+                      <td>
+                        <div className="filter-item-wrap">
+                          <DatePicker
+                            name="acntdt"
+                            value={filters.acntdt}
+                            format="yyyy-MM-dd"
+                            onChange={filterInputChange}
+                            className="required"
+                            placeholder=""
+                          />
+                        </div>
+                      </td>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>사업부</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="position"
+                            value={filters.position}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="inoutdiv"
+                            value={filters.inoutdiv}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>첨부파일</th>
+                      <td>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={filters.files}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <FormContext.Provider
                 value={{
-                  attdatnum,
-                  files,
-                  setAttdatnum,
-                  setFiles,
+                  acntcd,
+                  acntnm,
+                  setAcntcd,
+                  setAcntnm,
                   mainDataState,
                   setMainDataState,
                   // fetchGrid,
                 }}
               >
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>상세정보(1: 차변, 2: 대변)</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "300px" }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        rowstatus:
-                          row.rowstatus == null ||
-                          row.rowstatus == "" ||
-                          row.rowstatus == undefined
-                            ? ""
-                            : row.rowstatus,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                      })),
-                      mainDataState
-                    )}
-                    onDataStateChange={onMainDataStateChange}
-                    {...mainDataState}
-                    //선택 subDataState
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
+                <FormContext2.Provider
+                  value={{
+                    custcd,
+                    custnm,
+                    setCustcd,
+                    setCustnm,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <FormContext3.Provider
+                    value={{
+                      stdrmkcd,
+                      stdrmknm,
+                      acntcd,
+                      acntnm,
+                      setAcntcd,
+                      setAcntnm,
+                      setStdrmkcd,
+                      setStdrmknm,
+                      mainDataState,
+                      setMainDataState,
+                      // fetchGrid,
                     }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
                   >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    <GridColumn
-                      field="acseq2"
-                      title="순번"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={mainTotalFooterCell}
-                    />
-                    <GridColumn
-                      field="drcrdiv"
-                      title="차대구분"
-                      width="150px"
-                      cell={CustomRadioCell}
-                    />
-                    <GridColumn
-                      field="acntcd"
-                      title="계정코드"
-                      cell={ColumnCommandCell}
-                      headerCell={RequiredHeader}
-                      width="150px"
-                    />
-                    <GridColumn field="acntnm" title="계정명" width="150px" />
-                    <GridColumn
-                      field="stdrmkcd"
-                      title="단축코드"
-                      width="150px"
-                      cell={ColumnCommandCell3}
-                    />
-                    <GridColumn field="stdrmknm" title="단축명" width="150px" />
-                    <GridColumn
-                      field="slipamt_1"
-                      title="차변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn
-                      field="slipamt_2"
-                      title="대변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn field="remark3" title="적요" width="300px" />
-                    <GridColumn
-                      field="custcd"
-                      cell={ColumnCommandCell2}
-                      title="업체코드"
-                      width="150px"
-                    />
-                    <GridColumn field="custnm" title="업체명" width="150px" />
-                    <GridColumn
-                      field="bizregnum"
-                      title="사업자등록번호"
-                      width="200px"
-                    />
-                    <GridColumn
-                      field="files"
-                      cell={ColumnCommandCell4}
-                      title="첨부파일"
-                      width="200px"
-                    />
-                  </Grid>
-                </GridContainer>
-              </FormContext4.Provider>
-            </FormContext3.Provider>
-          </FormContext2.Provider>
-        </FormContext.Provider>
-        <FormBoxWrap>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>관리금액</th>
-                <td>
-                  <NumericTextBox
-                    name="mngamt"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
+                    <FormContext4.Provider
+                      value={{
+                        attdatnum,
+                        files,
+                        setAttdatnum,
+                        setFiles,
+                        mainDataState,
+                        setMainDataState,
+                        // fetchGrid,
+                      }}
+                    >
+                      <GridContainer>
+                        <GridTitleContainer className="WindowButtonContainer">
+                          <GridTitle>상세정보(1: 차변, 2: 대변)</GridTitle>
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper) {
+                                  swiper.slideTo(0);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            <div>
+                              <Button
+                                onClick={onAddClick}
+                                themeColor={"primary"}
+                                icon="plus"
+                                title="행 추가"
+                              ></Button>
+                              <Button
+                                onClick={onDeleteClick}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="minus"
+                                title="행 삭제"
+                              ></Button>
+                              <Button
+                                onClick={() => {
+                                  if (swiper) {
+                                    swiper.slideTo(2);
+                                  }
+                                }}
+                                icon="chevron-right"
+                                themeColor={"primary"}
+                                fillMode={"flat"}
+                              ></Button>
+                            </div>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <Grid
+                          style={{ height: mobileheight2 }}
+                          data={process(
+                            mainDataResult.data.map((row) => ({
+                              ...row,
+                              rowstatus:
+                                row.rowstatus == null ||
+                                row.rowstatus == "" ||
+                                row.rowstatus == undefined
+                                  ? ""
+                                  : row.rowstatus,
+                              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                            })),
+                            mainDataState
+                          )}
+                          onDataStateChange={onMainDataStateChange}
+                          {...mainDataState}
+                          //선택 subDataState
+                          dataItemKey={DATA_ITEM_KEY}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange}
+                          //스크롤 조회기능
+                          fixedScroll={true}
+                          total={mainDataResult.total}
+                          skip={page.skip}
+                          take={page.take}
+                          pageable={true}
+                          onPageChange={pageChange}
+                          //원하는 행 위치로 스크롤 기능
+                          ref={gridRef}
+                          rowHeight={30}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onMainItemChange}
+                          cellRender={customCellRender}
+                          rowRender={customRowRender}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          <GridColumn
+                            field="acseq2"
+                            title="순번"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={mainTotalFooterCell}
+                          />
+                          <GridColumn
+                            field="drcrdiv"
+                            title="차대구분"
+                            width="150px"
+                            cell={CustomRadioCell}
+                          />
+                          <GridColumn
+                            field="acntcd"
+                            title="계정코드"
+                            cell={ColumnCommandCell}
+                            headerCell={RequiredHeader}
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="acntnm"
+                            title="계정명"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="stdrmkcd"
+                            title="단축코드"
+                            width="150px"
+                            cell={ColumnCommandCell3}
+                          />
+                          <GridColumn
+                            field="stdrmknm"
+                            title="단축명"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="slipamt_1"
+                            title="차변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="slipamt_2"
+                            title="대변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="remark3"
+                            title="적요"
+                            width="300px"
+                          />
+                          <GridColumn
+                            field="custcd"
+                            cell={ColumnCommandCell2}
+                            title="업체코드"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="custnm"
+                            title="업체명"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="bizregnum"
+                            title="사업자등록번호"
+                            width="200px"
+                          />
+                          <GridColumn
+                            field="files"
+                            cell={ColumnCommandCell4}
+                            title="첨부파일"
+                            width="200px"
+                          />
+                        </Grid>
+                      </GridContainer>
+                    </FormContext4.Provider>
+                  </FormContext3.Provider>
+                </FormContext2.Provider>
+              </FormContext.Provider>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <FormBoxWrap
+                  className="FormBoxWrap2"
+                  style={{ height: mobileheight3, overflow: "auto" }}
+                >
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>관리금액</th>
+                        <td>
+                          <NumericTextBox
+                            name="mngamt"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngamt
+                            }
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>RAT</th>
+                        <td>
+                          <Input
+                            name="rate"
+                            type="number"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].rate
+                            }
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>사용부서</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="usedptcd"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].usedptcd
+                              }
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              textField="dptnm"
+                              valueField="dptcd"
+                            />
+                          )}
+                        </td>
+                        <th>자산</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="propertykind"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].propertykind
+                              }
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>비용증빙</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="evidentialkind"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].evidentialkind
+                              }
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </td>
+                        <th>신용카드</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="creditcd"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].creditcd
+                              }
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              textField="Column1"
+                              valueField="creditcd"
+                            />
+                          )}
+                        </td>
+                        <th>계산서유형</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="reason_intax_deduction"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].reason_intax_deduction
+                              }
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드1</th>
+                        <td>
+                          <Input
+                            name="mngitemcd1"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd1
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명1</th>
+                        <td>
+                          <Input
+                            name="mngitemnm1"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd1)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd1)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드1</th>
+                        <td>
+                          {mainDataResult.data.filter(
                             (item: any) =>
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngamt
-                    }
-                    onChange={InputChange}
-                  />
-                </td>
-                <th>RAT</th>
-                <td>
-                  <Input
-                    name="rate"
-                    type="number"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata1
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype1 == "B" ? (
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].mngitemcd1 == "C2" ? (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="mngdata1"
+                                  type="text"
+                                  value={
+                                    mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0] == undefined
+                                      ? ""
+                                      : mainDataResult.data.filter(
+                                          (item: any) =>
+                                            item.num ==
+                                            Object.getOwnPropertyNames(
+                                              selectedState
+                                            )[0]
+                                        )[0].mngdata1
+                                  }
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onNoteWndClick}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            ) : (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="mngdata1"
+                                  type="text"
+                                  value={
+                                    mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0] == undefined
+                                      ? ""
+                                      : mainDataResult.data.filter(
+                                          (item: any) =>
+                                            item.num ==
+                                            Object.getOwnPropertyNames(
+                                              selectedState
+                                            )[0]
+                                        )[0].mngdata1
+                                  }
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                                <ButtonInInput>
+                                  <Button
+                                    type={"button"}
+                                    onClick={onStandardWndClick}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            )
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype1 == "D" ? (
+                            <DatePicker
+                              name="mngdata1"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata1
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              className="required"
+                              onChange={InputChange}
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata1
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름1</th>
+                        <td>
+                          {mainDataResult.data.filter(
                             (item: any) =>
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].rate
-                    }
-                    onChange={InputChange}
-                  />
-                </td>
-                <th>사용부서</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="usedptcd"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm1
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].usedptcd
-                      }
-                      customOptionData={customOptionData}
-                      changeData={ComboBoxChange}
-                      textField="dptnm"
-                      valueField="dptcd"
-                    />
-                  )}
-                </td>
-                <th>자산</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="propertykind"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].propertykind
-                      }
-                      customOptionData={customOptionData}
-                      changeData={ComboBoxChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>비용증빙</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="evidentialkind"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].evidentialkind
-                      }
-                      customOptionData={customOptionData}
-                      changeData={ComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>신용카드</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="creditcd"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].creditcd
-                      }
-                      customOptionData={customOptionData}
-                      changeData={ComboBoxChange}
-                      textField="Column1"
-                      valueField="creditcd"
-                    />
-                  )}
-                </td>
-                <th>계산서유형</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="reason_intax_deduction"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].reason_intax_deduction
-                      }
-                      customOptionData={customOptionData}
-                      changeData={ComboBoxChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드1</th>
-                <td>
-                  <Input
-                    name="mngitemcd1"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
+                            )[0].controltype1 == "T" ? (
+                            <Input
+                              name="mngdatanm1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm1
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm1
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드2</th>
+                        <td>
+                          <Input
+                            name="mngitemcd2"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd2
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명2</th>
+                        <td>
+                          <Input
+                            name="mngitemnm2"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd2)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd2)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드2</th>
+                        <td>
+                          {mainDataResult.data.filter(
                             (item: any) =>
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd1
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명1</th>
-                <td>
-                  <Input
-                    name="mngitemnm1"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata2"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata2
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype2 == "B" ? (
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="mngdata2"
+                                type="text"
+                                value={
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata2
+                                }
+                                onChange={InputChange}
+                                className="required"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onStandardWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </div>
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype2 == "D" ? (
+                            <DatePicker
+                              name="mngdata2"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata2
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              className="required"
+                              onChange={InputChange}
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata2"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata2
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름2</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm2"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm2
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype2 == "T" ? (
+                            <Input
+                              name="mngdatanm2"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm2
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm2"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm2
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드3</th>
+                        <td>
+                          <Input
+                            name="mngitemcd3"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd3
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명3</th>
+                        <td>
+                          <Input
+                            name="mngitemnm3"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd3)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd3)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드3</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata3"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata3
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype3 == "B" ? (
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="mngdata3"
+                                type="text"
+                                value={
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata3
+                                }
+                                className="required"
+                                onChange={InputChange}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onStandardWndClick3}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </div>
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype3 == "D" ? (
+                            <DatePicker
+                              name="mngdata3"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata3
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              onChange={InputChange}
+                              className="required"
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata3"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata3
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름3</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm3"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm3
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype3 == "T" ? (
+                            <Input
+                              name="mngdatanm3"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm3
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm3"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm3
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드4</th>
+                        <td>
+                          <Input
+                            name="mngitemcd4"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd4
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명4</th>
+                        <td>
+                          <Input
+                            name="mngitemnm4"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd4)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd4)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드4</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata4"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata4
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype4 == "B" ? (
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="mngdata4"
+                                type="text"
+                                value={
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata4
+                                }
+                                onChange={InputChange}
+                                className="required"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onStandardWndClick4}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </div>
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype4 == "D" ? (
+                            <DatePicker
+                              name="mngdata4"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata4
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              onChange={InputChange}
+                              className="required"
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata4"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata4
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름4</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm4"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm4
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype4 == "T" ? (
+                            <Input
+                              name="mngdatanm4"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm4
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm4"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm4
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드5</th>
+                        <td>
+                          <Input
+                            name="mngitemcd5"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd5
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명5</th>
+                        <td>
+                          <Input
+                            name="mngitemnm5"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd5)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd5)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드5</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata5"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata5
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype5 == "B" ? (
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="mngdata5"
+                                type="text"
+                                value={
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata5
+                                }
+                                onChange={InputChange}
+                                className="required"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onStandardWndClick5}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </div>
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype5 == "D" ? (
+                            <DatePicker
+                              name="mngdata5"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata5
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              onChange={InputChange}
+                              className="required"
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata5"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata5
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름5</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm5"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm5
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype5 == "T" ? (
+                            <Input
+                              name="mngdatanm5"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm5
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm5"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? 0
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm5
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리항목코드6</th>
+                        <td>
+                          <Input
+                            name="mngitemcd6"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? 0
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngitemcd6
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목명6</th>
+                        <td>
+                          <Input
+                            name="mngitemnm6"
+                            type="text"
+                            value={
+                              mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd6)
+                              )?.mngitemnm == undefined
+                                ? ""
+                                : mngItemListData.find(
+                                    (items: any) =>
+                                      items.mngitemcd ==
+                                      (mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0] == undefined
+                                        ? ""
+                                        : mainDataResult.data.filter(
+                                            (item: any) =>
+                                              item.num ==
+                                              Object.getOwnPropertyNames(
+                                                selectedState
+                                              )[0]
+                                          )[0].mngitemcd6)
+                                  )?.mngitemnm
+                            }
+                            className="readonly"
+                          />
+                        </td>
+                        <th>관리항목값코드6</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdata6"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata6
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype6 == "B" ? (
+                            <div className="filter-item-wrap">
+                              <Input
+                                name="mngdata6"
+                                type="text"
+                                value={
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata6
+                                }
+                                onChange={InputChange}
+                                className="required"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onStandardWndClick6}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </div>
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined ? (
+                            ""
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype6 == "D" ? (
+                            <DatePicker
+                              name="mngdata6"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? new Date()
+                                  : toDate(
+                                      mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngdata6
+                                    )
+                              }
+                              format="yyyy-MM-dd"
+                              onChange={InputChange}
+                              className="required"
+                              placeholder=""
+                            />
+                          ) : (
+                            <Input
+                              name="mngdata6"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata6
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>관리항목값이름6</th>
+                        <td>
+                          {mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined ? (
+                            <Input
+                              name="mngdatanm6"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm6
+                              }
+                              className="readonly"
+                            />
+                          ) : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].controltype6 == "T" ? (
+                            <Input
+                              name="mngdatanm6"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm6
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          ) : (
+                            <Input
+                              name="mngdatanm6"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdatanm6
+                              }
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+                <BottomContainer className="BottomContainer">
+                  <ButtonContainer>
+                    <Button themeColor={"primary"} onClick={selectData}>
+                      저장
+                    </Button>
+                    <Button
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      onClick={onClose}
+                    >
+                      닫기
+                    </Button>
+                  </ButtonContainer>
+                </BottomContainer>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <>
+            <FormBoxWrap className="FormBoxWrap">
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>전표일자</th>
+                    <td>
+                      <div className="filter-item-wrap">
+                        <DatePicker
+                          name="acntdt"
+                          value={filters.acntdt}
+                          format="yyyy-MM-dd"
+                          onChange={filterInputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      </div>
+                    </td>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          className="required"
+                        />
+                      )}
+                    </td>
+                    <th>사업부</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="position"
+                          value={filters.position}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="inoutdiv"
+                          value={filters.inoutdiv}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>첨부파일</th>
+                    <td>
+                      <Input
+                        name="files"
+                        type="text"
+                        value={filters.files}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onAttachmentsWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+            <FormContext.Provider
+              value={{
+                acntcd,
+                acntnm,
+                setAcntcd,
+                setAcntnm,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
+              <FormContext2.Provider
+                value={{
+                  custcd,
+                  custnm,
+                  setCustcd,
+                  setCustnm,
+                  mainDataState,
+                  setMainDataState,
+                  // fetchGrid,
+                }}
+              >
+                <FormContext3.Provider
+                  value={{
+                    stdrmkcd,
+                    stdrmknm,
+                    acntcd,
+                    acntnm,
+                    setAcntcd,
+                    setAcntnm,
+                    setStdrmkcd,
+                    setStdrmknm,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <FormContext4.Provider
+                    value={{
+                      attdatnum,
+                      files,
+                      setAttdatnum,
+                      setFiles,
+                      mainDataState,
+                      setMainDataState,
+                      // fetchGrid,
+                    }}
+                  >
+                    <GridContainer>
+                      <GridTitleContainer className="WindowButtonContainer">
+                        <GridTitle>상세정보(1: 차변, 2: 대변)</GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            onClick={onAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onDeleteClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <Grid
+                        style={{ height: webheight }}
+                        data={process(
+                          mainDataResult.data.map((row) => ({
+                            ...row,
+                            rowstatus:
+                              row.rowstatus == null ||
+                              row.rowstatus == "" ||
+                              row.rowstatus == undefined
+                                ? ""
+                                : row.rowstatus,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          mainDataState
+                        )}
+                        onDataStateChange={onMainDataStateChange}
+                        {...mainDataState}
+                        //선택 subDataState
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange}
+                        //스크롤 조회기능
+                        fixedScroll={true}
+                        total={mainDataResult.total}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable={true}
+                        onPageChange={pageChange}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <GridColumn
+                          field="acseq2"
+                          title="순번"
+                          width="100px"
+                          cell={NumberCell}
+                          footerCell={mainTotalFooterCell}
+                        />
+                        <GridColumn
+                          field="drcrdiv"
+                          title="차대구분"
+                          width="150px"
+                          cell={CustomRadioCell}
+                        />
+                        <GridColumn
+                          field="acntcd"
+                          title="계정코드"
+                          cell={ColumnCommandCell}
+                          headerCell={RequiredHeader}
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="acntnm"
+                          title="계정명"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="stdrmkcd"
+                          title="단축코드"
+                          width="150px"
+                          cell={ColumnCommandCell3}
+                        />
+                        <GridColumn
+                          field="stdrmknm"
+                          title="단축명"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="slipamt_1"
+                          title="차변금액"
+                          width="100px"
+                          cell={NumberCell}
+                          footerCell={editNumberFooterCell}
+                        />
+                        <GridColumn
+                          field="slipamt_2"
+                          title="대변금액"
+                          width="100px"
+                          cell={NumberCell}
+                          footerCell={editNumberFooterCell}
+                        />
+                        <GridColumn
+                          field="remark3"
+                          title="적요"
+                          width="300px"
+                        />
+                        <GridColumn
+                          field="custcd"
+                          cell={ColumnCommandCell2}
+                          title="업체코드"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="custnm"
+                          title="업체명"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="bizregnum"
+                          title="사업자등록번호"
+                          width="200px"
+                        />
+                        <GridColumn
+                          field="files"
+                          cell={ColumnCommandCell4}
+                          title="첨부파일"
+                          width="200px"
+                        />
+                      </Grid>
+                    </GridContainer>
+                  </FormContext4.Provider>
+                </FormContext3.Provider>
+              </FormContext2.Provider>
+            </FormContext.Provider>
+            <FormBoxWrap className="FormBoxWrap2">
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>관리금액</th>
+                    <td>
+                      <NumericTextBox
+                        name="mngamt"
+                        value={
+                          mainDataResult.data.filter(
                             (item: any) =>
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd1)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                              )[0].mngamt
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>RAT</th>
+                    <td>
+                      <Input
+                        name="rate"
+                        type="number"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? 0
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].rate
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>사용부서</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="usedptcd"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].usedptcd
+                          }
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          textField="dptnm"
+                          valueField="dptcd"
+                        />
+                      )}
+                    </td>
+                    <th>자산</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="propertykind"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].propertykind
+                          }
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>비용증빙</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="evidentialkind"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].evidentialkind
+                          }
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>신용카드</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="creditcd"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].creditcd
+                          }
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          textField="Column1"
+                          valueField="creditcd"
+                        />
+                      )}
+                    </td>
+                    <th>계산서유형</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="reason_intax_deduction"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].reason_intax_deduction
+                          }
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드1</th>
+                    <td>
+                      <Input
+                        name="mngitemcd1"
+                        type="text"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? 0
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].mngitemcd1
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목명1</th>
+                    <td>
+                      <Input
+                        name="mngitemnm1"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -3785,269 +6052,286 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd1)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드1</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata1"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata1
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype1 == "B" ? (
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].mngitemcd1 == "C2" ? (
-                      <div className="filter-item-wrap">
-                        <Input
-                          name="mngdata1"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? ""
-                              : mainDataResult.data.filter(
-                                  (item: any) =>
-                                    item.num ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].mngdata1
-                          }
-                          onChange={InputChange}
-                          className="required"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onNoteWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </div>
-                    ) : (
-                      <div className="filter-item-wrap">
-                        <Input
-                          name="mngdata1"
-                          type="text"
-                          value={
-                            mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] == undefined
-                              ? ""
-                              : mainDataResult.data.filter(
-                                  (item: any) =>
-                                    item.num ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].mngdata1
-                          }
-                          onChange={InputChange}
-                          className="required"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onStandardWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </div>
-                    )
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype1 == "D" ? (
-                    <DatePicker
-                      name="mngdata1"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
-                              mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata1
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      className="required"
-                      onChange={InputChange}
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata1"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata1
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름1</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm1"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm1
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype1 == "T" ? (
-                    <Input
-                      name="mngdatanm1"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm1
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm1"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm1
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드2</th>
-                <td>
-                  <Input
-                    name="mngitemcd2"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd1)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드1</th>
+                    <td>
+                      {mainDataResult.data.filter(
                         (item: any) =>
                           item.num ==
                           Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd2
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명2</th>
-                <td>
-                  <Input
-                    name="mngitemnm2"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata1
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype1 == "B" ? (
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].mngitemcd1 == "C2" ? (
+                          <div className="filter-item-wrap">
+                            <Input
+                              name="mngdata1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata1
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onNoteWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </div>
+                        ) : (
+                          <div className="filter-item-wrap">
+                            <Input
+                              name="mngdata1"
+                              type="text"
+                              value={
+                                mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0] == undefined
+                                  ? ""
+                                  : mainDataResult.data.filter(
+                                      (item: any) =>
+                                        item.num ==
+                                        Object.getOwnPropertyNames(
+                                          selectedState
+                                        )[0]
+                                    )[0].mngdata1
+                              }
+                              onChange={InputChange}
+                              className="required"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onStandardWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </div>
+                        )
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype1 == "D" ? (
+                        <DatePicker
+                          name="mngdata1"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata1
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          className="required"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata1
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름1</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm1
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype1 == "T" ? (
+                        <Input
+                          name="mngdatanm1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm1
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm1"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm1
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드2</th>
+                    <td>
+                      <Input
+                        name="mngitemcd2"
+                        type="text"
+                        value={
+                          mainDataResult.data.filter(
                             (item: any) =>
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd2)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                              )[0].mngitemcd2
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목명2</th>
+                    <td>
+                      <Input
+                        name="mngitemnm2"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -4063,42 +6347,224 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd2)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드2</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata2"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd2)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드2</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata2"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata2
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype2 == "B" ? (
-                    <div className="filter-item-wrap">
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata2
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype2 == "B" ? (
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="mngdata2"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata2
+                            }
+                            onChange={InputChange}
+                            className="required"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onStandardWndClick2}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </div>
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype2 == "D" ? (
+                        <DatePicker
+                          name="mngdata2"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata2
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          className="required"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata2"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata2
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름2</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm2"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm2
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype2 == "T" ? (
+                        <Input
+                          name="mngdatanm2"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm2
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm2"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm2
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드3</th>
+                    <td>
                       <Input
-                        name="mngdata2"
+                        name="mngitemcd3"
                         type="text"
                         value={
                           mainDataResult.data.filter(
@@ -4106,191 +6572,23 @@ const CopyWindow = ({
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata2
+                              )[0].mngitemcd3
                         }
-                        onChange={InputChange}
-                        className="required"
+                        className="readonly"
                       />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick2}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </div>
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype2 == "D" ? (
-                    <DatePicker
-                      name="mngdata2"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
-                              mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata2
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      className="required"
-                      onChange={InputChange}
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata2"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata2
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름2</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm2"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm2
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype2 == "T" ? (
-                    <Input
-                      name="mngdatanm2"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm2
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm2"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm2
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드3</th>
-                <td>
-                  <Input
-                    name="mngitemcd3"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd3
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명3</th>
-                <td>
-                  <Input
-                    name="mngitemnm3"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd3)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                    </td>
+                    <th>관리항목명3</th>
+                    <td>
+                      <Input
+                        name="mngitemnm3"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -4306,42 +6604,224 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd3)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드3</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata3"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd3)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드3</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata3"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata3
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype3 == "B" ? (
-                    <div className="filter-item-wrap">
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata3
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype3 == "B" ? (
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="mngdata3"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata3
+                            }
+                            className="required"
+                            onChange={InputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onStandardWndClick3}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </div>
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype3 == "D" ? (
+                        <DatePicker
+                          name="mngdata3"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata3
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata3"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata3
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름3</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm3"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm3
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype3 == "T" ? (
+                        <Input
+                          name="mngdatanm3"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm3
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm3"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm3
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드4</th>
+                    <td>
                       <Input
-                        name="mngdata3"
+                        name="mngitemcd4"
                         type="text"
                         value={
                           mainDataResult.data.filter(
@@ -4349,191 +6829,23 @@ const CopyWindow = ({
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata3
+                              )[0].mngitemcd4
                         }
-                        className="required"
-                        onChange={InputChange}
+                        className="readonly"
                       />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick3}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </div>
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype3 == "D" ? (
-                    <DatePicker
-                      name="mngdata3"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
-                              mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata3
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata3"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata3
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름3</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm3"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm3
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype3 == "T" ? (
-                    <Input
-                      name="mngdatanm3"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm3
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm3"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm3
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드4</th>
-                <td>
-                  <Input
-                    name="mngitemcd4"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd4
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명4</th>
-                <td>
-                  <Input
-                    name="mngitemnm4"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd4)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                    </td>
+                    <th>관리항목명4</th>
+                    <td>
+                      <Input
+                        name="mngitemnm4"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -4549,42 +6861,224 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd4)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드4</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata4"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd4)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드4</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata4"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata4
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype4 == "B" ? (
-                    <div className="filter-item-wrap">
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata4
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype4 == "B" ? (
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="mngdata4"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata4
+                            }
+                            onChange={InputChange}
+                            className="required"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onStandardWndClick4}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </div>
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype4 == "D" ? (
+                        <DatePicker
+                          name="mngdata4"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata4
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata4"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata4
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름4</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm4"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm4
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype4 == "T" ? (
+                        <Input
+                          name="mngdatanm4"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm4
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm4"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm4
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드5</th>
+                    <td>
                       <Input
-                        name="mngdata4"
+                        name="mngitemcd5"
                         type="text"
                         value={
                           mainDataResult.data.filter(
@@ -4592,191 +7086,23 @@ const CopyWindow = ({
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata4
+                              )[0].mngitemcd5
                         }
-                        onChange={InputChange}
-                        className="required"
+                        className="readonly"
                       />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick4}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </div>
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype4 == "D" ? (
-                    <DatePicker
-                      name="mngdata4"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
-                              mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata4
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata4"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata4
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름4</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm4"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm4
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype4 == "T" ? (
-                    <Input
-                      name="mngdatanm4"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm4
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm4"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm4
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드5</th>
-                <td>
-                  <Input
-                    name="mngitemcd5"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd5
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명5</th>
-                <td>
-                  <Input
-                    name="mngitemnm5"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd5)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                    </td>
+                    <th>관리항목명5</th>
+                    <td>
+                      <Input
+                        name="mngitemnm5"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -4792,42 +7118,224 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd5)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드5</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata5"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd5)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드5</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata5"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata5
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype5 == "B" ? (
-                    <div className="filter-item-wrap">
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata5
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype5 == "B" ? (
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="mngdata5"
+                            type="text"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata5
+                            }
+                            onChange={InputChange}
+                            className="required"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onStandardWndClick5}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </div>
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype5 == "D" ? (
+                        <DatePicker
+                          name="mngdata5"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata5
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata5"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata5
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름5</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm5"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm5
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].controltype5 == "T" ? (
+                        <Input
+                          name="mngdatanm5"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm5
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm5"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm5
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>관리항목코드6</th>
+                    <td>
                       <Input
-                        name="mngdata5"
+                        name="mngitemcd6"
                         type="text"
                         value={
                           mainDataResult.data.filter(
@@ -4835,191 +7343,23 @@ const CopyWindow = ({
                               item.num ==
                               Object.getOwnPropertyNames(selectedState)[0]
                           )[0] == undefined
-                            ? ""
+                            ? 0
                             : mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata5
+                              )[0].mngitemcd6
                         }
-                        onChange={InputChange}
-                        className="required"
+                        className="readonly"
                       />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick5}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </div>
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype5 == "D" ? (
-                    <DatePicker
-                      name="mngdata5"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
-                              mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata5
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata5"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata5
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름5</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm5"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm5
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype5 == "T" ? (
-                    <Input
-                      name="mngdatanm5"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm5
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm5"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? 0
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm5
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>관리항목코드6</th>
-                <td>
-                  <Input
-                    name="mngitemcd6"
-                    type="text"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? 0
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].mngitemcd6
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목명6</th>
-                <td>
-                  <Input
-                    name="mngitemnm6"
-                    type="text"
-                    value={
-                      mngItemListData.find(
-                        (items: any) =>
-                          items.mngitemcd ==
-                          (mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngitemcd6)
-                      )?.mngitemnm == undefined
-                        ? ""
-                        : mngItemListData.find(
+                    </td>
+                    <th>관리항목명6</th>
+                    <td>
+                      <Input
+                        name="mngitemnm6"
+                        type="text"
+                        value={
+                          mngItemListData.find(
                             (items: any) =>
                               items.mngitemcd ==
                               (mainDataResult.data.filter(
@@ -5035,206 +7375,238 @@ const CopyWindow = ({
                                         selectedState
                                       )[0]
                                   )[0].mngitemcd6)
-                          )?.mngitemnm
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>관리항목값코드6</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdata6"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                          )?.mngitemnm == undefined
+                            ? ""
+                            : mngItemListData.find(
+                                (items: any) =>
+                                  items.mngitemcd ==
+                                  (mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0] == undefined
+                                    ? ""
+                                    : mainDataResult.data.filter(
+                                        (item: any) =>
+                                          item.num ==
+                                          Object.getOwnPropertyNames(
+                                            selectedState
+                                          )[0]
+                                      )[0].mngitemcd6)
+                              )?.mngitemnm
+                        }
+                        className="readonly"
+                      />
+                    </td>
+                    <th>관리항목값코드6</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdata6"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata6
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype6 == "B" ? (
-                    <div className="filter-item-wrap">
-                      <Input
-                        name="mngdata6"
-                        type="text"
-                        value={
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? ""
-                            : mainDataResult.data.filter(
-                                (item: any) =>
-                                  item.num ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata6
-                        }
-                        onChange={InputChange}
-                        className="required"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onStandardWndClick6}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata6
+                          }
+                          className="readonly"
                         />
-                      </ButtonInInput>
-                    </div>
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined ? (
-                    ""
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype6 == "D" ? (
-                    <DatePicker
-                      name="mngdata6"
-                      value={
-                        mainDataResult.data.filter(
+                      ) : mainDataResult.data.filter(
                           (item: any) =>
                             item.num ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? new Date()
-                          : toDate(
+                        )[0].controltype6 == "B" ? (
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="mngdata6"
+                            type="text"
+                            value={
                               mainDataResult.data.filter(
                                 (item: any) =>
                                   item.num ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].mngdata6
-                            )
-                      }
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  ) : (
-                    <Input
-                      name="mngdata6"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata6
+                            }
+                            onChange={InputChange}
+                            className="required"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onStandardWndClick6}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </div>
+                      ) : mainDataResult.data.filter(
                           (item: any) =>
                             item.num ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
-                              (item: any) =>
-                                item.num ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdata6
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>관리항목값이름6</th>
-                <td>
-                  {mainDataResult.data.filter(
-                    (item: any) =>
-                      item.num == Object.getOwnPropertyNames(selectedState)[0]
-                  )[0] == undefined ? (
-                    <Input
-                      name="mngdatanm6"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
+                        )[0] == undefined ? (
+                        ""
+                      ) : mainDataResult.data.filter(
                           (item: any) =>
                             item.num ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                        )[0].controltype6 == "D" ? (
+                        <DatePicker
+                          name="mngdata6"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm6
-                      }
-                      className="readonly"
-                    />
-                  ) : mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0].controltype6 == "T" ? (
-                    <Input
-                      name="mngdatanm6"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? new Date()
+                              : toDate(
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].mngdata6
+                                )
+                          }
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      ) : (
+                        <Input
+                          name="mngdata6"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdata6
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                    <th>관리항목값이름6</th>
+                    <td>
+                      {mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined ? (
+                        <Input
+                          name="mngdatanm6"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm6
+                          }
+                          className="readonly"
+                        />
+                      ) : mainDataResult.data.filter(
                           (item: any) =>
                             item.num ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                        )[0].controltype6 == "T" ? (
+                        <Input
+                          name="mngdatanm6"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm6
-                      }
-                      onChange={InputChange}
-                      className="required"
-                    />
-                  ) : (
-                    <Input
-                      name="mngdatanm6"
-                      type="text"
-                      value={
-                        mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0] == undefined
-                          ? ""
-                          : mainDataResult.data.filter(
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm6
+                          }
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      ) : (
+                        <Input
+                          name="mngdatanm6"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
                               (item: any) =>
                                 item.num ==
                                 Object.getOwnPropertyNames(selectedState)[0]
-                            )[0].mngdatanm6
-                      }
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].mngdatanm6
+                          }
+                          className="readonly"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+            <BottomContainer className="BottomContainer">
+              <ButtonContainer>
+                <Button themeColor={"primary"} onClick={selectData}>
+                  저장
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={onClose}
+                >
+                  닫기
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        )}
       </Window>
       {standardWindowVisible && (
         <StandardWindow

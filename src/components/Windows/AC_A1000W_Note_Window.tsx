@@ -24,7 +24,9 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isDeviceWidthState, isMobileState } from "../../store/atoms";
+import {
+  isFilterHideState2
+} from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
@@ -73,6 +75,9 @@ const AC_A1000W_Note_Window = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
@@ -83,6 +88,7 @@ const AC_A1000W_Note_Window = ({
     setMobileHeight(deviceHeight - height - height2 - height3 - height4);
     setWebHeight(position.height - height - height2 - height3 - height5);
   }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(position.height - height - height2 - height3 - height5);
@@ -151,6 +157,7 @@ const AC_A1000W_Note_Window = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 

@@ -344,6 +344,7 @@ type TFormBoxWrap = {
 export const FormBoxWrap = styled.div<TFormBoxWrap>`
   width: 100%;
   padding: 10px;
+  overflow: auto;
   border: ${(props) =>
     props.border ? "solid 1px rgba(0, 0, 0, 0.08);" : undefined};
 `;

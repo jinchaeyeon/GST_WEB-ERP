@@ -1,7 +1,7 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -19,6 +19,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
+  getHeight,
 } from "../CommonFunction";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import Window from "./WindowComponent/Window";
@@ -33,6 +34,9 @@ type IWindow = {
 const lastMonth = (date: Date) => {
   return new Date(date.getFullYear(), 12, 0);
 };
+
+var height = 0;
+var height2 = 0;
 
 const CopyWindow = ({
   setVisible,
@@ -50,8 +54,20 @@ const CopyWindow = ({
     height: isMobile == true ? deviceHeight : 300,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
   //커스텀 옵션 조회
@@ -165,7 +181,12 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
+        <FormBoxWrap
+          className="FormBoxWrap"
+          style={{
+            height: isMobile ? mobileheight : webheight,
+          }}
+        >
           <FormBox>
             <tbody>
               <tr>
@@ -231,7 +252,7 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인

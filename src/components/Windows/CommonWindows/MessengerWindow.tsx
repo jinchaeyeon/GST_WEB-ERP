@@ -1028,7 +1028,6 @@ const KendoWindow = ({
                   className="FormBoxWrap"
                   style={{
                     width: "100%",
-                    overflow: "auto",
                     height: mobileheight,
                   }}
                 >
@@ -1486,7 +1485,6 @@ const KendoWindow = ({
                   className="FormBoxWrap"
                   style={{
                     width: "100%",
-                    overflow: "auto",
                     height: mobileheight2,
                   }}
                 >

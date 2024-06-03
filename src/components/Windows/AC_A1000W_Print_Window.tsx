@@ -1,7 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -9,11 +8,11 @@ import {
   FormBoxWrap,
 } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
 import {
   GetPropertyValueByName,
   UseCustomOption,
   UseMessages,
+  getHeight,
 } from "../CommonFunction";
 import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -25,7 +24,8 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-
+var height = 0;
+var height2 = 0;
 const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -36,13 +36,30 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 220,
   });
+  const [position2, setPosition2] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeight : 800,
+  });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
 
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
-  const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
+  const onChangePostion2 = (position: any) => {
+    setPosition2(position);
+  };
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -85,7 +102,6 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   };
 
   const onPrintWndClick = () => {
-    window.scrollTo(0, 0);
     setPreviewVisible((prev) => !prev);
   };
 
@@ -98,7 +114,12 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
+        <FormBoxWrap
+          style={{
+            height: isMobile ? mobileheight : webheight,
+            overflow: "auto",
+          }}
+        >
           <FormBox>
             <tbody>
               <tr>
@@ -115,7 +136,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onPrintWndClick}>
               확인
@@ -133,10 +154,10 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
       {previewVisible && (
         <Window
           titles={"미리보기"}
-          positions={position}
+          positions={position2}
           Close={() => setPreviewVisible((prev) => !prev)}
-          modals={modal}
-          onChangePostion={onChangePostion}
+          modals={false}
+          onChangePostion={onChangePostion2}
         >
           <ReplaceTaxReport Type={filters.print} data={data} />
         </Window>
