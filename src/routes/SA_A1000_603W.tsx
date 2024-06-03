@@ -657,6 +657,9 @@ const SA_A1000_603W: React.FC = () => {
             ?.valueCode,
           infrdt: setDefaultDate(customOptionData, "infrdt"),
           intodt: setDefaultDate(customOptionData, "intodt"),
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           find_row_value: queryParams.get("go") as string,
           isSearch: true,
         }));
@@ -670,6 +673,9 @@ const SA_A1000_603W: React.FC = () => {
             ?.valueCode,
           infrdt: setDefaultDate(customOptionData, "infrdt"),
           intodt: setDefaultDate(customOptionData, "intodt"),
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -679,7 +685,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "L_CM501_603, R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
   const [materialgbListData, setMaterialgbListData] = React.useState([
@@ -734,6 +740,9 @@ const SA_A1000_603W: React.FC = () => {
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setMaterialgbListData(getBizCom(bizComponentData, "L_SA012_603"));
@@ -753,6 +762,7 @@ const SA_A1000_603W: React.FC = () => {
       setMeditypeListData(getBizCom(bizComponentData, "L_CM501_603"));
       setStatusListData(getBizCom(bizComponentData, "L_CM500_603"));
       setStatusListData2(getBizCom(bizComponentData, "L_SA011_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -870,7 +880,7 @@ const SA_A1000_603W: React.FC = () => {
     });
   };
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -3276,7 +3286,8 @@ const SA_A1000_603W: React.FC = () => {
       extra_field5: "",
       rcvemail: "",
       extra_field3: "",
-      extra_field2: "",
+      extra_field2: defaultOption.find((item: any) => item.id == "extra_field2")
+        ?.valueCode,
       materialinfo: "",
       agency1: "",
       agency2: "",
@@ -4343,12 +4354,14 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                   <th>물질상세분야</th>
                   <td>
-                    <Input
-                      name="extra_field2"
-                      type="text"
-                      value={filters.extra_field2}
-                      onChange={filterInputChange}
-                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="extra_field2"
+                        value={filters.extra_field2}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
                   </td>
                   <th>영업담당자</th>
                   <td>
@@ -4502,6 +4515,9 @@ const SA_A1000_603W: React.FC = () => {
                     )?.code_name,
                     status: statusListData2.find(
                       (items: any) => items.sub_code == row.status
+                    )?.code_name,
+                    extra_field2: extra_field2ListData.find(
+                      (items: any) => items.sub_code == row.extra_field2
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -5218,12 +5234,25 @@ const SA_A1000_603W: React.FC = () => {
                           </td>
                           <th>물질상세분야</th>
                           <td>
-                            <Input
-                              name="extra_field2"
-                              type="text"
-                              value={Information.extra_field2}
-                              onChange={InputChange}
-                            />
+                            {worktype == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="extra_field2"
+                                    value={Information.extra_field2}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="extra_field2"
+                                    value={Information.extra_field2}
+                                    bizComponentId="L_CM501_603"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )}
                           </td>
                           <th>물질정보</th>
                           <td colSpan={3}>
@@ -6409,12 +6438,25 @@ const SA_A1000_603W: React.FC = () => {
                       </td>
                       <th>물질상세분야</th>
                       <td>
-                        <Input
-                          name="extra_field2"
-                          type="text"
-                          value={Information.extra_field2}
-                          onChange={InputChange}
-                        />
+                        {worktype == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="extra_field2"
+                                value={Information.extra_field2}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="extra_field2"
+                                value={Information.extra_field2}
+                                bizComponentId="L_CM501_603"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
                       </td>
                       <th>물질정보</th>
                       <td colSpan={3}>

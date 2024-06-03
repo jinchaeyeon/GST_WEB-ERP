@@ -195,7 +195,7 @@ const BA_A0021W_603: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA001_603, L_CM701, L_CM700, L_sysUserMaster_001, L_BA026, L_BA076, L_BA077",
+    "L_CM501_603, L_SA001_603, L_CM701, L_CM700, L_sysUserMaster_001, L_BA026, L_BA076, L_BA077",
     setBizComponentData
   );
   const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
@@ -215,6 +215,10 @@ const BA_A0021W_603: React.FC = () => {
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       setUsegbListData(getBizCom(bizComponentData, "L_CM700"));
@@ -224,6 +228,7 @@ const BA_A0021W_603: React.FC = () => {
       setItemlvl2ListData(getBizCom(bizComponentData, "L_BA076"));
       setItemlvl3ListData(getBizCom(bizComponentData, "L_BA077"));
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -1534,6 +1539,9 @@ const BA_A0021W_603: React.FC = () => {
                             usegb: usegbListData.find(
                               (item: any) => item.sub_code == row.usegb
                             )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
+                            )?.code_name,
                             [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                           })),
                           mainDataState2
@@ -1614,6 +1622,9 @@ const BA_A0021W_603: React.FC = () => {
                             )?.user_name,
                             materialtype: materialtypeListData.find(
                               (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
                             )?.code_name,
                             [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                           })),
@@ -1697,6 +1708,9 @@ const BA_A0021W_603: React.FC = () => {
                             )?.user_name,
                             materialtype: materialtypeListData.find(
                               (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
                             )?.code_name,
                             [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
                           })),
@@ -2225,6 +2239,9 @@ const BA_A0021W_603: React.FC = () => {
                             usegb: usegbListData.find(
                               (item: any) => item.sub_code == row.usegb
                             )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
+                            )?.code_name,
                             [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                           })),
                           mainDataState2
@@ -2305,6 +2322,9 @@ const BA_A0021W_603: React.FC = () => {
                             )?.user_name,
                             materialtype: materialtypeListData.find(
                               (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
                             )?.code_name,
                             [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                           })),
@@ -2388,6 +2408,9 @@ const BA_A0021W_603: React.FC = () => {
                             )?.user_name,
                             materialtype: materialtypeListData.find(
                               (items: any) => items.sub_code == row.materialtype
+                            )?.code_name,
+                            extra_field2: extra_field2ListData.find(
+                              (items: any) => items.sub_code == row.extra_field2
                             )?.code_name,
                             [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
                           })),

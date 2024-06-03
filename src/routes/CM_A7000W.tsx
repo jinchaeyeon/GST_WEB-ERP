@@ -211,7 +211,7 @@ const CM_A7000W: React.FC = () => {
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA019_603, L_Requestgb, L_SA001_603, L_sysUserMaster_001, L_CM700, L_CM701",
+    "L_CM501_603, L_SA019_603, L_Requestgb, L_SA001_603, L_sysUserMaster_001, L_CM700, L_CM701",
     setBizComponentData
   );
 
@@ -231,7 +231,9 @@ const CM_A7000W: React.FC = () => {
   const [materialtypeListData, setmaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
@@ -240,6 +242,7 @@ const CM_A7000W: React.FC = () => {
       setTestTypeListData(getBizCom(bizComponentData, "L_SA019_603"));
       setrequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
       setmaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -398,6 +401,9 @@ const CM_A7000W: React.FC = () => {
           usegb: defaultOption.find((item: any) => item.id == "usegb")
             ?.valueCode,
           type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           find_row_value: queryParams.get("go") as string,
           query: true,
         }));
@@ -414,6 +420,9 @@ const CM_A7000W: React.FC = () => {
           usegb: defaultOption.find((item: any) => item.id == "usegb")
             ?.valueCode,
           type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -1278,7 +1287,8 @@ const CM_A7000W: React.FC = () => {
       materialtype: defaultOption.find((item: any) => item.id == "materialtype")
         ?.valueCode,
       type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
-      extra_field2: "",
+      extra_field2: defaultOption.find((item: any) => item.id == "extra_field2")
+        ?.valueCode,
       place: "",
     });
   };
@@ -1732,12 +1742,14 @@ const CM_A7000W: React.FC = () => {
                   </td>
                   <th>물질상세분야</th>
                   <td>
-                    <Input
-                      name="extra_field2"
-                      type="text"
-                      value={filters.extra_field2}
-                      onChange={filterInputChange}
-                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="extra_field2"
+                        value={filters.extra_field2}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
                   </td>
                   <th></th>
                   <td></td>
@@ -1791,6 +1803,9 @@ const CM_A7000W: React.FC = () => {
                     )?.code_name,
                     type: typeListData.find(
                       (items: any) => items.sub_code == row.type
+                    )?.code_name,
+                    extra_field2: extra_field2ListData.find(
+                      (items: any) => items.sub_code == row.extra_field2
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
@@ -2217,19 +2232,21 @@ const CM_A7000W: React.FC = () => {
                           </td>
                           <th>물질상세분야</th>
                           <td>
-                            {information.ref_key != "" ? (
-                              <Input
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
                                 name="extra_field2"
-                                type="text"
                                 value={information.extra_field2}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="extra_field2"
-                                type="text"
-                                value={information.extra_field2}
-                                onChange={InputChange}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                disabled={
+                                  information.ref_key != "" ? true : false
+                                }
+                                className={
+                                  information.ref_key != ""
+                                    ? "readonly"
+                                    : undefined
+                                }
                               />
                             )}
                           </td>
@@ -2711,19 +2728,21 @@ const CM_A7000W: React.FC = () => {
                           </td>
                           <th>물질상세분야</th>
                           <td>
-                            {information.ref_key != "" ? (
-                              <Input
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
                                 name="extra_field2"
-                                type="text"
                                 value={information.extra_field2}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="extra_field2"
-                                type="text"
-                                value={information.extra_field2}
-                                onChange={InputChange}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                disabled={
+                                  information.ref_key != "" ? true : false
+                                }
+                                className={
+                                  information.ref_key != ""
+                                    ? "readonly"
+                                    : undefined
+                                }
                               />
                             )}
                           </td>

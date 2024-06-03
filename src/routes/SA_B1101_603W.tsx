@@ -61,7 +61,7 @@ const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
 const numberField = ["totamt"];
 
 const SA_B1101_603W: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -125,18 +125,24 @@ const SA_B1101_603W: React.FC = () => {
     }
   };
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent(
+    "L_CM501_603, L_SA001_603, L_sysUserMaster_001",
+    setBizComponentData
+  );
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -552,6 +558,9 @@ const SA_B1101_603W: React.FC = () => {
                 )?.user_name,
                 materialtype: materialtypeListData.find(
                   (items: any) => items.sub_code == row.materialtype
+                )?.code_name,
+                extra_field2: extra_field2ListData.find(
+                  (items: any) => items.sub_code == row.extra_field2
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),

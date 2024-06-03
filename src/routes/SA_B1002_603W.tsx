@@ -79,7 +79,7 @@ const SA_B1002_603W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".ButtonContainer");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -135,6 +135,9 @@ const SA_B1002_603W: React.FC = () => {
           ?.valueCode,
         designyn: defaultOption.find((item: any) => item.id == "designyn")
           ?.valueCode,
+        extra_field2: defaultOption.find(
+          (item: any) => item.id == "extra_field2"
+        )?.valueCode,
         isSearch: true,
       }));
     }
@@ -150,18 +153,24 @@ const SA_B1002_603W: React.FC = () => {
   };
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   //   물질분류, 영업담당자
-  UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent(
+    "L_CM501_603, L_SA001_603, L_sysUserMaster_001",
+    setBizComponentData
+  );
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -572,12 +581,14 @@ const SA_B1002_603W: React.FC = () => {
               </td>
               <th>물질상세분야</th>
               <td>
-                <Input
-                  name="extra_field2"
-                  type="text"
-                  value={filters.extra_field2}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="extra_field2"
+                    value={filters.extra_field2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th>영업담당자</th>
               <td>
@@ -642,6 +653,9 @@ const SA_B1002_603W: React.FC = () => {
                 chkperson: userListData.find(
                   (items: any) => items.user_id == row.chkperson
                 )?.user_name,
+                extra_field2: extra_field2ListData.find(
+                  (item: any) => item.sub_code == row.extra_field2
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

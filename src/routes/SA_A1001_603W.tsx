@@ -54,7 +54,7 @@ import {
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -159,7 +159,7 @@ const SA_A1001_603W: React.FC = () => {
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A1001_603W", setCustomOptionData);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -237,6 +237,9 @@ const SA_A1001_603W: React.FC = () => {
             ?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
           query: true,
@@ -254,6 +257,9 @@ const SA_A1001_603W: React.FC = () => {
           rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -262,7 +268,7 @@ const SA_A1001_603W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_SA001_603, L_Requestgb",
+    "L_CM501_603, L_sysUserMaster_001, L_SA001_603, L_Requestgb",
     setBizComponentData
   );
   const [userListData, setUserListData] = useState([
@@ -274,11 +280,15 @@ const SA_A1001_603W: React.FC = () => {
   const [requestgbListData, setRequestgbListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setRequestgbListData(getBizCom(bizComponentData, "L_Requestgb"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -1662,12 +1672,14 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                   <th>물질상세분야</th>
                   <td>
-                    <Input
-                      name="extra_field2"
-                      type="text"
-                      value={filters.extra_field2}
-                      onChange={filterInputChange}
-                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="extra_field2"
+                        value={filters.extra_field2}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
                   </td>
                   <th>등록자</th>
                   <td>
@@ -1764,6 +1776,9 @@ const SA_A1001_603W: React.FC = () => {
                     )?.user_name,
                     materialtype: materialtypeListData.find(
                       (items: any) => items.sub_code == row.materialtype
+                    )?.code_name,
+                    extra_field2: extra_field2ListData.find(
+                      (items: any) => items.sub_code == row.extra_field2
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),

@@ -205,6 +205,9 @@ const CM_A5000W: React.FC = () => {
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
           )?.valueCode,
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
           query: true,
@@ -225,6 +228,9 @@ const CM_A5000W: React.FC = () => {
           require_type: defaultOption.find(
             (item: any) => item.id == "require_type"
           )?.valueCode,
+          extra_field2: defaultOption.find(
+            (item: any) => item.id == "extra_field2"
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -234,7 +240,7 @@ const CM_A5000W: React.FC = () => {
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_CM503_603, L_CM502_603, L_SA001_603, L_CM500_603_Q",
+    "L_CM501_603,L_sysUserMaster_001, L_CM503_603, L_CM502_603, L_SA001_603, L_CM500_603_Q",
     setBizComponentData
   );
   //상태, 의약품상세분류
@@ -254,6 +260,9 @@ const CM_A5000W: React.FC = () => {
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setStatusListData(getBizCom(bizComponentData, "L_CM500_603_Q"));
@@ -261,6 +270,7 @@ const CM_A5000W: React.FC = () => {
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
       setRequire_typeListData(getBizCom(bizComponentData, "L_CM502_603"));
       setCompletion_methodListData(getBizCom(bizComponentData, "L_CM503_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -1645,7 +1655,8 @@ const CM_A5000W: React.FC = () => {
       ref_document_id: "",
       materialtype: defaultOption.find((item: any) => item.id == "materialtype")
         ?.valueCode,
-      extra_field2: "",
+      extra_field2: defaultOption.find((item: any) => item.id == "extra_field2")
+        ?.valueCode,
       custprsnnm: "",
     });
     setInformation2({
@@ -1795,12 +1806,14 @@ const CM_A5000W: React.FC = () => {
                   </td>
                   <th>물질상세분야</th>
                   <td>
-                    <Input
-                      name="extra_field2"
-                      type="text"
-                      value={filters.extra_field2}
-                      onChange={filterInputChange}
-                    />
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="extra_field2"
+                        value={filters.extra_field2}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr>
@@ -1938,6 +1951,9 @@ const CM_A5000W: React.FC = () => {
                     )?.code_name,
                     completion_method: completion_methodListData.find(
                       (items: any) => items.sub_code == row.completion_method
+                    )?.code_name,
+                    extra_field2: extra_field2ListData.find(
+                      (items: any) => items.sub_code == row.extra_field2
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
@@ -2245,12 +2261,17 @@ const CM_A5000W: React.FC = () => {
                             </td>
                             <th>물질상세분야</th>
                             <td colSpan={3}>
-                              <Input
-                                name="extra_field2"
-                                type="text"
-                                value={information.extra_field2}
-                                className="readonly"
-                              />
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="extra_field2"
+                                  value={information.extra_field2}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
                             </td>
                           </tr>
                           <tr>
@@ -2530,12 +2551,17 @@ const CM_A5000W: React.FC = () => {
                             </td>
                             <th>물질상세분야</th>
                             <td colSpan={3}>
-                              <Input
-                                name="extra_field2"
-                                type="text"
-                                value={information.extra_field2}
-                                className="readonly"
-                              />
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="extra_field2"
+                                  value={information.extra_field2}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="readonly"
+                                  disabled={true}
+                                />
+                              )}
                             </td>
                           </tr>
                           <tr>
@@ -2985,12 +3011,17 @@ const CM_A5000W: React.FC = () => {
                               </td>
                               <th>물질상세분야</th>
                               <td colSpan={3}>
-                                <Input
-                                  name="extra_field2"
-                                  type="text"
-                                  value={information.extra_field2}
-                                  className="readonly"
-                                />
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="extra_field2"
+                                    value={information.extra_field2}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
                               </td>
                             </tr>
                             <tr>
@@ -3230,12 +3261,17 @@ const CM_A5000W: React.FC = () => {
                               </td>
                               <th>물질상세분야</th>
                               <td colSpan={3}>
-                                <Input
-                                  name="extra_field2"
-                                  type="text"
-                                  value={information.extra_field2}
-                                  className="readonly"
-                                />
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="extra_field2"
+                                    value={information.extra_field2}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    className="readonly"
+                                    disabled={true}
+                                  />
+                                )}
                               </td>
                             </tr>
                             <tr>

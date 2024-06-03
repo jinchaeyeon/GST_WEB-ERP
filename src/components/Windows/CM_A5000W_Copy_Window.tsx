@@ -154,7 +154,7 @@ const KendoWindow = ({
     height3 = getHeight(".TitleContainer"); //조회버튼있는 title부분
     height4 = getHeight(".visible-mobile-only2"); //필터 모바일
     height5 = getHeight(".filterBox2"); //필터 웹
-    height6 = getHeight(".WindowButtonContainer"); 
+    height6 = getHeight(".WindowButtonContainer");
 
     setMobileHeight(
       deviceHeight - height - height2 - height3 - height4 - height6
@@ -200,6 +200,9 @@ const KendoWindow = ({
         require_type: defaultOption.find(
           (item: any) => item.id == "require_type"
         )?.valueCode,
+        extra_field2: defaultOption.find(
+          (item: any) => item.id == "extra_field2"
+        )?.valueCode,
         isSearch: true,
       }));
     }
@@ -208,7 +211,7 @@ const KendoWindow = ({
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_CM500_603_Q, L_CM501_603, L_CM502_603, L_SA001_603, L_CM503_603, L_sysUserMaster_001",
+    "L_CM501_603, L_CM500_603_Q, L_CM501_603, L_CM502_603, L_SA001_603, L_CM503_603, L_sysUserMaster_001",
     setBizComponentData
   );
   // 의약품상세분류, 문의 분야
@@ -229,6 +232,10 @@ const KendoWindow = ({
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
+  const [extra_field2ListData, setExtra_field2ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
@@ -236,6 +243,7 @@ const KendoWindow = ({
       setStatusListData(getBizCom(bizComponentData, "L_CM500_603_Q"));
       setRequireListData(getBizCom(bizComponentData, "L_CM502_603"));
       setCompletion_methodListData(getBizCom(bizComponentData, "L_CM503_603"));
+      setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
     }
   }, [bizComponentData]);
 
@@ -614,12 +622,14 @@ const KendoWindow = ({
               </td>
               <th>물질상세분야</th>
               <td>
-                <Input
-                  name="extra_field2"
-                  type="text"
-                  value={filters.extra_field2}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="extra_field2"
+                    value={filters.extra_field2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
             </tr>
             <tr>
@@ -728,6 +738,9 @@ const KendoWindow = ({
               )?.code_name,
               completion_method: completion_methodListData.find(
                 (items: any) => items.sub_code == row.completion_method
+              )?.code_name,
+              extra_field2: extra_field2ListData.find(
+                (items: any) => items.sub_code == row.extra_field2
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
