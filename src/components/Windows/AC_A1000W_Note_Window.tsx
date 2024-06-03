@@ -11,7 +11,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,6 +24,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
+import { isDeviceWidthState, isMobileState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
@@ -31,10 +33,11 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
+  getHeight,
   setDefaultDate,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -47,7 +50,11 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const AC_A1000W_Note_Window = ({
   workType,
   setVisible,
@@ -58,15 +65,27 @@ const AC_A1000W_Note_Window = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 800,
   });
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
 
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -310,7 +329,7 @@ const AC_A1000W_Note_Window = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -318,7 +337,7 @@ const AC_A1000W_Note_Window = ({
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -388,10 +407,10 @@ const AC_A1000W_Note_Window = ({
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
+      </WindowFilterContainer>
       <GridContainer>
         <Grid
-          style={{ height: "500px" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -450,7 +469,7 @@ const AC_A1000W_Note_Window = ({
           <GridColumn field="pubbank" title="발행은행명" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기

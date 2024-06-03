@@ -1224,12 +1224,14 @@ interface ErrorFallbackProps {
 const ErrorFallback = ({ error }: ErrorFallbackProps) => {
   useEffect(() => {
     const chunkFailedMessage = /Loading chunk [\d]+ failed/;
-    const reloadMessage = /Uncaught (in promise) InvalidValueError/;
+    const reloadMessage = /ChunkLoadError/;
+    const reloadMessage2 = /InvalidValueError/;
     // props로 받은 error 확인하여 chunk error 발생 시 새로고침
     if (
       error?.message &&
       (chunkFailedMessage.test(error.message) ||
-        reloadMessage.test(error.message))
+        reloadMessage.test(error.message) ||
+        reloadMessage2.test(error.message))
     ) {
       window.location.reload();
     }

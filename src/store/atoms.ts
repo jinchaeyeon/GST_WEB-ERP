@@ -1,4 +1,5 @@
 import { atom, AtomEffect, DefaultValue } from "recoil";
+import { recoilPersist } from "recoil-persist";
 import { DEFAULT_SESSION_ITEM } from "../components/CommonString";
 import {
   TInfoItem,
@@ -8,7 +9,6 @@ import {
   TpointsItem,
   TSessionItem,
 } from "./types";
-import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist();
 
@@ -47,7 +47,7 @@ export const loginResultState = atom<TLoginResult>({
 export const menusState = atom<Array<TMenu>>({
   key: "menusState",
   default: null as any,
-  effects_UNSTABLE: [persistAtom]
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const clickedState = atom<string>({
@@ -58,7 +58,7 @@ export const clickedState = atom<string>({
 export const linkState = atom<any>({
   key: "linkState",
   default: "",
-  effects_UNSTABLE: [persistAtom]
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const infoState = atom<TInfoItem>({
@@ -137,7 +137,7 @@ export const unsavedNameState = atom<string[]>({
 export const menuList = atom<any[]>({
   key: "menuList",
   default: [],
-  effects_UNSTABLE: [persistAtom]
+  effects_UNSTABLE: [persistAtom],
 });
 export const colors = atom<string[]>({
   key: "colors",
@@ -152,12 +152,15 @@ export const colorsName = atom<string>({
 export const OSState = atom<boolean>({
   key: "OSState",
   default: false,
-  effects_UNSTABLE: [persistAtom]
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const heightstate = atom<number>({
   key: "heightstate",
-  default: document.documentElement.clientHeight - 170,
+  default:
+    document.documentElement.clientWidth <= 1200
+      ? document.documentElement.clientHeight - 170
+      : document.documentElement.clientHeight,
 });
 
 export const isFilterheightstate = atom<number>({
