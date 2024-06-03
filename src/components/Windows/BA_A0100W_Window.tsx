@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -8,6 +8,7 @@ import {
   FormBoxWrap,
 } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
+import { getHeight } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type TKendoWindow = {
@@ -15,6 +16,9 @@ type TKendoWindow = {
   setData(number: number): void;
   modal?: boolean;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
@@ -27,9 +31,18 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 250,
     height: isMobile == true ? deviceHeight : 220,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
 
   const filterInputChange = (e: any) => {
@@ -61,7 +74,7 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap>
+      <FormBoxWrap style={{ height: isMobile ? mobileheight : webheight }}>
         <FormBox>
           <tbody>
             <tr>
@@ -78,7 +91,7 @@ const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onSaveClick}>
             저장

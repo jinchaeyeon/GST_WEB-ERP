@@ -11,7 +11,7 @@ import {
   GridSelectionChangeEvent,
   GridSortChangeEvent,
 } from "@progress/kendo-react-grid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -26,8 +26,9 @@ import {
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
+  getHeight,
   UseGetValueFromSessionItem,
-  UsePermissions
+  UsePermissions,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -36,19 +37,20 @@ const DATA_ITEM_KEY = "seq";
 let deletedRows: object[] = [];
 let temp = 0;
 let targetRowIndex: null | number = null;
+var height2 = 0;
 
 const CommentsGrid = (props: {
   ref_key: string;
   form_id: string;
   table_id: string;
-  style: { height: string };
+  style: { height: any };
 }) => {
   const { ref_key, form_id, table_id, style } = props;
   const { height } = style;
 
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -66,6 +68,19 @@ const CommentsGrid = (props: {
   const onDataStateChange = (event: GridDataStateChangeEvent) => {
     setDataState(event.dataState);
   };
+
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height2 = getHeight(".CommentsButtonContainer");
+
+    if(typeof height == "number") {
+      setWebHeight(height - height2);
+    } else if(height.includes("vh")){
+      let newStr = parseFloat(height.replace("vh", ""))  * 0.01;
+      setWebHeight((document.documentElement.clientHeight * newStr) - height2);
+    }
+  }, [height]);
 
   const [dataState, setDataState] = useState<State>({
     sort: [],
@@ -571,7 +586,7 @@ const CommentsGrid = (props: {
 
   return (
     <>
-      <GridTitleContainer>
+      <GridTitleContainer className="CommentsButtonContainer">
         <GridTitle data-control-name="grtlCmtList">코멘트</GridTitle>
 
         {permissions && (
@@ -600,7 +615,7 @@ const CommentsGrid = (props: {
         )}
       </GridTitleContainer>
       <Grid
-        style={{ height }}
+        style={{ height: webheight }}
         data={process(
           dataResult.data.map((row) => ({
             ...row,

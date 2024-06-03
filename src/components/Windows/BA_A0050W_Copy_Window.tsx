@@ -13,8 +13,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -24,10 +27,16 @@ import {
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading, loginResultState } from "../../store/atoms";
+import {
+  isFilterHideState2,
+  isLoading,
+  loginResultState,
+} from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -37,6 +46,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
 } from "../CommonFunction";
 import {
@@ -45,16 +55,12 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import Window from "./WindowComponent/Window";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY = "itemcd";
 const DATA_ITEM_KEY2 = "itemcd";
-
-const topHeight = 55.56;
-const bottomHeight = 55;
-const leftOverHeight = (topHeight + bottomHeight) / 2;
 
 type TKendoWindow = {
   getVisible(isVisible: boolean): void;
@@ -67,6 +73,15 @@ type TKendoWindow = {
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
 
 const KendoWindow = ({
   getVisible,
@@ -135,12 +150,58 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".TitleContainer"); //조회버튼
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    height6 = getHeight(".WindowButtonContainer");
+    height7 = getHeight(".WindowButtonContainer2");
+    height8 = getHeight(".WindowButtonContainer3");
+
+    setMobileHeight(deviceHeight - height - height3 - height4 - height6);
+    setMobileHeight2(
+      deviceHeight - height - height2 - height3 - height4 - height7
+    );
+    setMobileHeight3(deviceHeight - height - height3 - height4 - height8);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height5) / 2 - height6
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height5) / 2 - height7
+    );
+    setWebHeight3(
+      (position.height - height - height2 - height3 - height5) / 2 - height8
+    );
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height5) / 2 - height6
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height5) / 2 - height7
+    );
+    setWebHeight3(
+      (position.height - height - height2 - height3 - height5) / 2 - height8
+    );
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     getVisible(false);
   };
 
@@ -713,6 +774,9 @@ const KendoWindow = ({
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setFilters2((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -774,6 +838,9 @@ const KendoWindow = ({
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onDetailDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -835,7 +902,15 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FilterContainer>
+      <TitleContainer className="TitleContainer">
+        <Title></Title>
+        <ButtonContainer>
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+            조회
+          </Button>
+        </ButtonContainer>
+      </TitleContainer>
+      <WindowFilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -887,229 +962,549 @@ const KendoWindow = ({
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
-
-      <GridContainerWrap height={`calc(50% - ${leftOverHeight}px)`}>
-        <GridContainer width={`45%`}>
-          <GridTitleContainer>
-            <GridTitle>품목리스트</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            data={process(
-              detailDataResult.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code == row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: selecteddetailState[idGetter(row)], //선택된 데이터
-              })),
-              detailState
-            )}
-            {...detailState}
-            onDataStateChange={onDetailDataStateChange}
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onDetailDataSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={detailDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //더블클릭
-            style={{ height: "calc(100% - 5px)" }}
-          >
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="200px"
-              footerCell={detailTotalFooterCell}
-            />
-            <GridColumn field="itemnm" title="품목명" width="185PX" />
-            <GridColumn field="insiz" title="규격" width="150px" />
-            <GridColumn field="itemacnt" title="품목계정" width="150px" />
-          </Grid>
-        </GridContainer>
-        <GridContainer width={`calc(55% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>복사대상</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            data={process(
-              detailDataResult2.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code == row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: selecteddetailState2[idGetter2(row)], //선택된 데이터
-              })),
-              detailState2
-            )}
-            {...detailState2}
-            onDataStateChange={onDetailDataStateChange2}
-            dataItemKey={DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={detailDataResult2.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef2}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            style={{ height: "calc(100% - 5px)" }}
-            onSelectionChange={onDetailDataSelectionChange2}
-            onHeaderSelectionChange={onHeaderSelectionChange}
-          >
-            <GridColumn
-              field={SELECTED_FIELD}
-              width="45px"
-              headerSelectionValue={
-                detailDataResult2.data.findIndex(
-                  (item: any) => !selecteddetailState2[idGetter2(item)]
-                ) == -1
-              }
-            />
-            <GridColumn
-              field="itemcd"
-              title="품목코드"
-              width="230px"
-              footerCell={detailTotalFooterCell2}
-            />
-            <GridColumn field="itemnm" title="품목명" width="200PX" />
-            <GridColumn field="insiz" title="규격" width="200px" />
-            <GridColumn field="itemacnt" title="품목계정" width="150px" />
-          </Grid>
-        </GridContainer>
-      </GridContainerWrap>
-      <GridContainer height={`calc(50% - ${leftOverHeight}px)`} width={`99.9%`}>
-        <GridTitleContainer>
-          <GridTitle>BOM상세</GridTitle>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: "calc(100% - 40px)" }}
-          data={process(
-            detailDataResult3.data.map((row) => ({
-              ...row,
-              proccd: proccdListData.find(
-                (items: any) => items.sub_code == row.proccd
-              )?.code_name,
-              outprocyn: outprocynListData.find(
-                (items: any) => items.sub_code == row.outprocyn
-              )?.code_name,
-              prodemp: prodempListData.find(
-                (items: any) => items.user_id == row.prodemp
-              )?.user_name,
-              qtyunit: qtyunitListData.find(
-                (items: any) => items.sub_code == row.qtyunit
-              )?.code_name,
-              procunit: procunitListData.find(
-                (items: any) => items.sub_code == row.procunit
-              )?.code_name,
-              [SELECTED_FIELD]: selecteddetailState3[idGetter3(row)], //선택된 데이터
-            })),
-            detailState3
-          )}
-          {...detailState3}
-          onDataStateChange={onDetailDataStateChange3}
-          dataItemKey={DATA_ITEM_KEY3}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+      </WindowFilterContainer>
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
           }}
-          //스크롤 조회기능
-          fixedScroll={true}
-          total={detailDataResult3.total}
-          skip={page3.skip}
-          take={page3.take}
-          pageable={true}
-          onPageChange={pageChange3}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef3}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange3}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onSelectionChange={onDetailDataSelectionChange3}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
         >
-          <GridColumn
-            field="proccd"
-            title="공정"
-            width="150px"
-            footerCell={detailTotalFooterCell3}
-          />
-          <GridColumn
-            field="procseq"
-            title="공정순서"
-            width="100px"
-            cell={NumberCell}
-          />
-          <GridColumn field="outprocyn" title="외주구분" width="100px" />
-          <GridColumn field="prodemp" title="작업자" width="150px" />
-          <GridColumn field="prodmac" title="설비" width="150px" />
-          <GridColumn field="chlditemcd" title="소요자재코드" width="150px" />
-          <GridColumn field="chlditemnm" title="소요자재명" width="150px" />
-          <GridColumn
-            field="unitqty"
-            title="단위수량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="qtyunit" title="수량단위" width="120px" />
-          <GridColumn field="outgb" title="불출구분" width="120px" />
-          <GridColumn
-            field="procqty"
-            title="재공생산량"
-            width="120px"
-            cell={NumberCell}
-          />
-          <GridColumn field="procunit" title="생산량단위" width="120px" />
-          <GridColumn field="remark" title="비고" width="200px" />
-        </Grid>
-      </GridContainer>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} onClick={selectData}>
-            저장
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-      </BottomContainer>
+          <SwiperSlide key={0}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    {" "}
+                    <div>품목리스트</div>
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  detailDataResult.data.map((row) => ({
+                    ...row,
+                    itemacnt: itemacntListData.find(
+                      (items: any) => items.sub_code == row.itemacnt
+                    )?.code_name,
+                    [SELECTED_FIELD]: selecteddetailState[idGetter(row)], //선택된 데이터
+                  })),
+                  detailState
+                )}
+                style={{ height: mobileheight }}
+                {...detailState}
+                onDataStateChange={onDetailDataStateChange}
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onDetailDataSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //더블클릭
+              >
+                <GridColumn
+                  field="itemcd"
+                  title="품목코드"
+                  width="200px"
+                  footerCell={detailTotalFooterCell}
+                />
+                <GridColumn field="itemnm" title="품목명" width="185PX" />
+                <GridColumn field="insiz" title="규격" width="150px" />
+                <GridColumn field="itemacnt" title="품목계정" width="150px" />
+              </Grid>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer3">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    {" "}
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      BOM상세
+                    </div>
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: mobileheight3 }}
+                data={process(
+                  detailDataResult3.data.map((row) => ({
+                    ...row,
+                    proccd: proccdListData.find(
+                      (items: any) => items.sub_code == row.proccd
+                    )?.code_name,
+                    outprocyn: outprocynListData.find(
+                      (items: any) => items.sub_code == row.outprocyn
+                    )?.code_name,
+                    prodemp: prodempListData.find(
+                      (items: any) => items.user_id == row.prodemp
+                    )?.user_name,
+                    qtyunit: qtyunitListData.find(
+                      (items: any) => items.sub_code == row.qtyunit
+                    )?.code_name,
+                    procunit: procunitListData.find(
+                      (items: any) => items.sub_code == row.procunit
+                    )?.code_name,
+                    [SELECTED_FIELD]: selecteddetailState3[idGetter3(row)], //선택된 데이터
+                  })),
+                  detailState3
+                )}
+                {...detailState3}
+                onDataStateChange={onDetailDataStateChange3}
+                dataItemKey={DATA_ITEM_KEY3}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult3.total}
+                skip={page3.skip}
+                take={page3.take}
+                pageable={true}
+                onPageChange={pageChange3}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef3}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange3}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onSelectionChange={onDetailDataSelectionChange3}
+              >
+                <GridColumn
+                  field="proccd"
+                  title="공정"
+                  width="150px"
+                  footerCell={detailTotalFooterCell3}
+                />
+                <GridColumn
+                  field="procseq"
+                  title="공정순서"
+                  width="100px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="outprocyn" title="외주구분" width="100px" />
+                <GridColumn field="prodemp" title="작업자" width="150px" />
+                <GridColumn field="prodmac" title="설비" width="150px" />
+                <GridColumn
+                  field="chlditemcd"
+                  title="소요자재코드"
+                  width="150px"
+                />
+                <GridColumn
+                  field="chlditemnm"
+                  title="소요자재명"
+                  width="150px"
+                />
+                <GridColumn
+                  field="unitqty"
+                  title="단위수량"
+                  width="120px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="qtyunit" title="수량단위" width="120px" />
+                <GridColumn field="outgb" title="불출구분" width="120px" />
+                <GridColumn
+                  field="procqty"
+                  title="재공생산량"
+                  width="120px"
+                  cell={NumberCell}
+                />
+                <GridColumn field="procunit" title="생산량단위" width="120px" />
+                <GridColumn field="remark" title="비고" width="200px" />
+              </Grid>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      복사대상
+                    </div>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  detailDataResult2.data.map((row) => ({
+                    ...row,
+                    itemacnt: itemacntListData.find(
+                      (items: any) => items.sub_code == row.itemacnt
+                    )?.code_name,
+                    [SELECTED_FIELD]: selecteddetailState2[idGetter2(row)], //선택된 데이터
+                  })),
+                  detailState2
+                )}
+                style={{ height: mobileheight2 }}
+                {...detailState2}
+                onDataStateChange={onDetailDataStateChange2}
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult2.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef2}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onSelectionChange={onDetailDataSelectionChange2}
+                onHeaderSelectionChange={onHeaderSelectionChange}
+              >
+                <GridColumn
+                  field={SELECTED_FIELD}
+                  width="45px"
+                  headerSelectionValue={
+                    detailDataResult2.data.findIndex(
+                      (item: any) => !selecteddetailState2[idGetter2(item)]
+                    ) == -1
+                  }
+                />
+                <GridColumn
+                  field="itemcd"
+                  title="품목코드"
+                  width="230px"
+                  footerCell={detailTotalFooterCell2}
+                />
+                <GridColumn field="itemnm" title="품목명" width="200PX" />
+                <GridColumn field="insiz" title="규격" width="200px" />
+                <GridColumn field="itemacnt" title="품목계정" width="150px" />
+              </Grid>
+              <BottomContainer className="BottomContainer">
+                <ButtonContainer>
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    onClick={onClose}
+                  >
+                    닫기
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width={`45%`}>
+              <GridTitleContainer className="WindowButtonContainer">
+                <GridTitle>품목리스트</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  detailDataResult.data.map((row) => ({
+                    ...row,
+                    itemacnt: itemacntListData.find(
+                      (items: any) => items.sub_code == row.itemacnt
+                    )?.code_name,
+                    [SELECTED_FIELD]: selecteddetailState[idGetter(row)], //선택된 데이터
+                  })),
+                  detailState
+                )}
+                style={{ height: webheight }}
+                {...detailState}
+                onDataStateChange={onDetailDataStateChange}
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onDetailDataSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //더블클릭
+              >
+                <GridColumn
+                  field="itemcd"
+                  title="품목코드"
+                  width="200px"
+                  footerCell={detailTotalFooterCell}
+                />
+                <GridColumn field="itemnm" title="품목명" width="185PX" />
+                <GridColumn field="insiz" title="규격" width="150px" />
+                <GridColumn field="itemacnt" title="품목계정" width="150px" />
+              </Grid>
+            </GridContainer>
+            <GridContainer width={`calc(55% - ${GAP}px)`}>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <GridTitle>복사대상</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  detailDataResult2.data.map((row) => ({
+                    ...row,
+                    itemacnt: itemacntListData.find(
+                      (items: any) => items.sub_code == row.itemacnt
+                    )?.code_name,
+                    [SELECTED_FIELD]: selecteddetailState2[idGetter2(row)], //선택된 데이터
+                  })),
+                  detailState2
+                )}
+                style={{ height: webheight2 }}
+                {...detailState2}
+                onDataStateChange={onDetailDataStateChange2}
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={detailDataResult2.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef2}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onSelectionChange={onDetailDataSelectionChange2}
+                onHeaderSelectionChange={onHeaderSelectionChange}
+              >
+                <GridColumn
+                  field={SELECTED_FIELD}
+                  width="45px"
+                  headerSelectionValue={
+                    detailDataResult2.data.findIndex(
+                      (item: any) => !selecteddetailState2[idGetter2(item)]
+                    ) == -1
+                  }
+                />
+                <GridColumn
+                  field="itemcd"
+                  title="품목코드"
+                  width="230px"
+                  footerCell={detailTotalFooterCell2}
+                />
+                <GridColumn field="itemnm" title="품목명" width="200PX" />
+                <GridColumn field="insiz" title="규격" width="200px" />
+                <GridColumn field="itemacnt" title="품목계정" width="150px" />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+          <GridContainer>
+            <GridTitleContainer className="WindowButtonContainer3">
+              <GridTitle>BOM상세</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: webheight3 }}
+              data={process(
+                detailDataResult3.data.map((row) => ({
+                  ...row,
+                  proccd: proccdListData.find(
+                    (items: any) => items.sub_code == row.proccd
+                  )?.code_name,
+                  outprocyn: outprocynListData.find(
+                    (items: any) => items.sub_code == row.outprocyn
+                  )?.code_name,
+                  prodemp: prodempListData.find(
+                    (items: any) => items.user_id == row.prodemp
+                  )?.user_name,
+                  qtyunit: qtyunitListData.find(
+                    (items: any) => items.sub_code == row.qtyunit
+                  )?.code_name,
+                  procunit: procunitListData.find(
+                    (items: any) => items.sub_code == row.procunit
+                  )?.code_name,
+                  [SELECTED_FIELD]: selecteddetailState3[idGetter3(row)], //선택된 데이터
+                })),
+                detailState3
+              )}
+              {...detailState3}
+              onDataStateChange={onDetailDataStateChange3}
+              dataItemKey={DATA_ITEM_KEY3}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={detailDataResult3.total}
+              skip={page3.skip}
+              take={page3.take}
+              pageable={true}
+              onPageChange={pageChange3}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef3}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange3}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onSelectionChange={onDetailDataSelectionChange3}
+            >
+              <GridColumn
+                field="proccd"
+                title="공정"
+                width="150px"
+                footerCell={detailTotalFooterCell3}
+              />
+              <GridColumn
+                field="procseq"
+                title="공정순서"
+                width="100px"
+                cell={NumberCell}
+              />
+              <GridColumn field="outprocyn" title="외주구분" width="100px" />
+              <GridColumn field="prodemp" title="작업자" width="150px" />
+              <GridColumn field="prodmac" title="설비" width="150px" />
+              <GridColumn
+                field="chlditemcd"
+                title="소요자재코드"
+                width="150px"
+              />
+              <GridColumn field="chlditemnm" title="소요자재명" width="150px" />
+              <GridColumn
+                field="unitqty"
+                title="단위수량"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn field="qtyunit" title="수량단위" width="120px" />
+              <GridColumn field="outgb" title="불출구분" width="120px" />
+              <GridColumn
+                field="procqty"
+                title="재공생산량"
+                width="120px"
+                cell={NumberCell}
+              />
+              <GridColumn field="procunit" title="생산량단위" width="120px" />
+              <GridColumn field="remark" title="비고" width="200px" />
+            </Grid>
+          </GridContainer>
+          <BottomContainer className="BottomContainer">
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                저장
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </>
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}

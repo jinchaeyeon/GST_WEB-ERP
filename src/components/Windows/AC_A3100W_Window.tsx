@@ -13,14 +13,13 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   ButtonInInput,
   FilterBox,
-  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -28,7 +27,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import MonthCalendar from "../Calendars/MonthCalendar";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -45,11 +44,13 @@ import {
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
+  getHeight,
   numberWithCommas,
   setDefaultDate,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import Window from "./WindowComponent/Window";
@@ -139,6 +140,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -160,9 +170,52 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 580,
   });
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".k-tabstrip-items-wrapper"); //탭
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    height6 = getHeight(".WindowButtonContainer");
+    height7 = getHeight(".WindowButtonContainer2");
+    height8 = getHeight(".WindowButtonContainer3");
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height3 - height6);
+    setMobileHeight3(
+      deviceHeight - height - height2 - height3 - height4 - height7
+    );
+    setMobileHeight4(deviceHeight - height - height2 - height3 - height8);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3 - height6);
+    setWebHeight3(
+      position.height - height - height2 - height3 - height5 - height7
+    );
+    setWebHeight4(position.height - height - height2 - height3 - height8);
+  }, [tabSelected]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3 - height6);
+    setWebHeight3(
+      position.height - height - height2 - height3 - height5 - height7
+    );
+    setWebHeight4(position.height - height - height2 - height3 - height8);
   };
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -206,23 +259,10 @@ const CopyWindow = ({
   const processApi = useApi();
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
-  const handleSelectTab = (e: any) => {
-    if (e.selected == 0) {
-      setPosition((prev) => ({
-        ...prev,
-        height: isMobile == true ? 900 : 580,
-      }));
-    } else {
-      setPosition((prev) => ({
-        ...prev,
-        height: 900,
-      }));
-    }
-    setTabSelected(e.selected);
-  };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -2022,13 +2062,16 @@ const CopyWindow = ({
         onChangePostion={onChangePostion}
       >
         <TabStrip
-          style={{ width: "100%", height: `calc(100% - 80px)` }}
+          style={{ width: "100%" }}
           selected={tabSelected}
           onSelect={handleSelectTab}
           scrollable={isMobile}
         >
           <TabStripTab title="기본정보">
-            <FormBoxWrap border={true}>
+            <FormBoxWrap
+              border={true}
+              style={{ height: isMobile ? mobileheight : webheight }}
+            >
               <FormBox>
                 <tbody>
                   <tr>
@@ -2359,8 +2402,11 @@ const CopyWindow = ({
             title="자산변동"
             disabled={workType == "N" ? true : false}
           >
-            <GridContainer height={position.height - 250 + "px"}>
-              <GridTitleContainer>
+            <GridContainer>
+              <GridTitleContainer
+                className="WindowButtonContainer"
+                style={{ justifyContent: "end" }}
+              >
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -2378,7 +2424,7 @@ const CopyWindow = ({
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: `calc(100% - 35px)` }}
+                style={{ height: isMobile ? mobileheight2 : webheight2 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2458,7 +2504,7 @@ const CopyWindow = ({
             title="월감가상각"
             disabled={workType == "N" ? true : false}
           >
-            <FilterBoxWrap>
+            <WindowFilterContainer>
               <FilterBox>
                 <tbody>
                   <tr>
@@ -2488,9 +2534,12 @@ const CopyWindow = ({
                   </tr>
                 </tbody>
               </FilterBox>
-            </FilterBoxWrap>
-            <GridContainer height={position.height - 300 + "px"}>
-              <GridTitleContainer>
+            </WindowFilterContainer>
+            <GridContainer>
+              <GridTitleContainer
+                className="WindowButtonContainer2"
+                style={{ justifyContent: "end" }}
+              >
                 <ButtonContainer>
                   <Button
                     onClick={onSearch}
@@ -2514,7 +2563,7 @@ const CopyWindow = ({
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: `calc(100% - 35px)` }}
+                style={{ height: isMobile ? mobileheight3 : webheight3 }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -2620,8 +2669,11 @@ const CopyWindow = ({
             title="년감가상각"
             disabled={workType == "N" ? true : false}
           >
-            <GridContainer height={position.height - 250 + "px"}>
-              <GridTitleContainer>
+            <GridContainer>
+              <GridTitleContainer
+                className="WindowButtonContainer3"
+                style={{ justifyContent: "end" }}
+              >
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick3}
@@ -2639,7 +2691,7 @@ const CopyWindow = ({
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: `calc(100% - 35px)` }}
+                style={{ height: isMobile ? mobileheight4 : webheight4 }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
@@ -2757,7 +2809,7 @@ const CopyWindow = ({
             </GridContainer>
           </TabStripTab>
         </TabStrip>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               저장

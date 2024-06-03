@@ -2,7 +2,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -10,7 +10,6 @@ import {
   ButtonInInput,
   FormBox,
   FormBoxWrap,
-  GridContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
@@ -21,7 +20,8 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
-  dateformat
+  dateformat,
+  getHeight,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -36,6 +36,9 @@ type TKendoWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   getVisible,
@@ -71,9 +74,18 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 550,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼
 
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -87,7 +99,6 @@ const KendoWindow = ({
 
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
-
     getVisible(false);
   };
 
@@ -320,125 +331,123 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainer>
-        <FormBoxWrap>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>문서번호</th>
-                <td>
-                  <Input
-                    name="datnum"
-                    type="text"
-                    value={filters.datnum}
-                    className="readonly"
+      <FormBoxWrap style={{ height: isMobile ? mobileheight : webheight }}>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>문서번호</th>
+              <td>
+                <Input
+                  name="datnum"
+                  type="text"
+                  value={filters.datnum}
+                  className="readonly"
+                />
+              </td>
+              <th>직성자</th>
+              <td>
+                <Input
+                  name="person"
+                  type="text"
+                  value={filters.person}
+                  className="readonly"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>카테고리</th>
+              <td>
+                <Input
+                  name="category"
+                  type="text"
+                  value="전체공지"
+                  className="readonly"
+                />
+              </td>
+              <th>공지게시여부</th>
+              <td>
+                <Checkbox
+                  name="publish_yn"
+                  value={
+                    filters.publish_yn == "Y"
+                      ? true
+                      : filters.publish_yn == "N"
+                      ? false
+                      : filters.publish_yn
+                  }
+                  onChange={filterInputChange}
+                ></Checkbox>
+              </td>
+            </tr>
+            <tr>
+              <th>공지시작일</th>
+              <td>
+                <DatePicker
+                  name="publish_start_date"
+                  value={filters.publish_start_date}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                  className="required"
+                />
+              </td>
+              <th>공지종료일</th>
+              <td>
+                <DatePicker
+                  name="publish_end_date"
+                  value={filters.publish_end_date}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                  className="required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>제목</th>
+              <td colSpan={3}>
+                <Input
+                  name="title"
+                  type="text"
+                  value={filters.title}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th></th>
+              <td colSpan={3}>
+                <TextArea
+                  value={filters.contents}
+                  name="contents"
+                  rows={7}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>첨부파일</th>
+              <td colSpan={3}>
+                <Input
+                  name="files"
+                  type="text"
+                  value={filters.files}
+                  className="readonly"
+                />
+                <ButtonInInput>
+                  <Button
+                    type={"button"}
+                    onClick={onAttachmentsWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
                   />
-                </td>
-                <th>직성자</th>
-                <td>
-                  <Input
-                    name="person"
-                    type="text"
-                    value={filters.person}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>카테고리</th>
-                <td>
-                  <Input
-                    name="category"
-                    type="text"
-                    value="전체공지"
-                    className="readonly"
-                  />
-                </td>
-                <th>공지게시여부</th>
-                <td>
-                  <Checkbox
-                    name="publish_yn"
-                    value={
-                      filters.publish_yn == "Y"
-                        ? true
-                        : filters.publish_yn == "N"
-                        ? false
-                        : filters.publish_yn
-                    }
-                    onChange={filterInputChange}
-                  ></Checkbox>
-                </td>
-              </tr>
-              <tr>
-                <th>공지시작일</th>
-                <td>
-                  <DatePicker
-                    name="publish_start_date"
-                    value={filters.publish_start_date}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </td>
-                <th>공지종료일</th>
-                <td>
-                  <DatePicker
-                    name="publish_end_date"
-                    value={filters.publish_end_date}
-                    format="yyyy-MM-dd"
-                    onChange={filterInputChange}
-                    placeholder=""
-                    className="required"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>제목</th>
-                <td colSpan={3}>
-                  <Input
-                    name="title"
-                    type="text"
-                    value={filters.title}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th></th>
-                <td colSpan={3}>
-                  <TextArea
-                    value={filters.contents}
-                    name="contents"
-                    rows={7}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>첨부파일</th>
-                <td colSpan={3}>
-                  <Input
-                    name="files"
-                    type="text"
-                    value={filters.files}
-                    className="readonly"
-                  />
-                  <ButtonInInput>
-                    <Button
-                      type={"button"}
-                      onClick={onAttachmentsWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-      </GridContainer>
-      <BottomContainer>
+                </ButtonInInput>
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={handleSubmit}>
             저장

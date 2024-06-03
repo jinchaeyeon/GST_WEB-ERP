@@ -1344,7 +1344,7 @@ const KendoWindow = ({
             ref_key={initialVal.group_code}
             form_id={pathname}
             table_id={"comCodeMaster"}
-            style={{ height: "25vh" }}
+            style={{ height: "36vh" }}
           />
         </GridContainer>
       </GridContainerWrap>

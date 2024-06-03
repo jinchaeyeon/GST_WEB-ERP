@@ -13,8 +13,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -50,6 +53,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   isValidDate,
   setDefaultDate2,
   toDate,
@@ -111,6 +115,13 @@ type Idata = {
   title: string;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -128,8 +139,41 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 920,
   });
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    height5 = getHeight(".WindowButtonContainer3");
+    height6 = getHeight(".WindowButtonContainer4");
+
+    setMobileHeight(deviceHeight - height - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height4);
+    setMobileHeight3(deviceHeight - height - height5);
+    setMobileHeight4(deviceHeight - height - height6);
+    setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
+    setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
+    setWebHeight3((position.height - height - height2) / 8 - height5);
+    setWebHeight4(((position.height - height - height2) * 2) / 8);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
+    setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
+    setWebHeight3((position.height - height - height2) / 8 - height5);
+    setWebHeight4(((position.height - height - height2) * 2) / 8);
   };
 
   const pc = UseGetValueFromSessionItem("pc");
@@ -885,473 +929,1054 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <GridContainerWrap>
-          <GridContainer width="70%">
-            <GridTitleContainer>
-              <GridTitle>상세정보</GridTitle>
-            </GridTitleContainer>
-            <FormBoxWrap border={true}>
-              <FormBox>
-                {userId == filters.insert_userid || workType == "N" ? (
-                  <tbody>
-                    <tr>
-                      <th>작성일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="recdt"
-                            value={filters.recdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                            className="required"
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                      <th>작성자</th>
-                      <td>
-                        <Input
-                          name="personnm"
-                          type="text"
-                          value={workType == "N" ? userName : filters.personnm}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>수리자</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="rcvperson"
-                            value={filters.rcvperson}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            type="new"
-                            textField="user_name"
-                            valueField="user_id"
-                            className="required"
-                          />
-                        )}
-                      </td>
-                      <th>완료요청일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="reqdt"
-                            value={filters.reqdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>업체코드</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={filters.custcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onCustWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                      <th>업체명</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={filters.custnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>제목</th>
-                      <td colSpan={7}>
-                        <Input
-                          name="title"
-                          type="text"
-                          value={filters.title}
-                          onChange={filterInputChange}
-                          className="required"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>요청내용</th>
-                      <td colSpan={7}>
-                        <TextArea
-                          value={filters.reqctns}
-                          name="reqctns"
-                          rows={10}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>첨부파일</th>
-                      <td colSpan={7}>
-                        <Input
-                          name="files"
-                          type="text"
-                          value={filters.files}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onAttachmentsWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                  </tbody>
-                ) : (
-                  <tbody>
-                    <tr>
-                      <th>작성일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="recdt"
-                            value={filters.recdt}
-                            format="yyyy-MM-dd"
-                            disabled={true}
-                            className="readonly"
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                      <th>작성자</th>
-                      <td>
-                        <Input
-                          name="personnm"
-                          type="text"
-                          value={filters.personnm}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>수리자</th>
-                      <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="rcvperson"
-                            value={filters.rcvperson}
-                            bizComponentId="L_sysUserMaster_001"
-                            bizComponentData={bizComponentData}
-                            changeData={filterComboBoxChange}
-                            className="readonly"
-                            valueField="user_id"
-                            textField="user_name"
-                          />
-                        )}
-                      </td>
-                      <th>완료요청일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <DatePicker
-                            name="reqdt"
-                            value={filters.reqdt}
-                            format="yyyy-MM-dd"
-                            disabled={true}
-                            className="readonly"
-                            placeholder=""
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>업체코드</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={filters.custcd}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button icon="more-horizontal" fillMode="flat" />
-                        </ButtonInInput>
-                      </td>
-                      <th>업체명</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={filters.custnm}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>제목</th>
-                      <td colSpan={7}>
-                        <Input
-                          name="title"
-                          type="text"
-                          value={filters.title}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>요청내용</th>
-                      <td colSpan={7}>
-                        <TextArea
-                          value={filters.reqctns}
-                          name="reqctns"
-                          rows={10}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>첨부파일</th>
-                      <td colSpan={7}>
-                        <Input
-                          name="files"
-                          type="text"
-                          value={filters.files}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onAttachmentsWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                  </tbody>
-                )}
-              </FormBox>
-            </FormBoxWrap>
-          </GridContainer>
-          <GridContainer width={`calc(30% - ${GAP}px)`}>
-            <GridTitleContainer>
-              <GridTitle>참조</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "41vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
+        {isMobile ? (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>상세정보</div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap border={true} style={{ height: mobileheight }}>
+                  <FormBox>
+                    {userId == filters.insert_userid || workType == "N" ? (
+                      <tbody>
+                        <tr>
+                          <th>작성일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="recdt"
+                                value={filters.recdt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                className="required"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>작성자</th>
+                          <td>
+                            <Input
+                              name="personnm"
+                              type="text"
+                              value={
+                                workType == "N" ? userName : filters.personnm
+                              }
+                              className="readonly"
+                            />
+                          </td>
+                          <th>수리자</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="rcvperson"
+                                value={filters.rcvperson}
+                                customOptionData={customOptionData}
+                                changeData={filterComboBoxChange}
+                                type="new"
+                                textField="user_name"
+                                valueField="user_id"
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>완료요청일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="reqdt"
+                                value={filters.reqdt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>업체코드</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={filters.custcd}
+                              onChange={filterInputChange}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>제목</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="title"
+                              type="text"
+                              value={filters.title}
+                              onChange={filterInputChange}
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>요청내용</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={filters.reqctns}
+                              name="reqctns"
+                              rows={10}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={filters.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                      </tbody>
+                    ) : (
+                      <tbody>
+                        <tr>
+                          <th>작성일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="recdt"
+                                value={filters.recdt}
+                                format="yyyy-MM-dd"
+                                disabled={true}
+                                className="readonly"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>작성자</th>
+                          <td>
+                            <Input
+                              name="personnm"
+                              type="text"
+                              value={filters.personnm}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>수리자</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="rcvperson"
+                                value={filters.rcvperson}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={filterComboBoxChange}
+                                className="readonly"
+                                valueField="user_id"
+                                textField="user_name"
+                              />
+                            )}
+                          </td>
+                          <th>완료요청일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="reqdt"
+                                value={filters.reqdt}
+                                format="yyyy-MM-dd"
+                                disabled={true}
+                                className="readonly"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>업체코드</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={filters.custcd}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button icon="more-horizontal" fillMode="flat" />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>제목</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="title"
+                              type="text"
+                              value={filters.title}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>요청내용</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={filters.reqctns}
+                              name="reqctns"
+                              rows={10}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={filters.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                      </tbody>
+                    )}
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer2">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        참조
+                      </div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight2 }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      dptcd: dptcdListData.find(
+                        (item: any) => item.dptcd == row.dptcd
+                      )?.dptnm,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      chooses:
+                        row.chooses == "Y"
+                          ? true
+                          : row.chooses == "N"
+                          ? false
+                          : row.chooses,
+                      loadok:
+                        row.loadok == "Y"
+                          ? true
+                          : row.loadok == "N"
+                          ? false
+                          : row.loadok,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="user_name"
+                    title="사용자명"
+                    width="100px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn field="dptcd" title="부서코드" width="100px" />
+                  <GridColumn field="postcd" title="직위" width="90px" />
+                  <GridColumn
+                    field="chooses"
+                    title="참조"
+                    width="60px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="loadok"
+                    title="확인"
+                    width="60px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="readok"
+                    title="열람"
+                    width="60px"
+                    cell={CheckBoxReadOnlyCell}
+                  />
+                </Grid>
+                <BottomContainer className="BottomContainer">
+                  <ButtonContainer>
+                    <Button themeColor={"primary"} onClick={selectData}>
+                      저장
+                    </Button>
+                    <Button
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      onClick={onClose}
+                    >
+                      닫기
+                    </Button>
+                  </ButtonContainer>
+                </BottomContainer>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer3">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        처리영역
+                      </div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(3);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap border={true} style={{ height: mobileheight3 }}>
+                  <FormBox>
+                    <tbody>
+                      {userId != filters.rcvperson ? (
+                        <tr>
+                          <th>처리여부</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="endyn"
+                                value={filters.endyn}
+                                bizComponentId="R_ENDYN3"
+                                bizComponentData={bizComponentData}
+                                className="readonly"
+                              />
+                            )}
+                          </td>
+                          <th>완료예정일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="finexpdt"
+                                format="yyyy-MM-dd"
+                                className="readonly"
+                                disabled={true}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>완료일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="findt"
+                                format="yyyy-MM-dd"
+                                className="readonly"
+                                disabled={true}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr>
+                          <th>처리여부</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="endyn"
+                                value={filters.endyn}
+                                bizComponentId="R_ENDYN3"
+                                bizComponentData={bizComponentData}
+                                changeData={filterRadioChange}
+                              />
+                            )}
+                          </td>
+                          <th>완료예정일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="finexpdt"
+                                value={filters.finexpdt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>완료일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="findt"
+                                value={filters.findt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={3}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer4">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
+                </GridTitleContainer>
+                <CommentsGrid
+                  ref_key={
+                    workType == "N"
                       ? ""
-                      : row.rowstatus,
-                  dptcd: dptcdListData.find(
-                    (item: any) => item.dptcd == row.dptcd
-                  )?.dptnm,
-                  postcd: postcdListData.find(
-                    (item: any) => item.sub_code == row.postcd
-                  )?.code_name,
-                  chooses:
-                    row.chooses == "Y"
-                      ? true
-                      : row.chooses == "N"
-                      ? false
-                      : row.chooses,
-                  loadok:
-                    row.loadok == "Y"
-                      ? true
-                      : row.loadok == "N"
-                      ? false
-                      : row.loadok,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              onDataStateChange={onMainDataStateChange}
-              {...mainDataState}
-              //선택 subDataState
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              <GridColumn
-                field="user_name"
-                title="사용자명"
-                width="100px"
-                footerCell={mainTotalFooterCell}
-              />
-              <GridColumn field="dptcd" title="부서코드" width="100px" />
-              <GridColumn field="postcd" title="직위" width="90px" />
-              <GridColumn
-                field="chooses"
-                title="참조"
-                width="60px"
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field="loadok"
-                title="확인"
-                width="60px"
-                cell={CheckBoxCell}
-              />
-              <GridColumn
-                field="readok"
-                title="열람"
-                width="60px"
-                cell={CheckBoxReadOnlyCell}
-              />
-            </Grid>
-          </GridContainer>
-        </GridContainerWrap>
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>처리영역</GridTitle>
-          </GridTitleContainer>
-          <FormBoxWrap border={true}>
-            <FormBox>
-              <tbody>
-                {userId != filters.rcvperson ? (
-                  <tr>
-                    <th>처리여부</th>
-                    <td>
-                      {bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="endyn"
-                          value={filters.endyn}
-                          bizComponentId="R_ENDYN3"
-                          bizComponentData={bizComponentData}
-                          className="readonly"
-                        />
-                      )}
-                    </td>
-                    <th>완료예정일</th>
-                    <td>
-                      <div className="filter-item-wrap">
-                        <DatePicker
-                          name="finexpdt"
-                          format="yyyy-MM-dd"
-                          className="readonly"
-                          disabled={true}
-                          placeholder=""
-                        />
-                      </div>
-                    </td>
-                    <th>완료일</th>
-                    <td>
-                      <div className="filter-item-wrap">
-                        <DatePicker
-                          name="findt"
-                          format="yyyy-MM-dd"
-                          className="readonly"
-                          disabled={true}
-                          placeholder=""
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr>
-                    <th>처리여부</th>
-                    <td>
-                      {bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="endyn"
-                          value={filters.endyn}
-                          bizComponentId="R_ENDYN3"
-                          bizComponentData={bizComponentData}
-                          changeData={filterRadioChange}
-                        />
-                      )}
-                    </td>
-                    <th>완료예정일</th>
-                    <td>
-                      <div className="filter-item-wrap">
-                        <DatePicker
-                          name="finexpdt"
-                          value={filters.finexpdt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
-                      </div>
-                    </td>
-                    <th>완료일</th>
-                    <td>
-                      <div className="filter-item-wrap">
-                        <DatePicker
-                          name="findt"
-                          value={filters.findt}
-                          format="yyyy-MM-dd"
-                          onChange={filterInputChange}
-                          placeholder=""
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </GridContainer>
-        <GridContainer>
-          <CommentsGrid
-            ref_key={
-              workType == "N"
-                ? ""
-                : data?.recno == undefined
-                ? filters.recno
-                : data?.recno
-            }
-            form_id={pathname}
-            table_id={"CR100T"}
-            style={{ height: "20vh" }}
-          ></CommentsGrid>
-        </GridContainer>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+                      : data?.recno == undefined
+                      ? filters.recno
+                      : data?.recno
+                  }
+                  form_id={pathname}
+                  table_id={"CR100T"}
+                  style={{ height: mobileheight4 }}
+                ></CommentsGrid>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <>
+            <GridContainerWrap>
+              <GridContainer width="70%">
+                <GridTitleContainer className="WindowButtonContainer">
+                  <GridTitle>상세정보</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap border={true} style={{ height: webheight }}>
+                  <FormBox>
+                    {userId == filters.insert_userid || workType == "N" ? (
+                      <tbody>
+                        <tr>
+                          <th>작성일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="recdt"
+                                value={filters.recdt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                className="required"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>작성자</th>
+                          <td>
+                            <Input
+                              name="personnm"
+                              type="text"
+                              value={
+                                workType == "N" ? userName : filters.personnm
+                              }
+                              className="readonly"
+                            />
+                          </td>
+                          <th>수리자</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="rcvperson"
+                                value={filters.rcvperson}
+                                customOptionData={customOptionData}
+                                changeData={filterComboBoxChange}
+                                type="new"
+                                textField="user_name"
+                                valueField="user_id"
+                                className="required"
+                              />
+                            )}
+                          </td>
+                          <th>완료요청일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="reqdt"
+                                value={filters.reqdt}
+                                format="yyyy-MM-dd"
+                                onChange={filterInputChange}
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>업체코드</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={filters.custcd}
+                              onChange={filterInputChange}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>제목</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="title"
+                              type="text"
+                              value={filters.title}
+                              onChange={filterInputChange}
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>요청내용</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={filters.reqctns}
+                              name="reqctns"
+                              rows={10}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={filters.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                      </tbody>
+                    ) : (
+                      <tbody>
+                        <tr>
+                          <th>작성일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="recdt"
+                                value={filters.recdt}
+                                format="yyyy-MM-dd"
+                                disabled={true}
+                                className="readonly"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                          <th>작성자</th>
+                          <td>
+                            <Input
+                              name="personnm"
+                              type="text"
+                              value={filters.personnm}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>수리자</th>
+                          <td>
+                            {bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="rcvperson"
+                                value={filters.rcvperson}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={filterComboBoxChange}
+                                className="readonly"
+                                valueField="user_id"
+                                textField="user_name"
+                              />
+                            )}
+                          </td>
+                          <th>완료요청일</th>
+                          <td>
+                            <div className="filter-item-wrap">
+                              <DatePicker
+                                name="reqdt"
+                                value={filters.reqdt}
+                                format="yyyy-MM-dd"
+                                disabled={true}
+                                className="readonly"
+                                placeholder=""
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>업체코드</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={filters.custcd}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button icon="more-horizontal" fillMode="flat" />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>제목</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="title"
+                              type="text"
+                              value={filters.title}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>요청내용</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={filters.reqctns}
+                              name="reqctns"
+                              rows={10}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={filters.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                      </tbody>
+                    )}
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+              <GridContainer width={`calc(30% - ${GAP}px)`}>
+                <GridTitleContainer className="WindowButtonContainer2">
+                  <GridTitle>참조</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: webheight2 }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      dptcd: dptcdListData.find(
+                        (item: any) => item.dptcd == row.dptcd
+                      )?.dptnm,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      chooses:
+                        row.chooses == "Y"
+                          ? true
+                          : row.chooses == "N"
+                          ? false
+                          : row.chooses,
+                      loadok:
+                        row.loadok == "Y"
+                          ? true
+                          : row.loadok == "N"
+                          ? false
+                          : row.loadok,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="user_name"
+                    title="사용자명"
+                    width="100px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn field="dptcd" title="부서코드" width="100px" />
+                  <GridColumn field="postcd" title="직위" width="90px" />
+                  <GridColumn
+                    field="chooses"
+                    title="참조"
+                    width="60px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="loadok"
+                    title="확인"
+                    width="60px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="readok"
+                    title="열람"
+                    width="60px"
+                    cell={CheckBoxReadOnlyCell}
+                  />
+                </Grid>
+              </GridContainer>
+            </GridContainerWrap>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer3">
+                <GridTitle>처리영역</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap border={true} style={{ height: webheight3 }}>
+                <FormBox>
+                  <tbody>
+                    {userId != filters.rcvperson ? (
+                      <tr>
+                        <th>처리여부</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="endyn"
+                              value={filters.endyn}
+                              bizComponentId="R_ENDYN3"
+                              bizComponentData={bizComponentData}
+                              className="readonly"
+                            />
+                          )}
+                        </td>
+                        <th>완료예정일</th>
+                        <td>
+                          <div className="filter-item-wrap">
+                            <DatePicker
+                              name="finexpdt"
+                              format="yyyy-MM-dd"
+                              className="readonly"
+                              disabled={true}
+                              placeholder=""
+                            />
+                          </div>
+                        </td>
+                        <th>완료일</th>
+                        <td>
+                          <div className="filter-item-wrap">
+                            <DatePicker
+                              name="findt"
+                              format="yyyy-MM-dd"
+                              className="readonly"
+                              disabled={true}
+                              placeholder=""
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <th>처리여부</th>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="endyn"
+                              value={filters.endyn}
+                              bizComponentId="R_ENDYN3"
+                              bizComponentData={bizComponentData}
+                              changeData={filterRadioChange}
+                            />
+                          )}
+                        </td>
+                        <th>완료예정일</th>
+                        <td>
+                          <div className="filter-item-wrap">
+                            <DatePicker
+                              name="finexpdt"
+                              value={filters.finexpdt}
+                              format="yyyy-MM-dd"
+                              onChange={filterInputChange}
+                              placeholder=""
+                            />
+                          </div>
+                        </td>
+                        <th>완료일</th>
+                        <td>
+                          <div className="filter-item-wrap">
+                            <DatePicker
+                              name="findt"
+                              value={filters.findt}
+                              format="yyyy-MM-dd"
+                              onChange={filterInputChange}
+                              placeholder=""
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+            <GridContainer>
+              <CommentsGrid
+                ref_key={
+                  workType == "N"
+                    ? ""
+                    : data?.recno == undefined
+                    ? filters.recno
+                    : data?.recno
+                }
+                form_id={pathname}
+                table_id={"CR100T"}
+                style={{ height: webheight4 }}
+              ></CommentsGrid>
+            </GridContainer>
+            <BottomContainer className="BottomContainer">
+              <ButtonContainer>
+                <Button themeColor={"primary"} onClick={selectData}>
+                  저장
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={onClose}
+                >
+                  닫기
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        )}
       </Window>
       {custWindowVisible && (
         <CustomersWindow

@@ -111,7 +111,7 @@ const BA_A0021W_603: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1502,7 +1502,7 @@ const BA_A0021W_603: React.FC = () => {
                           }
                           form_id={"BA_A0021W_603"}
                           table_id={"BA020T"}
-                          style={{ height: `${deviceHeight - height - 65}px` }}
+                          style={{ height: deviceHeight - height - 65 }}
                         />
                       </GridContainer>
                     </SwiperSlide>
@@ -2195,7 +2195,7 @@ const BA_A0021W_603: React.FC = () => {
                       }
                       form_id={"BA_A0021W_603"}
                       table_id={"BA020T"}
-                      style={{ height: "55vh" }}
+                      style={{ height: "60vh" }}
                     />
                   </GridContainer>
                 </TabStripTab>

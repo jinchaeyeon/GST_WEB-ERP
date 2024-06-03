@@ -88,7 +88,7 @@ const EA_A2000W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1651,7 +1651,7 @@ const EA_A2000W: React.FC = () => {
                 ref_key={filters2.appnum}
                 form_id={"EA_A2000W"}
                 table_id={"EA100T"}
-                style={{ height: `${deviceHeight - height}px` }}
+                style={{ height: deviceHeight - height }}
               ></CommentsGrid>
             </GridContainer>
           </SwiperSlide>
@@ -2104,7 +2104,7 @@ const EA_A2000W: React.FC = () => {
                     ref_key={filters2.appnum}
                     form_id={"EA_A2000W"}
                     table_id={"EA100T"}
-                    style={{ height: "47.7vh" }}
+                    style={{ height: "50vh" }}
                   ></CommentsGrid>
                 </GridContainer>
               </GridContainerWrap>

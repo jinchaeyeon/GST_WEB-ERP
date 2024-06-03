@@ -11,8 +11,11 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -41,6 +44,7 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   setDefaultDate2,
 } from "../CommonFunction";
 import {
@@ -73,6 +77,11 @@ type TDetailData = {
   loadok: string[];
   readok: string[];
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
 const KendoWindow = ({
   getVisible,
@@ -110,9 +119,27 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    setMobileHeight(deviceHeight - height - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height4);
+    setWebHeight(position.height - height - height2);
+    setWebHeight2(position.height - height - height2 - height4);
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
+    setWebHeight2(position.height - height - height2 - height4);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -675,216 +702,484 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainerWrap>
-        <GridContainer width="55%">
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>문서번호</th>
-                  <td>
-                    <Input
-                      name="datnum"
-                      type="text"
-                      value={filters.datnum}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>직성자</th>
-                  <td>
-                    <Input
-                      name="person"
-                      type="text"
-                      value={filters.person}
-                      className="readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>분류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="category"
-                        value={filters.category}
-                        type="new"
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0}>
+            <FormBoxWrap style={{ height: mobileheight }}>
+              <GridTitleContainer className="WindowButtonContainer">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "end" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>문서번호</th>
+                    <td>
+                      <Input
+                        name="datnum"
+                        type="text"
+                        value={filters.datnum}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>직성자</th>
+                    <td>
+                      <Input
+                        name="person"
+                        type="text"
+                        value={filters.person}
+                        className="readonly"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>분류</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="category"
+                          value={filters.category}
+                          type="new"
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          className="required"
+                        />
+                      )}
+                    </td>
+                    <th>공지게시여부</th>
+                    <td>
+                      <Checkbox
+                        name="publish_yn"
+                        value={
+                          filters.publish_yn == "Y"
+                            ? true
+                            : filters.publish_yn == "N"
+                            ? false
+                            : filters.publish_yn
+                        }
+                        onChange={filterInputChange}
+                      ></Checkbox>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>시작일자</th>
+                    <td>
+                      <DatePicker
+                        name="publish_start_date"
+                        value={filters.publish_start_date}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
                         className="required"
                       />
-                    )}
-                  </td>
-                  <th>공지게시여부</th>
-                  <td>
-                    <Checkbox
-                      name="publish_yn"
-                      value={
-                        filters.publish_yn == "Y"
-                          ? true
-                          : filters.publish_yn == "N"
-                          ? false
-                          : filters.publish_yn
-                      }
-                      onChange={filterInputChange}
-                    ></Checkbox>
-                  </td>
-                </tr>
-                <tr>
-                  <th>시작일자</th>
-                  <td>
-                    <DatePicker
-                      name="publish_start_date"
-                      value={filters.publish_start_date}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                      className="required"
-                    />
-                  </td>
-                  <th>종료일자</th>
-                  <td>
-                    <DatePicker
-                      name="publish_end_date"
-                      value={filters.publish_end_date}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                      className="required"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>제목</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="title"
-                      type="text"
-                      value={filters.title}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th></th>
-                  <td colSpan={3}>
-                    <TextArea
-                      value={filters.contents}
-                      name="contents"
-                      rows={7}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>첨부파일</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="files"
-                      type="text"
-                      value={filters.files}
-                      className="readonly"
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
+                    </td>
+                    <th>종료일자</th>
+                    <td>
+                      <DatePicker
+                        name="publish_end_date"
+                        value={filters.publish_end_date}
+                        format="yyyy-MM-dd"
+                        onChange={filterInputChange}
+                        placeholder=""
+                        className="required"
                       />
-                    </ButtonInInput>
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </GridContainer>
-        <GridContainer width={`calc(45% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>참조</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "36vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd == row.dptcd
-                )?.dptnm,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code == row.postcd
-                )?.code_name,
-                chooses:
-                  row.chooses == "Y"
-                    ? true
-                    : row.chooses == "N"
-                    ? false
-                    : row.chooses,
-                loadok:
-                  row.loadok == "Y"
-                    ? true
-                    : row.loadok == "N"
-                    ? false
-                    : row.loadok,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn field="user_name" title="성명" width="100px" />
-            <GridColumn field="dptcd" title="부서" width="120px" />
-            <GridColumn field="postcd" title="직위" width="90px" />
-            <GridColumn
-              field="chooses"
-              title="참조"
-              width="60px"
-              cell={
-                filters.category == "200" ? CheckBoxCell : CheckBoxReadOnlyCell
-              }
-            />
-            <GridColumn
-              field="loadok"
-              title="확인"
-              width="60px"
-              cell={CheckBoxReadOnlyCell}
-            />
-            <GridColumn field="readok" title="열람" width="60px" />
-          </Grid>
-        </GridContainer>
-      </GridContainerWrap>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            저장
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-      </BottomContainer>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>제목</th>
+                    <td colSpan={3}>
+                      <Input
+                        name="title"
+                        type="text"
+                        value={filters.title}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th></th>
+                    <td colSpan={3}>
+                      <TextArea
+                        value={filters.contents}
+                        name="contents"
+                        rows={7}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>첨부파일</th>
+                    <td colSpan={3}>
+                      <Input
+                        name="files"
+                        type="text"
+                        value={filters.files}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onAttachmentsWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "start" }}>
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      참조
+                    </div>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: mobileheight2 }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd == row.dptcd
+                    )?.dptnm,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    chooses:
+                      row.chooses == "Y"
+                        ? true
+                        : row.chooses == "N"
+                        ? false
+                        : row.chooses,
+                    loadok:
+                      row.loadok == "Y"
+                        ? true
+                        : row.loadok == "N"
+                        ? false
+                        : row.loadok,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                onDataStateChange={onMainDataStateChange}
+                {...mainDataState}
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn field="user_name" title="성명" width="100px" />
+                <GridColumn field="dptcd" title="부서" width="120px" />
+                <GridColumn field="postcd" title="직위" width="90px" />
+                <GridColumn
+                  field="chooses"
+                  title="참조"
+                  width="60px"
+                  cell={
+                    filters.category == "200"
+                      ? CheckBoxCell
+                      : CheckBoxReadOnlyCell
+                  }
+                />
+                <GridColumn
+                  field="loadok"
+                  title="확인"
+                  width="60px"
+                  cell={CheckBoxReadOnlyCell}
+                />
+                <GridColumn field="readok" title="열람" width="60px" />
+              </Grid>
+              <BottomContainer className="BottomContainer">
+                <ButtonContainer>
+                  <Button themeColor={"primary"} onClick={handleSubmit}>
+                    저장
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    onClick={onClose}
+                  >
+                    닫기
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width="55%">
+              <FormBoxWrap style={{ height: webheight }}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>문서번호</th>
+                      <td>
+                        <Input
+                          name="datnum"
+                          type="text"
+                          value={filters.datnum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>직성자</th>
+                      <td>
+                        <Input
+                          name="person"
+                          type="text"
+                          value={filters.person}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="category"
+                            value={filters.category}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>공지게시여부</th>
+                      <td>
+                        <Checkbox
+                          name="publish_yn"
+                          value={
+                            filters.publish_yn == "Y"
+                              ? true
+                              : filters.publish_yn == "N"
+                              ? false
+                              : filters.publish_yn
+                          }
+                          onChange={filterInputChange}
+                        ></Checkbox>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>시작일자</th>
+                      <td>
+                        <DatePicker
+                          name="publish_start_date"
+                          value={filters.publish_start_date}
+                          format="yyyy-MM-dd"
+                          onChange={filterInputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>종료일자</th>
+                      <td>
+                        <DatePicker
+                          name="publish_end_date"
+                          value={filters.publish_end_date}
+                          format="yyyy-MM-dd"
+                          onChange={filterInputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>제목</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="title"
+                          type="text"
+                          value={filters.title}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td colSpan={3}>
+                        <TextArea
+                          value={filters.contents}
+                          name="contents"
+                          rows={7}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={filters.files}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <GridTitle>참조</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: webheight2 }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd == row.dptcd
+                    )?.dptnm,
+                    postcd: postcdListData.find(
+                      (item: any) => item.sub_code == row.postcd
+                    )?.code_name,
+                    chooses:
+                      row.chooses == "Y"
+                        ? true
+                        : row.chooses == "N"
+                        ? false
+                        : row.chooses,
+                    loadok:
+                      row.loadok == "Y"
+                        ? true
+                        : row.loadok == "N"
+                        ? false
+                        : row.loadok,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                onDataStateChange={onMainDataStateChange}
+                {...mainDataState}
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn field="user_name" title="성명" width="100px" />
+                <GridColumn field="dptcd" title="부서" width="120px" />
+                <GridColumn field="postcd" title="직위" width="90px" />
+                <GridColumn
+                  field="chooses"
+                  title="참조"
+                  width="60px"
+                  cell={
+                    filters.category == "200"
+                      ? CheckBoxCell
+                      : CheckBoxReadOnlyCell
+                  }
+                />
+                <GridColumn
+                  field="loadok"
+                  title="확인"
+                  width="60px"
+                  cell={CheckBoxReadOnlyCell}
+                />
+                <GridColumn field="readok" title="열람" width="60px" />
+              </Grid>
+            </GridContainer>
+          </GridContainerWrap>
+          <BottomContainer className="BottomContainer">
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={handleSubmit}>
+                저장
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </>
+      )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}

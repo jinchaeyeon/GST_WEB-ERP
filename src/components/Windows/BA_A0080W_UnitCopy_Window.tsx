@@ -15,18 +15,19 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
   GridContainer,
+  Title,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -42,6 +43,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
 } from "../CommonFunction";
 import {
@@ -50,7 +52,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import Window from "./WindowComponent/Window";
 
@@ -82,7 +84,11 @@ const customData = [
 const CustomNumberCell = (props: GridCellProps) => {
   return <NumberCell myProp={customData} {...props} />;
 };
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 let targetRowIndex: null | number = null;
 const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
@@ -94,9 +100,24 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 570,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
 
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".TitleContainer"); //조회버튼
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -210,6 +231,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -667,7 +689,8 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer style={{ float: "right" }}>
+        <TitleContainer className="TitleContainer">
+          <Title></Title>
           <ButtonContainer>
             <Button
               onClick={() => search()}
@@ -678,7 +701,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -721,10 +744,10 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
-        <GridContainer height="calc(100% - 170px)">
+        </WindowFilterContainer>
+        <GridContainer>
           <Grid
-            style={{ height: "100%" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -809,7 +832,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
             <GridColumn field="remark" title="비고" width="250px" />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onSaveClick}>
               저장

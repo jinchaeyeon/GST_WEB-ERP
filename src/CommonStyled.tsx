@@ -353,7 +353,7 @@ export const FormBox = styled.table`
   /* border: solid 1px #d7d7d7;
   background-color: #fff; */
   width: 100%;
-
+  
   .home {
     width: 25% !important;
     min-width: auto !important;
