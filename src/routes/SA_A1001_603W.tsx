@@ -451,7 +451,7 @@ const SA_A1001_603W: React.FC = () => {
       } else if (data.type == "Analyze") {
         setDesignWindowVisible4(true);
       } else {
-        alert("미정");
+        alert("해당되는 디자인 타입이 없습니다.");
       }
     } else {
       alert("데이터가 없습니다.");
