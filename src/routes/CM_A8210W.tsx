@@ -1531,7 +1531,7 @@ const CM_A8210W: React.FC = () => {
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -2055,7 +2055,7 @@ const CM_A8210W: React.FC = () => {
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

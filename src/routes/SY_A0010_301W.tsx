@@ -708,7 +708,7 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };

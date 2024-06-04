@@ -634,7 +634,7 @@ const BA_A0070W: React.FC = () => {
           isSearch: true,
         }));
         deletedMainRows = [];
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1355,7 +1355,7 @@ const BA_A0070W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

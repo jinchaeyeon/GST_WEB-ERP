@@ -2071,7 +2071,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                         컨트롤리스트
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -2131,7 +2131,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -2375,7 +2375,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2444,7 +2444,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                       <div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -2790,7 +2790,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2850,7 +2850,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                       <div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}

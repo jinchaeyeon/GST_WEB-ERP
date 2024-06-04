@@ -851,7 +851,7 @@ const Main: React.FC = () => {
             >
               <Button
                 onClick={() => {
-                  if (swiper) {
+                  if (swiper && isMobile) {
                     swiper.slideTo(0);
                   }
                 }}

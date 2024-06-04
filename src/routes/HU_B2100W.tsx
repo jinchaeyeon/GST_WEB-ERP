@@ -555,7 +555,7 @@ const HU_B2100W: React.FC = () => {
           pgNum: 1,
           find_row_value: "",
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }

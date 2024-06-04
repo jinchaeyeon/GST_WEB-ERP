@@ -634,7 +634,7 @@ const AC_A3000W: React.FC = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -725,7 +725,7 @@ const AC_A3000W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

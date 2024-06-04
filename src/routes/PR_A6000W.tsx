@@ -1248,7 +1248,7 @@ const PR_A6000W: React.FC = () => {
                   <GridTitle>설비별비가동시간</GridTitle>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -1338,7 +1338,7 @@ const PR_A6000W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1350,7 +1350,7 @@ const PR_A6000W: React.FC = () => {
                   </ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(2);
                       }
                     }}
@@ -1441,7 +1441,7 @@ const PR_A6000W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}

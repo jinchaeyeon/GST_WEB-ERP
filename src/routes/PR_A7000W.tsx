@@ -2597,7 +2597,7 @@ const PR_A7000W: React.FC = () => {
                       <GridTitle>생산계획기본</GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -2697,7 +2697,7 @@ const PR_A7000W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -2709,7 +2709,7 @@ const PR_A7000W: React.FC = () => {
                       </ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -2838,7 +2838,7 @@ const PR_A7000W: React.FC = () => {
                     <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}

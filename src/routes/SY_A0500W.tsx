@@ -718,7 +718,7 @@ const SY_A0500W: React.FC = () => {
       resetAllGrid();
       setXY([-1, -1]);
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-      if (swiper) {
+      if (swiper && isMobile) {
         swiper.slideTo(0);
       }
     } catch (e) {
@@ -1320,7 +1320,7 @@ const SY_A0500W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

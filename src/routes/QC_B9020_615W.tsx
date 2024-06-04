@@ -162,7 +162,7 @@ const QC_B9020_615W: React.FC = () => {
           prodmac: "",
         }));
         if (isMobile) {
-          if (swiper) {
+          if (swiper && isMobile) {
             swiper.slideTo(0);
           }
         } else {
@@ -391,7 +391,7 @@ const QC_B9020_615W: React.FC = () => {
 
   const changeSwiper = (fxcode: string) => {
     if (isMobile) {
-      if (swiper) {
+      if (swiper && isMobile) {
         swiper.slideTo(1);
       }
     } else {

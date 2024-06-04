@@ -5091,7 +5091,7 @@ const HU_A4000W: React.FC = () => {
                       <Button
                         key={label}
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(index + 1);
                           }
                         }}
@@ -5240,7 +5240,7 @@ const HU_A4000W: React.FC = () => {
                           <Button
                             key={label}
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(index + 1);
                               }
                             }}

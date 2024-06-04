@@ -551,7 +551,7 @@ const MA_A3400_606W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1280,7 +1280,7 @@ const MA_A3400_606W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1353,7 +1353,7 @@ const MA_A3400_606W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}

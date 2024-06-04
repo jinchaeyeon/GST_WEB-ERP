@@ -617,7 +617,7 @@ const HU_B2140W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -811,7 +811,7 @@ const HU_B2140W: React.FC = () => {
               <Button
                 key={label}
                 onClick={() => {
-                  if (swiper) {
+                  if (swiper && isMobile) {
                     swiper.slideTo(index);
                   }
                 }}

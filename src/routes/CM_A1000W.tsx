@@ -1202,7 +1202,7 @@ const CM_A1000W: React.FC = () => {
       usetime: "",
       total_usetime: "",
     }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -1637,7 +1637,7 @@ const CM_A1000W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1911,7 +1911,7 @@ const CM_A1000W: React.FC = () => {
                   >
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

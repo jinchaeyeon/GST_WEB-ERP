@@ -1992,7 +1992,7 @@ const BA_A0020_603: React.FC = () => {
                             {"컴플레인 기본사항"}
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(1);
                                 }
                               }}
@@ -2231,7 +2231,7 @@ const BA_A0020_603: React.FC = () => {
                             <ButtonContainer>
                               <Button
                                 onClick={() => {
-                                  if (swiper) {
+                                  if (swiper && isMobile) {
                                     swiper.slideTo(0);
                                   }
                                 }}
@@ -2243,7 +2243,7 @@ const BA_A0020_603: React.FC = () => {
                             </ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(2);
                                 }
                               }}
@@ -2302,7 +2302,7 @@ const BA_A0020_603: React.FC = () => {
                             <ButtonContainer>
                               <Button
                                 onClick={() => {
-                                  if (swiper) {
+                                  if (swiper && isMobile) {
                                     swiper.slideTo(1);
                                   }
                                 }}
@@ -2314,7 +2314,7 @@ const BA_A0020_603: React.FC = () => {
                             </ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(3);
                                 }
                               }}
@@ -2439,7 +2439,7 @@ const BA_A0020_603: React.FC = () => {
                             <ButtonContainer>
                               <Button
                                 onClick={() => {
-                                  if (swiper) {
+                                  if (swiper && isMobile) {
                                     swiper.slideTo(2);
                                   }
                                 }}
@@ -2451,7 +2451,7 @@ const BA_A0020_603: React.FC = () => {
                             </ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(4);
                                 }
                               }}
@@ -2577,7 +2577,7 @@ const BA_A0020_603: React.FC = () => {
                           <ButtonContainer style={{ justifyContent: "left" }}>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(3);
                                 }
                               }}

@@ -2049,7 +2049,7 @@ const CM_A5000W: React.FC = () => {
                         {"문의"}
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -2639,7 +2639,7 @@ const CM_A5000W: React.FC = () => {
                         <ButtonContainer>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}

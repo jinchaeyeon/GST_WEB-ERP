@@ -1570,7 +1570,7 @@ const BA_A0050: React.FC = () => {
       isSearch: true,
     }));
     deletedMainRows = [];
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -2297,7 +2297,7 @@ const BA_A0050: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -2307,7 +2307,7 @@ const BA_A0050: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
@@ -2432,7 +2432,7 @@ const BA_A0050: React.FC = () => {
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}

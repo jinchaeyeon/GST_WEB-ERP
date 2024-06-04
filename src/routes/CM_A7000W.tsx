@@ -1899,7 +1899,7 @@ const CM_A7000W: React.FC = () => {
                         {"회의록"}
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -2266,7 +2266,7 @@ const CM_A7000W: React.FC = () => {
                         <ButtonContainer>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -2278,7 +2278,7 @@ const CM_A7000W: React.FC = () => {
                         </ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2379,7 +2379,7 @@ const CM_A7000W: React.FC = () => {
                       <ButtonContainer style={{ justifyContent: "left" }}>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}

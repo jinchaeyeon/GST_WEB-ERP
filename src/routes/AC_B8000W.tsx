@@ -2357,7 +2357,7 @@ const AC_B8000W: React.FC = () => {
                         매출표제일반(개인 제외)
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -2459,7 +2459,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -2471,7 +2471,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2573,7 +2573,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2585,7 +2585,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
@@ -2664,7 +2664,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(2);
                               }
                             }}
@@ -2676,7 +2676,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(4);
                             }
                           }}
@@ -2755,7 +2755,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(3);
                               }
                             }}
@@ -2767,7 +2767,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(5);
                             }
                           }}
@@ -2844,7 +2844,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(4);
                               }
                             }}
@@ -3419,7 +3419,7 @@ const AC_B8000W: React.FC = () => {
                         신용, 직불카드(개인 제외)
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -3521,7 +3521,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -3533,7 +3533,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -3635,7 +3635,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -3647,7 +3647,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
@@ -3744,7 +3744,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(2);
                               }
                             }}
@@ -4261,7 +4261,7 @@ const AC_B8000W: React.FC = () => {
                         매출집계자료(전자계산서 외)
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -4363,7 +4363,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -4375,7 +4375,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -4477,7 +4477,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -4489,7 +4489,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
@@ -4591,7 +4591,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(2);
                               }
                             }}
@@ -4603,7 +4603,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(4);
                             }
                           }}
@@ -4702,7 +4702,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(3);
                               }
                             }}
@@ -4714,7 +4714,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(5);
                             }
                           }}
@@ -4811,7 +4811,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(4);
                               }
                             }}
@@ -5490,7 +5490,7 @@ const AC_B8000W: React.FC = () => {
                         합계
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -5575,7 +5575,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -5587,7 +5587,7 @@ const AC_B8000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -5689,7 +5689,7 @@ const AC_B8000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}

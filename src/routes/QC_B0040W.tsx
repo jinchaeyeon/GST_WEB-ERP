@@ -1224,7 +1224,7 @@ const QC_B0040W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1410,7 +1410,7 @@ const QC_B0040W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1513,7 +1513,7 @@ const QC_B0040W: React.FC = () => {
                     <div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -1526,7 +1526,7 @@ const QC_B0040W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -1632,7 +1632,7 @@ const QC_B0040W: React.FC = () => {
                     <div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1645,7 +1645,7 @@ const QC_B0040W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(3);
                           }
                         }}
@@ -1741,7 +1741,7 @@ const QC_B0040W: React.FC = () => {
                     <div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}

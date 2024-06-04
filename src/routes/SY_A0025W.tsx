@@ -636,7 +636,7 @@ const SY_A0025W: React.FC = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     deletedMainRows = [];
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -1203,7 +1203,7 @@ const SY_A0025W: React.FC = () => {
                       요약정보
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1309,7 +1309,7 @@ const SY_A0025W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1321,7 +1321,7 @@ const SY_A0025W: React.FC = () => {
                       </ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -1448,7 +1448,7 @@ const SY_A0025W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1460,7 +1460,7 @@ const SY_A0025W: React.FC = () => {
                       </ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(3);
                           }
                         }}
@@ -1701,7 +1701,7 @@ const SY_A0025W: React.FC = () => {
                       <ButtonContainer style={{ justifyContent: "left" }}>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}

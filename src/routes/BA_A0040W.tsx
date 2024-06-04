@@ -1425,7 +1425,7 @@ const BA_A0040: React.FC = () => {
       total: 0,
     });
     setTabSelected(0);
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -1629,7 +1629,7 @@ const BA_A0040: React.FC = () => {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };

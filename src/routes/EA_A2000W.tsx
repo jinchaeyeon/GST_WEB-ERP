@@ -1167,7 +1167,7 @@ const EA_A2000W: React.FC = () => {
                     <GridTitle>미결함</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1208,7 +1208,7 @@ const EA_A2000W: React.FC = () => {
                     <GridTitle>기결함</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1239,7 +1239,7 @@ const EA_A2000W: React.FC = () => {
                     <GridTitle>개인결재현황</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1265,7 +1265,7 @@ const EA_A2000W: React.FC = () => {
                     <GridTitle>참조자확인</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1281,7 +1281,7 @@ const EA_A2000W: React.FC = () => {
                     <GridTitle>미결함</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1425,7 +1425,7 @@ const EA_A2000W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1437,7 +1437,7 @@ const EA_A2000W: React.FC = () => {
                   </ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(2);
                       }
                     }}
@@ -1539,7 +1539,7 @@ const EA_A2000W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1552,7 +1552,7 @@ const EA_A2000W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(3);
                         }
                       }}

@@ -1579,7 +1579,7 @@ const KendoWindow = ({
                       결재/합의 정보
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1714,7 +1714,7 @@ const KendoWindow = ({
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1726,7 +1726,7 @@ const KendoWindow = ({
                       </ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -1809,7 +1809,7 @@ const KendoWindow = ({
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

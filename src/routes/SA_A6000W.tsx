@@ -1231,7 +1231,7 @@ const SA_A6000W: React.FC = () => {
             isSearch: true,
           }));
         }
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -2272,7 +2272,7 @@ const SA_A6000W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -2699,7 +2699,7 @@ const SA_A6000W: React.FC = () => {
                         <GridTitle>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2823,7 +2823,7 @@ const SA_A6000W: React.FC = () => {
                         {" "}
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}

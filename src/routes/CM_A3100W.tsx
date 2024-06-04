@@ -735,7 +735,7 @@ const CM_A3100W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

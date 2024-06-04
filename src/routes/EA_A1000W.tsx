@@ -2077,7 +2077,7 @@ const EA_A1000: React.FC = () => {
                   <GridTitle>참조</GridTitle>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -2200,7 +2200,7 @@ const EA_A1000: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -2212,7 +2212,7 @@ const EA_A1000: React.FC = () => {
                   </ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(2);
                       }
                     }}
@@ -2386,7 +2386,7 @@ const EA_A1000: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -2398,7 +2398,7 @@ const EA_A1000: React.FC = () => {
                   </ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(3);
                       }
                     }}
@@ -2513,7 +2513,7 @@ const EA_A1000: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(2);
                       }
                     }}

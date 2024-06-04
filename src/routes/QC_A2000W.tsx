@@ -1462,7 +1462,7 @@ const QC_A2000: React.FC = () => {
           pgNum: 1,
         }));
         if(tabSelected == 1) {
-          if (swiper) {
+          if (swiper && isMobile) {
             swiper.slideTo(0);
           }
         }
@@ -2833,7 +2833,7 @@ const QC_A2000: React.FC = () => {
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

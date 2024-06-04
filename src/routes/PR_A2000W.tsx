@@ -639,7 +639,7 @@ const PR_A2000W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -729,7 +729,7 @@ const PR_A2000W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "left" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}

@@ -853,7 +853,7 @@ const SY_A0125W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -1338,7 +1338,7 @@ const SY_A0125W: React.FC = () => {
                       {"부서리스트"}
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1408,7 +1408,7 @@ const SY_A0125W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1420,7 +1420,7 @@ const SY_A0125W: React.FC = () => {
                       </ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -1562,7 +1562,7 @@ const SY_A0125W: React.FC = () => {
                     <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}

@@ -2028,7 +2028,7 @@ const AC_A6000W: React.FC = () => {
                 <ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -2072,7 +2072,7 @@ const AC_A6000W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

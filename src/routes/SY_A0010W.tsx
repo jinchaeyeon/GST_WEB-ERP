@@ -741,7 +741,7 @@ const Page: React.FC = () => {
       isSearch: true,
     }));
     setDetailFilters((prev) => ({ ...prev, pgNum: 1 }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -1401,7 +1401,7 @@ const Page: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

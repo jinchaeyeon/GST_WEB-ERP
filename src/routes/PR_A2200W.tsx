@@ -460,7 +460,7 @@ const PR_A2200W: React.FC = () => {
 
   useEffect(() => {
     if (information.setup_hw_num != "" && index == 1 && isMobile) {
-      if (swiper) {
+      if (swiper && isMobile) {
         swiper.slideTo(2);
       }
     }
@@ -905,7 +905,7 @@ const PR_A2200W: React.FC = () => {
                         setup_location: "",
                         isSearch: true,
                       }));
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}

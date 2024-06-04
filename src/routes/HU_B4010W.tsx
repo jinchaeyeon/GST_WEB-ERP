@@ -1011,7 +1011,7 @@ const HU_B4010W: React.FC = () => {
         setDate10(new Date(year, month - 9, day));
         setDate11(new Date(year, month - 10, day));
         setDate12(new Date(year, month - 11, day));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1570,7 +1570,7 @@ const HU_B4010W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1581,7 +1581,7 @@ const HU_B4010W: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
@@ -1678,7 +1678,7 @@ const HU_B4010W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

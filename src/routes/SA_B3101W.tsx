@@ -405,7 +405,7 @@ const SA_B3101W: React.FC = () => {
       convertDateToStr(filters.yyyy).substr(0, 4) + "년 매입/매출현황";
     setUnitTitle(unitText);
     setChartTitle(chartTitle);
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -536,7 +536,7 @@ const SA_B3101W: React.FC = () => {
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

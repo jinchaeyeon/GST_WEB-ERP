@@ -1180,7 +1180,7 @@ const AC_B5060W: React.FC = () => {
                         <div> 기본정보</div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1256,7 +1256,7 @@ const AC_B5060W: React.FC = () => {
                       <ButtonContainer style={{ justifyContent: "left" }}>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1695,7 +1695,7 @@ const AC_B5060W: React.FC = () => {
                         <div> 기본정보</div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1771,7 +1771,7 @@ const AC_B5060W: React.FC = () => {
                       <ButtonContainer style={{ justifyContent: "left" }}>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}

@@ -733,7 +733,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
                   참석자
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}

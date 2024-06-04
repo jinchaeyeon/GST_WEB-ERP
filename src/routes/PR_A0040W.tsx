@@ -1806,7 +1806,7 @@ const PR_A0040W: React.FC = () => {
                   <GridTitle>요약정보</GridTitle>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -1939,7 +1939,7 @@ const PR_A0040W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -1951,7 +1951,7 @@ const PR_A0040W: React.FC = () => {
                   </ButtonContainer>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(2);
                       }
                     }}
@@ -2045,7 +2045,7 @@ const PR_A0040W: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}

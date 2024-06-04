@@ -572,7 +572,7 @@ const KendoWindow = ({
                     요약정보
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -637,7 +637,7 @@ const KendoWindow = ({
                   <ButtonContainer style={{ justifyContent: "left" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}

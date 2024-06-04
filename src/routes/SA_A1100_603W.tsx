@@ -466,7 +466,7 @@ const SA_A1100_603W: React.FC = () => {
       isSearch: true,
     }));
     setTabSelected(1);
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -850,7 +850,7 @@ const SA_A1100_603W: React.FC = () => {
               isSearch: true,
             }));
             setTabSelected(1);
-            if (swiper) {
+            if (swiper && isMobile) {
               swiper.slideTo(1);
             }
           }
@@ -2803,7 +2803,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -3104,7 +3104,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -3117,7 +3117,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -3279,7 +3279,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -3292,7 +3292,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
@@ -3420,7 +3420,7 @@ const SA_A1100_603W: React.FC = () => {
                       {" "}
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}

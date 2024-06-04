@@ -3364,7 +3364,7 @@ const CopyWindow = ({
                 <ButtonContainer style={{ justifyContent: "end" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -3502,7 +3502,7 @@ const CopyWindow = ({
                           >
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(0);
                                 }
                               }}
@@ -3526,7 +3526,7 @@ const CopyWindow = ({
                               ></Button>
                               <Button
                                 onClick={() => {
-                                  if (swiper) {
+                                  if (swiper && isMobile) {
                                     swiper.slideTo(2);
                                   }
                                 }}
@@ -3682,7 +3682,7 @@ const CopyWindow = ({
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

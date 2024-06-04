@@ -1917,7 +1917,7 @@ const SA_A1001_603W: React.FC = () => {
                           상세정보
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2062,7 +2062,7 @@ const SA_A1001_603W: React.FC = () => {
                           <ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(0);
                                 }
                               }}

@@ -120,7 +120,7 @@ const CM_A1000W_617: React.FC = () => {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -130,7 +130,7 @@ const CM_A1000W_617: React.FC = () => {
   };
 
   const resetAllGrid = () => {
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
     setMainDataResult(process([], mainDataState));
@@ -385,7 +385,7 @@ const CM_A1000W_617: React.FC = () => {
       title: selectedRowData.title,
       contents: selectedRowData.contents,
     });
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -447,7 +447,7 @@ const CM_A1000W_617: React.FC = () => {
       title: "",
       contents: "",
     }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -523,7 +523,7 @@ const CM_A1000W_617: React.FC = () => {
         title: "",
         contents: "",
       });
-      if (swiper) {
+      if (swiper && isMobile) {
         swiper.slideTo(0);
       }
     } else {
@@ -711,7 +711,7 @@ const CM_A1000W_617: React.FC = () => {
                 >
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

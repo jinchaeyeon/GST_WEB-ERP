@@ -1898,7 +1898,7 @@ const MA_A9001W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -2739,7 +2739,7 @@ const MA_A9001W: React.FC = () => {
                   >
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -3037,7 +3037,7 @@ const MA_A9001W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

@@ -331,7 +331,7 @@ const CR_A0000W: React.FC = () => {
     if (data.isSuccess == true) {
       alert("신청이 완료되었습니다.");
       if (isMobile) {
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(1);
         }
       } else {
@@ -430,7 +430,7 @@ const CR_A0000W: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(2);
     }
   }, [slice]);
@@ -554,7 +554,7 @@ const CR_A0000W: React.FC = () => {
                           setSelectedState(item[DATA_ITEM_KEY]);
                           setChangeDate("");
                           setSlice(false);
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -581,7 +581,7 @@ const CR_A0000W: React.FC = () => {
                       }}
                       className="k-icon k-i-arrow-60-left k-icon-lg"
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -638,7 +638,7 @@ const CR_A0000W: React.FC = () => {
                         }}
                         className="k-icon k-i-arrow-60-left k-icon-lg"
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                           setChangeDate("");
@@ -963,7 +963,7 @@ const CR_A0000W: React.FC = () => {
                       <ButtonContainer>
                         <Buttons
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                             setChangeDate("");

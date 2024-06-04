@@ -953,7 +953,7 @@ const QC_A2500W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1232,7 +1232,7 @@ const QC_A2500W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}

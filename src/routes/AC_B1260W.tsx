@@ -930,7 +930,7 @@ const AC_B1260W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -979,7 +979,7 @@ const AC_B1260W: React.FC = () => {
                     <GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -1345,7 +1345,7 @@ const AC_B1260W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1394,7 +1394,7 @@ const AC_B1260W: React.FC = () => {
                     <GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -1759,7 +1759,7 @@ const AC_B1260W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1808,7 +1808,7 @@ const AC_B1260W: React.FC = () => {
                     <GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -2173,7 +2173,7 @@ const AC_B1260W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -2222,7 +2222,7 @@ const AC_B1260W: React.FC = () => {
                     <GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -2587,7 +2587,7 @@ const AC_B1260W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -2636,7 +2636,7 @@ const AC_B1260W: React.FC = () => {
                     <GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

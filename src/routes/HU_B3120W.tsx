@@ -846,7 +846,7 @@ const HU_B3120W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };

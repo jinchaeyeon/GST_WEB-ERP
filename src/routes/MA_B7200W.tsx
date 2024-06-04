@@ -1105,7 +1105,7 @@ const MA_B7200W: React.FC = () => {
             isSearch: true,
           }));
         }
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1944,7 +1944,7 @@ const MA_B7200W: React.FC = () => {
                         <GridTitle>입고상세내역</GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2056,7 +2056,7 @@ const MA_B7200W: React.FC = () => {
                           <ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(0);
                                 }
                               }}
@@ -2275,7 +2275,7 @@ const MA_B7200W: React.FC = () => {
                         <GridTitle>입고상세내역</GridTitle>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2382,7 +2382,7 @@ const MA_B7200W: React.FC = () => {
                         <ButtonContainer>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}

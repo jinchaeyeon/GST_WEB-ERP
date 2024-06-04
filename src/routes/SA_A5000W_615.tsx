@@ -641,7 +641,7 @@ const SA_A5000W_615: React.FC = () => {
                       </Button>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             if (mainDataResult.total > 0) {
                               swiper.slideTo(1);
                             } else {
@@ -839,7 +839,7 @@ const SA_A5000W_615: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                               events();
                             }

@@ -655,7 +655,7 @@ const SA_A2300: React.FC = () => {
       isSearch: true,
     }));
 
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -956,7 +956,7 @@ const SA_A2300: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1225,7 +1225,7 @@ const SA_A2300: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}

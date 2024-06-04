@@ -948,7 +948,7 @@ const CopyWindow = ({
                       <div>상세정보</div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -1220,7 +1220,7 @@ const CopyWindow = ({
                       <div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1232,7 +1232,7 @@ const CopyWindow = ({
                       </div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}
@@ -1359,7 +1359,7 @@ const CopyWindow = ({
                       <div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1371,7 +1371,7 @@ const CopyWindow = ({
                       </div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(3);
                           }
                         }}
@@ -1478,7 +1478,7 @@ const CopyWindow = ({
                     >
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(2);
                           }
                         }}

@@ -1354,7 +1354,7 @@ const HU_B4000W: React.FC = () => {
           setPage2(initialPageState);
           setPage3(initialPageState);
           setPage4(initialPageState);
-          if (swiper) {
+          if (swiper && isMobile) {
             swiper.slideTo(0);
           }
         }
@@ -2043,7 +2043,7 @@ const HU_B4000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -2054,7 +2054,7 @@ const HU_B4000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(2);
                               }
                             }}
@@ -2064,7 +2064,7 @@ const HU_B4000W: React.FC = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(3);
                               }
                             }}
@@ -2166,7 +2166,7 @@ const HU_B4000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -2177,7 +2177,7 @@ const HU_B4000W: React.FC = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2187,7 +2187,7 @@ const HU_B4000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
@@ -2265,7 +2265,7 @@ const HU_B4000W: React.FC = () => {
                         <div>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -2276,7 +2276,7 @@ const HU_B4000W: React.FC = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2286,7 +2286,7 @@ const HU_B4000W: React.FC = () => {
                         </div>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}

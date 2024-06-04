@@ -1818,7 +1818,7 @@ const MA_A3500W: React.FC = () => {
             find_row_value: "",
           }));
         }
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -3285,7 +3285,7 @@ const MA_A3500W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

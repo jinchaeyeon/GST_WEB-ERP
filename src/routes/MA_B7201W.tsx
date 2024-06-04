@@ -650,7 +650,7 @@ const MA_B7201W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -1158,7 +1158,7 @@ const MA_B7201W: React.FC = () => {
                     <GridTitle>입고상세내역</GridTitle>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
@@ -1265,7 +1265,7 @@ const MA_B7201W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

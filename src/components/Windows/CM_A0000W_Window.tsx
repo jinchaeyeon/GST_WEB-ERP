@@ -718,7 +718,7 @@ const KendoWindow = ({
                   <ButtonContainer style={{ justifyContent: "end" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -857,7 +857,7 @@ const KendoWindow = ({
                     <div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

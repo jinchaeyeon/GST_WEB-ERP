@@ -657,7 +657,7 @@ const QC_A0120: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }

@@ -643,7 +643,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   }, [ParaData]);
 
   const resetAll = () => {
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
     setPage(initialPageState);
@@ -816,7 +816,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           if (checkDataResult.total > 0) {
                             swiper.slideTo(1);
                           } else {

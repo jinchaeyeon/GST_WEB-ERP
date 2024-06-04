@@ -1316,7 +1316,7 @@ const AC_A0070W: React.FC = () => {
                     {"요약정보"}
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1419,7 +1419,7 @@ const AC_A0070W: React.FC = () => {
                     <ButtonContainer>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}
@@ -1431,7 +1431,7 @@ const AC_A0070W: React.FC = () => {
                     </ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
@@ -1647,7 +1647,7 @@ const AC_A0070W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "left" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

@@ -853,7 +853,7 @@ const AC_B8040W: React.FC = () => {
                   <ButtonContainer>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -945,7 +945,7 @@ const AC_B8040W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(0);
                         }
                       }}
@@ -955,7 +955,7 @@ const AC_B8040W: React.FC = () => {
                     ></Button>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
@@ -1049,7 +1049,7 @@ const AC_B8040W: React.FC = () => {
                   <ButtonContainer style={{ justifyContent: "left" }}>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}

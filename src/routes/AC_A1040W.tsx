@@ -1555,7 +1555,7 @@ const AC_A1040W: React.FC = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(1);
                       }
                     }}
@@ -1688,7 +1688,7 @@ const AC_A1040W: React.FC = () => {
                 <GridTitle>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

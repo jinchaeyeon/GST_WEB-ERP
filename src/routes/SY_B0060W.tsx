@@ -600,7 +600,7 @@ const SY_B0060W: React.FC = () => {
                     </ApprovalInner>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -643,7 +643,7 @@ const SY_B0060W: React.FC = () => {
             >
               <Button
                 onClick={() => {
-                  if (swiper) {
+                  if (swiper && isMobile) {
                     swiper.slideTo(0);
                   }
                 }}

@@ -3125,7 +3125,7 @@ FROM HU072T WHERE paycd = '4'`;
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}

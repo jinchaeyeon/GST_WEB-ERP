@@ -1563,7 +1563,7 @@ const AC_A0090W: React.FC = () => {
                     <div> 기본정보</div>
                     <Button
                       onClick={() => {
-                        if (swiper) {
+                        if (swiper && isMobile) {
                           swiper.slideTo(1);
                         }
                       }}
@@ -1708,7 +1708,7 @@ const AC_A0090W: React.FC = () => {
                     <div>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

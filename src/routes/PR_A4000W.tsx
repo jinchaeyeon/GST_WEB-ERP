@@ -2152,7 +2152,7 @@ const PR_A4000W: React.FC = () => {
                       <GridTitle>작업정보</GridTitle>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(1);
                           }
                         }}
@@ -2243,7 +2243,7 @@ const PR_A4000W: React.FC = () => {
                     <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
-                          if (swiper) {
+                          if (swiper && isMobile) {
                             swiper.slideTo(0);
                           }
                         }}

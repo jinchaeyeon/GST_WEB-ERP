@@ -1745,7 +1745,7 @@ const SA_A1200_603W: React.FC = () => {
                           계약가능성관리
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(1);
                               }
                             }}
@@ -2018,7 +2018,7 @@ const SA_A1200_603W: React.FC = () => {
                         <ButtonContainer>
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -2030,7 +2030,7 @@ const SA_A1200_603W: React.FC = () => {
                         </ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2135,7 +2135,7 @@ const SA_A1200_603W: React.FC = () => {
                           <ButtonContainer>
                             <Button
                               onClick={() => {
-                                if (swiper) {
+                                if (swiper && isMobile) {
                                   swiper.slideTo(1);
                                 }
                               }}

@@ -1272,7 +1272,7 @@ const BA_A0020: React.FC = () => {
       find_row_value: "",
     }));
     setTabSelected(0);
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -1663,7 +1663,7 @@ const BA_A0020: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
     setyn(true);
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(0);
     }
   };
@@ -3286,7 +3286,7 @@ const BA_A0020: React.FC = () => {
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
                     onClick={() => {
-                      if (swiper) {
+                      if (swiper && isMobile) {
                         swiper.slideTo(0);
                       }
                     }}

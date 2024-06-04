@@ -9489,7 +9489,7 @@ const CopyWindow = ({
                         </Button>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}

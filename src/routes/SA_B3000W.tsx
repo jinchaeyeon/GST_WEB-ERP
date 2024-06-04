@@ -665,7 +665,7 @@ const SA_B3000W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
-        if (swiper) {
+        if (swiper && isMobile) {
           swiper.slideTo(0);
         }
       }
@@ -810,7 +810,7 @@ const SA_B3000W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -882,7 +882,7 @@ const SA_B3000W: React.FC = () => {
                         >
                           <Button
                             onClick={() => {
-                              if (swiper) {
+                              if (swiper && isMobile) {
                                 swiper.slideTo(0);
                               }
                             }}
@@ -985,7 +985,7 @@ const SA_B3000W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1114,7 +1114,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1124,7 +1124,7 @@ const SA_B3000W: React.FC = () => {
 
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -1185,7 +1185,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1238,7 +1238,7 @@ const SA_B3000W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1444,7 +1444,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1453,7 +1453,7 @@ const SA_B3000W: React.FC = () => {
                         </Button>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -1542,7 +1542,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1612,7 +1612,7 @@ const SA_B3000W: React.FC = () => {
                       <ButtonContainer>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
@@ -1895,7 +1895,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(0);
                             }
                           }}
@@ -1904,7 +1904,7 @@ const SA_B3000W: React.FC = () => {
                         </Button>
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
@@ -2002,7 +2002,7 @@ const SA_B3000W: React.FC = () => {
                       >
                         <Button
                           onClick={() => {
-                            if (swiper) {
+                            if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
