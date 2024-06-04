@@ -81,7 +81,9 @@ const KendoWindow = ({
     height6 = getHeight(".WindowButtonContainer");
 
     setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setMobileHeight2(deviceHeight - height - height2 - height3 - height4);
+    setMobileHeight2(
+      deviceHeight - height - height2 - height3 - height4 - height6
+    );
     setWebHeight((position.height - height - height2 - height3 - height5) / 2);
     setWebHeight2(
       (position.height - height - height2 - height3 - height5) / 2 - height6

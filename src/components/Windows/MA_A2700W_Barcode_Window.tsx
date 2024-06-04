@@ -29,9 +29,9 @@ const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 800) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 470) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 500) / 2,
     width: isMobile == true ? deviceWidth : 800,
-    height: isMobile == true ? deviceHeight : 470,
+    height: isMobile == true ? deviceHeight : 500,
   });
   const onChangePostion = (position: any) => {
     setPosition(position);

@@ -89,9 +89,7 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
-const topHeight = 140.13;
-const bottomHeight = 55;
-const leftOverHeight = (topHeight + bottomHeight) / 3;
+
 let temp = 0;
 let targetRowIndex: null | number = null;
 

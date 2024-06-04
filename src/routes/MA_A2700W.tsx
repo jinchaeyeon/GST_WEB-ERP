@@ -106,7 +106,7 @@ const MA_A2700W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -2107,7 +2107,12 @@ const MA_A2700W: React.FC = () => {
       {barcodeWindowVisible && (
         <BarcodeWindow
           setVisible={setBarcodeWindowVisible}
-          data={barcodeDataResult.data[0]}
+          data={
+            detailDataResult.data.filter(
+              (item) =>
+                item.num == Object.getOwnPropertyNames(detailselectedState)[0]
+            )[0]
+          }
           modal={true}
         />
       )}
