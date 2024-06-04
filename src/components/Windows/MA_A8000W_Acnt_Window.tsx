@@ -13,19 +13,20 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
+  Title,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
@@ -37,10 +38,11 @@ import {
   UseMessages,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import AccountWindow from "./CommonWindows/AccountWindow";
@@ -56,6 +58,11 @@ type IWindow = {
 };
 
 let targetRowIndex: null | number = null;
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 
 const CopyWindow = ({
   setVisible,
@@ -73,9 +80,27 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
+
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
@@ -161,6 +186,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -521,7 +547,8 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer style={{ float: "right" }}>
+        <TitleContainer className="TitleContainer">
+          <Title />
           <ButtonContainer>
             <Button
               onClick={() => search()}
@@ -532,7 +559,7 @@ const CopyWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -570,54 +597,6 @@ const CopyWindow = ({
                     />
                   )}
                 </td>
-                <th>구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="inoutdiv"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                      disabled={true}
-                    />
-                  )}
-                </td>
-                <th>장부반영여부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionRadioGroup
-                      name="bookregyn"
-                      customOptionData={customOptionData}
-                      changeData={filterRadioChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>계정코드</th>
-                <td>
-                  <Input
-                    name="acntcd"
-                    type="text"
-                    value={filters.acntcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onAccountWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>계정코드 명</th>
-                <td>
-                  <Input
-                    name="acntnm"
-                    type="text"
-                    value={filters.acntnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
                 <th>업체코드</th>
                 <td>
                   <Input
@@ -643,6 +622,30 @@ const CopyWindow = ({
                     onChange={filterInputChange}
                   />
                 </td>
+              </tr>
+              <tr>
+                <th>구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="inoutdiv"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                      disabled={true}
+                    />
+                  )}
+                </td>
+                <th>장부반영여부</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="bookregyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+
                 <th>완료여부</th>
                 <td>
                   {customOptionData !== null && (
@@ -653,13 +656,38 @@ const CopyWindow = ({
                     />
                   )}
                 </td>
+                <th>계정코드</th>
+                <td>
+                  <Input
+                    name="acntcd"
+                    type="text"
+                    value={filters.acntcd}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onAccountWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </td>
+                <th>계정코드 명</th>
+                <td>
+                  <Input
+                    name="acntnm"
+                    type="text"
+                    value={filters.acntnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
-        <GridContainer height={`calc(100% - 200px)`}>
+        </WindowFilterContainer>
+        <GridContainer>
           <Grid
-            style={{ height: "calc(100% - 5px)" }} //5px = margin bottom 값
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -745,7 +773,7 @@ const CopyWindow = ({
             <GridColumn field="custnm" title="업체명" width="120px" />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인

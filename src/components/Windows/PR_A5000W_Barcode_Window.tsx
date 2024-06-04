@@ -1,8 +1,7 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Barcode } from "@progress/kendo-react-barcodes";
 import { Button } from "@progress/kendo-react-buttons";
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
@@ -10,7 +9,7 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { UseGetValueFromSessionItem } from "../CommonFunction";
+import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type barcode = {
@@ -33,6 +32,10 @@ type IWindow = {
   modal?: boolean;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -43,9 +46,23 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".TitleContainer");
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
   };
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -126,31 +143,6 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     });
   }, []);
 
-  React.useEffect(() => {
-    if (total > 2) {
-      setPosition((prev: any) => ({
-        left: 300,
-        top: 100,
-        width: isMobile == true ? deviceWidth : 800,
-        height: 900,
-      }));
-    } else if (total > 1) {
-      setPosition((prev: any) => ({
-        left: 300,
-        top: 100,
-        width: isMobile == true ? deviceWidth : 800,
-        height: 720,
-      }));
-    } else {
-      setPosition((prev: any) => ({
-        left: 300,
-        top: 100,
-        width: isMobile == true ? deviceWidth : 800,
-        height: 500,
-      }));
-    }
-  }, []);
-
   return (
     <>
       <Window
@@ -160,7 +152,7 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <ButtonContainer>
+        <ButtonContainer className="TitleContainer">
           <ReactToPrint
             trigger={() => (
               <Button fillMode="outline" themeColor={"primary"} icon="print">
@@ -170,11 +162,18 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
             content={() => componentRef.current}
           />
         </ButtonContainer>
-        <div id="BarcodePrint" className="printable barcode" ref={componentRef}>
+        <div
+          id="BarcodePrint"
+          style={{
+            height: isMobile ? mobileheight : webheight,
+            overflow: "auto",
+          }}
+          ref={componentRef}
+        >
           {mainDataResult.data[0] != null &&
             mainDataResult.data[0].map((item: any) => (
-              <div key={item.ordkey} style={{ marginBottom: "10px" }}>
-                <table style={{ width: "650px" }}>
+              <div key={item.ordkey}>
+                <table style={{ width: "100%" }}>
                   <tbody>
                     <tr>
                       <th>품명</th>
@@ -195,7 +194,7 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
                     </tr>
                   </tbody>
                 </table>
-                <table style={{ width: "650px" }}>
+                <table style={{ width: "100%" }}>
                   <tbody>
                     <tr>
                       <th>바코드</th>
@@ -204,7 +203,7 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
                       <td>
                         <Barcode
                           type="Code128"
-                          width={630}
+                          width={position.width - 32}
                           value={item.barcode}
                         />
                       </td>
@@ -214,7 +213,7 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
               </div>
             ))}
         </div>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button
               themeColor={"primary"}

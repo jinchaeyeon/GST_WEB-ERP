@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -39,6 +39,7 @@ import {
   UseMessages,
   convertDateToStr,
   getGridItemChangedData,
+  getHeight,
   numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -123,6 +124,11 @@ type TBadData = {
   remark: string[];
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const DetailWindow = ({
   getVisible,
   rekey,
@@ -166,8 +172,26 @@ const DetailWindow = ({
     height: isMobile == true ? deviceHeight : 700,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height4);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3);
   };
 
   const onClose = () => {
@@ -1316,7 +1340,7 @@ const DetailWindow = ({
     >
       <GridContainerWrap>
         <GridContainer width={`50%`}>
-          <GridTitleContainer>
+          <GridTitleContainer className="WindowButtonContainer">
             <GridTitle>투입이력</GridTitle>
             <ButtonContainer>
               <Button
@@ -1336,7 +1360,7 @@ const DetailWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "53vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               inDataResult.data.map((row) => ({
                 ...row,
@@ -1413,7 +1437,7 @@ const DetailWindow = ({
           </Grid>
         </GridContainer>
         <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <GridTitleContainer>
+          <GridTitleContainer className="WindowButtonContainer2">
             <GridTitle>불량내역</GridTitle>
             <ButtonContainer>
               <Button
@@ -1433,7 +1457,7 @@ const DetailWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "53vh" }}
+            style={{ height: isMobile ? mobileheight2 : webheight2 }}
             data={process(
               badDataResult.data.map((row) => ({
                 ...row,
@@ -1506,7 +1530,7 @@ const DetailWindow = ({
           </Grid>
         </GridContainer>
       </GridContainerWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button onClick={onSaveClick} themeColor={"primary"} icon="save">
             저장

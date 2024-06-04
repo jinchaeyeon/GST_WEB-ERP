@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -35,6 +35,7 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -54,6 +55,10 @@ type TKendoWindow = {
 };
 
 const DATA_ITEM_KEY = "num";
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -82,8 +87,20 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1100,
     height: isMobile == true ? deviceHeight : 700,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
   };
   const onClose = () => {
     setVisible(false);
@@ -557,20 +574,22 @@ const KendoWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <GridContainer height="58vh">
-          <GridTitleContainer>
+        <GridContainer>
+          <GridTitleContainer className="WindowButtonContainer">
             <GridTitle>투입가능 소재 리스트</GridTitle>
-            <Button
-              icon="delete"
-              onClick={onSaveClick}
-              fillMode={"outline"}
-              themeColor={"primary"}
-            >
-              재공잔량처리
-            </Button>
+            <ButtonContainer>
+              <Button
+                icon="delete"
+                onClick={onSaveClick}
+                fillMode={"outline"}
+                themeColor={"primary"}
+              >
+                재공잔량처리
+              </Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 40px)" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -648,7 +667,7 @@ const KendoWindow = ({
             <GridColumn field="qtyunit" title="단위" width="80px" />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button
               themeColor={"primary"}

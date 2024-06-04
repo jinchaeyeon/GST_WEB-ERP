@@ -200,23 +200,23 @@ const CopyWindow = ({
     setMobileHeight3(
       deviceHeight - height - height2 - height3 - height5 - height8
     );
-    setWebHeight((position.height - height - height2 - height3 - height4) / 3);
+    setWebHeight((position.height - height - height2 - height3 - height4) / 2);
     setWebHeight2(
-      (position.height - height - height2 - height3 - height4) / 3 - height7
+      (position.height - height - height2 - height3 - height4) / 2 - height7
     );
     setWebHeight3(
-      (position.height - height - height2 - height3 - height4) / 3 - height8
+      (position.height - height - height2 - height3 - height4) / 2 - height8
     );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight((position.height - height - height2 - height3 - height4) / 3);
+    setWebHeight((position.height - height - height2 - height3 - height4) / 2);
     setWebHeight2(
-      (position.height - height - height2 - height3 - height4) / 3 - height7
+      (position.height - height - height2 - height3 - height4) / 2 - height7
     );
     setWebHeight3(
-      (position.height - height - height2 - height3 - height4) / 3 - height8
+      (position.height - height - height2 - height3 - height4) / 2 - height8
     );
   };
   const DATA_ITEM_KEY = "num";

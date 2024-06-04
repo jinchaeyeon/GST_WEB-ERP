@@ -7,7 +7,7 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -15,9 +15,14 @@ import {
   FieldWrap,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { sessionItemState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { UseBizComponent, UseGetValueFromSessionItem } from "../CommonFunction";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  getHeight,
+} from "../CommonFunction";
 import { FormComboBox, FormReadOnly } from "../Editors";
 import Window from "./WindowComponent/Window";
 
@@ -32,21 +37,37 @@ type TKendoWindow = {
   pathname: string;
 };
 
+var height = 0;
+var height2 = 0;
+
 const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-  const [position, setPosition] = useState({
-    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
-    width: isMobile == true ? deviceWidth : 500,
-    height: isMobile == true ? deviceHeight : 320,
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 400) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 330) / 2,
+    width: isMobile == true ? deviceWidth : 400,
+    height: isMobile == true ? deviceHeight : 330,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
+
   // 세션 아이템
   const [sessionItem] = useRecoilState(sessionItemState);
 
@@ -195,7 +216,13 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
         }}
         render={(formRenderProps: FormRenderProps) => (
           <FormElement horizontal={true}>
-            <fieldset className={"k-form-fieldset"}>
+            <fieldset
+              className={"k-form-fieldset"}
+              style={{
+                height: isMobile ? mobileheight : webheight,
+                overflow: "auto",
+              }}
+            >
               <button
                 id="valueChanged"
                 style={{ display: "none" }}
@@ -259,7 +286,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
                 )}
               </FieldWrap>
             </fieldset>
-            <BottomContainer style={{ marginTop: "40px" }}>
+            <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"}>
                   확인

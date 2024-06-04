@@ -11,8 +11,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -22,11 +22,12 @@ import {
   GridTitle,
   GridTitleContainer,
   PrimaryP,
+  Title,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
@@ -38,6 +39,7 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../CommonFunction";
@@ -46,7 +48,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import Window from "./WindowComponent/Window";
 
@@ -60,7 +62,13 @@ type IWindow = {
 const DATA_ITEM_KEY = "num";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let temp = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
 let targetRowIndex: null | number = null;
 
 const ProdStockWindow = ({
@@ -86,9 +94,43 @@ const ProdStockWindow = ({
     width: isMobile == true ? deviceWidth : 1400,
     height: isMobile == true ? deviceHeight : 880,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+    height6 = getHeight(".WindowButtonContainer");
+    height7 = getHeight(".WindowButtonContainer2");
+    setMobileHeight(
+      deviceHeight - height - height2 - height3 - height4 - height6
+    );
+    setMobileHeight2(
+      deviceHeight - height - height2 - height3 - height4 - height7
+    );
+    setWebHeight(
+      (position.height - height - height2 - height3 - height5) / 2 - height6
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height5) / 2 - height7
+    );
+  }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height5) / 2 - height6
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height5) / 2 - height7
+    );
   };
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -210,6 +252,7 @@ const ProdStockWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -509,14 +552,15 @@ const ProdStockWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer style={{ float: "right" }}>
+      <TitleContainer className="TitleContainer">
+        <Title />
         <ButtonContainer>
-          <Button onClick={search} icon="search" themeColor={"primary"}>
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
@@ -593,14 +637,14 @@ const ProdStockWindow = ({
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
-      <GridContainer height="33vh">
-        <GridTitleContainer>
+      </WindowFilterContainer>
+      <GridContainer>
+        <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>재고리스트</GridTitle>
           <PrimaryP>※ 더블 클릭하여 품목 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 40px)" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -675,13 +719,13 @@ const ProdStockWindow = ({
           <GridColumn field="qtyunit" title="단위" width="80px" />
         </Grid>
       </GridContainer>
-      <GridContainer height="30vh">
-        <GridTitleContainer>
+      <GridContainer>
+        <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
           <PrimaryP>※ 더블 클릭하여 Keeping 해제</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 40px)" }}
+          style={{ height: isMobile ? mobileheight2 : webheight2 }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
@@ -752,7 +796,7 @@ const ProdStockWindow = ({
           <GridColumn field="qtyunit" title="단위" width="80px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인

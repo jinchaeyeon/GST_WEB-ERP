@@ -17,7 +17,14 @@ import {
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
 import * as React from "react";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { useRecoilState } from "recoil";
 import {
@@ -38,6 +45,7 @@ import {
   UseMessages,
   arrayLengthValidator,
   getCodeFromValue,
+  getHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -92,8 +100,7 @@ type TDetailData = {
 
 // Create the Grid that will be used inside the Form
 const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
-  const { validationMessage, visited, name, dataItemKey } =
-    fieldArrayRenderProps;
+  const { validationMessage, visited, name, height } = fieldArrayRenderProps;
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const editItemCloneRef = useRef();
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
@@ -290,10 +297,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   };
 
   return (
-    <GridContainer
-      margin={{ top: "30px" }}
-      style={{ display: "flex", flexDirection: "row" }}
-    >
+    <GridContainer>
       <FormGridEditContext.Provider
         value={{
           editIndex,
@@ -308,7 +312,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             [SELECTED_FIELD]: selectedState[idGetter(item)],
           }))}
           total={dataWithIndexes.total}
-          style={{ height: "400px" }}
+          style={{ height: height }}
           cellRender={customCellRender}
           //선택기능
           dataItemKey={FORM_DATA_INDEX}
@@ -338,7 +342,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           />
         </Grid>
 
-        <NumberKeypad>
+        <NumberKeypad className="Keypads">
           <NumberKeypadRow>
             <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
               1
@@ -389,6 +393,10 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const KendoWindow = ({
   setVisible,
   rekey,
@@ -410,8 +418,21 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //탭 부분
+    height3 = getHeight(".Keypads"); //탭 부분
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
   };
   const onClose = () => {
     setVisible(false);
@@ -598,7 +619,7 @@ const KendoWindow = ({
   }, [paraData]);
 
   useEffect(() => {
-    if (bizComponentData.length) {
+    if (bizComponentData !== null) {
       resetAllGrid();
       fetchGrid();
     }
@@ -637,9 +658,10 @@ const KendoWindow = ({
               dataItemKey={FORM_DATA_INDEX}
               component={FormGrid}
               validator={arrayLengthValidator}
+              height={isMobile ? mobileheight : webheight}
             />
 
-            <BottomContainer>
+            <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 <Button type={"submit"} themeColor={"primary"}>
                   확인

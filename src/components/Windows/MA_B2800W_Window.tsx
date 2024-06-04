@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -30,6 +30,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getBizCom,
+  getHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -48,7 +49,7 @@ type IKendoWindow = {
   setVisible(t: boolean): void;
   para: IFilter;
   pathname: string;
-  modal? :boolean;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -77,8 +78,15 @@ const numberField2 = [
   "inamt",
 ];
 let targetRowIndex: null | number = null;
+var height = 0;
+var height2 = 0;
 
-const KendoWindow = ({ setVisible, para, pathname, modal=false }: IKendoWindow) => {
+const KendoWindow = ({
+  setVisible,
+  para,
+  pathname,
+  modal = false,
+}: IKendoWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -88,8 +96,19 @@ const KendoWindow = ({ setVisible, para, pathname, modal=false }: IKendoWindow) 
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 550,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   const setLoading = useSetRecoilState(isLoading);
 
@@ -370,9 +389,9 @@ const KendoWindow = ({ setVisible, para, pathname, modal=false }: IKendoWindow) 
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainer height="calc(100% - 60px)">
+      <GridContainer>
         <Grid
-          style={{ height: "100%" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -445,7 +464,7 @@ const KendoWindow = ({ setVisible, para, pathname, modal=false }: IKendoWindow) 
             )}
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기

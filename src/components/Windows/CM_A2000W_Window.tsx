@@ -165,7 +165,7 @@ const CopyWindow = ({
     setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
     setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
     setWebHeight3((position.height - height - height2) / 8 - height5);
-    setWebHeight4(((position.height - height - height2) * 2) / 8);
+    setWebHeight4(((position.height - height - height2) * 5) / 8);
   }, []);
 
   const onChangePostion = (position: any) => {
@@ -173,7 +173,7 @@ const CopyWindow = ({
     setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
     setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
     setWebHeight3((position.height - height - height2) / 8 - height5);
-    setWebHeight4(((position.height - height - height2) * 2) / 8);
+    setWebHeight4(((position.height - height - height2) * 5) / 8);
   };
 
   const pc = UseGetValueFromSessionItem("pc");

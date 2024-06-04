@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -33,6 +33,7 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   numberWithCommas,
 } from "../CommonFunction";
 import {
@@ -58,6 +59,10 @@ type TKendoWindow = {
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let deletedMainRows: object[] = [];
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -85,8 +90,20 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 600,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
   };
   const onClose = () => {
     setVisible(false);
@@ -603,7 +620,7 @@ const KendoWindow = ({
       onChangePostion={onChangePostion}
     >
       <GridContainer>
-        <GridTitleContainer>
+        <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>생산실적내역</GridTitle>
           <ButtonContainer>
             <Button
@@ -616,7 +633,7 @@ const KendoWindow = ({
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "43vh" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -722,7 +739,7 @@ const KendoWindow = ({
           <GridColumn field="remark" title="비고" width="150px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button
             themeColor={"primary"}

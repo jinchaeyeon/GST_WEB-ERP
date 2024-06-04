@@ -838,8 +838,8 @@ export const NumberKeypad = styled.div`
   border: solid 1px #f0f0f0;
   display: inline-block;
   @media (min-width: 1200px) {
-    margin: 5px 0;
-    margin-left: 5px;
+    padding: 5px 0;
+    padding-left: 5px;
   }
 `;
 export const NumberKeypadRow = styled.div`
@@ -853,7 +853,7 @@ export const NumberKeypadCell = styled.div<TColor>`
   text-align: center;
   border-radius: 5px;
   width: 100%;
-  margin: 1%;
+  padding: 1%;
   min-height: 50px;
   display: flex;
   align-items: center;

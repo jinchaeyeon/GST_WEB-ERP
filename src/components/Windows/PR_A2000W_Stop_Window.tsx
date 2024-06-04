@@ -1,5 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -18,6 +18,7 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   findMessage,
+  getHeight,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -33,6 +34,9 @@ type TKendoWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -80,9 +84,23 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 400,
     height: isMobile == true ? deviceHeight : 330,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
+
   const onClose = () => {
     setVisible(false);
   };
@@ -199,7 +217,10 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap border={true}>
+      <FormBoxWrap
+        border={true}
+        style={{ height: isMobile ? mobileheight : webheight }}
+      >
         <FormBox>
           <tbody>
             <tr>
@@ -251,7 +272,7 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <BottomContainer style={{ marginTop: "40px" }}>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button
             themeColor={"primary"}

@@ -16,8 +16,17 @@ import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Label } from "@progress/kendo-react-labels";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -47,6 +56,7 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
   getItemQuery,
   getSelectedFirstData,
   numberWithCommas,
@@ -411,6 +421,12 @@ type TKendoWindow = {
   pathname: string;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const KendoWindow = ({
   getVisible,
   reloadData,
@@ -442,12 +458,35 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 750) / 2,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceHeight : 800,
+    height: isMobile == true ? deviceHeight : 750,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0); // 앞에 폼 높이
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    height5 = getHeight(".WindowButtonContainer3");
+
+    setMobileHeight(deviceHeight - height - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height4);
+    setMobileHeight3(deviceHeight - height - height5);
+    setWebHeight((position.height - height - height2) / 2 - height3);
+    setWebHeight2((position.height - height - height2) / 2 - height4);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight((position.height - height - height2) / 2 - height3);
+    setWebHeight2((position.height - height - height2) / 2 - height4);
   };
   const onClose = () => {
     getVisible(false);
@@ -1847,192 +1886,250 @@ const KendoWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <GridContainerWrap>
-          <GridContainer width="30%">
-            <InfoList>
-              <InfoTitle>수주정보</InfoTitle>
-              <InfoItem>
-                <InfoLabel>품목코드</InfoLabel>
-                <InfoValue>{Information.itemcd}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <InfoLabel>품목명</InfoLabel>
-                <InfoValue>{Information.itemnm}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <InfoLabel>품목계정</InfoLabel>
-                <InfoValue>{Information.itemacnt}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <InfoLabel>규격</InfoLabel>
-                <InfoValue>{Information.insiz}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <InfoLabel>재질</InfoLabel>
-                <InfoValue>{Information.bnatur}</InfoValue>
-              </InfoItem>
-            </InfoList>
-            <InfoList>
-              <InfoTitle>계획정보</InfoTitle>
-              <InfoItem>
-                <InfoLabel>수주량</InfoLabel>
-                <InfoValue>{Information.qty}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <InfoLabel>잔량</InfoLabel>
-                <InfoValue>{Information.planqty}</InfoValue>
-              </InfoItem>
-              <InfoItem>
-                <Label style={{ width: "50%", fontWeight: 600 }}>
-                  계획수량
-                </Label>
-                <InfoValue>
-                  <Input
-                    name="planqty"
-                    type="number"
-                    value={Information2.planqty}
-                    onChange={filterInputChange}
-                    className="required big-input"
-                  />
-                </InfoValue>
-              </InfoItem>
-            </InfoList>
-          </GridContainer>
-          <GridContainer width={`calc(70% - ${GAP}px)`}>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>공정</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    type={"button"}
-                    themeColor={"primary"}
-                    onClick={onCopyEditClick2}
-                  >
-                    패턴공정도
-                  </Button>
-                  <Button
-                    type={"button"}
-                    themeColor={"primary"}
-                    onClick={onAddClick}
-                    title="행 추가"
-                    icon="add"
-                  ></Button>
-                  <Button
-                    type={"button"}
-                    themeColor={"primary"}
-                    fillMode="outline"
-                    onClick={onDeleteClick}
-                    title="행 삭제"
-                    icon="minus"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "30vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    rowstatus:
-                      row.rowstatus == null ||
-                      row.rowstatus == "" ||
-                      row.rowstatus == undefined
-                        ? ""
-                        : row.rowstatus,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                onDataStateChange={onMainDataStateChange}
-                {...mainDataState}
-                //선택 subDataState
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
+        {isMobile ? (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer
+                style={{ height: mobileheight3, overflow: "auto" }}
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="proccd"
-                  title="공정"
-                  width="150px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="procseq"
-                  title="공정순서"
-                  width="100px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="outprocyn"
-                  title="외주구분"
-                  width="110px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="prodemp"
-                  title="작업자"
-                  width="120px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="prodmac"
-                  title="설비"
-                  width="200px"
-                  cell={CustomComboBoxCell}
-                />
-              </Grid>
-            </GridContainer>
-            <FormContext.Provider
-              value={{
-                itemInfo,
-                setItemInfo,
-              }}
-            >
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>자재</GridTitle>
-                  <ButtonContainer>
+                <GridTitleContainer className="WindowButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "end" }}>
                     <Button
-                      type={"button"}
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
                       themeColor={"primary"}
-                      onClick={onAddClick2}
-                      title="행 추가"
-                      icon="add"
-                    ></Button>
-                    <Button
-                      type={"button"}
-                      themeColor={"primary"}
-                      fillMode="outline"
-                      onClick={onDeleteClick2}
-                      title="행 삭제"
-                      icon="minus"
+                      fillMode={"flat"}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
+                <InfoList>
+                  <InfoTitle>수주정보</InfoTitle>
+                  <InfoItem>
+                    <InfoLabel>품목코드</InfoLabel>
+                    <InfoValue>{Information.itemcd}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목명</InfoLabel>
+                    <InfoValue>{Information.itemnm}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목계정</InfoLabel>
+                    <InfoValue>{Information.itemacnt}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>규격</InfoLabel>
+                    <InfoValue>{Information.insiz}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>재질</InfoLabel>
+                    <InfoValue>{Information.bnatur}</InfoValue>
+                  </InfoItem>
+                </InfoList>
+                <InfoList>
+                  <InfoTitle>계획정보</InfoTitle>
+                  <InfoItem>
+                    <InfoLabel>수주량</InfoLabel>
+                    <InfoValue>{Information.qty}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>잔량</InfoLabel>
+                    <InfoValue>{Information.planqty}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <Label style={{ width: "50%", fontWeight: 600 }}>
+                      계획수량
+                    </Label>
+                    <InfoValue>
+                      <Input
+                        name="planqty"
+                        type="number"
+                        value={Information2.planqty}
+                        onChange={filterInputChange}
+                        className="required big-input"
+                      />
+                    </InfoValue>
+                  </InfoItem>
+                </InfoList>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer">
+                  <GridTitle>공정</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <div>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                    <div>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        onClick={onCopyEditClick2}
+                      >
+                        패턴공정도
+                      </Button>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        onClick={onAddClick}
+                        title="행 추가"
+                        icon="add"
+                      ></Button>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick}
+                        title="행 삭제"
+                        icon="minus"
+                      ></Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: mobileheight }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="proccd"
+                    title="공정"
+                    width="150px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="procseq"
+                    title="공정순서"
+                    width="100px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="outprocyn"
+                    title="외주구분"
+                    width="110px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="prodemp"
+                    title="작업자"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="prodmac"
+                    title="설비"
+                    width="200px"
+                    cell={CustomComboBoxCell}
+                  />
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer2">
+                  <GridTitle>자재</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <div>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        onClick={onAddClick2}
+                        title="행 추가"
+                        icon="add"
+                      ></Button>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick2}
+                        title="행 삭제"
+                        icon="minus"
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -2120,17 +2217,305 @@ const KendoWindow = ({
                     cell={CustomComboBoxCell}
                   />
                 </Grid>
+                <BottomContainer className="BottomContainer">
+                  <ButtonContainer>
+                    <Button onClick={onSave} themeColor={"primary"} icon="save">
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </BottomContainer>
               </GridContainer>
-            </FormContext.Provider>
-          </GridContainer>
-        </GridContainerWrap>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button onClick={onSave} themeColor={"primary"} icon="save">
-              저장
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <>
+            {" "}
+            <GridContainerWrap>
+              <GridContainer width="30%">
+                <InfoList>
+                  <InfoTitle>수주정보</InfoTitle>
+                  <InfoItem>
+                    <InfoLabel>품목코드</InfoLabel>
+                    <InfoValue>{Information.itemcd}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목명</InfoLabel>
+                    <InfoValue>{Information.itemnm}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>품목계정</InfoLabel>
+                    <InfoValue>{Information.itemacnt}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>규격</InfoLabel>
+                    <InfoValue>{Information.insiz}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>재질</InfoLabel>
+                    <InfoValue>{Information.bnatur}</InfoValue>
+                  </InfoItem>
+                </InfoList>
+                <InfoList>
+                  <InfoTitle>계획정보</InfoTitle>
+                  <InfoItem>
+                    <InfoLabel>수주량</InfoLabel>
+                    <InfoValue>{Information.qty}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <InfoLabel>잔량</InfoLabel>
+                    <InfoValue>{Information.planqty}</InfoValue>
+                  </InfoItem>
+                  <InfoItem>
+                    <Label style={{ width: "50%", fontWeight: 600 }}>
+                      계획수량
+                    </Label>
+                    <InfoValue>
+                      <Input
+                        name="planqty"
+                        type="number"
+                        value={Information2.planqty}
+                        onChange={filterInputChange}
+                        className="required big-input"
+                      />
+                    </InfoValue>
+                  </InfoItem>
+                </InfoList>
+              </GridContainer>
+              <GridContainer width={`calc(70% - ${GAP}px)`}>
+                <GridContainer>
+                  <GridTitleContainer className="WindowButtonContainer">
+                    <GridTitle>공정</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        onClick={onCopyEditClick2}
+                      >
+                        패턴공정도
+                      </Button>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        onClick={onAddClick}
+                        title="행 추가"
+                        icon="add"
+                      ></Button>
+                      <Button
+                        type={"button"}
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick}
+                        title="행 삭제"
+                        icon="minus"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: webheight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    onDataStateChange={onMainDataStateChange}
+                    {...mainDataState}
+                    //선택 subDataState
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    <GridColumn
+                      field="proccd"
+                      title="공정"
+                      width="150px"
+                      cell={CustomComboBoxCell}
+                    />
+                    <GridColumn
+                      field="procseq"
+                      title="공정순서"
+                      width="100px"
+                      cell={NumberCell}
+                    />
+                    <GridColumn
+                      field="outprocyn"
+                      title="외주구분"
+                      width="110px"
+                      cell={CustomComboBoxCell}
+                    />
+                    <GridColumn
+                      field="prodemp"
+                      title="작업자"
+                      width="120px"
+                      cell={CustomComboBoxCell}
+                    />
+                    <GridColumn
+                      field="prodmac"
+                      title="설비"
+                      width="200px"
+                      cell={CustomComboBoxCell}
+                    />
+                  </Grid>
+                </GridContainer>
+                <FormContext.Provider
+                  value={{
+                    itemInfo,
+                    setItemInfo,
+                  }}
+                >
+                  <GridContainer>
+                    <GridTitleContainer className="WindowButtonContainer2">
+                      <GridTitle>자재</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          type={"button"}
+                          themeColor={"primary"}
+                          onClick={onAddClick2}
+                          title="행 추가"
+                          icon="add"
+                        ></Button>
+                        <Button
+                          type={"button"}
+                          themeColor={"primary"}
+                          fillMode="outline"
+                          onClick={onDeleteClick2}
+                          title="행 삭제"
+                          icon="minus"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: webheight2 }}
+                      data={process(
+                        mainDataResult2.data.map((row) => ({
+                          ...row,
+                          rowstatus:
+                            row.rowstatus == null ||
+                            row.rowstatus == "" ||
+                            row.rowstatus == undefined
+                              ? ""
+                              : row.rowstatus,
+                          [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                        })),
+                        mainDataState2
+                      )}
+                      onDataStateChange={onMainDataStateChange2}
+                      {...mainDataState2}
+                      //선택 subDataState
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange2}
+                      //스크롤 조회기능
+                      fixedScroll={true}
+                      total={mainDataResult2.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange2}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange2}
+                      cellRender={customCellRender2}
+                      rowRender={customRowRender2}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      <GridColumn
+                        field="proccd"
+                        title="공정"
+                        width="130px"
+                        cell={CustomComboBoxCell}
+                      />
+                      <GridColumn
+                        field="chlditemcd"
+                        title="소요자재코드"
+                        width="160px"
+                        cell={ColumnCommandCell}
+                      />
+                      <GridColumn
+                        field="chlditemnm"
+                        title="소요자재명"
+                        width="180px"
+                      />
+                      <GridColumn
+                        field="outgb"
+                        title="자재사용구분"
+                        width="120px"
+                        cell={CustomComboBoxCell}
+                      />
+                      <GridColumn
+                        field="unitqty"
+                        title="소요량"
+                        width="120px"
+                        cell={NumberCell}
+                        footerCell={editNumberFooterCell}
+                      />
+                      <GridColumn
+                        field="procqty"
+                        title="재공생산량"
+                        width="120px"
+                        cell={NumberCell}
+                        footerCell={editNumberFooterCell}
+                      />
+                      <GridColumn
+                        field="qtyunit"
+                        title="수량단위"
+                        width="100px"
+                        cell={CustomComboBoxCell}
+                      />
+                    </Grid>
+                  </GridContainer>
+                </FormContext.Provider>
+              </GridContainer>
+            </GridContainerWrap>
+            <BottomContainer className="BottomContainer">
+              <ButtonContainer>
+                <Button onClick={onSave} themeColor={"primary"} icon="save">
+                  저장
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        )}
       </Window>
       {CopyWindowVisible2 && (
         <CopyWindow2
