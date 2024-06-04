@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -64,12 +64,39 @@ var index = 0;
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const AC_A0000W: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [swiper, setSwiper] = useState<SwiperCore>();
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A0000W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".filterBox"); //필터 웹
+      height5 = getHeight(".TitleContainer");
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height2);
+      setWebHeight(
+        deviceHeight - height - height2 - height3 - height4 - height5
+      );
+    }
+  }, [customOptionData]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -77,7 +104,7 @@ const AC_A0000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -93,10 +120,6 @@ const AC_A0000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A0000W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A0000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -910,7 +933,7 @@ const AC_A0000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>법인기본</Title>
         <ButtonContainer>
           {permissions && (
@@ -989,7 +1012,7 @@ const AC_A0000W: React.FC = () => {
                   fileName="법인기본"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1085,9 +1108,8 @@ const AC_A0000W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height2,
+                    height: mobileheight2,
                     width: "100%",
-                    overflow: "scroll",
                   }}
                 >
                   <FormBox>
@@ -1438,7 +1460,7 @@ const AC_A0000W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1466,7 +1488,7 @@ const AC_A0000W: React.FC = () => {
               fileName="법인기본"
             >
               <Grid
-                style={{ height: "46.5vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1528,10 +1550,10 @@ const AC_A0000W: React.FC = () => {
               </Grid>
             </ExcelExport>
           </GridContainer>
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer2">
             <GridTitle>세부정보</GridTitle>
           </GridTitleContainer>
-          <FormBoxWrap border={true}>
+          <FormBoxWrap border={true} className="FormBoxWrap">
             <FormBox>
               <tbody>
                 <tr>

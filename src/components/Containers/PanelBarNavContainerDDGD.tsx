@@ -118,7 +118,7 @@ const PanelBarNavContainer = (props: any) => {
       } else {
         setIsFilterHideStates(false); // 데스크톱 열린 상태로 설정
         setIsFilterheightstates(0);
-        setroutesDeviceHeight(document.documentElement.clientHeight);
+        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
     };
     window.addEventListener("resize", handleWindowResize);
@@ -177,7 +177,7 @@ const PanelBarNavContainer = (props: any) => {
       } else {
         setIsFilterheightstates(0);
         setIsFilterHideStates(false);
-        setroutesDeviceHeight(document.documentElement.clientHeight);
+        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
     };
   }, [
@@ -397,7 +397,7 @@ const PanelBarNavContainer = (props: any) => {
       } else {
         setIsFilterheightstates(0);
         setIsFilterHideStates(false);
-        setroutesDeviceHeight(document.documentElement.clientHeight);
+        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);

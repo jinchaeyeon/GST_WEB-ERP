@@ -160,7 +160,7 @@ export const heightstate = atom<number>({
   default:
     document.documentElement.clientWidth <= 1200
       ? document.documentElement.clientHeight - 170
-      : document.documentElement.clientHeight,
+      : document.documentElement.clientHeight - 30,
 });
 
 export const isFilterheightstate = atom<number>({
