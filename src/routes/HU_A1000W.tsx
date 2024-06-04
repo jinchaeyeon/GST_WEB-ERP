@@ -280,7 +280,7 @@ const HU_A1000W: React.FC = () => {
       [name]: value,
     }));
   };
-
+  console.log(information);
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 

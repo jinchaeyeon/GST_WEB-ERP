@@ -188,23 +188,30 @@ export const useApi = () => {
   }
 
   useEffect(() => {
-    if (window.location.pathname !== "/") {
-      if (!isSessionValid && !sessionItemFetched) {
-        if (token && loginResult) {    
-          setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
-          fetchSessionItem(); // 세션 아이템 가져오는 함수 호출
-          window.location.reload(); // 페이지 새로고침
-        } else {
-          resetLocalStorage(); // 토큰, 로그인결과가 없을시
-          window.location.href = "/"; // 리다이렉션 처리
-        }  
+    const checkSessionAndFetchItem = async () => {
+      if (window.location.pathname !== "/") {
+        if (!isSessionValid && !sessionItemFetched) {
+          if (token && loginResult) {
+            setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
+            await fetchSessionItem(); // 세션 아이템 가져오는 함수 호출
+            // 상태가 변경될 때 무한 새로고침을 방지하기 위해 조건 추가
+            if (!isSessionValid) {
+              window.location.reload(); // 페이지 새로고침
+            }
+          } else {
+            resetLocalStorage(); // 토큰, 로그인결과가 없을시
+            window.location.href = "/"; // 리다이렉션 처리
+          }
+        }
       }
-    }   
-  }, [isSessionValid, sessionItemFetched]);
+    };
+  
+    checkSessionAndFetchItem();
+  }, [isSessionValid, sessionItemFetched, token, loginResult]);
 
   const processApi = async <T>(name: string, params: any = null): Promise<T> => {    
     if (window.location.pathname !== "/") {
-      if (!token && !loginResult) {
+      if (!token || !loginResult) {
         resetLocalStorage(); // 토큰, 로그인결과가 없을시
         window.location.href = "/"; // 리다이렉션 처리
       }
