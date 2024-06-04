@@ -23,8 +23,18 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
 import CryptoJS from "crypto-js";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -63,6 +73,7 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   toDate,
 } from "../CommonFunction";
 import {
@@ -985,6 +996,19 @@ type IWindow = {
   pathname: string;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+var height10 = 0;
+var height11 = 0;
+var height12 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -1011,8 +1035,92 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
+  const [mobileheight11, setMobileHeight11] = useState(0);
+  const [webheight11, setWebHeight11] = useState(0);
+  const [mobileheight12, setMobileHeight12] = useState(0);
+  const [webheight12, setWebHeight12] = useState(0);
+  const [mobileheight13, setMobileHeight13] = useState(0);
+  const [webheight13, setWebHeight13] = useState(0);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".k-tabstrip-items-wrapper"); //탭
+    height4 = getHeight(".WindowButtonContainer");
+    height5 = getHeight(".WindowButtonContainer2");
+    height6 = getHeight(".WindowButtonContainer3");
+    height7 = getHeight(".WindowButtonContainer4");
+    height8 = getHeight(".WindowButtonContainer5");
+    height9 = getHeight(".WindowButtonContainer6");
+    height10 = getHeight(".WindowButtonContainer7");
+    height11 = getHeight(".WindowButtonContainer8");
+    height12 = getHeight(".WindowButtonContainer9");
+
+    setMobileHeight(deviceHeight - height - height2 - height3);
+    setWebHeight(position.height - height - height2 - height3);
+    setMobileHeight2(deviceHeight - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3);
+    setMobileHeight3(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight3(position.height - height - height2 - height3 - height4);
+    setMobileHeight4(deviceHeight - height - height2 - height3);
+    setWebHeight4(position.height - height - height2 - height3);
+    setMobileHeight5(deviceHeight - height - height2 - height3);
+    setWebHeight5(position.height - height - height2 - height3);
+    setMobileHeight6(deviceHeight - height - height2 - height3 - height5);
+    setWebHeight6(position.height - height - height2 - height3 - height5);
+    setMobileHeight7(deviceHeight - height - height2 - height3 - height6);
+    setWebHeight7(position.height - height - height2 - height3 - height6);
+    setMobileHeight8(deviceHeight - height - height2 - height3 - height7);
+    setWebHeight8(position.height - height - height2 - height3 - height7);
+    setMobileHeight9(deviceHeight - height - height2 - height3 - height8);
+    setWebHeight9(position.height - height - height2 - height3 - height8);
+    setMobileHeight10(deviceHeight - height - height2 - height3 - height9);
+    setWebHeight10(position.height - height - height2 - height3 - height9);
+    setMobileHeight11(deviceHeight - height - height2 - height3 - height10);
+    setWebHeight11(position.height - height - height2 - height3 - height10);
+    setMobileHeight12(deviceHeight - height - height2 - height3 - height11);
+    setWebHeight12(position.height - height - height2 - height3 - height11);
+    setMobileHeight13(deviceHeight - height - height2 - height3 - height12);
+    setWebHeight13(position.height - height - height2 - height3 - height12);
+  }, [tabSelected]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight2(position.height - height - height2 - height3);
+    setWebHeight3(position.height - height - height2 - height3 - height4);
+    setWebHeight4(position.height - height - height2 - height3);
+    setWebHeight5(position.height - height - height2 - height3);
+    setWebHeight6(position.height - height - height2 - height3 - height5);
+    setWebHeight7(position.height - height - height2 - height3 - height6);
+    setWebHeight8(position.height - height - height2 - height3 - height7);
+    setWebHeight9(position.height - height - height2 - height3 - height8);
+    setWebHeight10(position.height - height - height2 - height3 - height9);
+    setWebHeight11(position.height - height - height2 - height3 - height10);
+    setWebHeight12(position.height - height - height2 - height3 - height11);
+    setWebHeight13(position.height - height - height2 - height3 - height12);
   };
 
   const [loginResult] = useRecoilState(loginResultState);
@@ -1674,38 +1782,6 @@ const CopyWindow = ({
           });
         }
       }
-    }
-
-    if (
-      e.selected == 0 ||
-      e.selected == 4 ||
-      e.selected == 5 ||
-      e.selected == 6 ||
-      e.selected == 7 ||
-      e.selected == 8 ||
-      e.selected == 9 ||
-      e.selected == 10 ||
-      e.selected == 11
-    ) {
-      setPosition((prev) => ({
-        ...prev,
-        height: 750,
-      }));
-    } else if (e.selected == 1) {
-      setPosition((prev) => ({
-        ...prev,
-        height: isMobile == true ? 750 : 630,
-      }));
-    } else if (e.selected == 2) {
-      setPosition((prev) => ({
-        ...prev,
-        height: isMobile == true ? 750 : 450,
-      }));
-    } else if (e.selected == 3) {
-      setPosition((prev) => ({
-        ...prev,
-        height: isMobile == true ? 750 : 350,
-      }));
     }
     setTabSelected(e.selected);
   };
@@ -8333,1366 +8409,1639 @@ const CopyWindow = ({
         onChangePostion={onChangePostion}
       >
         <TabStrip
-          style={{ width: "100%", height: `calc(100% - 55px)` }}
+          style={{ width: "100%" }}
           selected={tabSelected}
           onSelect={handleSelectTab}
           scrollable={isMobile}
         >
           <TabStripTab title="인사기본">
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>사번</th>
-                    <td>
-                      {workType == "N" ? (
+            <GridContainer
+              style={{
+                height: isMobile ? mobileheight : webheight,
+                overflow: "auto",
+              }}
+            >
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>사번</th>
+                      <td>
+                        {workType == "N" ? (
+                          <Input
+                            name="prsnnum"
+                            type="text"
+                            value={information.prsnnum}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        ) : (
+                          <Input
+                            name="prsnnum"
+                            type="text"
+                            value={information.prsnnum}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>사번2</th>
+                      <td>
                         <Input
-                          name="prsnnum"
+                          name="prsnnum2"
                           type="text"
-                          value={information.prsnnum}
+                          value={information.prsnnum2}
                           onChange={InputChange}
                           className="required"
                         />
-                      ) : (
+                      </td>
+                      <th>부서코드</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="dptcd"
+                            value={information.dptcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            textField="dptnm"
+                            valueField="dptcd"
+                            type="new"
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>국적</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="nationcd"
+                            value={information.nationcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>지원경로</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="path"
+                            value={information.path}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>성명</th>
+                      <td>
                         <Input
-                          name="prsnnum"
+                          name="prsnnm"
                           type="text"
-                          value={information.prsnnum}
-                          className="readonly"
-                        />
-                      )}
-                    </td>
-                    <th>사번2</th>
-                    <td>
-                      <Input
-                        name="prsnnum2"
-                        type="text"
-                        value={information.prsnnum2}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>부서코드</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="dptcd"
-                          value={information.dptcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          textField="dptnm"
-                          valueField="dptcd"
-                          type="new"
+                          value={information.prsnnm}
+                          onChange={InputChange}
                           className="required"
                         />
-                      )}
-                    </td>
-                    <th>국적</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="nationcd"
-                          value={information.nationcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>직책</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="abilcd"
+                            value={information.abilcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>직위</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="postcd"
+                            value={information.postcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>퇴사일</th>
+                      <td>
+                        <DatePicker
+                          name="rtrdt"
+                          value={information.rtrdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                    <th>지원경로</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="path"
-                          value={information.path}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>퇴직사유</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="rtrrsn"
+                            value={information.rtrrsn}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>성명(한문)</th>
+                      <td>
+                        <Input
+                          name="prsnnmh"
+                          type="text"
+                          value={information.prsnnmh}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>성명</th>
-                    <td>
-                      <Input
-                        name="prsnnm"
-                        type="text"
-                        value={information.prsnnm}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>직책</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="abilcd"
-                          value={information.abilcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>성명(영문)</th>
+                      <td>
+                        <Input
+                          name="prsnnme"
+                          type="text"
+                          value={information.prsnnme}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>직위</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="postcd"
-                          value={information.postcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>최종학력</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="schcd"
+                            value={information.schcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>사원구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="emptype"
+                            value={information.emptype}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>입사구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="regcd"
+                            value={information.regcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>주민번호</th>
+                      <td>
+                        <MaskedTextBox
+                          mask="0000000000000"
+                          name="perregnum"
+                          value={information.perregnum}
+                          onChange={InputChange}
+                          className="required"
                         />
-                      )}
-                    </td>
-                    <th>퇴사일</th>
-                    <td>
-                      <DatePicker
-                        name="rtrdt"
-                        value={information.rtrdt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>퇴직사유</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="rtrrsn"
-                          value={information.rtrrsn}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>성별</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionRadioGroup
+                                name="sexcd"
+                                customOptionData={customOptionData}
+                                changeData={RadioChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="sexcd"
+                                value={information.sexcd}
+                                bizComponentId="R_SEXCD"
+                                bizComponentData={bizComponentData}
+                                changeData={RadioChange}
+                              />
+                            )}
+                      </td>
+                      <th>전화번호</th>
+                      <td>
+                        <Input
+                          name="telephon"
+                          type="text"
+                          value={information.telephon}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>성명(한문)</th>
-                    <td>
-                      <Input
-                        name="prsnnmh"
-                        type="text"
-                        value={information.prsnnmh}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>성명(영문)</th>
-                    <td>
-                      <Input
-                        name="prsnnme"
-                        type="text"
-                        value={information.prsnnme}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>최종학력</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="schcd"
-                          value={information.schcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>휴대전화번호</th>
+                      <td>
+                        <Input
+                          name="phonenum"
+                          type="text"
+                          value={information.phonenum}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>사원구분</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="emptype"
-                          value={information.emptype}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>내선번호</th>
+                      <td>
+                        <Input
+                          name="extnum"
+                          type="text"
+                          value={information.extnum}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>입사구분</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="regcd"
-                          value={information.regcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>연차발생기준일</th>
+                      <td>
+                        <DatePicker
+                          name="occudate"
+                          value={information.occudate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>주민번호</th>
-                    <td>
-                      <MaskedTextBox
-                        mask="0000000000000"
-                        name="perregnum"
-                        value={information.perregnum}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>성별</th>
-                    <td>
-                      {workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="sexcd"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="sexcd"
-                              value={information.sexcd}
-                              bizComponentId="R_SEXCD"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                    </td>
-                    <th>전화번호</th>
-                    <td>
-                      <Input
-                        name="telephon"
-                        type="text"
-                        value={information.telephon}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>휴대전화번호</th>
-                    <td>
-                      <Input
-                        name="phonenum"
-                        type="text"
-                        value={information.phonenum}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>내선번호</th>
-                    <td>
-                      <Input
-                        name="extnum"
-                        type="text"
-                        value={information.extnum}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>연차발생기준일</th>
-                    <td>
-                      <DatePicker
-                        name="occudate"
-                        value={information.occudate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>생년월일</th>
-                    <td>
-                      <DatePicker
-                        name="birdt"
-                        value={information.birdt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>양/음</th>
-                    <td>
-                      {workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="bircd"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="bircd"
-                              value={information.bircd}
-                              bizComponentId="R_BIRCD"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                    </td>
+                      </td>
+                      <th>생년월일</th>
+                      <td>
+                        <DatePicker
+                          name="birdt"
+                          value={information.birdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>양/음</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionRadioGroup
+                                name="bircd"
+                                customOptionData={customOptionData}
+                                changeData={RadioChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="bircd"
+                                value={information.bircd}
+                                bizComponentId="R_BIRCD"
+                                bizComponentData={bizComponentData}
+                                changeData={RadioChange}
+                              />
+                            )}
+                      </td>
 
-                    <th>직무코드</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="jobcd"
-                          value={information.jobcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      <th>직무코드</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="jobcd"
+                            value={information.jobcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>카드번호</th>
+                      <td>
+                        <Input
+                          name="cardcd"
+                          type="text"
+                          value={information.cardcd}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>카드번호</th>
-                    <td>
-                      <Input
-                        name="cardcd"
-                        type="text"
-                        value={information.cardcd}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>입사일</th>
-                    <td>
-                      <DatePicker
-                        name="regorgdt"
-                        value={information.regorgdt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>개인메일</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="mailid"
-                        type="text"
-                        value={information.mailid}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>메일주소(회사)</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="workmail"
-                        type="text"
-                        value={information.workmail}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>정산입사일</th>
-                    <td>
-                      <DatePicker
-                        name="firredt"
-                        value={information.firredt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>주민등록지우편번호</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="hmzipcode"
-                        type="text"
-                        value={information.hmzipcode}
-                        onChange={InputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onZipCodeWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>입사일</th>
+                      <td>
+                        <DatePicker
+                          name="regorgdt"
+                          value={information.regorgdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      </ButtonInInput>
-                    </td>
-                    <th>주민등록지주소</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="koraddr"
-                        type="text"
-                        value={information.koraddr}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>사업장</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="location"
-                          value={information.location}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>개인메일</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="mailid"
+                          type="text"
+                          value={information.mailid}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>우편번호</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="zipcode"
-                        type="text"
-                        value={information.zipcode}
-                        onChange={InputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onZipCodeWndClick2}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                      <th>메일주소(회사)</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="workmail"
+                          type="text"
+                          value={information.workmail}
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </td>
-                    <th>주소</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="hmaddr"
-                        type="text"
-                        value={information.hmaddr}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>급여지급유형</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="paycd"
-                          value={information.paycd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>정산입사일</th>
+                      <td>
+                        <DatePicker
+                          name="firredt"
+                          value={information.firredt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                    <th>근무형태</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="workgb"
-                          value={information.workgb}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>주민등록지우편번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="hmzipcode"
+                          type="text"
+                          value={information.hmzipcode}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>근무조</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="workcls"
-                          value={information.workcls}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onZipCodeWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>주민등록지주소</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="koraddr"
+                          type="text"
+                          value={information.koraddr}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>영문주소</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="enaddr"
-                        type="text"
-                        value={information.enaddr}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>첨부파일</th>
-                    <td colSpan={9}>
-                      <Input
-                        name="files"
-                        type="text"
-                        value={information.files}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onAttachmentsWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={information.location}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>우편번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="zipcode"
+                          type="text"
+                          value={information.zipcode}
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>비고</th>
-                    <td colSpan={9}>
-                      <TextArea
-                        value={information.remark}
-                        name="remark"
-                        rows={5}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onZipCodeWndClick2}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>주소</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="hmaddr"
+                          type="text"
+                          value={information.hmaddr}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>급여지급유형</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="paycd"
+                            value={information.paycd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>근무형태</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="workgb"
+                            value={information.workgb}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>근무조</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="workcls"
+                            value={information.workcls}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>영문주소</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="enaddr"
+                          type="text"
+                          value={information.enaddr}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={9}>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={information.files}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={9}>
+                        <TextArea
+                          value={information.remark}
+                          name="remark"
+                          rows={5}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
           </TabStripTab>
           <TabStripTab
             title="인사상세"
             disabled={workType == "N" ? true : false}
           >
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>공지게시여부</th>
-                    <td>
-                      <Checkbox
-                        name="payyn"
-                        value={
-                          information.payyn == "Y"
-                            ? true
-                            : information.payyn == "N"
-                            ? false
-                            : information.payyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>상여금계산구분</th>
-                    <td>
-                      <Checkbox
-                        name="bnskind"
-                        value={
-                          information.bnskind == "Y"
-                            ? true
-                            : information.bnskind == "N"
-                            ? false
-                            : information.bnskind
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>근태관리여부</th>
-                    <td>
-                      <Checkbox
-                        name="workchk"
-                        value={
-                          information.workchk == "Y"
-                            ? true
-                            : information.workchk == "N"
-                            ? false
-                            : information.workchk
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>연차관리여부</th>
-                    <td>
-                      <Checkbox
-                        name="yrchk"
-                        value={
-                          information.yrchk == "Y"
-                            ? true
-                            : information.yrchk == "N"
-                            ? false
-                            : information.yrchk
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>고용보험여부</th>
-                    <td>
-                      <Checkbox
-                        name="hirinsuyn"
-                        value={
-                          information.hirinsuyn == "Y"
-                            ? true
-                            : information.hirinsuyn == "N"
-                            ? false
-                            : information.hirinsuyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>건강보험취득일</th>
-                    <td>
-                      <DatePicker
-                        name="meddate"
-                        value={information.meddate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>국민연금취득일</th>
-                    <td>
-                      <DatePicker
-                        name="anudate"
-                        value={information.anudate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>고용보험취득일</th>
-                    <td>
-                      <DatePicker
-                        name="hirdate"
-                        value={information.hirdate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>의료보험번호</th>
-                    <td>
-                      <Input
-                        name="medinsunum"
-                        type="text"
-                        value={information.medinsunum}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>의료보험등급</th>
-                    <td>
-                      <Input
-                        name="medgrad"
-                        type="text"
-                        value={information.medgrad}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>국민보험등급</th>
-                    <td>
-                      <Input
-                        name="pnsgrad"
-                        type="text"
-                        value={information.pnsgrad}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>연장시간</th>
-                    <td>
-                      <Input
-                        name="overtime"
-                        type="text"
-                        value={information.overtime}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onOvertimeWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+            <GridContainer
+              style={{
+                height: isMobile ? mobileheight2 : webheight2,
+                overflow: "auto",
+              }}
+            >
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>공지게시여부</th>
+                      <td>
+                        <Checkbox
+                          name="payyn"
+                          value={
+                            information.payyn == "Y"
+                              ? true
+                              : information.payyn == "N"
+                              ? false
+                              : information.payyn
+                          }
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </td>
-                    <th>은행코드</th>
-                    <td>
-                      <Input
-                        name="bankcd"
-                        type="text"
-                        value={information.bankcd}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onBankcdWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                      <th>상여금계산구분</th>
+                      <td>
+                        <Checkbox
+                          name="bnskind"
+                          value={
+                            information.bnskind == "Y"
+                              ? true
+                              : information.bnskind == "N"
+                              ? false
+                              : information.bnskind
+                          }
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </td>
-                    <th>은행명</th>
-                    <td>
-                      <Input
-                        name="banknm"
-                        type="text"
-                        value={information.banknm}
-                        className="readonly"
-                      />
-                    </td>
-                    <th>계좌번호</th>
-                    <td>
-                      <Input
-                        name="bankacnt"
-                        type="text"
-                        value={information.bankacnt}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>예금주</th>
-                    <td>
-                      <Input
-                        name="bankacntuser"
-                        type="text"
-                        value={information.bankacntuser}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>통장사본</th>
-                    <td>
-                      <Input
-                        name="bankfiles"
-                        type="text"
-                        value={information.bankfiles}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onAttachmentsWndClick2}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                      <th>근태관리여부</th>
+                      <td>
+                        <Checkbox
+                          name="workchk"
+                          value={
+                            information.workchk == "Y"
+                              ? true
+                              : information.workchk == "N"
+                              ? false
+                              : information.workchk
+                          }
+                          onChange={InputChange}
                         />
-                      </ButtonInInput>
-                    </td>
-                    <th>감면시작</th>
-                    <td colSpan={3}>
-                      <CommonDateRangePicker
-                        value={{
-                          start: information.exstartdt,
-                          end: information.exenddt,
-                        }}
-                        onChange={(e: { value: { start: any; end: any } }) =>
-                          setInformation((prev) => ({
-                            ...prev,
-                            exstartdt: e.value.start,
-                            exenddt: e.value.end,
-                          }))
-                        }
-                      />
-                    </td>
-                    <th>세액구분</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="taxcd"
-                          value={information.taxcd}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>연차관리여부</th>
+                      <td>
+                        <Checkbox
+                          name="yrchk"
+                          value={
+                            information.yrchk == "Y"
+                              ? true
+                              : information.yrchk == "N"
+                              ? false
+                              : information.yrchk
+                          }
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>연차발생기준</th>
-                    <td colSpan={3}>
-                      {bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="dayoffdiv"
-                          value={information.dayoffdiv}
-                          bizComponentId="R_dayoffdiv"
-                          bizComponentData={bizComponentData}
-                          changeData={RadioChange}
+                      </td>
+                      <th>고용보험여부</th>
+                      <td>
+                        <Checkbox
+                          name="hirinsuyn"
+                          value={
+                            information.hirinsuyn == "Y"
+                              ? true
+                              : information.hirinsuyn == "N"
+                              ? false
+                              : information.hirinsuyn
+                          }
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>퇴직급여기준</th>
-                    <td colSpan={3}>
-                      {bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="rtrtype"
-                          value={information.rtrtype}
-                          bizComponentId="R_Rtrtype"
-                          bizComponentData={bizComponentData}
-                          changeData={RadioChange}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>건강보험취득일</th>
+                      <td>
+                        <DatePicker
+                          name="meddate"
+                          value={information.meddate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                    <th>업청년세액감면</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="exmtaxgb"
-                          value={information.exmtaxgb}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>국민연금취득일</th>
+                      <td>
+                        <DatePicker
+                          name="anudate"
+                          value={information.anudate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>세대주여부</th>
-                    <td colSpan={3}>
-                      {bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="houseyn"
-                          value={information.houseyn}
-                          bizComponentId="R_HOUSEYN"
-                          bizComponentData={bizComponentData}
-                          changeData={RadioChange}
+                      </td>
+                      <th>고용보험취득일</th>
+                      <td>
+                        <DatePicker
+                          name="hirdate"
+                          value={information.hirdate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
-                      )}
-                    </td>
-                    <th>소득세조정률</th>
-                    <td colSpan={2}>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="incgb"
-                          value={information.incgb}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+                      </td>
+                      <th>의료보험번호</th>
+                      <td>
+                        <Input
+                          name="medinsunum"
+                          type="text"
+                          value={information.medinsunum}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th colSpan={2}>직전년도 총급여액 2500만원 이하</th>
-                    <td>
-                      <Checkbox
-                        name="below2kyn"
-                        value={
-                          information.below2kyn == "Y"
-                            ? true
-                            : information.below2kyn == "N"
-                            ? false
-                            : information.below2kyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>세액계산대상여부</th>
-                    <td>
-                      <Checkbox
-                        name="caltaxyn"
-                        value={
-                          information.caltaxyn == "Y"
-                            ? true
-                            : information.caltaxyn == "N"
-                            ? false
-                            : information.caltaxyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>연말정산신고대</th>
-                    <td>
-                      <Checkbox
-                        name="yrdclyn"
-                        value={
-                          information.yrdclyn == "Y"
-                            ? true
-                            : information.yrdclyn == "N"
-                            ? false
-                            : information.yrdclyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>부녀자</th>
-                    <td>
-                      <Checkbox
-                        name="wmn"
-                        value={
-                          information.wmn == "Y"
-                            ? true
-                            : information.wmn == "N"
-                            ? false
-                            : information.wmn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>배우자유무</th>
-                    <td>
-                      <Checkbox
-                        name="sps"
-                        value={
-                          information.sps == "Y"
-                            ? true
-                            : information.sps == "N"
-                            ? false
-                            : information.sps
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>노조가입</th>
-                    <td>
-                      <Checkbox
-                        name="laboryn"
-                        value={
-                          information.laboryn == "Y"
-                            ? true
-                            : information.laboryn == "N"
-                            ? false
-                            : information.laboryn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>신체장애</th>
-                    <td>
-                      <Checkbox
-                        name="dfmyn"
-                        value={
-                          information.dfmyn == "Y"
-                            ? true
-                            : information.dfmyn == "N"
-                            ? false
-                            : information.dfmyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>병역특례</th>
-                    <td>
-                      <Checkbox
-                        name="milyn"
-                        value={
-                          information.milyn == "Y"
-                            ? true
-                            : information.milyn == "N"
-                            ? false
-                            : information.milyn
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>경감보험대상</th>
-                    <td>
-                      <Checkbox
-                        name="dfmyn2"
-                        value={
-                          information.dfmyn2 == "Y"
-                            ? true
-                            : information.dfmyn2 == "N"
-                            ? false
-                            : information.dfmyn2
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>국외근로대상</th>
-                    <td>
-                      <Checkbox
-                        name="notaxe"
-                        value={
-                          information.notaxe == "Y"
-                            ? true
-                            : information.notaxe == "N"
-                            ? false
-                            : information.notaxe
-                        }
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>경로자65</th>
-                    <td>
-                      <NumericTextBox
-                        name="agenum"
-                        value={information.agenum}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>경로자70</th>
-                    <td>
-                      <NumericTextBox
-                        name="agenum70"
-                        value={information.agenum70}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>부양자(본인미포함)</th>
-                    <td>
-                      <NumericTextBox
-                        name="sptnum"
-                        value={information.sptnum}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>자녀양육</th>
-                    <td>
-                      <NumericTextBox
-                        name="brngchlnum"
-                        value={information.brngchlnum}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>장애자</th>
-                    <td>
-                      <NumericTextBox
-                        name="dfmnum"
-                        value={information.dfmnum}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>다자녀</th>
-                    <td>
-                      <NumericTextBox
-                        name="childnum"
-                        value={information.childnum}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>가족수당배우</th>
-                    <td>
-                      <NumericTextBox
-                        name="fam1"
-                        value={information.fam1}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                    <th>가족수당자녀</th>
-                    <td>
-                      <NumericTextBox
-                        name="fam2"
-                        value={information.fam2}
-                        onChange={InputChange}
-                        format="n0"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
+                      </td>
+                      <th>의료보험등급</th>
+                      <td>
+                        <Input
+                          name="medgrad"
+                          type="text"
+                          value={information.medgrad}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>국민보험등급</th>
+                      <td>
+                        <Input
+                          name="pnsgrad"
+                          type="text"
+                          value={information.pnsgrad}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>연장시간</th>
+                      <td>
+                        <Input
+                          name="overtime"
+                          type="text"
+                          value={information.overtime}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onOvertimeWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>은행코드</th>
+                      <td>
+                        <Input
+                          name="bankcd"
+                          type="text"
+                          value={information.bankcd}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onBankcdWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>은행명</th>
+                      <td>
+                        <Input
+                          name="banknm"
+                          type="text"
+                          value={information.banknm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>계좌번호</th>
+                      <td>
+                        <Input
+                          name="bankacnt"
+                          type="text"
+                          value={information.bankacnt}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>예금주</th>
+                      <td>
+                        <Input
+                          name="bankacntuser"
+                          type="text"
+                          value={information.bankacntuser}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>통장사본</th>
+                      <td>
+                        <Input
+                          name="bankfiles"
+                          type="text"
+                          value={information.bankfiles}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick2}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>감면시작</th>
+                      <td colSpan={3}>
+                        <CommonDateRangePicker
+                          value={{
+                            start: information.exstartdt,
+                            end: information.exenddt,
+                          }}
+                          onChange={(e: { value: { start: any; end: any } }) =>
+                            setInformation((prev) => ({
+                              ...prev,
+                              exstartdt: e.value.start,
+                              exenddt: e.value.end,
+                            }))
+                          }
+                        />
+                      </td>
+                      <th>세액구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="taxcd"
+                            value={information.taxcd}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>연차발생기준</th>
+                      <td colSpan={3}>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="dayoffdiv"
+                            value={information.dayoffdiv}
+                            bizComponentId="R_dayoffdiv"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                      </td>
+                      <th>퇴직급여기준</th>
+                      <td colSpan={3}>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="rtrtype"
+                            value={information.rtrtype}
+                            bizComponentId="R_Rtrtype"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                      </td>
+                      <th>업청년세액감면</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="exmtaxgb"
+                            value={information.exmtaxgb}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>세대주여부</th>
+                      <td colSpan={3}>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="houseyn"
+                            value={information.houseyn}
+                            bizComponentId="R_HOUSEYN"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                      </td>
+                      <th>소득세조정률</th>
+                      <td colSpan={2}>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="incgb"
+                            value={information.incgb}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th colSpan={2}>직전년도 총급여액 2500만원 이하</th>
+                      <td>
+                        <Checkbox
+                          name="below2kyn"
+                          value={
+                            information.below2kyn == "Y"
+                              ? true
+                              : information.below2kyn == "N"
+                              ? false
+                              : information.below2kyn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>세액계산대상여부</th>
+                      <td>
+                        <Checkbox
+                          name="caltaxyn"
+                          value={
+                            information.caltaxyn == "Y"
+                              ? true
+                              : information.caltaxyn == "N"
+                              ? false
+                              : information.caltaxyn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>연말정산신고대</th>
+                      <td>
+                        <Checkbox
+                          name="yrdclyn"
+                          value={
+                            information.yrdclyn == "Y"
+                              ? true
+                              : information.yrdclyn == "N"
+                              ? false
+                              : information.yrdclyn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>부녀자</th>
+                      <td>
+                        <Checkbox
+                          name="wmn"
+                          value={
+                            information.wmn == "Y"
+                              ? true
+                              : information.wmn == "N"
+                              ? false
+                              : information.wmn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>배우자유무</th>
+                      <td>
+                        <Checkbox
+                          name="sps"
+                          value={
+                            information.sps == "Y"
+                              ? true
+                              : information.sps == "N"
+                              ? false
+                              : information.sps
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>노조가입</th>
+                      <td>
+                        <Checkbox
+                          name="laboryn"
+                          value={
+                            information.laboryn == "Y"
+                              ? true
+                              : information.laboryn == "N"
+                              ? false
+                              : information.laboryn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>신체장애</th>
+                      <td>
+                        <Checkbox
+                          name="dfmyn"
+                          value={
+                            information.dfmyn == "Y"
+                              ? true
+                              : information.dfmyn == "N"
+                              ? false
+                              : information.dfmyn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>병역특례</th>
+                      <td>
+                        <Checkbox
+                          name="milyn"
+                          value={
+                            information.milyn == "Y"
+                              ? true
+                              : information.milyn == "N"
+                              ? false
+                              : information.milyn
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>경감보험대상</th>
+                      <td>
+                        <Checkbox
+                          name="dfmyn2"
+                          value={
+                            information.dfmyn2 == "Y"
+                              ? true
+                              : information.dfmyn2 == "N"
+                              ? false
+                              : information.dfmyn2
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>국외근로대상</th>
+                      <td>
+                        <Checkbox
+                          name="notaxe"
+                          value={
+                            information.notaxe == "Y"
+                              ? true
+                              : information.notaxe == "N"
+                              ? false
+                              : information.notaxe
+                          }
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>경로자65</th>
+                      <td>
+                        <NumericTextBox
+                          name="agenum"
+                          value={information.agenum}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>경로자70</th>
+                      <td>
+                        <NumericTextBox
+                          name="agenum70"
+                          value={information.agenum70}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>부양자(본인미포함)</th>
+                      <td>
+                        <NumericTextBox
+                          name="sptnum"
+                          value={information.sptnum}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>자녀양육</th>
+                      <td>
+                        <NumericTextBox
+                          name="brngchlnum"
+                          value={information.brngchlnum}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>장애자</th>
+                      <td>
+                        <NumericTextBox
+                          name="dfmnum"
+                          value={information.dfmnum}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>다자녀</th>
+                      <td>
+                        <NumericTextBox
+                          name="childnum"
+                          value={information.childnum}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>가족수당배우</th>
+                      <td>
+                        <NumericTextBox
+                          name="fam1"
+                          value={information.fam1}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                      <th>가족수당자녀</th>
+                      <td>
+                        <NumericTextBox
+                          name="fam2"
+                          value={information.fam2}
+                          onChange={InputChange}
+                          format="n0"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
           </TabStripTab>
           <TabStripTab
             title="개인정보"
             disabled={workType == "N" ? true : false}
           >
-            <GridContainerWrap>
-              <GridContainer width="20%">
-                <GridTitleContainer>
-                  <GridTitle>사진</GridTitle>
-                  <ButtonContainer>
-                    <Button onClick={onAttWndClick2} themeColor={"primary"}>
-                      사진업로드
-                    </Button>
-                    <input
-                      id="uploadAttachment"
-                      style={{ display: "none" }}
-                      type="file"
-                      accept="image/*"
-                      ref={excelInput}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        getAttachmentsDataphoto(event.target.files);
+            {isMobile ? (
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer>
+                    <GridTitleContainer className="WindowButtonContainer">
+                      <GridTitle>사진</GridTitle>
+                      <ButtonContainer>
+                        <Button onClick={onAttWndClick2} themeColor={"primary"}>
+                          사진업로드
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        <input
+                          id="uploadAttachment"
+                          style={{ display: "none" }}
+                          type="file"
+                          accept="image/*"
+                          ref={excelInput}
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            getAttachmentsDataphoto(event.target.files);
+                          }}
+                        />
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        height: mobileheight3,
+                        overflow: "auto",
                       }}
-                    />
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <div style={{ textAlign: "center", marginTop: "15px" }}>
-                  {information.photodatnum != "" ? (
-                    <img
-                      style={{ display: "block", margin: "auto", width: "80%" }}
-                      ref={excelInput}
-                      src={imgBase64}
-                      alt="UserImage"
-                    />
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </GridContainer>
-              <GridContainer width={`calc(80% - ${GAP}px)`}>
-                <FormBoxWrap border={true}>
-                  <FormBox>
-                    <tbody>
-                      <tr>
-                        <th>신장</th>
-                        <td>
-                          <NumericTextBox
-                            name="height"
-                            value={information.height}
-                            onChange={InputChange}
-                            format="n0"
-                          />
-                        </td>
-                        <th>체중</th>
-                        <td>
-                          <NumericTextBox
-                            name="weight"
-                            value={information.weight}
-                            onChange={InputChange}
-                            format="n0"
-                          />
-                        </td>
-                        <th>혈액형</th>
-                        <td>
-                          <Input
-                            name="blood"
-                            type="text"
-                            value={information.blood}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>종교</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="religion"
-                              value={information.religion}
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              type="new"
-                            />
-                          )}
-                        </td>
-                        <th>신발</th>
-                        <td>
-                          <Input
-                            name="size3"
-                            type="text"
-                            value={information.size3}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>의류(상)</th>
-                        <td>
-                          <Input
-                            name="size1"
-                            type="text"
-                            value={information.size1}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>의류(하)</th>
-                        <td>
-                          <Input
-                            name="size2"
-                            type="text"
-                            value={information.size2}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>색맹</th>
-                        <td>
-                          <Input
-                            name="color"
-                            type="text"
-                            value={information.color}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>시력(좌)</th>
-                        <td>
-                          <NumericTextBox
-                            name="leye"
-                            value={information.leye}
-                            onChange={InputChange}
-                            format="n0"
-                          />
-                        </td>
-                        <th>시력(우)</th>
-                        <td>
-                          <NumericTextBox
-                            name="reye"
-                            value={information.reye}
-                            onChange={InputChange}
-                            format="n0"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>결혼여부</th>
-                        <td colSpan={3}>
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="marriage"
-                              value={information.marriage}
-                              bizComponentId="R_MARRIAGE"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                        </td>
-                        <th>결혼기념일</th>
-                        <td>
-                          <DatePicker
-                            name="marrydt"
-                            value={information.marrydt}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            placeholder=""
-                          />
-                        </td>
-                        <th>본적</th>
-                        <td>
-                          <Input
-                            name="orgaddr"
-                            type="text"
-                            value={information.orgaddr}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>출생지</th>
-                        <td>
-                          <Input
-                            name="birthplace"
-                            type="text"
-                            value={information.birthplace}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>취미</th>
-                        <td>
-                          <Input
-                            name="hobby"
-                            type="text"
-                            value={information.hobby}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>특기</th>
-                        <td>
-                          <Input
-                            name="hobby2"
-                            type="text"
-                            value={information.hobby2}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBox>
-                </FormBoxWrap>
-              </GridContainer>
-            </GridContainerWrap>
+                    >
+                      {information.photodatnum != "" ? (
+                        <img
+                          style={{
+                            display: "block",
+                            margin: "auto",
+                            width: "80%",
+                          }}
+                          ref={excelInput}
+                          src={imgBase64}
+                          alt="UserImage"
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer>
+                    <FormBoxWrap
+                      border={true}
+                      style={{ height: mobileheight4 }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>신장</th>
+                            <td>
+                              <NumericTextBox
+                                name="height"
+                                value={information.height}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>체중</th>
+                            <td>
+                              <NumericTextBox
+                                name="weight"
+                                value={information.weight}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>혈액형</th>
+                            <td>
+                              <Input
+                                name="blood"
+                                type="text"
+                                value={information.blood}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>종교</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="religion"
+                                  value={information.religion}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  type="new"
+                                />
+                              )}
+                            </td>
+                            <th>신발</th>
+                            <td>
+                              <Input
+                                name="size3"
+                                type="text"
+                                value={information.size3}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>의류(상)</th>
+                            <td>
+                              <Input
+                                name="size1"
+                                type="text"
+                                value={information.size1}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>의류(하)</th>
+                            <td>
+                              <Input
+                                name="size2"
+                                type="text"
+                                value={information.size2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>색맹</th>
+                            <td>
+                              <Input
+                                name="color"
+                                type="text"
+                                value={information.color}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>시력(좌)</th>
+                            <td>
+                              <NumericTextBox
+                                name="leye"
+                                value={information.leye}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>시력(우)</th>
+                            <td>
+                              <NumericTextBox
+                                name="reye"
+                                value={information.reye}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>결혼여부</th>
+                            <td colSpan={3}>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="marriage"
+                                  value={information.marriage}
+                                  bizComponentId="R_MARRIAGE"
+                                  bizComponentData={bizComponentData}
+                                  changeData={RadioChange}
+                                />
+                              )}
+                            </td>
+                            <th>결혼기념일</th>
+                            <td>
+                              <DatePicker
+                                name="marrydt"
+                                value={information.marrydt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>본적</th>
+                            <td>
+                              <Input
+                                name="orgaddr"
+                                type="text"
+                                value={information.orgaddr}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>출생지</th>
+                            <td>
+                              <Input
+                                name="birthplace"
+                                type="text"
+                                value={information.birthplace}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>취미</th>
+                            <td>
+                              <Input
+                                name="hobby"
+                                type="text"
+                                value={information.hobby}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>특기</th>
+                            <td>
+                              <Input
+                                name="hobby2"
+                                type="text"
+                                value={information.hobby2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            ) : (
+              <>
+                <GridContainerWrap>
+                  <GridContainer width="20%">
+                    <GridTitleContainer className="WindowButtonContainer">
+                      <GridTitle>사진</GridTitle>
+                      <ButtonContainer>
+                        <Button onClick={onAttWndClick2} themeColor={"primary"}>
+                          사진업로드
+                        </Button>
+                        <input
+                          id="uploadAttachment"
+                          style={{ display: "none" }}
+                          type="file"
+                          accept="image/*"
+                          ref={excelInput}
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            getAttachmentsDataphoto(event.target.files);
+                          }}
+                        />
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        height: webheight3,
+                        overflow: "auto",
+                      }}
+                    >
+                      {information.photodatnum != "" ? (
+                        <img
+                          style={{
+                            display: "block",
+                            margin: "auto",
+                            width: "80%",
+                          }}
+                          ref={excelInput}
+                          src={imgBase64}
+                          alt="UserImage"
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </GridContainer>
+                  <GridContainer width={`calc(80% - ${GAP}px)`}>
+                    <FormBoxWrap border={true} style={{ height: webheight4 }}>
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>신장</th>
+                            <td>
+                              <NumericTextBox
+                                name="height"
+                                value={information.height}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>체중</th>
+                            <td>
+                              <NumericTextBox
+                                name="weight"
+                                value={information.weight}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>혈액형</th>
+                            <td>
+                              <Input
+                                name="blood"
+                                type="text"
+                                value={information.blood}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>종교</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="religion"
+                                  value={information.religion}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  type="new"
+                                />
+                              )}
+                            </td>
+                            <th>신발</th>
+                            <td>
+                              <Input
+                                name="size3"
+                                type="text"
+                                value={information.size3}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>의류(상)</th>
+                            <td>
+                              <Input
+                                name="size1"
+                                type="text"
+                                value={information.size1}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>의류(하)</th>
+                            <td>
+                              <Input
+                                name="size2"
+                                type="text"
+                                value={information.size2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>색맹</th>
+                            <td>
+                              <Input
+                                name="color"
+                                type="text"
+                                value={information.color}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>시력(좌)</th>
+                            <td>
+                              <NumericTextBox
+                                name="leye"
+                                value={information.leye}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                            <th>시력(우)</th>
+                            <td>
+                              <NumericTextBox
+                                name="reye"
+                                value={information.reye}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>결혼여부</th>
+                            <td colSpan={3}>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="marriage"
+                                  value={information.marriage}
+                                  bizComponentId="R_MARRIAGE"
+                                  bizComponentData={bizComponentData}
+                                  changeData={RadioChange}
+                                />
+                              )}
+                            </td>
+                            <th>결혼기념일</th>
+                            <td>
+                              <DatePicker
+                                name="marrydt"
+                                value={information.marrydt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>본적</th>
+                            <td>
+                              <Input
+                                name="orgaddr"
+                                type="text"
+                                value={information.orgaddr}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>출생지</th>
+                            <td>
+                              <Input
+                                name="birthplace"
+                                type="text"
+                                value={information.birthplace}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>취미</th>
+                            <td>
+                              <Input
+                                name="hobby"
+                                type="text"
+                                value={information.hobby}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>특기</th>
+                            <td>
+                              <Input
+                                name="hobby2"
+                                type="text"
+                                value={information.hobby2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </GridContainerWrap>
+              </>
+            )}
           </TabStripTab>
           <TabStripTab
             title="병역사항"
             disabled={workType == "N" ? true : false}
           >
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>병역구분</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="armygb"
-                          value={information.armygb}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          type="new"
+            <GridContainer
+              style={{
+                height: isMobile ? mobileheight5 : webheight5,
+                overflow: "auto",
+              }}
+            >
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>병역구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="armygb"
+                            value={information.armygb}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>군번</th>
+                      <td>
+                        <Input
+                          name="militarynum"
+                          type="text"
+                          value={information.militarynum}
+                          onChange={InputChange}
                         />
-                      )}
-                    </td>
-                    <th>군번</th>
-                    <td>
-                      <Input
-                        name="militarynum"
-                        type="text"
-                        value={information.militarynum}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>입대일</th>
-                    <td>
-                      <DatePicker
-                        name="armystartdt"
-                        value={information.armystartdt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>군별</th>
-                    <td>
-                      <Input
-                        name="armydistinctiom"
-                        type="text"
-                        value={information.armydistinctiom}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>병과</th>
-                    <td>
-                      <Input
-                        name="armykind"
-                        type="text"
-                        value={information.armykind}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>면제사유</th>
-                    <td>
-                      <Input
-                        name="armyexrsn"
-                        type="text"
-                        value={information.armyexrsn}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>계급</th>
-                    <td>
-                      <Input
-                        name="armyrank"
-                        type="text"
-                        value={information.armyrank}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>전역일</th>
-                    <td>
-                      <DatePicker
-                        name="armyenddt"
-                        value={information.armyenddt}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                    <th>역종</th>
-                    <td>
-                      <Input
-                        name="armyclass"
-                        type="text"
-                        value={information.armyclass}
-                        onChange={InputChange}
-                      />
-                    </td>
-                    <th>주특기</th>
-                    <td>
-                      <Input
-                        name="armyspeciality"
-                        type="text"
-                        value={information.armyspeciality}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
+                      </td>
+                      <th>입대일</th>
+                      <td>
+                        <DatePicker
+                          name="armystartdt"
+                          value={information.armystartdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>군별</th>
+                      <td>
+                        <Input
+                          name="armydistinctiom"
+                          type="text"
+                          value={information.armydistinctiom}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>병과</th>
+                      <td>
+                        <Input
+                          name="armykind"
+                          type="text"
+                          value={information.armykind}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>면제사유</th>
+                      <td>
+                        <Input
+                          name="armyexrsn"
+                          type="text"
+                          value={information.armyexrsn}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>계급</th>
+                      <td>
+                        <Input
+                          name="armyrank"
+                          type="text"
+                          value={information.armyrank}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>전역일</th>
+                      <td>
+                        <DatePicker
+                          name="armyenddt"
+                          value={information.armyenddt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>역종</th>
+                      <td>
+                        <Input
+                          name="armyclass"
+                          type="text"
+                          value={information.armyclass}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>주특기</th>
+                      <td>
+                        <Input
+                          name="armyspeciality"
+                          type="text"
+                          value={information.armyspeciality}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
           </TabStripTab>
           <TabStripTab
             title="가족관계"
@@ -9709,8 +10058,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer2">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick}
@@ -9728,7 +10077,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight6 : webheight6 }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -9867,8 +10216,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer3">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick2}
@@ -9886,7 +10235,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight7 : webheight7 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -9977,8 +10326,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer4">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick3}
@@ -9996,7 +10345,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight8 : webheight8 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -10095,8 +10444,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer5">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick4}
@@ -10114,7 +10463,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight9 : webheight9 }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,
@@ -10214,8 +10563,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer6">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick5}
@@ -10233,7 +10582,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight10 : webheight10 }}
                   data={process(
                     mainDataResult5.data.map((row) => ({
                       ...row,
@@ -10343,8 +10692,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer7">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick6}
@@ -10362,7 +10711,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight11 : webheight11 }}
                   data={process(
                     mainDataResult6.data.map((row) => ({
                       ...row,
@@ -10444,8 +10793,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer8">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick7}
@@ -10463,7 +10812,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight12 : webheight12 }}
                   data={process(
                     mainDataResult7.data.map((row) => ({
                       ...row,
@@ -10565,8 +10914,8 @@ const CopyWindow = ({
                 // fetchGrid,
               }}
             >
-              <GridContainer height={position.height - 220 + "px"}>
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer9">
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick8}
@@ -10584,7 +10933,7 @@ const CopyWindow = ({
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: `calc(100% - 35px)` }}
+                  style={{ height: isMobile ? mobileheight13 : webheight13 }}
                   data={process(
                     mainDataResult8.data.map((row) => ({
                       ...row,
@@ -10677,7 +11026,7 @@ const CopyWindow = ({
             </FormContext8.Provider>
           </TabStripTab>
         </TabStrip>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인

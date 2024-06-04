@@ -11,8 +11,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -25,19 +25,20 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import Window from "./WindowComponent/Window";
 
@@ -67,7 +68,13 @@ const DATA_ITEM_KEY = "prsnnum";
 const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
 const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -79,8 +86,37 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 830,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height3 = getHeight(".BottomContainer"); //하단 버튼부분
+    height4 = getHeight(".filterBox2"); //필터 웹
+    height5 = getHeight(".WindowButtonContainer");
+    height6 = getHeight(".WindowButtonContainer2");
+    height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+    setMobileHeight(deviceHeight - height - height2 - height3 - height7);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height4) / 2 - height5
+    );
+    setMobileHeight2(deviceHeight - height - height2 - height3 - height7);
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height4) / 2 - height6
+    );
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      (position.height - height - height2 - height3 - height4) / 2 - height5
+    );
+    setWebHeight2(
+      (position.height - height - height2 - height3 - height4) / 2 - height6
+    );
   };
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -153,6 +189,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -414,7 +451,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -422,7 +459,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </TitleContainer>
-      <FilterContainer>
+      <WindowFilterContainer>
         <FilterBox>
           <tbody>
             <tr>
@@ -459,13 +496,17 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
             </tr>
           </tbody>
         </FilterBox>
-      </FilterContainer>
-      <GridContainer height="calc(100% - 470px)">
-        <GridTitleContainer>
+      </WindowFilterContainer>
+      <GridContainer
+        style={{
+          overflow: "auto",
+        }}
+      >
+        <GridTitleContainer className="WindowButtonContainer">
           <GridTitle>사용자 리스트</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 42px)" }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -523,12 +564,16 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="postcd" title="직위" width="120px" />
         </Grid>
       </GridContainer>
-      <GridContainer>
-        <GridTitleContainer>
+      <GridContainer
+        style={{
+          overflow: "auto",
+        }}
+      >
+        <GridTitleContainer className="WindowButtonContainer2">
           <GridTitle>Keeping</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "250px" }}
+          style={{ height: isMobile ? mobileheight2 : webheight2 }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
@@ -572,7 +617,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <GridColumn field="postcd" title="직위" width="120px" />
         </Grid>
       </GridContainer>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인

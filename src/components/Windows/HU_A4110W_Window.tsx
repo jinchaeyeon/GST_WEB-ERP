@@ -13,8 +13,11 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -54,6 +57,7 @@ import {
   dateformat,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -145,6 +149,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const KendoWindow = ({
   setVisible,
   setData,
@@ -163,8 +173,32 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  var index2 = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".FormBoxWrap");
+    height4 = getHeight(".FormBoxWrap2");
+    height5 = getHeight(".WindowButtonContainer");
+
+    setMobileHeight(deviceHeight - height);
+    setMobileHeight2(deviceHeight - height - height5);
+    setMobileHeight3(deviceHeight - height - height2);
+    setWebHeight(
+      position.height - height - height2 - height3 - height4 - height5
+    );
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      position.height - height - height2 - height3 - height4 - height5
+    );
   };
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -529,6 +563,10 @@ const KendoWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   //그리드 푸터
@@ -1470,598 +1508,1312 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap>
-        <FormBox>
-          <tbody>
-            <tr>
-              <th>결의서 No</th>
-              <td>
-                <Input
-                  name="expenseno"
-                  type="text"
-                  value={filters.expenseno}
-                  className="readonly"
-                />
-              </td>
-              <th>신청일자</th>
-              <td>
-                <DatePicker
-                  name="expensedt"
-                  value={filters.expensedt}
-                  format="yyyy-MM-dd"
-                  className="readonly"
-                  placeholder=""
-                  disabled={true}
-                />
-              </td>
-              <th>사업장</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="location"
-                    value={filters.location}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    className="required"
-                  />
-                )}
-              </td>
-              <th>사업부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="position"
-                    value={filters.position}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>요청자 사번</th>
-              <td>
-                <Input
-                  name="prsnnum"
-                  type="text"
-                  value={filters.prsnnum}
-                  onChange={filterInputChange}
-                  className="required"
-                />
-                <ButtonInInput>
-                  <Button
-                    type="button"
-                    icon="more-horizontal"
-                    fillMode="flat"
-                    onClick={onPrsnnumWndClick}
-                  />
-                </ButtonInInput>
-              </td>
-              <th>요청자 성명</th>
-              <td>
-                <Input
-                  name="prsnnm"
-                  type="text"
-                  value={filters.prsnnm}
-                  className="readonly"
-                />
-              </td>
-              <th>요청자 부서</th>
-              <td>
-                <Input
-                  name="dptnm"
-                  type="text"
-                  value={filters.dptnm}
-                  className="readonly"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </FormBox>
-      </FormBoxWrap>
-      <GridContainer height={position.height - 500 + "px"}>
-        <GridTitleContainer>
-          <GridTitle>기본정보</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-            ></Button>
-            <Button
-              onClick={onDeleteClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-            ></Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: `calc(100% - 35px)` }}
-          data={process(
-            mainDataResult.data.map((row) => ({
-              ...row,
-              carddt: row.carddt
-                ? new Date(dateformat(row.carddt))
-                : new Date(dateformat("99991231")),
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-            mainDataState
-          )}
-          onDataStateChange={onMainDataStateChange}
-          {...mainDataState}
-          //선택 subDataState
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
           }}
-          onSelectionChange={onSelectionChange}
-          //스크롤 조회기능
-          fixedScroll={true}
-          total={mainDataResult.total}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onMainItemChange}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          editField={EDIT_FIELD}
+          onActiveIndexChange={(swiper) => {
+            index2 = swiper.activeIndex;
+          }}
         >
-          <GridColumn field="rowstatus" title=" " width="50px" />
-          <GridColumn
-            field="chk"
-            title=" "
-            width="45px"
-            headerCell={CustomCheckBoxCell2}
-            cell={CheckBoxCell}
-          />
-          <GridColumn
-            field="carddt"
-            title="사용일"
-            width="120px"
-            cell={DateCell}
-            headerCell={RequiredHeader}
-            footerCell={mainTotalFooterCell}
-          />
-          <GridColumn
-            field="remark"
-            title="품의내역"
-            width="200px"
-            headerCell={RequiredHeader}
-          />
-          <GridColumn
-            field="dptcd"
-            title="비용부서"
-            width="120px"
-            cell={CustomComboBoxCell}
-            headerCell={RequiredHeader}
-          />
-          <GridColumn
-            field="amt"
-            title="지출금액"
-            width="100px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="taxamt"
-            title="부가세"
-            width="100px"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="totamt"
-            title="합계"
-            width="100px"
-            cell={NumberCell}
-          />
-        </Grid>
-      </GridContainer>
-      <FormBoxWrap>
-        <FormBox>
-          <tbody>
-            <tr>
-              <th>사용유형</th>
-              <td colSpan={7}>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="usekind"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind
+          <SwiperSlide key={0}>
+            <FormBoxWrap
+              className="FormBoxWrap"
+              style={{ height: mobileheight }}
+            >
+              <ButtonContainer style={{ justifyContent: "end" }}>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(1);
                     }
-                    bizComponentId="R_AC038"
-                    bizComponentData={bizComponentData}
-                    changeData={RadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>고객사코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].custcd
-                  }
-                  onChange={InputChange}
-                />
-                <ButtonInInput>
+                  }}
+                  icon="chevron-right"
+                  themeColor={"primary"}
+                  fillMode={"flat"}
+                ></Button>
+              </ButtonContainer>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>결의서 No</th>
+                    <td>
+                      <Input
+                        name="expenseno"
+                        type="text"
+                        value={filters.expenseno}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>신청일자</th>
+                    <td>
+                      <DatePicker
+                        name="expensedt"
+                        value={filters.expensedt}
+                        format="yyyy-MM-dd"
+                        className="readonly"
+                        placeholder=""
+                        disabled={true}
+                      />
+                    </td>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          className="required"
+                        />
+                      )}
+                    </td>
+                    <th>사업부</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="position"
+                          value={filters.position}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>요청자 사번</th>
+                    <td>
+                      <Input
+                        name="prsnnum"
+                        type="text"
+                        value={filters.prsnnum}
+                        onChange={filterInputChange}
+                        className="required"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type="button"
+                          icon="more-horizontal"
+                          fillMode="flat"
+                          onClick={onPrsnnumWndClick}
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>요청자 성명</th>
+                    <td>
+                      <Input
+                        name="prsnnm"
+                        type="text"
+                        value={filters.prsnnm}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>요청자 부서</th>
+                    <td>
+                      <Input
+                        name="dptnm"
+                        type="text"
+                        value={filters.dptnm}
+                        className="readonly"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer">
+                <GridTitle>기본정보</GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>고객사명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].custnm
-                  }
-                  className="readonly"
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  <div>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </div>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: mobileheight2 }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    carddt: row.carddt
+                      ? new Date(dateformat(row.carddt))
+                      : new Date(dateformat("99991231")),
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                onDataStateChange={onMainDataStateChange}
+                {...mainDataState}
+                //선택 subDataState
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
                 />
-              </td>
-              <th>예산항목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].itemcd
-                  }
-                  className="readonly"
+                <GridColumn
+                  field="carddt"
+                  title="사용일"
+                  width="120px"
+                  cell={DateCell}
+                  headerCell={RequiredHeader}
+                  footerCell={mainTotalFooterCell}
                 />
-                <ButtonInInput>
+                <GridColumn
+                  field="remark"
+                  title="품의내역"
+                  width="200px"
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn
+                  field="dptcd"
+                  title="비용부서"
+                  width="120px"
+                  cell={CustomComboBoxCell}
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn
+                  field="amt"
+                  title="지출금액"
+                  width="100px"
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="taxamt"
+                  title="부가세"
+                  width="100px"
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="totamt"
+                  title="합계"
+                  width="100px"
+                  cell={NumberCell}
+                />
+              </Grid>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer>
+              <FormBoxWrap
+                className="FormBoxWrap2"
+                style={{ height: mobileheight3, overflow: "auto" }}
+              >
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
-                    onClick={onCodeWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>예산항목명</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="itemcd"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].itemcd
-                    }
-                    bizComponentId="L_AC024"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                    valueField="stdrmkcd"
-                    textField="stdrmknm1"
-                    para="AC_A1020W"
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>계산서유형</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="taxtype"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].taxtype
-                    }
-                    bizComponentId="L_AC013"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                    disabled={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? true
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "A" ||
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "D" ||
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "F"
-                        ? true
-                        : false
-                    }
-                    className={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? "readonly"
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "A" ||
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "D" ||
-                          mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "F"
-                        ? "readonly"
-                        : undefined
-                    }
-                  />
-                )}
-              </td>
-              <th>계산서유형 세액</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="taxdiv"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].taxdiv
-                    }
-                    bizComponentId="R_TAXDIV_"
-                    bizComponentData={bizComponentData}
-                    changeData={RadioChange}
-                    disabled={true}
-                  />
-                )}
-              </td>
-              <th>계정과목코드</th>
-              <td>
-                <Input
-                  name="acntcd"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].acntcd
-                  }
-                  className="readonly"
-                />
-              </td>
-              <th>계정과목명</th>
-              <td>
-                <Input
-                  name="acntnm"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].acntnm
-                  }
-                  className="readonly"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>계산서구분</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="etax"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].etax
-                    }
-                    bizComponentId="L_AC401"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>카드관련</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentComboBox
-                    name="cardcd"
-                    value={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? ""
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].cardcd
-                    }
-                    bizComponentId="L_AC030T"
-                    bizComponentData={bizComponentData}
-                    changeData={ComboBoxChange}
-                    valueField="creditcd"
-                    textField="creditnm"
-                    disabled={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? true
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "B"
-                        ? false
-                        : true
-                    }
-                    className={
-                      mainDataResult.data.filter(
-                        (item: any) =>
-                          item.num ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0] == undefined
-                        ? "readonly"
-                        : mainDataResult.data.filter(
-                            (item: any) =>
-                              item.num ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0].usekind == "B"
-                        ? undefined
-                        : "readonly"
-                    }
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>첨부파일</th>
-              <td colSpan={7}>
-                <Input
-                  name="files"
-                  type="text"
-                  value={
-                    mainDataResult.data.filter(
-                      (item: any) =>
-                        item.num == Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? ""
-                      : mainDataResult.data.filter(
-                          (item: any) =>
-                            item.num ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].files
-                  }
-                  className="readonly"
-                />
-                <ButtonInInput>
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>사용유형</th>
+                      <td colSpan={7}>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="usekind"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind
+                            }
+                            bizComponentId="R_AC038"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>고객사코드</th>
+                      <td>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].custcd
+                          }
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCustWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>고객사명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].custnm
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th>예산항목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].itemcd
+                          }
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCodeWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>예산항목명</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemcd"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].itemcd
+                            }
+                            bizComponentId="L_AC024"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            valueField="stdrmkcd"
+                            textField="stdrmknm1"
+                            para="AC_A1020W"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계산서유형</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="taxtype"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].taxtype
+                            }
+                            bizComponentId="L_AC013"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            disabled={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? true
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "A" ||
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "D" ||
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "F"
+                                ? true
+                                : false
+                            }
+                            className={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? "readonly"
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "A" ||
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "D" ||
+                                  mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "F"
+                                ? "readonly"
+                                : undefined
+                            }
+                          />
+                        )}
+                      </td>
+                      <th>계산서유형 세액</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="taxdiv"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].taxdiv
+                            }
+                            bizComponentId="R_TAXDIV_"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>계정과목코드</th>
+                      <td>
+                        <Input
+                          name="acntcd"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].acntcd
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th>계정과목명</th>
+                      <td>
+                        <Input
+                          name="acntnm"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].acntnm
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계산서구분</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="etax"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].etax
+                            }
+                            bizComponentId="L_AC401"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>카드관련</th>
+                      <td>
+                        {bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="cardcd"
+                            value={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? ""
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].cardcd
+                            }
+                            bizComponentId="L_AC030T"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            valueField="creditcd"
+                            textField="creditnm"
+                            disabled={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? true
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "B"
+                                ? false
+                                : true
+                            }
+                            className={
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0] == undefined
+                                ? "readonly"
+                                : mainDataResult.data.filter(
+                                    (item: any) =>
+                                      item.num ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].usekind == "B"
+                                ? undefined
+                                : "readonly"
+                            }
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={7}>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? ""
+                              : mainDataResult.data.filter(
+                                  (item: any) =>
+                                    item.num ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].files
+                          }
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <BottomContainer className="BottomContainer">
+                <ButtonContainer>
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    확인
+                  </Button>
                   <Button
-                    type={"button"}
-                    onClick={onAttachmentsWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-            </tr>
-          </tbody>
-        </FormBox>
-      </FormBoxWrap>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} onClick={selectData}>
-            확인
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-      </BottomContainer>
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    onClick={onClose}
+                  >
+                    닫기
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <FormBoxWrap className="FormBoxWrap">
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th>결의서 No</th>
+                  <td>
+                    <Input
+                      name="expenseno"
+                      type="text"
+                      value={filters.expenseno}
+                      className="readonly"
+                    />
+                  </td>
+                  <th>신청일자</th>
+                  <td>
+                    <DatePicker
+                      name="expensedt"
+                      value={filters.expensedt}
+                      format="yyyy-MM-dd"
+                      className="readonly"
+                      placeholder=""
+                      disabled={true}
+                    />
+                  </td>
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        className="required"
+                      />
+                    )}
+                  </td>
+                  <th>사업부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="position"
+                        value={filters.position}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>요청자 사번</th>
+                  <td>
+                    <Input
+                      name="prsnnum"
+                      type="text"
+                      value={filters.prsnnum}
+                      onChange={filterInputChange}
+                      className="required"
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>요청자 성명</th>
+                  <td>
+                    <Input
+                      name="prsnnm"
+                      type="text"
+                      value={filters.prsnnm}
+                      className="readonly"
+                    />
+                  </td>
+                  <th>요청자 부서</th>
+                  <td>
+                    <Input
+                      name="dptnm"
+                      type="text"
+                      value={filters.dptnm}
+                      className="readonly"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+          <GridContainer>
+            <GridTitleContainer className="WindowButtonContainer">
+              <GridTitle>기본정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: webheight }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  carddt: row.carddt
+                    ? new Date(dateformat(row.carddt))
+                    : new Date(dateformat("99991231")),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 subDataState
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
+              <GridColumn
+                field="carddt"
+                title="사용일"
+                width="120px"
+                cell={DateCell}
+                headerCell={RequiredHeader}
+                footerCell={mainTotalFooterCell}
+              />
+              <GridColumn
+                field="remark"
+                title="품의내역"
+                width="200px"
+                headerCell={RequiredHeader}
+              />
+              <GridColumn
+                field="dptcd"
+                title="비용부서"
+                width="120px"
+                cell={CustomComboBoxCell}
+                headerCell={RequiredHeader}
+              />
+              <GridColumn
+                field="amt"
+                title="지출금액"
+                width="100px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="taxamt"
+                title="부가세"
+                width="100px"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="totamt"
+                title="합계"
+                width="100px"
+                cell={NumberCell}
+              />
+            </Grid>
+          </GridContainer>
+          <FormBoxWrap className="FormBoxWrap2">
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th>사용유형</th>
+                  <td colSpan={7}>
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="usekind"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind
+                        }
+                        bizComponentId="R_AC038"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>고객사코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].custcd
+                      }
+                      onChange={InputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>고객사명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].custnm
+                      }
+                      className="readonly"
+                    />
+                  </td>
+                  <th>예산항목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].itemcd
+                      }
+                      className="readonly"
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCodeWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>예산항목명</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="itemcd"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].itemcd
+                        }
+                        bizComponentId="L_AC024"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        valueField="stdrmkcd"
+                        textField="stdrmknm1"
+                        para="AC_A1020W"
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>계산서유형</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="taxtype"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].taxtype
+                        }
+                        bizComponentId="L_AC013"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        disabled={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? true
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "A" ||
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "D" ||
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "F"
+                            ? true
+                            : false
+                        }
+                        className={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? "readonly"
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "A" ||
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "D" ||
+                              mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "F"
+                            ? "readonly"
+                            : undefined
+                        }
+                      />
+                    )}
+                  </td>
+                  <th>계산서유형 세액</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="taxdiv"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].taxdiv
+                        }
+                        bizComponentId="R_TAXDIV_"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                        disabled={true}
+                      />
+                    )}
+                  </td>
+                  <th>계정과목코드</th>
+                  <td>
+                    <Input
+                      name="acntcd"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].acntcd
+                      }
+                      className="readonly"
+                    />
+                  </td>
+                  <th>계정과목명</th>
+                  <td>
+                    <Input
+                      name="acntnm"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].acntnm
+                      }
+                      className="readonly"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>계산서구분</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="etax"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].etax
+                        }
+                        bizComponentId="L_AC401"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>카드관련</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="cardcd"
+                        value={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? ""
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].cardcd
+                        }
+                        bizComponentId="L_AC030T"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        valueField="creditcd"
+                        textField="creditnm"
+                        disabled={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? true
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "B"
+                            ? false
+                            : true
+                        }
+                        className={
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0] == undefined
+                            ? "readonly"
+                            : mainDataResult.data.filter(
+                                (item: any) =>
+                                  item.num ==
+                                  Object.getOwnPropertyNames(selectedState)[0]
+                              )[0].usekind == "B"
+                            ? undefined
+                            : "readonly"
+                        }
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={7}>
+                    <Input
+                      name="files"
+                      type="text"
+                      value={
+                        mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0] == undefined
+                          ? ""
+                          : mainDataResult.data.filter(
+                              (item: any) =>
+                                item.num ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0].files
+                      }
+                      className="readonly"
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+          <BottomContainer className="BottomContainer">
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </>
+      )}
       {prsnnumWindowVisible && (
         <PrsnnumWindow
           setVisible={setPrsnnumWindowVisible}

@@ -7,7 +7,7 @@ import {
   NumericTextBox,
   TextArea,
 } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -34,6 +34,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getBizCom,
+  getHeight,
   toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
@@ -53,6 +54,9 @@ type IWindow = {
   pathname: string;
 };
 
+var height = 0;
+var height2 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -71,9 +75,23 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 750,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -787,7 +805,10 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap border={true}>
+        <FormBoxWrap
+          border={true}
+          style={{ height: isMobile ? mobileheight : webheight }}
+        >
           <FormBox>
             <tbody>
               <tr>
@@ -1319,7 +1340,7 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인

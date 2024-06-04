@@ -1,7 +1,7 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -23,6 +23,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getHeight,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -56,6 +57,9 @@ type TKendoWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -179,9 +183,22 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 400,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
+
   const [standardWindowVisible, setStandardWindowVisible] =
     useState<boolean>(false);
   const onStandardClick = () => {
@@ -443,8 +460,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      {/* <GridContainer width={`68%`}> */}
-      <FormBoxWrap>
+      <FormBoxWrap style={{ height: isMobile ? mobileheight : webheight }}>
         <FormBox>
           <tbody>
             <tr>
@@ -646,7 +662,7 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={handleSubmit}>
             확인

@@ -11,19 +11,20 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
+  Title,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
@@ -37,6 +38,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../CommonFunction";
@@ -45,7 +47,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import Window from "./WindowComponent/Window";
@@ -56,6 +58,12 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 
 const CopyWindow = ({
   setVisible,
@@ -74,8 +82,25 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+    height5 = getHeight(".filterBox2"); //필터 웹
+
+    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+    setWebHeight(position.height - height - height2 - height3 - height5);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -225,6 +250,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -439,7 +465,8 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer style={{ float: "right" }}>
+        <TitleContainer className="TitleContainer">
+          <Title></Title>
           <ButtonContainer>
             <Button
               onClick={() => search()}
@@ -450,7 +477,7 @@ const CopyWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -556,10 +583,10 @@ const CopyWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
-        <GridContainer height="55vh">
+        </WindowFilterContainer>
+        <GridContainer>
           <Grid
-            style={{ height: "calc(100% - 20px)" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -724,7 +751,7 @@ const CopyWindow = ({
             />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
               확인
