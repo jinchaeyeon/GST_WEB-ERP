@@ -15,8 +15,17 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -25,6 +34,7 @@ import {
   FormBoxWrap,
   GridContainer,
   GridContainerWrap,
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
@@ -45,6 +55,7 @@ import {
   findMessage,
   getBizCom,
   getGridItemChangedData,
+  getHeight,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
@@ -70,6 +81,12 @@ type TKendoWindow = {
 let targetRowIndex: null | number = null;
 let temp = 0;
 let temp2 = 0;
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -177,9 +194,39 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".WindowButtonContainer");
+      height4 = getHeight(".WindowButtonContainer2");
+      height5 = getHeight(".WindowButtonContainer3");
+
+      setMobileHeight(deviceHeight - height - height3);
+      setMobileHeight2(deviceHeight - height - height4);
+      setMobileHeight3(deviceHeight - height - height2 - height5);
+      setWebHeight((position.height - height - height2) / 2);
+      setWebHeight2((position.height - height - height2) / 2);
+      setWebHeight3((position.height - height - height2) / 2 - height5);
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight((position.height - height - height2) / 2);
+    setWebHeight2((position.height - height - height2) / 2);
+    setWebHeight3((position.height - height - height2) / 2 - height5);
   };
+
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
 
@@ -1179,456 +1226,998 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainerWrap>
-        <GridContainer width={`68%`}>
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>그룹코드</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="group_code"
-                        type="text"
-                        value={initialVal.group_code}
-                        className="required"
-                        onChange={filterInputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="group_code"
-                        type="text"
-                        value={initialVal.group_code}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th>그룹코드명</th>
-                  <td>
-                    <Input
-                      name="group_name"
-                      type="text"
-                      value={initialVal.group_name}
-                      className="required"
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>세부코드길이</th>
-                  <td>
-                    <Input
-                      name="code_length"
-                      type="number"
-                      value={initialVal.code_length}
-                      className="required"
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>유형분류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="group_category"
-                        value={initialVal.group_category}
-                        customOptionData={customOptionData}
-                        className="required"
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>여유필드캡션1</th>
-                  <td>
-                    <Input
-                      name="field_caption1"
-                      type="text"
-                      value={initialVal.field_caption1}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션2</th>
-                  <td>
-                    <Input
-                      name="field_caption2"
-                      type="text"
-                      value={initialVal.field_caption2}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션3</th>
-                  <td>
-                    <Input
-                      name="field_caption3"
-                      type="text"
-                      value={initialVal.field_caption3}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션4</th>
-                  <td>
-                    <Input
-                      name="field_caption4"
-                      type="text"
-                      value={initialVal.field_caption4}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                {!isMobile || (isMobile && showAdditionalFields) ? (
-                  <>
-                    <tr>
-                      <th>여유필드캡션5</th>
-                      <td>
-                        <Input
-                          name="field_caption5"
-                          type="text"
-                          value={initialVal.field_caption5}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>여유필드캡션6</th>
-                      <td>
-                        <Input
-                          name="field_caption6"
-                          type="text"
-                          value={initialVal.field_caption6}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>여유필드캡션7</th>
-                      <td>
-                        <Input
-                          name="field_caption7"
-                          type="text"
-                          value={initialVal.field_caption7}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>여유필드캡션8</th>
-                      <td>
-                        <Input
-                          name="field_caption8"
-                          type="text"
-                          value={initialVal.field_caption8}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>여유필드캡션9</th>
-                      <td>
-                        <Input
-                          name="field_caption9"
-                          type="text"
-                          value={initialVal.field_caption9}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>여유필드캡션10</th>
-                      <td>
-                        <Input
-                          name="field_caption10"
-                          type="text"
-                          value={initialVal.field_caption10}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </>
-                ) : null}
-                {isMobile && (
-                  <tr>
-                    <td>
-                      <Button
-                        themeColor={"primary"}
-                        fillMode={null}
-                        onClick={() =>
-                          setShowAdditionalFields(!showAdditionalFields)
-                        }
-                      >
-                        {showAdditionalFields
-                          ? "여유 필드 숨기기"
-                          : "여유 필드 더보기"}
-                      </Button>
-                    </td>
-                  </tr>
-                )}
-
-                <tr>
-                  <th>숫자 참조 필드1</th>
-                  <td>
-                    <Input
-                      name="numref_caption1"
-                      type="text"
-                      value={initialVal.numref_caption1}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>숫자 참조 필드2</th>
-                  <td>
-                    <Input
-                      name="numref_caption2"
-                      type="text"
-                      value={initialVal.numref_caption2}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>숫자 참조 필드3</th>
-                  <td>
-                    <Input
-                      name="numref_caption3"
-                      type="text"
-                      value={initialVal.numref_caption3}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>숫자 참조 필드4</th>
-                  <td>
-                    <Input
-                      name="numref_caption4"
-                      type="text"
-                      value={initialVal.numref_caption4}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>숫자 참조 필드5</th>
-                  <td>
-                    <Input
-                      name="numref_caption5"
-                      type="text"
-                      value={initialVal.numref_caption5}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    <Checkbox
-                      name="use_yn"
-                      value={initialVal.use_yn == "Y" ? true : false}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>첨부파일</th>
-                  <td colSpan={7}>
-                    <Input
-                      name="files"
-                      type="text"
-                      value={initialVal.files}
-                      className="readonly"
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onAttachmentsWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
-                </tr>
-                <tr>
-                  <th>메모</th>
-                  <td colSpan={7}>
-                    <TextArea
-                      value={initialVal.memo}
-                      name="memo"
-                      rows={2}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </GridContainer>
-        <GridContainer width={`calc(32% - ${GAP}px)`}>
-          <CommentsGrid
-            ref_key={initialVal.group_code}
-            form_id={pathname}
-            table_id={"comCodeMaster"}
-            style={{ height: "36vh" }}
-          />
-        </GridContainer>
-      </GridContainerWrap>
-      <GridContainer
-        height="calc(100% - 420px)"
-        margin={{ top: "30px", bottom: "30px" }}
-      >
-        <ButtonContainer>
-          <Button
-            themeColor={"primary"}
-            onClick={onAddClick}
-            icon="add"
-            title="행 추가"
-          />
-          <Button
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onDeleteClick}
-            icon="minus"
-            title="행 삭제"
-          />
-          <Button
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onCopyClick}
-            icon="copy"
-            title="행 복사"
-          />
-        </ButtonContainer>
-        <Grid
-          style={{ height: "100%" }}
-          data={process(
-            detailDataResult.data.map((item: any) => ({
-              ...item,
-              insert_userid: userListData.find(
-                (items: any) => items.user_id == item.insert_userid
-              )?.user_name,
-              update_userid: userListData.find(
-                (items: any) => items.user_id == item.update_userid
-              )?.user_name,
-              [SELECTED_FIELD]: detailSelectedState[idGetter(item)],
-            })),
-            dataState
-          )}
-          {...dataState}
-          onDataStateChange={onGridDataStateChange}
-          // 렌더
-          onItemChange={onMainItemChange}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          //선택기능
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          editField={EDIT_FIELD}
-          selectable={{
-            enabled: true,
-            drag: false,
-            cell: false,
-            mode: "single",
+      {isMobile ? (
+        <Swiper
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
           }}
-          onSelectionChange={onSelectionChange}
-          onHeaderSelectionChange={onHeaderSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={detailDataResult.total}
-          skip={page.skip}
-          take={page.take}
-          pageable={true}
-          onPageChange={pageChange}
-          ref={gridRef}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onGridSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
         >
-          <GridColumn
-            field="chk"
-            title=" "
-            width="45px"
-            headerCell={CustomCheckBoxCell2}
-            cell={CheckBoxCell}
-          />
-          <GridColumn field="rowstatus" title=" " width="40px" />
-          <GridColumn
-            field="sub_code"
-            width="120px"
-            title="세부코드"
-            footerCell={detailTotalFooterCell}
-            headerCell={RequiredHeader}
-          />
-          <GridColumn
-            field="code_name"
-            width="200px"
-            headerCell={RequiredHeader}
-            title="세부코드명"
-          />
-          <GridColumn
-            field="system_yn"
-            width="120px"
-            title="시스템코드"
-            cell={CheckBoxCell}
-          />
-          <GridColumn
-            field="sort_seq"
-            width="120px"
-            title="정렬순서"
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="use_yn"
-            width="95px"
-            title="사용"
-            cell={CheckBoxCell}
-          />
-          <GridColumn field="extra_field1" width="200px" title={field1} />
-          <GridColumn field="extra_field2" width="200px" title={field2} />
-          <GridColumn field="extra_field3" width="200px" title={field3} />
-          <GridColumn field="extra_field4" width="200px" title={field4} />
-          <GridColumn field="extra_field5" width="200px" title={field5} />
-          <GridColumn field="extra_field6" width="200px" title={field6} />
-          <GridColumn field="extra_field7" width="200px" title={field7} />
-          <GridColumn field="extra_field8" width="200px" title={field8} />
-          <GridColumn field="extra_field9" width="200px" title={field9} />
-          <GridColumn field="extra_field10" width="200px" title={field10} />
-          <GridColumn field="memo" width="120px" title="메모" />
-          <GridColumn
-            field="numref1"
-            width="200px"
-            title={num1}
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="numref2"
-            width="200px"
-            title={num2}
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="numref3"
-            width="200px"
-            title={num3}
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="numref4"
-            width="200px"
-            title={num4}
-            cell={NumberCell}
-          />
-          <GridColumn
-            field="numref5"
-            width="200px"
-            title={num5}
-            cell={NumberCell}
-          />
-          <GridColumn field="insert_userid" width="120px" title="등록자" />
-          <GridColumn field="insert_pc" width="120px" title="등록PC" />
-          <GridColumn field="insert_time" width="120px" title="등록일자" />
-          <GridColumn field="update_userid" width="120px" title="수정자" />
-          <GridColumn field="update_pc" width="120px" title="수정PC" />
-          <GridColumn field="update_time" width="120px" title="수정일자" />
-        </Grid>
-      </GridContainer>
-      <BottomContainer>
-        <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            확인
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-            닫기
-          </Button>
-        </ButtonContainer>
-      </BottomContainer>
+          <SwiperSlide key={0}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer">
+                <ButtonContainer style={{ justifyContent: "end" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <FormBoxWrap style={{ height: mobileheight }}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>그룹코드</th>
+                      <td>
+                        {workType == "N" ? (
+                          <Input
+                            name="group_code"
+                            type="text"
+                            value={initialVal.group_code}
+                            className="required"
+                            onChange={filterInputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="group_code"
+                            type="text"
+                            value={initialVal.group_code}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>그룹코드명</th>
+                      <td>
+                        <Input
+                          name="group_name"
+                          type="text"
+                          value={initialVal.group_name}
+                          className="required"
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>세부코드길이</th>
+                      <td>
+                        <Input
+                          name="code_length"
+                          type="number"
+                          value={initialVal.code_length}
+                          className="required"
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>유형분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="group_category"
+                            value={initialVal.group_category}
+                            customOptionData={customOptionData}
+                            className="required"
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>여유필드캡션1</th>
+                      <td>
+                        <Input
+                          name="field_caption1"
+                          type="text"
+                          value={initialVal.field_caption1}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션2</th>
+                      <td>
+                        <Input
+                          name="field_caption2"
+                          type="text"
+                          value={initialVal.field_caption2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션3</th>
+                      <td>
+                        <Input
+                          name="field_caption3"
+                          type="text"
+                          value={initialVal.field_caption3}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션4</th>
+                      <td>
+                        <Input
+                          name="field_caption4"
+                          type="text"
+                          value={initialVal.field_caption4}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    {!isMobile || (isMobile && showAdditionalFields) ? (
+                      <>
+                        <tr>
+                          <th>여유필드캡션5</th>
+                          <td>
+                            <Input
+                              name="field_caption5"
+                              type="text"
+                              value={initialVal.field_caption5}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션6</th>
+                          <td>
+                            <Input
+                              name="field_caption6"
+                              type="text"
+                              value={initialVal.field_caption6}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션7</th>
+                          <td>
+                            <Input
+                              name="field_caption7"
+                              type="text"
+                              value={initialVal.field_caption7}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션8</th>
+                          <td>
+                            <Input
+                              name="field_caption8"
+                              type="text"
+                              value={initialVal.field_caption8}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>여유필드캡션9</th>
+                          <td>
+                            <Input
+                              name="field_caption9"
+                              type="text"
+                              value={initialVal.field_caption9}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션10</th>
+                          <td>
+                            <Input
+                              name="field_caption10"
+                              type="text"
+                              value={initialVal.field_caption10}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                      </>
+                    ) : null}
+                    {isMobile && (
+                      <tr>
+                        <td>
+                          <Button
+                            themeColor={"primary"}
+                            fillMode={null}
+                            onClick={() =>
+                              setShowAdditionalFields(!showAdditionalFields)
+                            }
+                          >
+                            {showAdditionalFields
+                              ? "여유 필드 숨기기"
+                              : "여유 필드 더보기"}
+                          </Button>
+                        </td>
+                      </tr>
+                    )}
+
+                    <tr>
+                      <th>숫자 참조 필드1</th>
+                      <td>
+                        <Input
+                          name="numref_caption1"
+                          type="text"
+                          value={initialVal.numref_caption1}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드2</th>
+                      <td>
+                        <Input
+                          name="numref_caption2"
+                          type="text"
+                          value={initialVal.numref_caption2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드3</th>
+                      <td>
+                        <Input
+                          name="numref_caption3"
+                          type="text"
+                          value={initialVal.numref_caption3}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드4</th>
+                      <td>
+                        <Input
+                          name="numref_caption4"
+                          type="text"
+                          value={initialVal.numref_caption4}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>숫자 참조 필드5</th>
+                      <td>
+                        <Input
+                          name="numref_caption5"
+                          type="text"
+                          value={initialVal.numref_caption5}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용여부</th>
+                      <td>
+                        <Checkbox
+                          name="use_yn"
+                          value={initialVal.use_yn == "Y" ? true : false}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={7}>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={initialVal.files}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>메모</th>
+                      <td colSpan={7}>
+                        <TextArea
+                          value={initialVal.memo}
+                          name="memo"
+                          rows={2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer2">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(2);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <CommentsGrid
+                ref_key={initialVal.group_code}
+                form_id={pathname}
+                table_id={"comCodeMaster"}
+                style={{ height: mobileheight2 }}
+              />
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer>
+              <GridTitleContainer className="WindowButtonContainer3">
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  <div>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={onAddClick}
+                      icon="add"
+                      title="행 추가"
+                    />
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onDeleteClick}
+                      icon="minus"
+                      title="행 삭제"
+                    />
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onCopyClick}
+                      icon="copy"
+                      title="행 복사"
+                    />
+                  </div>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: mobileheight3 }}
+                data={process(
+                  detailDataResult.data.map((item: any) => ({
+                    ...item,
+                    insert_userid: userListData.find(
+                      (items: any) => items.user_id == item.insert_userid
+                    )?.user_name,
+                    update_userid: userListData.find(
+                      (items: any) => items.user_id == item.update_userid
+                    )?.user_name,
+                    [SELECTED_FIELD]: detailSelectedState[idGetter(item)],
+                  })),
+                  dataState
+                )}
+                {...dataState}
+                onDataStateChange={onGridDataStateChange}
+                // 렌더
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                //선택기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                editField={EDIT_FIELD}
+                selectable={{
+                  enabled: true,
+                  drag: false,
+                  cell: false,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                onHeaderSelectionChange={onHeaderSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={detailDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onGridSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
+                />
+                <GridColumn field="rowstatus" title=" " width="40px" />
+                <GridColumn
+                  field="sub_code"
+                  width="120px"
+                  title="세부코드"
+                  footerCell={detailTotalFooterCell}
+                  headerCell={RequiredHeader}
+                />
+                <GridColumn
+                  field="code_name"
+                  width="200px"
+                  headerCell={RequiredHeader}
+                  title="세부코드명"
+                />
+                <GridColumn
+                  field="system_yn"
+                  width="120px"
+                  title="시스템코드"
+                  cell={CheckBoxCell}
+                />
+                <GridColumn
+                  field="sort_seq"
+                  width="120px"
+                  title="정렬순서"
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="use_yn"
+                  width="95px"
+                  title="사용"
+                  cell={CheckBoxCell}
+                />
+                <GridColumn field="extra_field1" width="200px" title={field1} />
+                <GridColumn field="extra_field2" width="200px" title={field2} />
+                <GridColumn field="extra_field3" width="200px" title={field3} />
+                <GridColumn field="extra_field4" width="200px" title={field4} />
+                <GridColumn field="extra_field5" width="200px" title={field5} />
+                <GridColumn field="extra_field6" width="200px" title={field6} />
+                <GridColumn field="extra_field7" width="200px" title={field7} />
+                <GridColumn field="extra_field8" width="200px" title={field8} />
+                <GridColumn field="extra_field9" width="200px" title={field9} />
+                <GridColumn
+                  field="extra_field10"
+                  width="200px"
+                  title={field10}
+                />
+                <GridColumn field="memo" width="120px" title="메모" />
+                <GridColumn
+                  field="numref1"
+                  width="200px"
+                  title={num1}
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="numref2"
+                  width="200px"
+                  title={num2}
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="numref3"
+                  width="200px"
+                  title={num3}
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="numref4"
+                  width="200px"
+                  title={num4}
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="numref5"
+                  width="200px"
+                  title={num5}
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="insert_userid"
+                  width="120px"
+                  title="등록자"
+                />
+                <GridColumn field="insert_pc" width="120px" title="등록PC" />
+                <GridColumn
+                  field="insert_time"
+                  width="120px"
+                  title="등록일자"
+                />
+                <GridColumn
+                  field="update_userid"
+                  width="120px"
+                  title="수정자"
+                />
+                <GridColumn field="update_pc" width="120px" title="수정PC" />
+                <GridColumn
+                  field="update_time"
+                  width="120px"
+                  title="수정일자"
+                />
+              </Grid>
+              <BottomContainer className="BottomContainer">
+                <ButtonContainer>
+                  <Button themeColor={"primary"} onClick={handleSubmit}>
+                    확인
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    onClick={onClose}
+                  >
+                    닫기
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
+      ) : (
+        <>
+          <GridContainerWrap>
+            <GridContainer width={`68%`}>
+              <FormBoxWrap style={{ height: webheight }}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>그룹코드</th>
+                      <td>
+                        {workType == "N" ? (
+                          <Input
+                            name="group_code"
+                            type="text"
+                            value={initialVal.group_code}
+                            className="required"
+                            onChange={filterInputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="group_code"
+                            type="text"
+                            value={initialVal.group_code}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>그룹코드명</th>
+                      <td>
+                        <Input
+                          name="group_name"
+                          type="text"
+                          value={initialVal.group_name}
+                          className="required"
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>세부코드길이</th>
+                      <td>
+                        <Input
+                          name="code_length"
+                          type="number"
+                          value={initialVal.code_length}
+                          className="required"
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>유형분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="group_category"
+                            value={initialVal.group_category}
+                            customOptionData={customOptionData}
+                            className="required"
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>여유필드캡션1</th>
+                      <td>
+                        <Input
+                          name="field_caption1"
+                          type="text"
+                          value={initialVal.field_caption1}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션2</th>
+                      <td>
+                        <Input
+                          name="field_caption2"
+                          type="text"
+                          value={initialVal.field_caption2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션3</th>
+                      <td>
+                        <Input
+                          name="field_caption3"
+                          type="text"
+                          value={initialVal.field_caption3}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션4</th>
+                      <td>
+                        <Input
+                          name="field_caption4"
+                          type="text"
+                          value={initialVal.field_caption4}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    {!isMobile || (isMobile && showAdditionalFields) ? (
+                      <>
+                        <tr>
+                          <th>여유필드캡션5</th>
+                          <td>
+                            <Input
+                              name="field_caption5"
+                              type="text"
+                              value={initialVal.field_caption5}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션6</th>
+                          <td>
+                            <Input
+                              name="field_caption6"
+                              type="text"
+                              value={initialVal.field_caption6}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션7</th>
+                          <td>
+                            <Input
+                              name="field_caption7"
+                              type="text"
+                              value={initialVal.field_caption7}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션8</th>
+                          <td>
+                            <Input
+                              name="field_caption8"
+                              type="text"
+                              value={initialVal.field_caption8}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>여유필드캡션9</th>
+                          <td>
+                            <Input
+                              name="field_caption9"
+                              type="text"
+                              value={initialVal.field_caption9}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <th>여유필드캡션10</th>
+                          <td>
+                            <Input
+                              name="field_caption10"
+                              type="text"
+                              value={initialVal.field_caption10}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                      </>
+                    ) : null}
+                    {isMobile && (
+                      <tr>
+                        <td>
+                          <Button
+                            themeColor={"primary"}
+                            fillMode={null}
+                            onClick={() =>
+                              setShowAdditionalFields(!showAdditionalFields)
+                            }
+                          >
+                            {showAdditionalFields
+                              ? "여유 필드 숨기기"
+                              : "여유 필드 더보기"}
+                          </Button>
+                        </td>
+                      </tr>
+                    )}
+
+                    <tr>
+                      <th>숫자 참조 필드1</th>
+                      <td>
+                        <Input
+                          name="numref_caption1"
+                          type="text"
+                          value={initialVal.numref_caption1}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드2</th>
+                      <td>
+                        <Input
+                          name="numref_caption2"
+                          type="text"
+                          value={initialVal.numref_caption2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드3</th>
+                      <td>
+                        <Input
+                          name="numref_caption3"
+                          type="text"
+                          value={initialVal.numref_caption3}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>숫자 참조 필드4</th>
+                      <td>
+                        <Input
+                          name="numref_caption4"
+                          type="text"
+                          value={initialVal.numref_caption4}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>숫자 참조 필드5</th>
+                      <td>
+                        <Input
+                          name="numref_caption5"
+                          type="text"
+                          value={initialVal.numref_caption5}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용여부</th>
+                      <td>
+                        <Checkbox
+                          name="use_yn"
+                          value={initialVal.use_yn == "Y" ? true : false}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td colSpan={7}>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={initialVal.files}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onAttachmentsWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>메모</th>
+                      <td colSpan={7}>
+                        <TextArea
+                          value={initialVal.memo}
+                          name="memo"
+                          rows={2}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
+            <GridContainer width={`calc(32% - ${GAP}px)`}>
+              <CommentsGrid
+                ref_key={initialVal.group_code}
+                form_id={pathname}
+                table_id={"comCodeMaster"}
+                style={{ height: webheight2 }}
+              />
+            </GridContainer>
+          </GridContainerWrap>
+          <GridContainer>
+            <ButtonContainer className="WindowButtonContainer3">
+              <Button
+                themeColor={"primary"}
+                onClick={onAddClick}
+                icon="add"
+                title="행 추가"
+              />
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onDeleteClick}
+                icon="minus"
+                title="행 삭제"
+              />
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyClick}
+                icon="copy"
+                title="행 복사"
+              />
+            </ButtonContainer>
+            <Grid
+              style={{ height: webheight3 }}
+              data={process(
+                detailDataResult.data.map((item: any) => ({
+                  ...item,
+                  insert_userid: userListData.find(
+                    (items: any) => items.user_id == item.insert_userid
+                  )?.user_name,
+                  update_userid: userListData.find(
+                    (items: any) => items.user_id == item.update_userid
+                  )?.user_name,
+                  [SELECTED_FIELD]: detailSelectedState[idGetter(item)],
+                })),
+                dataState
+              )}
+              {...dataState}
+              onDataStateChange={onGridDataStateChange}
+              // 렌더
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              //선택기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              editField={EDIT_FIELD}
+              selectable={{
+                enabled: true,
+                drag: false,
+                cell: false,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              onHeaderSelectionChange={onHeaderSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={detailDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onGridSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
+              <GridColumn field="rowstatus" title=" " width="40px" />
+              <GridColumn
+                field="sub_code"
+                width="120px"
+                title="세부코드"
+                footerCell={detailTotalFooterCell}
+                headerCell={RequiredHeader}
+              />
+              <GridColumn
+                field="code_name"
+                width="200px"
+                headerCell={RequiredHeader}
+                title="세부코드명"
+              />
+              <GridColumn
+                field="system_yn"
+                width="120px"
+                title="시스템코드"
+                cell={CheckBoxCell}
+              />
+              <GridColumn
+                field="sort_seq"
+                width="120px"
+                title="정렬순서"
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="use_yn"
+                width="95px"
+                title="사용"
+                cell={CheckBoxCell}
+              />
+              <GridColumn field="extra_field1" width="200px" title={field1} />
+              <GridColumn field="extra_field2" width="200px" title={field2} />
+              <GridColumn field="extra_field3" width="200px" title={field3} />
+              <GridColumn field="extra_field4" width="200px" title={field4} />
+              <GridColumn field="extra_field5" width="200px" title={field5} />
+              <GridColumn field="extra_field6" width="200px" title={field6} />
+              <GridColumn field="extra_field7" width="200px" title={field7} />
+              <GridColumn field="extra_field8" width="200px" title={field8} />
+              <GridColumn field="extra_field9" width="200px" title={field9} />
+              <GridColumn field="extra_field10" width="200px" title={field10} />
+              <GridColumn field="memo" width="120px" title="메모" />
+              <GridColumn
+                field="numref1"
+                width="200px"
+                title={num1}
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="numref2"
+                width="200px"
+                title={num2}
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="numref3"
+                width="200px"
+                title={num3}
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="numref4"
+                width="200px"
+                title={num4}
+                cell={NumberCell}
+              />
+              <GridColumn
+                field="numref5"
+                width="200px"
+                title={num5}
+                cell={NumberCell}
+              />
+              <GridColumn field="insert_userid" width="120px" title="등록자" />
+              <GridColumn field="insert_pc" width="120px" title="등록PC" />
+              <GridColumn field="insert_time" width="120px" title="등록일자" />
+              <GridColumn field="update_userid" width="120px" title="수정자" />
+              <GridColumn field="update_pc" width="120px" title="수정PC" />
+              <GridColumn field="update_time" width="120px" title="수정일자" />
+            </Grid>
+          </GridContainer>
+          <BottomContainer className="BottomContainer">
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={handleSubmit}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
+        </>
+      )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}

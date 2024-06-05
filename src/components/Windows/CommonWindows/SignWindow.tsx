@@ -46,9 +46,7 @@ type IWindow = {
   reference_key: string;
   modal?: boolean;
 };
-const topHeight = 10;
-const bottomHeight = 40;
-const leftOverHeight = (topHeight + bottomHeight) / 2;
+
 let targetRowIndex: null | number = null;
 var height = 0;
 var height3 = 0;

@@ -49,10 +49,6 @@ import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Window from "../WindowComponent/Window";
 
-const topHeight = 55;
-const bottomHeight = 55;
-const leftOverHeight = (topHeight + bottomHeight) / 2;
-
 type TKendoWindow = {
   setVisible(t: boolean): void;
   reload(): void;

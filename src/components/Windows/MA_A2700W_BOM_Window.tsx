@@ -1169,33 +1169,37 @@ const CopyWindow = ({
             <SwiperSlide key={1}>
               <GridContainer>
                 <GridTitleContainer className="WindowButtonContainer2">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <div>
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(0);
-                          }
-                        }}
-                        icon="chevron-left"
-                        themeColor={"primary"}
-                        fillMode={"flat"}
-                      ></Button>
-                      BOM 제품하위자재조회
-                    </div>
-                    <div>
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                        icon="chevron-right"
-                        themeColor={"primary"}
-                        fillMode={"flat"}
-                      ></Button>
-                    </div>
-                  </ButtonContainer>
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        BOM 제품하위자재조회
+                      </div>
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </div>
+                    </ButtonContainer>
+                  </GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{ height: mobileheight2 }}

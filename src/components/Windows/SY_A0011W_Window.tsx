@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -14,6 +14,7 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   findMessage,
+  getHeight,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -28,6 +29,9 @@ type TKendoWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -52,8 +56,19 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 500,
     height: isMobile == true ? deviceHeight : 320,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -100,7 +115,7 @@ const KendoWindow = ({
       "@p_user_group_id": user_group_id,
       "@p_user_group_name": "",
       "@p_culture_name": "",
-      "@p_use_yn": "",
+      "@p_use_yn": "%",
       "@p_find_row_value": "",
     },
   };
@@ -116,16 +131,19 @@ const KendoWindow = ({
 
     if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
+      const totalRowCnt = data.tables[0].RowCount;
 
-      setInitialVal((prev) => {
-        return {
-          ...prev,
-          user_group_id: row.user_group_id,
-          user_group_name: row.user_group_name,
-          memo: row.memo,
-          use_yn: row.use_yn,
-        };
-      });
+      if (totalRowCnt > 0) {
+        setInitialVal((prev) => {
+          return {
+            ...prev,
+            user_group_id: row.user_group_id,
+            user_group_name: row.user_group_name,
+            memo: row.memo,
+            use_yn: row.use_yn,
+          };
+        });
+      }
     }
   };
 
@@ -224,7 +242,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap>
+      <FormBoxWrap style={{ height: isMobile ? mobileheight : webheight }}>
         <FormBox>
           <tbody>
             <tr>
@@ -284,7 +302,7 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={handleSubmit}>
             저장

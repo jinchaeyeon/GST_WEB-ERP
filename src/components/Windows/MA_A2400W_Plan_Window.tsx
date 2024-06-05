@@ -1256,28 +1256,32 @@ const CopyWindow = ({
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="WindowButtonContainer3">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <div>
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        Keeping
+                      </div>
                       <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(1);
-                          }
-                        }}
-                        icon="chevron-left"
+                        onClick={onDeleteClick}
+                        fillMode="outline"
                         themeColor={"primary"}
-                        fillMode={"flat"}
+                        title="행 삭제"
+                        icon="minus"
                       ></Button>
-                      Keeping
-                    </div>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      title="행 삭제"
-                      icon="minus"
-                    ></Button>
-                  </ButtonContainer>
+                    </ButtonContainer>
+                  </GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{

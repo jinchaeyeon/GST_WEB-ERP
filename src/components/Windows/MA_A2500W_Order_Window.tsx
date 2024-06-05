@@ -1720,28 +1720,32 @@ const CopyWindow = ({
             <SwiperSlide key={3}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="WindowButtonContainer4">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <div>
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        Keeping
+                      </div>
                       <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                        icon="chevron-left"
+                        onClick={onDeleteClick}
+                        fillMode="outline"
                         themeColor={"primary"}
-                        fillMode={"flat"}
+                        title="행 삭제"
+                        icon="minus"
                       ></Button>
-                      Keeping
-                    </div>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      title="행 삭제"
-                      icon="minus"
-                    ></Button>
-                  </ButtonContainer>
+                    </ButtonContainer>
+                  </GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{ height: mobileheight4 }}

@@ -13,21 +13,22 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   ButtonInInput,
-  FormBox,
-  FormBoxWrap,
+  FilterBox,
   GridContainer,
   GridTitle,
   GridTitleContainer,
+  Title,
+  TitleContainer
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -41,10 +42,13 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getHeight,
+  handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -57,6 +61,13 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
 
 const CopyWindow = ({
   setVisible,
@@ -73,9 +84,39 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 700,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height5 = getHeight(".filterBox2"); //필터 웹
+      height6 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(
+        deviceHeight - height - height2 - height3 - height4 - height6
+      );
+      setWebHeight(
+        position.height - height - height2 - height3 - height5 - height6
+      );
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      position.height - height - height2 - height3 - height5 - height6
+    );
   };
+
   const DATA_ITEM_KEY = "num";
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -84,10 +125,6 @@ const CopyWindow = ({
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -156,6 +193,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -544,20 +582,20 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
-          <GridTitleContainer>
-            <GridTitle></GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={() => search()}
-                icon="search"
-                themeColor={"primary"}
-              >
-                조회
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <FormBox>
+        <TitleContainer className="TitleContainer">
+          <Title />
+          <ButtonContainer>
+            <Button
+              onClick={() => search()}
+              icon="search"
+              themeColor={"primary"}
+            >
+              조회
+            </Button>
+          </ButtonContainer>
+        </TitleContainer>
+        <WindowFilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
                 <th>일자</th>
@@ -659,14 +697,14 @@ const CopyWindow = ({
                 </td>
               </tr>
             </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <GridContainer height="calc(100% - 200px) ">
-          <GridTitleContainer>
+          </FilterBox>
+        </WindowFilterContainer>
+        <GridContainer>
+          <GridTitleContainer className="WindowButtonContainer">
             <GridTitle>기본정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 50px)" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -773,7 +811,7 @@ const CopyWindow = ({
             />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               확인

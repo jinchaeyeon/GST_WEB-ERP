@@ -979,7 +979,6 @@ const KendoWindow = ({
               <GridTitleContainer className="WindowButtonContainer">
                 <GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    {" "}
                     <div>품목리스트</div>
                     <div>
                       <Button
@@ -1053,7 +1052,6 @@ const KendoWindow = ({
               <GridTitleContainer className="WindowButtonContainer3">
                 <GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    {" "}
                     <div>
                       <Button
                         onClick={() => {

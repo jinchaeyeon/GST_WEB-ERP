@@ -14,8 +14,17 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -42,6 +51,7 @@ import {
   UseMessages,
   convertDateToStr,
   getGridItemChangedData,
+  getHeight,
   numberWithCommas,
   toDate,
 } from "../CommonFunction";
@@ -56,6 +66,10 @@ import Window from "./WindowComponent/Window";
 
 let temp = 0;
 let deletedMainRows: object[] = [];
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -520,9 +534,34 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 900,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height - height2 - height4);
+      setWebHeight(position.height - height - height2 - height3 - height4);
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height4);
   };
+
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [acntcd, setAcntcd] = useState<string>("");
@@ -542,10 +581,6 @@ const CopyWindow = ({
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1722,301 +1757,671 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>입금번호</th>
-                <td>
-                  <Input
-                    name="collectnum"
-                    type="text"
-                    value={filters.collectnum}
-                    className="readonly"
-                  />
-                </td>
-                <th>수금일자</th>
-                <td>
-                  <div className="filter-item-wrap">
-                    <DatePicker
-                      name="indt"
-                      value={filters.indt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                    />
-                  </div>
-                </td>
-                <th>사업장</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="location"
-                      value={filters.location}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>사업부</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="position"
-                      value={filters.position}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
-                <th>내수구분</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="doexdiv"
-                      value={filters.doexdiv}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      type="new"
-                      className="readonly"
-                      disabled={true}
-                    />
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <FormContext.Provider
-          value={{
-            acntcd,
-            acntnm,
-            setAcntcd,
-            setAcntnm,
-            mainDataState,
-            setMainDataState,
-            // fetchGrid,
-          }}
-        >
-          <FormContext2.Provider
-            value={{
-              custcd,
-              custnm,
-              setCustcd,
-              setCustnm,
-              mainDataState,
-              setMainDataState,
-              // fetchGrid,
+        {isMobile ? (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
             }}
           >
-            <FormContext3.Provider
-              value={{
-                stdrmkcd,
-                stdrmknm,
-                acntcd,
-                acntnm,
-                setAcntcd,
-                setAcntnm,
-                setStdrmkcd,
-                setStdrmknm,
-                mainDataState,
-                setMainDataState,
-                // fetchGrid,
-              }}
-            >
-              <FormContext4.Provider
+            <SwiperSlide key={0}>
+              <FormBoxWrap
+                className="FormBoxWrap"
+                style={{ height: mobileheight }}
+              >
+                <ButtonContainer style={{ justifyContent: "end" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>입금번호</th>
+                      <td>
+                        <Input
+                          name="collectnum"
+                          type="text"
+                          value={filters.collectnum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>수금일자</th>
+                      <td>
+                        <div className="filter-item-wrap">
+                          <DatePicker
+                            name="indt"
+                            value={filters.indt}
+                            format="yyyy-MM-dd"
+                            onChange={filterInputChange}
+                            className="required"
+                            placeholder=""
+                          />
+                        </div>
+                      </td>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>사업부</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="position"
+                            value={filters.position}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>내수구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="doexdiv"
+                            value={filters.doexdiv}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                            type="new"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <FormContext.Provider
                 value={{
-                  acntsrtnm,
-                  acntnum,
-                  setAcntsrtnm,
-                  setAcntnum,
+                  acntcd,
+                  acntnm,
+                  setAcntcd,
+                  setAcntnm,
                   mainDataState,
                   setMainDataState,
                   // fetchGrid,
                 }}
               >
-                <GridContainer height="calc(100% - 150px) ">
-                  <GridTitleContainer>
-                    <GridTitle>기본정보</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        themeColor={"primary"}
-                        onClick={onDetailClick}
-                        icon="folder-open"
-                      >
-                        기초잔액
-                      </Button>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "calc(100% - 50px)" }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        rowstatus:
-                          row.rowstatus == null ||
-                          row.rowstatus == "" ||
-                          row.rowstatus == undefined
-                            ? ""
-                            : row.rowstatus,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                      })),
-                      mainDataState
-                    )}
-                    onDataStateChange={onMainDataStateChange}
-                    {...mainDataState}
-                    //선택 subDataState
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
+                <FormContext2.Provider
+                  value={{
+                    custcd,
+                    custnm,
+                    setCustcd,
+                    setCustnm,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <FormContext3.Provider
+                    value={{
+                      stdrmkcd,
+                      stdrmknm,
+                      acntcd,
+                      acntnm,
+                      setAcntcd,
+                      setAcntnm,
+                      setStdrmkcd,
+                      setStdrmknm,
+                      mainDataState,
+                      setMainDataState,
+                      // fetchGrid,
                     }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
                   >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    <GridColumn
-                      field="drcrdiv"
-                      title="차대구분"
-                      width="150px"
-                      cell={CustomRadioCell}
-                      footerCell={mainTotalFooterCell}
-                    />
-                    <GridColumn
-                      field="amt_1"
-                      title="차변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn
-                      field="amt_2"
-                      title="대변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn
-                      field="stdrmkcd"
-                      title="단축코드"
-                      width="120px"
-                      cell={ColumnCommandCell3}
-                    />
-                    <GridColumn field="stdrmknm" title="단축명" width="120px" />
-                    <GridColumn
-                      field="acntcd"
-                      title="계정과목코드"
-                      width="120px"
-                      cell={ColumnCommandCell}
-                    />
-                    <GridColumn
-                      field="acntnm"
-                      title="계정과목명"
-                      width="120px"
-                    />
-                    <GridColumn
-                      field="custcd"
-                      title="업체코드"
-                      width="120px"
-                      cell={ColumnCommandCell2}
-                    />
-                    <GridColumn field="custnm" title="업체명" width="120px" />
-                    <GridColumn
-                      field="acntnum"
-                      title="예적금코드"
-                      width="120px"
-                      cell={ColumnCommandCell4}
-                    />
-                    <GridColumn
-                      field="acntsrtnm"
-                      title="예적금명"
-                      width="120px"
-                    />
-                    <GridColumn field="remark1" title="적요" width="200px" />
-                    <GridColumn
-                      field="taxnum"
-                      title="계산서번호"
-                      width="150px"
-                    />
-                    <GridColumn
-                      field="notenum"
-                      title="어음번호"
-                      width="150px"
-                    />
-                    <GridColumn
-                      field="pubdt"
-                      title="발행일자"
-                      width="120px"
-                      cell={DateCell}
-                    />
-                    <GridColumn
-                      field="enddt"
-                      title="만기일자"
-                      width="120px"
-                      cell={DateCell}
-                    />
-                    <GridColumn
-                      field="pubbank"
-                      title="발행은행명"
-                      width="120px"
-                    />
-                    <GridColumn
-                      field="pubperson"
-                      title="발행인"
-                      width="120px"
-                    />
-                  </Grid>
-                </GridContainer>
-              </FormContext4.Provider>
-            </FormContext3.Provider>
-          </FormContext2.Provider>
-        </FormContext.Provider>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
+                    <FormContext4.Provider
+                      value={{
+                        acntsrtnm,
+                        acntnum,
+                        setAcntsrtnm,
+                        setAcntnum,
+                        mainDataState,
+                        setMainDataState,
+                        // fetchGrid,
+                      }}
+                    >
+                      <GridContainer>
+                        <GridTitleContainer className="WindowButtonContainer">
+                          <GridTitle>기본정보</GridTitle>
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper && isMobile) {
+                                  swiper.slideTo(0);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            <div>
+                              <Button
+                                themeColor={"primary"}
+                                onClick={onDetailClick}
+                                icon="folder-open"
+                              >
+                                기초잔액
+                              </Button>
+                              <Button
+                                onClick={onAddClick}
+                                themeColor={"primary"}
+                                icon="plus"
+                                title="행 추가"
+                              ></Button>
+                              <Button
+                                onClick={onDeleteClick}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="minus"
+                                title="행 삭제"
+                              ></Button>
+                            </div>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <Grid
+                          style={{ height: mobileheight2 }}
+                          data={process(
+                            mainDataResult.data.map((row) => ({
+                              ...row,
+                              rowstatus:
+                                row.rowstatus == null ||
+                                row.rowstatus == "" ||
+                                row.rowstatus == undefined
+                                  ? ""
+                                  : row.rowstatus,
+                              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                            })),
+                            mainDataState
+                          )}
+                          onDataStateChange={onMainDataStateChange}
+                          {...mainDataState}
+                          //선택 subDataState
+                          dataItemKey={DATA_ITEM_KEY}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange}
+                          //스크롤 조회기능
+                          fixedScroll={true}
+                          total={mainDataResult.total}
+                          skip={page.skip}
+                          take={page.take}
+                          pageable={true}
+                          onPageChange={pageChange}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onMainItemChange}
+                          cellRender={customCellRender}
+                          rowRender={customRowRender}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          <GridColumn
+                            field="drcrdiv"
+                            title="차대구분"
+                            width="150px"
+                            cell={CustomRadioCell}
+                            footerCell={mainTotalFooterCell}
+                          />
+                          <GridColumn
+                            field="amt_1"
+                            title="차변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="amt_2"
+                            title="대변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="stdrmkcd"
+                            title="단축코드"
+                            width="120px"
+                            cell={ColumnCommandCell3}
+                          />
+                          <GridColumn
+                            field="stdrmknm"
+                            title="단축명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="acntcd"
+                            title="계정과목코드"
+                            width="120px"
+                            cell={ColumnCommandCell}
+                          />
+                          <GridColumn
+                            field="acntnm"
+                            title="계정과목명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="custcd"
+                            title="업체코드"
+                            width="120px"
+                            cell={ColumnCommandCell2}
+                          />
+                          <GridColumn
+                            field="custnm"
+                            title="업체명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="acntnum"
+                            title="예적금코드"
+                            width="120px"
+                            cell={ColumnCommandCell4}
+                          />
+                          <GridColumn
+                            field="acntsrtnm"
+                            title="예적금명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="remark1"
+                            title="적요"
+                            width="200px"
+                          />
+                          <GridColumn
+                            field="taxnum"
+                            title="계산서번호"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="notenum"
+                            title="어음번호"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="pubdt"
+                            title="발행일자"
+                            width="120px"
+                            cell={DateCell}
+                          />
+                          <GridColumn
+                            field="enddt"
+                            title="만기일자"
+                            width="120px"
+                            cell={DateCell}
+                          />
+                          <GridColumn
+                            field="pubbank"
+                            title="발행은행명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="pubperson"
+                            title="발행인"
+                            width="120px"
+                          />
+                        </Grid>
+                        <BottomContainer className="BottomContainer">
+                          <ButtonContainer>
+                            <Button themeColor={"primary"} onClick={selectData}>
+                              저장
+                            </Button>
+                            <Button
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                              onClick={onClose}
+                            >
+                              닫기
+                            </Button>
+                          </ButtonContainer>
+                        </BottomContainer>
+                      </GridContainer>
+                    </FormContext4.Provider>
+                  </FormContext3.Provider>
+                </FormContext2.Provider>
+              </FormContext.Provider>
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <>
+            <FormBoxWrap className="FormBoxWrap">
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>입금번호</th>
+                    <td>
+                      <Input
+                        name="collectnum"
+                        type="text"
+                        value={filters.collectnum}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>수금일자</th>
+                    <td>
+                      <div className="filter-item-wrap">
+                        <DatePicker
+                          name="indt"
+                          value={filters.indt}
+                          format="yyyy-MM-dd"
+                          onChange={filterInputChange}
+                          className="required"
+                          placeholder=""
+                        />
+                      </div>
+                    </td>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>사업부</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="position"
+                          value={filters.position}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                    <th>내수구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="doexdiv"
+                          value={filters.doexdiv}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                          type="new"
+                          className="readonly"
+                          disabled={true}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+            <FormContext.Provider
+              value={{
+                acntcd,
+                acntnm,
+                setAcntcd,
+                setAcntnm,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
             >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+              <FormContext2.Provider
+                value={{
+                  custcd,
+                  custnm,
+                  setCustcd,
+                  setCustnm,
+                  mainDataState,
+                  setMainDataState,
+                  // fetchGrid,
+                }}
+              >
+                <FormContext3.Provider
+                  value={{
+                    stdrmkcd,
+                    stdrmknm,
+                    acntcd,
+                    acntnm,
+                    setAcntcd,
+                    setAcntnm,
+                    setStdrmkcd,
+                    setStdrmknm,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <FormContext4.Provider
+                    value={{
+                      acntsrtnm,
+                      acntnum,
+                      setAcntsrtnm,
+                      setAcntnum,
+                      mainDataState,
+                      setMainDataState,
+                      // fetchGrid,
+                    }}
+                  >
+                    <GridContainer>
+                      <GridTitleContainer className="WindowButtonContainer">
+                        <GridTitle>기본정보</GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            themeColor={"primary"}
+                            onClick={onDetailClick}
+                            icon="folder-open"
+                          >
+                            기초잔액
+                          </Button>
+                          <Button
+                            onClick={onAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onDeleteClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <Grid
+                        style={{ height: webheight }}
+                        data={process(
+                          mainDataResult.data.map((row) => ({
+                            ...row,
+                            rowstatus:
+                              row.rowstatus == null ||
+                              row.rowstatus == "" ||
+                              row.rowstatus == undefined
+                                ? ""
+                                : row.rowstatus,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          mainDataState
+                        )}
+                        onDataStateChange={onMainDataStateChange}
+                        {...mainDataState}
+                        //선택 subDataState
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange}
+                        //스크롤 조회기능
+                        fixedScroll={true}
+                        total={mainDataResult.total}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable={true}
+                        onPageChange={pageChange}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <GridColumn
+                          field="drcrdiv"
+                          title="차대구분"
+                          width="150px"
+                          cell={CustomRadioCell}
+                          footerCell={mainTotalFooterCell}
+                        />
+                        <GridColumn
+                          field="amt_1"
+                          title="차변금액"
+                          width="100px"
+                          cell={NumberCell}
+                          footerCell={editNumberFooterCell}
+                        />
+                        <GridColumn
+                          field="amt_2"
+                          title="대변금액"
+                          width="100px"
+                          cell={NumberCell}
+                          footerCell={editNumberFooterCell}
+                        />
+                        <GridColumn
+                          field="stdrmkcd"
+                          title="단축코드"
+                          width="120px"
+                          cell={ColumnCommandCell3}
+                        />
+                        <GridColumn
+                          field="stdrmknm"
+                          title="단축명"
+                          width="120px"
+                        />
+                        <GridColumn
+                          field="acntcd"
+                          title="계정과목코드"
+                          width="120px"
+                          cell={ColumnCommandCell}
+                        />
+                        <GridColumn
+                          field="acntnm"
+                          title="계정과목명"
+                          width="120px"
+                        />
+                        <GridColumn
+                          field="custcd"
+                          title="업체코드"
+                          width="120px"
+                          cell={ColumnCommandCell2}
+                        />
+                        <GridColumn
+                          field="custnm"
+                          title="업체명"
+                          width="120px"
+                        />
+                        <GridColumn
+                          field="acntnum"
+                          title="예적금코드"
+                          width="120px"
+                          cell={ColumnCommandCell4}
+                        />
+                        <GridColumn
+                          field="acntsrtnm"
+                          title="예적금명"
+                          width="120px"
+                        />
+                        <GridColumn
+                          field="remark1"
+                          title="적요"
+                          width="200px"
+                        />
+                        <GridColumn
+                          field="taxnum"
+                          title="계산서번호"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="notenum"
+                          title="어음번호"
+                          width="150px"
+                        />
+                        <GridColumn
+                          field="pubdt"
+                          title="발행일자"
+                          width="120px"
+                          cell={DateCell}
+                        />
+                        <GridColumn
+                          field="enddt"
+                          title="만기일자"
+                          width="120px"
+                          cell={DateCell}
+                        />
+                        <GridColumn
+                          field="pubbank"
+                          title="발행은행명"
+                          width="120px"
+                        />
+                        <GridColumn
+                          field="pubperson"
+                          title="발행인"
+                          width="120px"
+                        />
+                      </Grid>
+                    </GridContainer>
+                  </FormContext4.Provider>
+                </FormContext3.Provider>
+              </FormContext2.Provider>
+            </FormContext.Provider>
+            <BottomContainer className="BottomContainer">
+              <ButtonContainer>
+                <Button themeColor={"primary"} onClick={selectData}>
+                  저장
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  onClick={onClose}
+                >
+                  닫기
+                </Button>
+              </ButtonContainer>
+            </BottomContainer>
+          </>
+        )}
       </Window>
       {DetailWindowVisible && (
         <MA_A8000W_Acnt_Window
