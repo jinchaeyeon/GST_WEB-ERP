@@ -9,7 +9,11 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type barcode = {
@@ -54,13 +58,19 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
     height3 = getHeight(".WindowTitleContainer");
 
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight(position.height - height - height2 - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
 
   const [loginResult] = useRecoilState(loginResultState);

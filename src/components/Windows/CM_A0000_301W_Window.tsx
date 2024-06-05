@@ -22,6 +22,7 @@ import {
   convertDateToStr,
   dateformat,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -81,13 +82,19 @@ const KendoWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼
 
-      setMobileHeight(deviceHeight - height - height2);
-      setWebHeight(position.height - height - height2);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) - height - height2
+      );
     }
   }, [customOptionData]);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {

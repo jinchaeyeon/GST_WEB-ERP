@@ -2,6 +2,9 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -19,13 +22,11 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 import Window from "./WindowComponent/Window";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -129,16 +130,26 @@ const CopyWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setMobileHeight2(deviceHeight - height - height2);
-    setMobileHeight3(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setMobileHeight3(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");

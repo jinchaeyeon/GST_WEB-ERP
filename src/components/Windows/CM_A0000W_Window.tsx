@@ -45,6 +45,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   setDefaultDate2,
 } from "../CommonFunction";
 import {
@@ -131,17 +132,35 @@ const KendoWindow = ({
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowButtonContainer");
       height4 = getHeight(".WindowButtonContainer2");
-      setMobileHeight(deviceHeight - height - height3);
-      setMobileHeight2(deviceHeight - height - height2 - height4);
-      setWebHeight(position.height - height - height2);
-      setWebHeight2(position.height - height - height2 - height4);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height3
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) - height - height2
+      );
+      setWebHeight2(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height4
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
-    setWebHeight2(position.height - height - height2 - height4);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height4
+    );
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅

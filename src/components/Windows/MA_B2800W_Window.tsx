@@ -31,6 +31,7 @@ import {
   convertDateToStr,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -107,14 +108,20 @@ const KendoWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-      setMobileHeight(deviceHeight - height - height2);
-      setWebHeight(position.height - height - height2);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) - height - height2
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
   const setLoading = useSetRecoilState(isLoading);
 

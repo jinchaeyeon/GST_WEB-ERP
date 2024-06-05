@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { getHeight } from "../CommonFunction";
+import { getHeight, getWindowDeviceHeight } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type barcode = {
@@ -47,13 +47,19 @@ const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
     height3 = getHeight(".WindowTitleContainer");
 
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight(position.height - height - height2 - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
 
   const onClose = () => {

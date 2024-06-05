@@ -40,6 +40,7 @@ import {
   UseMessages,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../CommonFunction";
@@ -67,8 +68,6 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
-var height6 = 0;
-var height7 = 0;
 let targetRowIndex: null | number = null;
 
 const ProdStockWindow = ({
@@ -110,31 +109,57 @@ const ProdStockWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
       height3 = getHeight(".BottomContainer"); //하단 버튼부분
-      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height5 = getHeight(".filterBox2"); //필터 웹
-      height6 = getHeight(".WindowButtonContainer");
-      height7 = getHeight(".WindowButtonContainer2");
+      height4 = getHeight(".WindowButtonContainer");
+      height5 = getHeight(".WindowButtonContainer2");
       setMobileHeight(
-        deviceHeight - height - height2 - height3 - height4 - height6
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
       setMobileHeight2(
-        deviceHeight - height - height2 - height3 - height4 - height7
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height5
       );
       setWebHeight(
-        (position.height - height - height2 - height3 - height5) / 2 - height6
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height4
       );
       setWebHeight2(
-        (position.height - height - height2 - height3 - height5) / 2 - height7
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height5
       );
     }
   }, [customOptionData]);
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      (position.height - height - height2 - height3 - height5) / 2 - height6
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height4
     );
     setWebHeight2(
-      (position.height - height - height2 - height3 - height5) / 2 - height7
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height5
     );
   };
 

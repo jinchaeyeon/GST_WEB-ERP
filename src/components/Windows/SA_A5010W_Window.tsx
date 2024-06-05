@@ -65,6 +65,7 @@ import {
   getHeight,
   getItemQuery,
   getUnpQuery,
+  getWindowDeviceHeight,
   isValidDate,
   numberWithCommas,
   toDate,
@@ -476,15 +477,29 @@ const CopyWindow = ({
       height3 = getHeight(".FormBoxWrap");
       height4 = getHeight(".WindowButtonContainer");
 
-      setMobileHeight(deviceHeight - height);
-      setMobileHeight2(deviceHeight - height - height2 - height4);
-      setWebHeight(position.height - height - height2 - height3 - height4);
+      setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   };
 
   const DATA_ITEM_KEY = "num";

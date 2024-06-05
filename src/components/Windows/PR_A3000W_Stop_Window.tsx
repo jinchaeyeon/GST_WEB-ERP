@@ -22,6 +22,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import { FormComboBox, FormReadOnly } from "../Editors";
 import Window from "./WindowComponent/Window";
@@ -59,13 +60,19 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   // 세션 아이템

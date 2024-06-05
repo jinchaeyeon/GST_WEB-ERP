@@ -12,7 +12,11 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -47,13 +51,19 @@ const KendoWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   const setLoading = useSetRecoilState(isLoading);

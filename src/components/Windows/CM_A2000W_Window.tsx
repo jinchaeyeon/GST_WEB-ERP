@@ -54,6 +54,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   isValidDate,
   setDefaultDate2,
   toDate,
@@ -163,23 +164,62 @@ const CopyWindow = ({
       height5 = getHeight(".WindowButtonContainer3");
       height6 = getHeight(".WindowButtonContainer4");
 
-      setMobileHeight(deviceHeight - height - height3);
-      setMobileHeight2(deviceHeight - height - height2 - height4);
-      setMobileHeight3(deviceHeight - height - height5);
-      setMobileHeight4(deviceHeight - height - height6);
-      setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
-      setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
-      setWebHeight3((position.height - height - height2) / 8 - height5);
-      setWebHeight4(((position.height - height - height2) * 5) / 8);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height3
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+      );
+      setMobileHeight3(
+        getWindowDeviceHeight(false, deviceHeight) - height - height5
+      );
+      setMobileHeight4(
+        getWindowDeviceHeight(false, deviceHeight) - height - height6
+      );
+      setWebHeight(
+        ((getWindowDeviceHeight(false, position.height) - height - height2) *
+          5) /
+          8 -
+          height3
+      );
+      setWebHeight2(
+        ((getWindowDeviceHeight(false, position.height) - height - height2) *
+          5) /
+          8 -
+          height4
+      );
+      setWebHeight3(
+        (getWindowDeviceHeight(false, position.height) - height - height2) / 8 -
+          height5
+      );
+      setWebHeight4(
+        ((getWindowDeviceHeight(false, position.height) - height - height2) *
+          5) /
+          8
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
-    setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
-    setWebHeight3((position.height - height - height2) / 8 - height5);
-    setWebHeight4(((position.height - height - height2) * 5) / 8);
+    setWebHeight(
+      ((getWindowDeviceHeight(false, position.height) - height - height2) * 5) /
+        8 -
+        height3
+    );
+    setWebHeight2(
+      ((getWindowDeviceHeight(false, position.height) - height - height2) * 5) /
+        8 -
+        height4
+    );
+    setWebHeight3(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 8 -
+        height5
+    );
+    setWebHeight4(
+      ((getWindowDeviceHeight(false, position.height) - height - height2) * 5) /
+        8
+    );
   };
 
   const pc = UseGetValueFromSessionItem("pc");

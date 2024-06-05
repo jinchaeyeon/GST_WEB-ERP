@@ -20,6 +20,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import Window from "./WindowComponent/Window";
@@ -66,14 +67,20 @@ const CopyWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-      setMobileHeight(deviceHeight - height - height2);
-      setWebHeight(position.height - height - height2);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) - height - height2
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   //customOptionData 조회 후 디폴트 값 세팅

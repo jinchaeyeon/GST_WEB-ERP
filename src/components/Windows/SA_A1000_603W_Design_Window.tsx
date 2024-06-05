@@ -22,6 +22,7 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
@@ -131,11 +132,21 @@ const CopyWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setMobileHeight2(deviceHeight - height - height2);
-    setMobileHeight3(deviceHeight - height - height2);
-    setMobileHeight4(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setMobileHeight3(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setMobileHeight4(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
 
   var index = 0;
@@ -143,7 +154,9 @@ const CopyWindow = ({
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
   const onClose = () => {
     setVisible(false);

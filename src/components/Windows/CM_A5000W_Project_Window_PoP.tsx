@@ -38,6 +38,7 @@ import {
   UsePermissions,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
 } from "../CommonFunction";
 import {
@@ -64,8 +65,6 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-var height5 = 0;
-var height6 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -107,15 +106,21 @@ const KendoWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
-      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height5 = getHeight(".filterBox2"); //필터 웹
-      height6 = getHeight(".WindowButtonContainer");
+      height4 = getHeight(".WindowButtonContainer");
 
       setMobileHeight(
-        deviceHeight - height - height2 - height3 - height4 - height6
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
       setWebHeight(
-        position.height - height - height2 - height3 - height5 - height6
+        getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
     }
   }, [customOptionData]);
@@ -123,7 +128,11 @@ const KendoWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      position.height - height - height2 - height3 - height5 - height6
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
     );
   };
 

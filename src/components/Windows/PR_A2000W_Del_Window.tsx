@@ -34,6 +34,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   numberWithCommas,
 } from "../CommonFunction";
 import {
@@ -97,13 +98,19 @@ const KendoWindow = ({
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
     height3 = getHeight(".WindowButtonContainer");
 
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight(position.height - height - height2 - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
   const onClose = () => {
     setVisible(false);

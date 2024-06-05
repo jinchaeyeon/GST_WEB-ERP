@@ -56,6 +56,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
@@ -211,20 +212,40 @@ const KendoWindow = ({
       height4 = getHeight(".WindowButtonContainer2");
       height5 = getHeight(".WindowButtonContainer3");
 
-      setMobileHeight(deviceHeight - height - height3);
-      setMobileHeight2(deviceHeight - height - height4);
-      setMobileHeight3(deviceHeight - height - height2 - height5);
-      setWebHeight((position.height - height - height2) / 2);
-      setWebHeight2((position.height - height - height2) / 2);
-      setWebHeight3((position.height - height - height2) / 2 - height5);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height3
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height4
+      );
+      setMobileHeight3(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height5
+      );
+      setWebHeight(
+        (getWindowDeviceHeight(false, position.height) - height - height2) / 2
+      );
+      setWebHeight2(
+        (getWindowDeviceHeight(false, position.height) - height - height2) / 2
+      );
+      setWebHeight3(
+        (getWindowDeviceHeight(false, position.height) - height - height2) / 2 -
+          height5
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight((position.height - height - height2) / 2);
-    setWebHeight2((position.height - height - height2) / 2);
-    setWebHeight3((position.height - height - height2) / 2 - height5);
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2
+    );
+    setWebHeight3(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2 -
+        height5
+    );
   };
 
   const onClose = () => {

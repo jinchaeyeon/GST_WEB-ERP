@@ -47,6 +47,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   numberWithCommas,
   setDefaultDate,
 } from "../CommonFunction";
@@ -149,15 +150,31 @@ const CopyWindow = ({
       height3 = getHeight(".BottomContainer"); //하단 버튼부분
       height4 = getHeight(".FormBoxWrap");
 
-      setMobileHeight(deviceHeight - height - height2);
-      setMobileHeight2(deviceHeight - height - height2 - height3);
-      setWebHeight(position.height - height - height2 - height3 - height4);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4
+      );
     }
-  }, []);
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   };
 
   const [loginResult] = useRecoilState(loginResultState);

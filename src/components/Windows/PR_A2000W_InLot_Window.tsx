@@ -36,6 +36,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -94,19 +95,25 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
 
   useLayoutEffect(() => {
-    if (customOptionData !== null) {
+    if(customOptionData != null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowButtonContainer");
-
-      setMobileHeight(deviceHeight - height - height2 - height3);
-      setWebHeight(position.height - height - height2 - height3);
+  
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) - height - height2 - height3
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
   const onClose = () => {
     setVisible(false);

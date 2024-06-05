@@ -43,6 +43,7 @@ import {
   convertDateToStr,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../CommonFunction";
@@ -105,19 +106,32 @@ const CopyWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
       height3 = getHeight(".BottomContainer"); //하단 버튼부분
-      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height5 = getHeight(".filterBox2"); //필터 웹
       height6 = getHeight(".WindowButtonContainer");
 
-      setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
       setMobileHeight2(
-        deviceHeight - height - height2 - height3 - height4 - height6
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height6
       );
       setWebHeight(
-        (position.height - height - height2 - height3 - height5) / 2
+        (getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3) /
+          2
       );
       setWebHeight2(
-        (position.height - height - height2 - height3 - height5) / 2 - height6
+        (getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height6
       );
     }
   }, [customOptionData]);
@@ -125,10 +139,19 @@ const CopyWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      (position.height - height - height2 - height3 - height5) / 2 - height6
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2
     );
     setWebHeight2(
-      (position.height - height - height2 - height3 - height5) / 2 - height6
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height6
     );
   };
   const DATA_ITEM_KEY = "num";

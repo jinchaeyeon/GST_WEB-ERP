@@ -40,6 +40,7 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -183,17 +184,35 @@ const DetailWindow = ({
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowButtonContainer");
       height4 = getHeight(".WindowButtonContainer2");
-      setMobileHeight(deviceHeight - height - height2 - height3);
-      setMobileHeight2(deviceHeight - height - height2 - height4);
-      setWebHeight(position.height - height - height2 - height3);
-      setWebHeight2(position.height - height - height2 - height3);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
+      setWebHeight2(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
     }
   }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
-    setWebHeight2(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
 
   const onClose = () => {

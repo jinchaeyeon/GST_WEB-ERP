@@ -5,7 +5,11 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 import Window from "./WindowComponent/Window";
 
@@ -42,12 +46,18 @@ const SA_A1001_603W_Window = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   const onClose = () => {

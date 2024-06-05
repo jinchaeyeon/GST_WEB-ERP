@@ -74,6 +74,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   toDate,
 } from "../CommonFunction";
 import {
@@ -1084,50 +1085,248 @@ const CopyWindow = ({
       height11 = getHeight(".WindowButtonContainer8");
       height12 = getHeight(".WindowButtonContainer9");
 
-      setMobileHeight(deviceHeight - height - height2 - height3);
-      setWebHeight(position.height - height - height2 - height3);
-      setMobileHeight2(deviceHeight - height - height2 - height3);
-      setWebHeight2(position.height - height - height2 - height3);
-      setMobileHeight3(deviceHeight - height - height2 - height3 - height4);
-      setWebHeight3(position.height - height - height2 - height3 - height4);
-      setMobileHeight4(deviceHeight - height - height2 - height3);
-      setWebHeight4(position.height - height - height2 - height3);
-      setMobileHeight5(deviceHeight - height - height2 - height3);
-      setWebHeight5(position.height - height - height2 - height3);
-      setMobileHeight6(deviceHeight - height - height2 - height3 - height5);
-      setWebHeight6(position.height - height - height2 - height3 - height5);
-      setMobileHeight7(deviceHeight - height - height2 - height3 - height6);
-      setWebHeight7(position.height - height - height2 - height3 - height6);
-      setMobileHeight8(deviceHeight - height - height2 - height3 - height7);
-      setWebHeight8(position.height - height - height2 - height3 - height7);
-      setMobileHeight9(deviceHeight - height - height2 - height3 - height8);
-      setWebHeight9(position.height - height - height2 - height3 - height8);
-      setMobileHeight10(deviceHeight - height - height2 - height3 - height9);
-      setWebHeight10(position.height - height - height2 - height3 - height9);
-      setMobileHeight11(deviceHeight - height - height2 - height3 - height10);
-      setWebHeight11(position.height - height - height2 - height3 - height10);
-      setMobileHeight12(deviceHeight - height - height2 - height3 - height11);
-      setWebHeight12(position.height - height - height2 - height3 - height11);
-      setMobileHeight13(deviceHeight - height - height2 - height3 - height12);
-      setWebHeight13(position.height - height - height2 - height3 - height12);
+      setMobileHeight(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight2(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
+      setMobileHeight3(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height4
+      );
+      setWebHeight3(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4
+      );
+      setMobileHeight4(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight4(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
+      setMobileHeight5(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+      );
+      setWebHeight5(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
+      );
+      setMobileHeight6(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height5
+      );
+      setWebHeight6(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height5
+      );
+      setMobileHeight7(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height6
+      );
+      setWebHeight7(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height6
+      );
+      setMobileHeight8(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height7
+      );
+      setWebHeight8(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height7
+      );
+      setMobileHeight9(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height8
+      );
+      setWebHeight9(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height8
+      );
+      setMobileHeight10(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height9
+      );
+      setWebHeight10(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height9
+      );
+      setMobileHeight11(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height10
+      );
+      setWebHeight11(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height10
+      );
+      setMobileHeight12(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height11
+      );
+      setWebHeight12(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height11
+      );
+      setMobileHeight13(
+        getWindowDeviceHeight(false, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height12
+      );
+      setWebHeight13(
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height12
+      );
     }
   }, [tabSelected, customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
-    setWebHeight2(position.height - height - height2 - height3);
-    setWebHeight3(position.height - height - height2 - height3 - height4);
-    setWebHeight4(position.height - height - height2 - height3);
-    setWebHeight5(position.height - height - height2 - height3);
-    setWebHeight6(position.height - height - height2 - height3 - height5);
-    setWebHeight7(position.height - height - height2 - height3 - height6);
-    setWebHeight8(position.height - height - height2 - height3 - height7);
-    setWebHeight9(position.height - height - height2 - height3 - height8);
-    setWebHeight10(position.height - height - height2 - height3 - height9);
-    setWebHeight11(position.height - height - height2 - height3 - height10);
-    setWebHeight12(position.height - height - height2 - height3 - height11);
-    setWebHeight13(position.height - height - height2 - height3 - height12);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight3(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
+    setWebHeight4(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight5(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight6(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height5
+    );
+    setWebHeight7(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height6
+    );
+    setWebHeight8(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height7
+    );
+    setWebHeight9(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height8
+    );
+    setWebHeight10(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height9
+    );
+    setWebHeight11(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height10
+    );
+    setWebHeight12(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height11
+    );
+    setWebHeight13(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height12
+    );
   };
 
   const [loginResult] = useRecoilState(loginResultState);

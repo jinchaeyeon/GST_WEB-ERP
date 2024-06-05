@@ -51,6 +51,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
@@ -84,8 +85,6 @@ var height4 = 0;
 var height5 = 0;
 var height6 = 0;
 var height7 = 0;
-var height8 = 0;
-var height9 = 0;
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -132,25 +131,54 @@ const CopyWindow = ({
       height5 = getHeight(".WindowButtonContainer2");
       height6 = getHeight(".WindowButtonContainer3");
       height7 = getHeight(".WindowButtonContainer4");
-      height8 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height9 = getHeight(".filterBox2"); //필터 웹
-      setMobileHeight(deviceHeight - height - height2 - height4 - height8);
-      setMobileHeight2(deviceHeight - height - height2 - height5 - height8);
-      setMobileHeight3(deviceHeight - height - height2 - height6 - height8);
+
+      setMobileHeight(
+        getWindowDeviceHeight(true, deviceHeight) - height - height2 - height4
+      );
+      setMobileHeight2(
+        getWindowDeviceHeight(true, deviceHeight) - height - height2 - height5
+      );
+      setMobileHeight3(
+        getWindowDeviceHeight(true, deviceHeight) - height - height2 - height6
+      );
       setMobileHeight4(
-        deviceHeight - height - height2 - height3 - height7 - height8
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height7
       );
       setWebHeight(
-        (position.height - height - height2 - height3 - height9) / 2 - height4
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height4
       );
       setWebHeight2(
-        (position.height - height - height2 - height3 - height9) / 2 - height5
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height5
       );
       setWebHeight3(
-        (position.height - height - height2 - height3 - height9) / 2 - height6
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height6
       );
       setWebHeight4(
-        (position.height - height - height2 - height3 - height9) / 2 - height7
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height7
       );
     }
   }, [customOptionData]);
@@ -158,16 +186,36 @@ const CopyWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      (position.height - height - height2 - height3 - height9) / 2 - height4
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height4
     );
     setWebHeight2(
-      (position.height - height - height2 - height3 - height9) / 2 - height5
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height5
     );
     setWebHeight3(
-      (position.height - height - height2 - height3 - height9) / 2 - height6
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height6
     );
     setWebHeight4(
-      (position.height - height - height2 - height3 - height9) / 2 - height7
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height7
     );
   };
   const DATA_ITEM_KEY = "num";

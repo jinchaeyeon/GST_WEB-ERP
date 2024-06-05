@@ -58,6 +58,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -191,11 +192,20 @@ const KendoWindow = ({
       height4 = getHeight(".FormBoxWrap2");
       height5 = getHeight(".WindowButtonContainer");
 
-      setMobileHeight(deviceHeight - height);
-      setMobileHeight2(deviceHeight - height - height5);
-      setMobileHeight3(deviceHeight - height - height2);
+      setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
+      setMobileHeight2(
+        getWindowDeviceHeight(false, deviceHeight) - height - height5
+      );
+      setMobileHeight3(
+        getWindowDeviceHeight(false, deviceHeight) - height - height2
+      );
       setWebHeight(
-        position.height - height - height2 - height3 - height4 - height5
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4 -
+          height5
       );
     }
   }, [customOptionData]);
@@ -203,7 +213,12 @@ const KendoWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      position.height - height - height2 - height3 - height4 - height5
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4 -
+        height5
     );
   };
   const setLoading = useSetRecoilState(isLoading);

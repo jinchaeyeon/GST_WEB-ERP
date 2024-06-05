@@ -39,6 +39,7 @@ import {
   UseMessages,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
 } from "../CommonFunction";
 import {
@@ -64,8 +65,6 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-var height5 = 0;
-var height6 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -106,14 +105,20 @@ const KendoWindow = ({
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowTitleContainer"); //공통 해더
       height4 = getHeight(".WindowButtonContainer");
-      height5 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height6 = getHeight(".filterBox2"); //필터 웹
 
       setMobileHeight(
-        deviceHeight - height - height2 - height3 - height4 - height5
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
       setWebHeight(
-        position.height - height - height2 - height3 - height4 - height6
+        getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
     }
   }, [customOptionData]);
@@ -121,7 +126,11 @@ const KendoWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      position.height - height - height2 - height3 - height4 - height6
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
     );
   };
   //메시지 조회
