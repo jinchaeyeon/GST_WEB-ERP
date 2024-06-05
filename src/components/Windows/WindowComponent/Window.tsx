@@ -92,100 +92,112 @@ const Window = ({
       setDefaultPostions(positions);
   }, []);
   const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top });
-    onChangePostion({ ...position, left: event.left, top: event.top });
+    if (!isMobile) {
+      setPosition({ ...position, left: event.left, top: event.top });
+      onChangePostion({ ...position, left: event.left, top: event.top });
+    }
   };
   const handleResize = (event: WindowMoveEvent) => {
-    setPosition({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
-    onChangePostion({
-      left: event.left,
-      top: event.top,
-      width: event.width,
-      height: event.height,
-    });
+    if (!isMobile) {
+      setPosition({
+        left: event.left,
+        top: event.top,
+        width: event.width,
+        height: event.height,
+      });
+      onChangePostion({
+        left: event.left,
+        top: event.top,
+        width: event.width,
+        height: event.height,
+      });
+    }
   };
   const onClose = () => {
     Close();
   };
 
   const handleStageChange = (e: WindowActionsEvent) => {
-    if (e.state == "FULLSCREEN" && windowStage != "full") {
-      setWindowStage("full");
-      setDefaultPostions(positions);
-      setPosition({
-        top: 0,
-        left: 0,
-        width: deviceWidth,
-        height: deviceHeight,
-      });
-      e.target.setState((prev) => ({
-        ...prev,
-        stage: "DEFAULT",
-        top: 0,
-        left: 0,
-        width: deviceWidth,
-        height: deviceHeight,
-      }));
-      onChangePostion({
-        top: 0,
-        left: 0,
-        width: deviceWidth,
-        height: deviceHeight,
-      });
-    } else if (e.state == "MINIMIZED") {
-      setWindowStage("MINIMIZED");
-      e.target.setState((prev) => ({
-        ...prev,
-        stage: "MINIMIZED",
-      }));
-    } else if (windowStage == "full") {
-      setWindowStage("DEFAULT");
-      setPosition(defaultPositions == undefined ? positions : defaultPositions);
-      e.target.setState((prev) => ({
-        ...prev,
-        stage: "DEFAULT",
-        top:
-          defaultPositions == undefined ? positions.top : defaultPositions.top,
-        left:
-          defaultPositions == undefined
-            ? positions.left
-            : defaultPositions.left,
-        width:
-          defaultPositions == undefined
-            ? positions.width
-            : defaultPositions.width,
-        height:
-          defaultPositions == undefined
-            ? positions.height
-            : defaultPositions.height,
-      }));
-      onChangePostion({
-        top:
-          defaultPositions == undefined ? positions.top : defaultPositions.top,
-        left:
-          defaultPositions == undefined
-            ? positions.left
-            : defaultPositions.left,
-        width:
-          defaultPositions == undefined
-            ? positions.width
-            : defaultPositions.width,
-        height:
-          defaultPositions == undefined
-            ? positions.height
-            : defaultPositions.height,
-      });
-    } else if (windowStage == "MINIMIZED") {
-      setWindowStage("DEFAULT");
-      e.target.setState((prev) => ({
-        ...prev,
-        stage: "DEFAULT",
-      }));
+    if (!isMobile) {
+      if (e.state == "FULLSCREEN" && windowStage != "full") {
+        setWindowStage("full");
+        setDefaultPostions(positions);
+        setPosition({
+          top: 0,
+          left: 0,
+          width: deviceWidth,
+          height: deviceHeight,
+        });
+        e.target.setState((prev) => ({
+          ...prev,
+          stage: "DEFAULT",
+          top: 0,
+          left: 0,
+          width: deviceWidth,
+          height: deviceHeight,
+        }));
+        onChangePostion({
+          top: 0,
+          left: 0,
+          width: deviceWidth,
+          height: deviceHeight,
+        });
+      } else if (e.state == "MINIMIZED") {
+        setWindowStage("MINIMIZED");
+        e.target.setState((prev) => ({
+          ...prev,
+          stage: "MINIMIZED",
+        }));
+      } else if (windowStage == "full") {
+        setWindowStage("DEFAULT");
+        setPosition(
+          defaultPositions == undefined ? positions : defaultPositions
+        );
+        e.target.setState((prev) => ({
+          ...prev,
+          stage: "DEFAULT",
+          top:
+            defaultPositions == undefined
+              ? positions.top
+              : defaultPositions.top,
+          left:
+            defaultPositions == undefined
+              ? positions.left
+              : defaultPositions.left,
+          width:
+            defaultPositions == undefined
+              ? positions.width
+              : defaultPositions.width,
+          height:
+            defaultPositions == undefined
+              ? positions.height
+              : defaultPositions.height,
+        }));
+        onChangePostion({
+          top:
+            defaultPositions == undefined
+              ? positions.top
+              : defaultPositions.top,
+          left:
+            defaultPositions == undefined
+              ? positions.left
+              : defaultPositions.left,
+          width:
+            defaultPositions == undefined
+              ? positions.width
+              : defaultPositions.width,
+          height:
+            defaultPositions == undefined
+              ? positions.height
+              : defaultPositions.height,
+        });
+      } else if (windowStage == "MINIMIZED") {
+        setWindowStage("DEFAULT");
+        e.target.setState((prev) => ({
+          ...prev,
+          stage: "DEFAULT",
+        }));
+      }
     }
   };
 
