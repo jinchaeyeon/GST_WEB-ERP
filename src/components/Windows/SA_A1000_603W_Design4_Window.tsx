@@ -1,7 +1,10 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -19,6 +22,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
   numberWithCommas3,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
@@ -101,6 +105,9 @@ type TdataArr = {
   ref_key_s: string[];
 };
 
+var height = 0;
+var height2 = 0;
+
 const CopyWindow = ({
   setVisible,
   filters,
@@ -117,8 +124,22 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 650,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setMobileHeight2(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -613,430 +634,951 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap border={true}>
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>시험번호</th>
-                <td>
-                  <Input
-                    name="quotestnum"
-                    type="text"
-                    value={Information.quotestnum}
-                    className="readonly"
-                  />
-                </td>
-                <th>시험파트</th>
-                <td>
-                  <Input
-                    name="itemlvl1"
-                    type="text"
-                    value={
-                      itemlvl1ListData.find(
-                        (item: any) => item.sub_code == Information.itemlvl1
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th>품번</th>
-                <td>
-                  <Input
-                    name="itemcd"
-                    type="text"
-                    value={Information.itemcd}
-                    className="readonly"
-                  />
-                </td>
-                <th>품명</th>
-                <td>
-                  <Input
-                    name="itemnm"
-                    type="text"
-                    value={Information.itemnm}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <FormBoxWrap border={true}>
-          <GridTitleContainer>
-            <GridTitle>기본</GridTitle>
-          </GridTitleContainer>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>표준물질수량</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="matterqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
+        {isMobile ? (
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <FormBoxWrap
+                border={true}
+                style={{ height: mobileheight, overflow: "auto" }}
+              >
+                <GridTitleContainer>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>기본정보</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
                       }}
-                      value={numberWithCommas3(Information.matterqty_base)}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="matterqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.matterqty_base)}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>사용기기</th>
-                <td>
-                  <Input
-                    name="prodmac_base"
-                    type="text"
-                    value={
-                      prodmacListData.find(
-                        (item: any) => item.sub_code == Information.prodmac_base
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>농도분석횟수</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="concentrationcnt_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(
-                        Information.concentrationcnt_base
-                      )}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="concentrationcnt_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(
-                        Information.concentrationcnt_base
-                      )}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>RUNTIME</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="runtime_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.runtime_base)}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="runtime_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.runtime_base)}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>군구성</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="gunqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.gunqty_base)}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="gunqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.gunqty_base)}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>분석유형</th>
-                <td>
-                  <div style={{ display: "flex" }}>
-                    {save == true ? (
-                      <Input
-                        name="assaytype1_base"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                          width: "50%",
-                        }}
-                        value={numberWithCommas3(Information.assaytype1_base)}
-                        onChange={InputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="assaytype1_base"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                          width: "50%",
-                        }}
-                        value={numberWithCommas3(Information.assaytype1_base)}
-                        className="readonly"
-                      />
-                    )}
-                    <p style={{ display: "flex", alignItems: "center" }}>
-                      &nbsp;종 개별
-                    </p>
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex" }}>
-                    {save == true ? (
-                      <Input
-                        name="assaytype2_base"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                          width: "50%",
-                        }}
-                        value={numberWithCommas3(Information.assaytype2_base)}
-                        onChange={InputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="assaytype2_base"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                          width: "50%",
-                        }}
-                        value={numberWithCommas3(Information.assaytype2_base)}
-                        className="readonly"
-                      />
-                    )}
-                    <p style={{ display: "flex", alignItems: "center" }}>
-                      &nbsp;종 동시
-                    </p>
-                  </div>
-                </td>
-                <td></td>
-              </tr>
-              <tr>
-                <th>총 SAMPLE 수</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="sampleqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.sampleqty_base)}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="sampleqty_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.sampleqty_base)}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <th>품목코드</th>
-                <td>
-                  {save == true ? (
-                    <>
-                      <Input
-                        name="column_itemcd_base"
-                        type="text"
-                        value={Information.column_itemcd_base}
-                        onChange={InputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onItemWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>시험번호</th>
+                      <td>
+                        <Input
+                          name="quotestnum"
+                          type="text"
+                          value={Information.quotestnum}
+                          className="readonly"
                         />
-                      </ButtonInInput>
-                    </>
-                  ) : (
-                    <Input
-                      name="column_itemcd_base"
-                      type="text"
-                      value={Information.column_itemcd_base}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>품목명</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="column_itemnm_base"
-                      type="text"
-                      value={Information.column_itemnm_base}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="column_itemnm_base"
-                      type="text"
-                      value={Information.column_itemnm_base}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>시험기간(D)</th>
-                <td>
-                  {save == true ? (
-                    <Input
-                      name="testperiod_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.testperiod_base)}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <Input
-                      name="testperiod_base"
-                      type="number"
-                      style={{
-                        textAlign: "right",
-                      }}
-                      value={numberWithCommas3(Information.testperiod_base)}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th>시험기간(W)</th>
-                <td>
-                  <Input
-                    name="experiment_week_base"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experiment_week_base)}
-                    className="readonly"
-                  />
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>시험참조</th>
-                <td colSpan={3}>
-                  {save == true ? (
-                    <>
-                      <Input
-                        name="ref_key_base"
-                        type="text"
-                        value={Information.ref_key_base}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onDetailWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
+                      </td>
+                      <th>시험파트</th>
+                      <td>
+                        <Input
+                          name="itemlvl1"
+                          type="text"
+                          value={
+                            itemlvl1ListData.find(
+                              (item: any) =>
+                                item.sub_code == Information.itemlvl1
+                            )?.code_name
+                          }
+                          className="readonly"
                         />
-                        <Button
-                          onClick={() => {
-                            setInformation((prev) => ({
-                              ...prev,
-                              ref_key_base: "",
-                            }));
+                      </td>
+                      <th>품번</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={Information.itemcd}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>품명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={Information.itemnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <FormBoxWrap
+                border={true}
+                style={{ height: mobileheight2, overflow: "auto" }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    기본
+                  </GridTitle>
+                </GridTitleContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>표준물질수량</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="matterqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.matterqty_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="matterqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.matterqty_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>사용기기</th>
+                      <td>
+                        <Input
+                          name="prodmac_base"
+                          type="text"
+                          value={
+                            prodmacListData.find(
+                              (item: any) =>
+                                item.sub_code == Information.prodmac_base
+                            )?.code_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>농도분석횟수</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="concentrationcnt_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.concentrationcnt_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="concentrationcnt_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.concentrationcnt_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>RUNTIME</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="runtime_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.runtime_base)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="runtime_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.runtime_base)}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>군구성</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="gunqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.gunqty_base)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="gunqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.gunqty_base)}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>분석유형</th>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {save == true ? (
+                            <Input
+                              name="assaytype1_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype1_base
+                              )}
+                              onChange={InputChange}
+                            />
+                          ) : (
+                            <Input
+                              name="assaytype1_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype1_base
+                              )}
+                              className="readonly"
+                            />
+                          )}
+                          <p style={{ display: "flex", alignItems: "center" }}>
+                            &nbsp;종 개별
+                          </p>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {save == true ? (
+                            <Input
+                              name="assaytype2_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype2_base
+                              )}
+                              onChange={InputChange}
+                            />
+                          ) : (
+                            <Input
+                              name="assaytype2_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype2_base
+                              )}
+                              className="readonly"
+                            />
+                          )}
+                          <p style={{ display: "flex", alignItems: "center" }}>
+                            &nbsp;종 동시
+                          </p>
+                        </div>
+                      </td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>총 SAMPLE 수</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="sampleqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.sampleqty_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="sampleqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.sampleqty_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        {save == true ? (
+                          <>
+                            <Input
+                              name="column_itemcd_base"
+                              type="text"
+                              value={Information.column_itemcd_base}
+                              onChange={InputChange}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onItemWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </>
+                        ) : (
+                          <Input
+                            name="column_itemcd_base"
+                            type="text"
+                            value={Information.column_itemcd_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="column_itemnm_base"
+                            type="text"
+                            value={Information.column_itemnm_base}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="column_itemnm_base"
+                            type="text"
+                            value={Information.column_itemnm_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>시험기간(D)</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="testperiod_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.testperiod_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="testperiod_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.testperiod_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>시험기간(W)</th>
+                      <td>
+                        <Input
+                          name="experiment_week_base"
+                          type="number"
+                          style={{
+                            textAlign: "right",
                           }}
-                          icon="close"
-                          fillMode="flat"
+                          value={numberWithCommas3(
+                            Information.experiment_week_base
+                          )}
+                          className="readonly"
                         />
-                      </ButtonInInput>
-                    </>
-                  ) : (
-                    <Input
-                      name="ref_key_base"
-                      type="text"
-                      value={Information.ref_key_base}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>비고</th>
-                <td colSpan={3}>
-                  {save == true ? (
-                    <TextArea
-                      value={Information.remark_base}
-                      name="remark_base"
-                      rows={2}
-                      onChange={InputChange}
-                    />
-                  ) : (
-                    <TextArea
-                      value={Information.remark_base}
-                      name="remark_base"
-                      rows={2}
-                      className="readonly"
-                    />
-                  )}
-                </td>
-                <th></th>
-                <td></td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <BottomContainer>
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>시험참조</th>
+                      <td colSpan={3}>
+                        {save == true ? (
+                          <>
+                            <Input
+                              name="ref_key_base"
+                              type="text"
+                              value={Information.ref_key_base}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onDetailWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                              <Button
+                                onClick={() => {
+                                  setInformation((prev) => ({
+                                    ...prev,
+                                    ref_key_base: "",
+                                  }));
+                                }}
+                                icon="close"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </>
+                        ) : (
+                          <Input
+                            name="ref_key_base"
+                            type="text"
+                            value={Information.ref_key_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={3}>
+                        {save == true ? (
+                          <TextArea
+                            value={Information.remark_base}
+                            name="remark_base"
+                            rows={2}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <TextArea
+                            value={Information.remark_base}
+                            name="remark_base"
+                            rows={2}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <>
+            <FormBoxWrap style={{ height: webheight }}>
+              <FormBoxWrap border={true}>
+                <GridTitleContainer>
+                  <GridTitle>기본정보</GridTitle>
+                </GridTitleContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>시험번호</th>
+                      <td>
+                        <Input
+                          name="quotestnum"
+                          type="text"
+                          value={Information.quotestnum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>시험파트</th>
+                      <td>
+                        <Input
+                          name="itemlvl1"
+                          type="text"
+                          value={
+                            itemlvl1ListData.find(
+                              (item: any) =>
+                                item.sub_code == Information.itemlvl1
+                            )?.code_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th>품번</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={Information.itemcd}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>품명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={Information.itemnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
+                <GridTitleContainer>
+                  <GridTitle>기본</GridTitle>
+                </GridTitleContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>표준물질수량</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="matterqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.matterqty_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="matterqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.matterqty_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>사용기기</th>
+                      <td>
+                        <Input
+                          name="prodmac_base"
+                          type="text"
+                          value={
+                            prodmacListData.find(
+                              (item: any) =>
+                                item.sub_code == Information.prodmac_base
+                            )?.code_name
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>농도분석횟수</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="concentrationcnt_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.concentrationcnt_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="concentrationcnt_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.concentrationcnt_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>RUNTIME</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="runtime_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.runtime_base)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="runtime_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.runtime_base)}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>군구성</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="gunqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.gunqty_base)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="gunqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.gunqty_base)}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>분석유형</th>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {save == true ? (
+                            <Input
+                              name="assaytype1_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype1_base
+                              )}
+                              onChange={InputChange}
+                            />
+                          ) : (
+                            <Input
+                              name="assaytype1_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype1_base
+                              )}
+                              className="readonly"
+                            />
+                          )}
+                          <p style={{ display: "flex", alignItems: "center" }}>
+                            &nbsp;종 개별
+                          </p>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {save == true ? (
+                            <Input
+                              name="assaytype2_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype2_base
+                              )}
+                              onChange={InputChange}
+                            />
+                          ) : (
+                            <Input
+                              name="assaytype2_base"
+                              type="number"
+                              style={{
+                                textAlign: "right",
+                                width: "50%",
+                              }}
+                              value={numberWithCommas3(
+                                Information.assaytype2_base
+                              )}
+                              className="readonly"
+                            />
+                          )}
+                          <p style={{ display: "flex", alignItems: "center" }}>
+                            &nbsp;종 동시
+                          </p>
+                        </div>
+                      </td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>총 SAMPLE 수</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="sampleqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.sampleqty_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="sampleqty_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.sampleqty_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        {save == true ? (
+                          <>
+                            <Input
+                              name="column_itemcd_base"
+                              type="text"
+                              value={Information.column_itemcd_base}
+                              onChange={InputChange}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onItemWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </>
+                        ) : (
+                          <Input
+                            name="column_itemcd_base"
+                            type="text"
+                            value={Information.column_itemcd_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="column_itemnm_base"
+                            type="text"
+                            value={Information.column_itemnm_base}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="column_itemnm_base"
+                            type="text"
+                            value={Information.column_itemnm_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>시험기간(D)</th>
+                      <td>
+                        {save == true ? (
+                          <Input
+                            name="testperiod_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.testperiod_base
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="testperiod_base"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.testperiod_base
+                            )}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>시험기간(W)</th>
+                      <td>
+                        <Input
+                          name="experiment_week_base"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(
+                            Information.experiment_week_base
+                          )}
+                          className="readonly"
+                        />
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>시험참조</th>
+                      <td colSpan={3}>
+                        {save == true ? (
+                          <>
+                            <Input
+                              name="ref_key_base"
+                              type="text"
+                              value={Information.ref_key_base}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onDetailWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                              <Button
+                                onClick={() => {
+                                  setInformation((prev) => ({
+                                    ...prev,
+                                    ref_key_base: "",
+                                  }));
+                                }}
+                                icon="close"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </>
+                        ) : (
+                          <Input
+                            name="ref_key_base"
+                            type="text"
+                            value={Information.ref_key_base}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={3}>
+                        {save == true ? (
+                          <TextArea
+                            value={Information.remark_base}
+                            name="remark_base"
+                            rows={2}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <TextArea
+                            value={Information.remark_base}
+                            name="remark_base"
+                            rows={2}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </FormBoxWrap>
+          </>
+        )}
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             {save == true ? (
               <Button themeColor={"primary"} onClick={onSave}>
