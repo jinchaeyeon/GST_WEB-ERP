@@ -13,18 +13,19 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
+  Title,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading } from "../../store/atoms";
+import { isFilterHideState2, isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -36,11 +37,12 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import FilterContainer from "../Containers/FilterContainer";
+import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import UserWindow from "./CommonWindows/UserWindow";
@@ -61,6 +63,12 @@ interface IPrsnnum {
   postcd: string;
 }
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const CopyWindow = ({
   setVisible,
   setData,
@@ -76,8 +84,29 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1400,
     height: isMobile == true ? deviceHeight : 820,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [isFilterHideStates2, setisFilterHideStates2] =
+    useRecoilState(isFilterHideState2);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+  React.useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height5 = getHeight(".filterBox2"); //필터 웹
+
+      setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+      setWebHeight(position.height - height - height2 - height3 - height5);
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2 - height3 - height5);
   };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -102,10 +131,6 @@ const CopyWindow = ({
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -189,6 +214,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    setisFilterHideStates2(true);
     setVisible(false);
   };
 
@@ -461,7 +487,8 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer style={{ float: "right" }}>
+        <TitleContainer className="TitleContainer">
+          <Title></Title>
           <ButtonContainer>
             <Button
               onClick={() => search()}
@@ -472,7 +499,7 @@ const CopyWindow = ({
             </Button>
           </ButtonContainer>
         </TitleContainer>
-        <FilterContainer>
+        <WindowFilterContainer>
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
@@ -613,10 +640,10 @@ const CopyWindow = ({
               </tr>
             </tbody>
           </FilterBox>
-        </FilterContainer>
-        <GridContainer height="55vh">
+        </WindowFilterContainer>
+        <GridContainer>
           <Grid
-            style={{ height: "calc(100% - 40px)" }} //5px = margin bottom 값
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -676,7 +703,7 @@ const CopyWindow = ({
             <GridColumn field="custprsnnm" title="의뢰자" width="150px" />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={() => setData({})}>
               미참조

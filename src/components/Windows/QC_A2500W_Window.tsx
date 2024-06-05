@@ -27,6 +27,7 @@ import {
   UseMessages,
   convertDateToStr,
   findMessage,
+  getHeight,
   toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
@@ -85,6 +86,9 @@ type Idata2 = {
   baddt: string;
 };
 
+var height = 0;
+var height2 = 0;
+
 const CopyWindow = ({
   workType,
   data,
@@ -103,8 +107,26 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: isMobile == true ? deviceHeight : 700,
   });
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  React.useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+      setMobileHeight(deviceHeight - height - height2);
+      setWebHeight(position.height - height - height2);
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   const pc = UseGetValueFromSessionItem("pc");
   const setLoading = useSetRecoilState(isLoading);
@@ -115,10 +137,6 @@ const CopyWindow = ({
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
@@ -528,7 +546,7 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <FormBoxWrap>
+        <FormBoxWrap style={{ height: isMobile ? mobileheight : webheight }}>
           <FormBox>
             <tbody>
               <tr>
@@ -752,7 +770,7 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
               저장
