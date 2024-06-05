@@ -1101,7 +1101,7 @@ const AC_B2000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>경영정보조회</Title>
 
         <ButtonContainer>

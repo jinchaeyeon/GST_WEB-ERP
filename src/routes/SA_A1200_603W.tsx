@@ -1465,7 +1465,7 @@ const SA_A1200_603W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>계약가능성관리</Title>
         <ButtonContainer>
           {tabSelected == 1 ? (

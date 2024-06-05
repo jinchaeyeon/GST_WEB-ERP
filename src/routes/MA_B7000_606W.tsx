@@ -673,7 +673,7 @@ const MA_B7000_606W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>재고조회</Title>
 
         <ButtonContainer>

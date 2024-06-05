@@ -354,7 +354,7 @@ const AC_B8030W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>부가세 매입/매출장</Title>
 
         <ButtonContainer>

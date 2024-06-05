@@ -27,6 +27,7 @@ import {
   UseGetValueFromSessionItem,
   getBizCom,
   getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -70,18 +71,34 @@ const KendoWindow = ({
   const [webheight2, setWebHeight2] = useState(0);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight((position.height - height - height4) / 2 - height2);
-    setWebHeight2((position.height - height - height4) / 2 - height3);
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) - height - height4) / 2 -
+        height2
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height4) / 2 -
+        height3
+    );
   };
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".WindowButtonContainer"); //grid title부분
     height3 = getHeight(".WindowButtonContainer2"); //grid title부분
     height4 = getHeight(".BottomContainer"); //하단 버튼부분
-    setMobileHeight(deviceHeight - height - height2 - height4);
-    setWebHeight((position.height - height - height4) / 2 - height2);
-    setMobileHeight2(deviceHeight - height - height3 - height4);
-    setWebHeight2((position.height - height - height4) / 2 - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+    );
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) - height - height4) / 2 -
+        height2
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3 - height4
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height4) / 2 -
+        height3
+    );
   }, []);
 
   const setLoading = useSetRecoilState(isLoading);

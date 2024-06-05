@@ -1235,7 +1235,7 @@ const QC_B0040W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>LOT정추적</Title>
 
         <ButtonContainer>

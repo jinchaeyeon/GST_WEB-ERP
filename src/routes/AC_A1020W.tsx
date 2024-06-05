@@ -665,7 +665,7 @@ const AC_A1020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>지출결의서</Title>
         <ButtonContainer>
           {permissions && (

@@ -1349,7 +1349,7 @@ const SY_A0120: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>사용자 정보</Title>
         <ButtonContainer>
           {permissions && (

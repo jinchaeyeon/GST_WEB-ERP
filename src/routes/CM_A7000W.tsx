@@ -1582,7 +1582,7 @@ const CM_A7000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>
           {loginResult.companyCode == "2302BA03"
             ? "고객상담일지"

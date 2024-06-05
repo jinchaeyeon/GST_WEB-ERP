@@ -674,7 +674,7 @@ const CM_B1000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>일정조회</Title>
 
         <ButtonContainer>

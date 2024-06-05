@@ -308,7 +308,7 @@ const SY_A0110: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>사용자 이용 현황</Title>
 
         <ButtonContainer>

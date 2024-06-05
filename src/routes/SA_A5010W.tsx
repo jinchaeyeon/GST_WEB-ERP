@@ -1018,7 +1018,7 @@ const SA_A5010W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>직접판매처리</Title>
 
         <ButtonContainer>

@@ -6,7 +6,7 @@ import {
   FormRenderProps,
 } from "@progress/kendo-react-form";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -17,6 +17,7 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   getBooleanFromYn,
   getHeight,
+  getWindowDeviceHeight,
   getYn,
   validator,
 } from "../../CommonFunction";
@@ -42,17 +43,23 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   const onClose = () => {

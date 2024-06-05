@@ -1998,7 +1998,7 @@ const Page: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>사용자 권한</Title>
         <ButtonContainer>
           {permissions && (

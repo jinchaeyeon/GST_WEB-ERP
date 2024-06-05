@@ -886,7 +886,7 @@ const MA_A2410W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>외주처리</Title>
         <ButtonContainer>
           {permissions && (

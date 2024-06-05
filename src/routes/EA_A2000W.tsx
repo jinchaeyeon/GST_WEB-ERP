@@ -1021,7 +1021,7 @@ const EA_A2000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>결재관리</Title>
         <ButtonContainer>
           {permissions && (

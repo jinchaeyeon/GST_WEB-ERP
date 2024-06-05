@@ -664,7 +664,7 @@ const SA_B2221: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>
               {companyCode == "2302BA03"
                 ? "제품별 실적 집계"
@@ -1512,7 +1512,7 @@ const SA_B2221: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>
               {companyCode == "2302BA03"
                 ? "제품별 실적 집계"

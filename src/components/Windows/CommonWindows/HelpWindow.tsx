@@ -53,6 +53,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
@@ -196,18 +197,52 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const [webheight2, setWebHeight2] = useState(0);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height2 = getHeight(".WindowTitleContainer"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
     height4 = getHeight(".ButtonContainer");
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight((position.height - height - height2 - height3) / 2);
-    setMobileHeight2(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight2((position.height - height - height2 - height3) / 2 - height4);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height4
+    );
   }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight((position.height - height - height2 - height3) / 2);
-    setWebHeight2((position.height - height - height2 - height3) / 2 - height4);
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height4
+    );
   };
   const [menulist, setMenuList] = useRecoilState(menuList);
 
@@ -877,7 +912,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
               alignItems: "center",
             }}
           >
-            <TitleContainer className="TitleContainer">
+            <TitleContainer className="WindowTitleContainer">
               <Title>메뉴얼</Title>
             </TitleContainer>
             <div
@@ -1006,7 +1041,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
         </Swiper>
       ) : (
         <>
-          <TitleContainer className="TitleContainer">
+          <TitleContainer className="WindowTitleContainer">
             <Title>메뉴얼</Title>
           </TitleContainer>
           <div

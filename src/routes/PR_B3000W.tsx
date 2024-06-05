@@ -456,7 +456,7 @@ const PR_B3000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>작업일보</Title>
 
         <ButtonContainer>

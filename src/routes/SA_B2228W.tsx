@@ -307,7 +307,7 @@ const SA_B2228W: React.FC = () => {
         }}
       >
         <ThemeProvider theme={theme}>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>영업활동보고</Title>
             {isMobile ? (
               <ButtonContainer>

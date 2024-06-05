@@ -2196,7 +2196,7 @@ const CM_A1600W_603: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>Scheduler</Title>
         <ButtonContainer>
           {permissions && (

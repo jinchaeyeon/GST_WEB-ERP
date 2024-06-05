@@ -732,7 +732,7 @@ const AC_A5020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>세금계산서확정</Title>
         <ButtonContainer>
           {permissions && (

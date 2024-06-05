@@ -593,7 +593,7 @@ const PR_B0020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>바코드 출력</Title>
         <ButtonContainer>
           {permissions && (

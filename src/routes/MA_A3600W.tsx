@@ -1465,7 +1465,7 @@ const MA_A3600W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>전용처리</Title>
 
         <ButtonContainer>

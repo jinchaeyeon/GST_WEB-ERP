@@ -179,7 +179,7 @@ const AC_B6040W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>자금일보</Title>
 
         <ButtonContainer>

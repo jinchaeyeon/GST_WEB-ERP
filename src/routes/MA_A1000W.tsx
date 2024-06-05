@@ -969,7 +969,7 @@ const MA_A1000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>구매요청관리</Title>
 
         <ButtonContainer>

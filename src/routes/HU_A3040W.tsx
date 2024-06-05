@@ -3735,7 +3735,7 @@ const HU_A3040W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>연금보험료</Title>
         <ButtonContainer>
           {permissions && (

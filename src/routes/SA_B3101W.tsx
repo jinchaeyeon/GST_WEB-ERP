@@ -424,7 +424,7 @@ const SA_B3101W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>매입매출현황</Title>
             <ButtonContainer>
               {permissions && (
@@ -640,7 +640,7 @@ const SA_B3101W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>매입매출현황</Title>
             <ButtonContainer>
               {permissions && (

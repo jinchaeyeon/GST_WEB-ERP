@@ -1417,7 +1417,7 @@ const HU_A3020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>지급, 공제항목</Title>
         <ButtonContainer>
           {permissions && (

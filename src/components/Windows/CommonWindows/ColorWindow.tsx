@@ -93,7 +93,7 @@ const KendoWindow = ({ setVisible }: IKendoWindow) => {
         left: position.left,
       }}
     >
-      <DialogTitle className="TitleContainer">
+      <DialogTitle className="WindowTitleContainer">
         컬러 설정 색상 {colorNames}
       </DialogTitle>
       <DialogContent>

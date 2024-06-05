@@ -4690,7 +4690,7 @@ const HU_A4000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>인사고과관리</Title>
 
         <ButtonContainer>

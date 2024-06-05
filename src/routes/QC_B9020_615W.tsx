@@ -408,7 +408,7 @@ const QC_B9020_615W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>온습도 모니터링</Title>
         <ButtonContainer>
           {permissions && (

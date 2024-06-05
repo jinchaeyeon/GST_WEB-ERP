@@ -883,7 +883,7 @@ const MA_B7000: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>재고조회</Title>
 
         <ButtonContainer>

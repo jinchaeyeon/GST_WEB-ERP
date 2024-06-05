@@ -1073,7 +1073,7 @@ const HU_A1060W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>증명서발급</Title>
         <ButtonContainer>
           {permissions && (

@@ -2574,7 +2574,7 @@ const PR_A9000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>재공품 기타입출고</Title>
 
         <ButtonContainer>

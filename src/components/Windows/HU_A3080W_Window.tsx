@@ -94,7 +94,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     useRecoilState(isFilterHideState2);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
     height4 = getHeight(".filterBox2"); //필터 웹
     height5 = getHeight(".WindowButtonContainer");
@@ -451,7 +451,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>

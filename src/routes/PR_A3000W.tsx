@@ -515,7 +515,7 @@ const PR_A3000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         {isMobile ? (
           <Title>생산실적</Title>
         ) : (

@@ -1033,7 +1033,7 @@ const MA_A3300W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>기타입고</Title>
 
         <ButtonContainer>

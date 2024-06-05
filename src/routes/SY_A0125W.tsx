@@ -1259,7 +1259,7 @@ const SY_A0125W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>부서관리</Title>
         <ButtonContainer>
           {permissions && (

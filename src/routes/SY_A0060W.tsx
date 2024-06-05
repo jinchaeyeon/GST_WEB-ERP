@@ -253,7 +253,7 @@ const SY_A0060W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>레이아웃 설정(NEW)</Title>
             <ButtonContainer>
               {permissions && (
@@ -369,7 +369,7 @@ const SY_A0060W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>레이아웃 설정(NEW)</Title>
 
             <ButtonContainer>

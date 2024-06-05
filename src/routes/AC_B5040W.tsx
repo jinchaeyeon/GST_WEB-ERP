@@ -1106,7 +1106,7 @@ const AC_B5040W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>전자세금계산서비교현황</Title>
 
         <ButtonContainer>

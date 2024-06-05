@@ -75,7 +75,7 @@ const SY_A0009W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>마이페이지</Title>
       </TitleContainer>
       <GridContainerWrap>

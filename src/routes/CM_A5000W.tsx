@@ -1731,7 +1731,7 @@ const CM_A5000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>컨설팅(문의·답변) 관리</Title>
         <ButtonContainer>
           {permissions && (

@@ -377,7 +377,7 @@ const AC_B3000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>년감가상각명세</Title>
 
         <ButtonContainer>

@@ -1560,7 +1560,7 @@ const HU_B3140W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>급상여분석정보</Title>
         <ButtonContainer>
           {permissions && (

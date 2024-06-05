@@ -523,7 +523,7 @@ const CR_A0000W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <TitleContainer>
+                <TitleContainer className="TitleContainer">
                   <Title>
                     우리집 강아지
                     <img
@@ -566,7 +566,7 @@ const CR_A0000W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer width="100%" height="100%">
-                <TitleContainer>
+                <TitleContainer className="TitleContainer">
                   <Title>
                     <span
                       style={{
@@ -623,7 +623,7 @@ const CR_A0000W: React.FC = () => {
                   width="100%"
                   style={{ overflowY: "scroll" }}
                 >
-                  <TitleContainer>
+                  <TitleContainer className="TitleContainer">
                     <Title>
                       <span
                         style={{

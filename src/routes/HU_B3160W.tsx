@@ -331,7 +331,7 @@ const HU_B3160W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>급상여이체명부</Title>
 
         <ButtonContainer>

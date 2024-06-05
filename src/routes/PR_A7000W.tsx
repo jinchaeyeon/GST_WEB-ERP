@@ -2424,7 +2424,7 @@ const PR_A7000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>작업지시</Title>
 
         <ButtonContainer>

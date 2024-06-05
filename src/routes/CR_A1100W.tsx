@@ -738,7 +738,7 @@ const CR_A1100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>출석관리</Title>
         <ButtonContainer>
           {permissions && (

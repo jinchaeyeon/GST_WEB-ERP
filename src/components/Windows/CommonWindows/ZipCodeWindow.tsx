@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 import DaumPostcode from "react-daum-postcode";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import { getHeight } from "../../CommonFunction";
+import { getHeight, getWindowDeviceHeight } from "../../CommonFunction";
 import Window from "../WindowComponent/Window";
 
 type IWindow = {
@@ -33,12 +33,13 @@ const ZipCodeWindow = ({
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
 
-    setMobileHeight(deviceHeight - height);
-    setWebHeight(position.height - height);
+    setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
+    setWebHeight(getWindowDeviceHeight(false, position.height) - height);
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(getWindowDeviceHeight(false, position.height) - height);
   };
 
   const onClose = () => {
@@ -77,7 +78,10 @@ const ZipCodeWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <DaumPostcode onComplete={handlePostCode} style={{ height: isMobile? mobileheight : webheight }} />
+      <DaumPostcode
+        onComplete={handlePostCode}
+        style={{ height: isMobile ? mobileheight : webheight }}
+      />
     </Window>
   );
 };

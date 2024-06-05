@@ -2404,7 +2404,7 @@ const MA_A9001W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>매입 E-TAX(전표)</Title>
 
         <ButtonContainer>

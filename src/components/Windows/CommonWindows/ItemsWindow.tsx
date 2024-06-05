@@ -20,19 +20,19 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import {
   UseBizComponent,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import Window from "../WindowComponent/Window";
-import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
@@ -46,8 +46,7 @@ let targetRowIndex: null | number = null;
 var height = 0;
 var height2 = 0;
 var height3 = 0;
-var height4 = 0;
-var height5 = 0;
+
 const ItemsWindow = ({
   workType,
   setVisible,
@@ -67,21 +66,25 @@ const ItemsWindow = ({
     height: isMobile == true ? deviceHeight : 800,
   });
   const [isFilterHideStates2, setisFilterHideStates2] =
-  useRecoilState(isFilterHideState2);
+    useRecoilState(isFilterHideState2);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
 
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setMobileHeight(
+      getWindowDeviceHeight(true, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   };
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -318,7 +321,7 @@ const ItemsWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>
@@ -381,7 +384,7 @@ const ItemsWindow = ({
         }}
       >
         <Grid
-          style={{ height: isMobile ? mobileheight : webheight, }}
+          style={{ height: isMobile ? mobileheight : webheight }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,

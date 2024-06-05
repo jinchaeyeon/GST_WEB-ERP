@@ -831,7 +831,7 @@ const QC_B0030W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>LOT추적</Title>
         <ButtonContainer>
           {permissions && (

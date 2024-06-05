@@ -955,7 +955,7 @@ const CM_A8250W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>제경비표준</Title>
 
         <ButtonContainer>

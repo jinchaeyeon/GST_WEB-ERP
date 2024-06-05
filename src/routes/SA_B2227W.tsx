@@ -220,7 +220,7 @@ const SA_B2227W: React.FC = () => {
         }}
       >
         <ThemeProvider theme={theme}>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>고객현황 DASHBOARD</Title>
           </TitleContainer>
           <GridContainerWrap>

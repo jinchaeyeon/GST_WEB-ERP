@@ -532,7 +532,7 @@ const MA_B2100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>입고현황</Title>
 
         <ButtonContainer>

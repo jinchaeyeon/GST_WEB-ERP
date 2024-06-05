@@ -68,7 +68,7 @@ const CopyWindow = ({
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".TitleContainer");
+    height3 = getHeight(".WindowTitleContainer");
 
     setMobileHeight(deviceHeight - height - height2 - height3);
     setWebHeight(position.height - height - height2 - height3);
@@ -177,7 +177,7 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <ButtonContainer className="TitleContainer">
+        <ButtonContainer className="WindowTitleContainer">
           <ReactToPrint
             trigger={() => (
               <Button fillMode="outline" themeColor={"primary"} icon="print">

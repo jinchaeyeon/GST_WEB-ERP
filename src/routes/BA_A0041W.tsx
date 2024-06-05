@@ -1710,7 +1710,7 @@ const BA_A0041W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>품목관리(멀티)</Title>
 
         <ButtonContainer>

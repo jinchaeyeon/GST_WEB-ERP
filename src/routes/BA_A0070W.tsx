@@ -1179,7 +1179,7 @@ const BA_A0070W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>환율관리</Title>
 
         <ButtonContainer>

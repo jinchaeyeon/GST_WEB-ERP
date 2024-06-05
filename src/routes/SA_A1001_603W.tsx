@@ -1562,7 +1562,7 @@ const SA_A1001_603W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>견적관리</Title>
         <ButtonContainer>
           {permissions && (

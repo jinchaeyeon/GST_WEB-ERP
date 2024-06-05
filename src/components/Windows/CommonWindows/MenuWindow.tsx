@@ -30,16 +30,19 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
-import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
+import {
+  getHeight,
+  getWindowDeviceHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-import FilterContainer from "../../Containers/FilterContainer";
-import Window from "../WindowComponent/Window";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
+import Window from "../WindowComponent/Window";
 
 let deletedMainRows: any[] = [];
 
@@ -54,8 +57,6 @@ type TKendoWindow = {
 var height = 0;
 var height2 = 0;
 var height3 = 0;
-var height4 = 0;
-var height5 = 0;
 const KendoWindow = ({
   setVisible,
   reloadData,
@@ -80,18 +81,22 @@ const KendoWindow = ({
 
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
 
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setMobileHeight(
+      getWindowDeviceHeight(true, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   };
 
   const [isFilterHideStates2, setisFilterHideStates2] =
@@ -304,7 +309,7 @@ const KendoWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer className="TitleContainer">
+        <TitleContainer className="WindowTitleContainer">
           <Title></Title>
           <ButtonContainer>
             <Button
@@ -346,7 +351,7 @@ const KendoWindow = ({
         <TreeList
           style={{
             height: isMobile ? mobileheight : webheight,
-            overflow: "auto"
+            overflow: "auto",
           }}
           data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
             extendDataItem(item, SUB_ITEMS_FIELD, {

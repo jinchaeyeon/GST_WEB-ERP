@@ -2184,7 +2184,7 @@ const SA_A6000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>판매계획관리</Title>
 
         <ButtonContainer>

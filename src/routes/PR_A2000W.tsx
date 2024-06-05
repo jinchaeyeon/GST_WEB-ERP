@@ -603,7 +603,7 @@ const PR_A2000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title className="iot-title">생산실적(투입)</Title>
         <ButtonContainer>
           <Button

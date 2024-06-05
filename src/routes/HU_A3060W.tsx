@@ -3220,7 +3220,7 @@ const HU_A3060W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>정산기준</Title>
         <ButtonContainer>
           {permissions && (

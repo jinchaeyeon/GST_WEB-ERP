@@ -1236,7 +1236,7 @@ const HU_A1000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>인사관리</Title>
         <ButtonContainer>
           {permissions && (

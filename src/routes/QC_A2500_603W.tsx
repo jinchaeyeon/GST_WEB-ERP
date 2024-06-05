@@ -1655,7 +1655,7 @@ const BA_A0020_603: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>컴플레인관리</Title>
 
         <ButtonContainer>

@@ -2435,7 +2435,7 @@ const PR_A1100W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>계획생산</Title>
 
         <ButtonContainer>

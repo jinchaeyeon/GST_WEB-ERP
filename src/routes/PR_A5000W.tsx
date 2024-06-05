@@ -1166,7 +1166,7 @@ const PR_A5000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>완제품입고</Title>
 
         <ButtonContainer>

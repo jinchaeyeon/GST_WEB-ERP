@@ -880,7 +880,7 @@ const QC_A0060W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>검사표준서</Title>
 
         <ButtonContainer>

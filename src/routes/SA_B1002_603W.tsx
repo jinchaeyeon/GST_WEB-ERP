@@ -479,7 +479,7 @@ const SA_B1002_603W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>견적현황조회</Title>
 
         <ButtonContainer>

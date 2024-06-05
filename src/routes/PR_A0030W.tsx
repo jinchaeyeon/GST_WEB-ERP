@@ -1471,7 +1471,7 @@ const PR_A0030W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>공정패턴관리</Title>
 
         <ButtonContainer>

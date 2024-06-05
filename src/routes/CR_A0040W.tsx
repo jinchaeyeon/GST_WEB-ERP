@@ -789,7 +789,7 @@ const CR_A0040W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>활성화 회원권 관리</Title>
 
         <ButtonContainer>

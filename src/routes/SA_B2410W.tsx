@@ -532,7 +532,7 @@ const SA_B2410: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>출고현황</Title>
 
         <ButtonContainer>

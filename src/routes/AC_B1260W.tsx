@@ -855,7 +855,7 @@ const AC_B1260W: React.FC = () => {
   );
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>단축코드별집계</Title>
 
         <ButtonContainer>

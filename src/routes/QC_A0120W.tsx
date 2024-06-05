@@ -668,7 +668,7 @@ const QC_A0120: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>불량내역조회</Title>
 
         <ButtonContainer>

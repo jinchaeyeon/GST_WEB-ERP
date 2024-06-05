@@ -1086,7 +1086,7 @@ const SA_B2000: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>수주처리</Title>
 
         <ButtonContainer>

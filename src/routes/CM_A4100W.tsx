@@ -2063,7 +2063,7 @@ const CM_A4100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>교육관리</Title>
 
         <ButtonContainer>

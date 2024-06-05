@@ -1951,7 +1951,7 @@ const QC_A3000: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>공정검사</Title>
 
         <ButtonContainer>

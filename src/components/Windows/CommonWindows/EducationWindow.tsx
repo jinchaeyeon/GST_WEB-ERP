@@ -25,7 +25,11 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
-import { getHeight, handleKeyPressSearch } from "../../CommonFunction";
+import {
+  getHeight,
+  getWindowDeviceHeight,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
 import { FORM_DATA_INDEX, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import Window from "../WindowComponent/Window";
@@ -53,8 +57,6 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-var height5 = 0;
-var height6 = 0;
 const KendoWindow = ({
   getVisible,
   setData,
@@ -80,22 +82,32 @@ TKendoWindow) => {
   });
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".TitleContainer"); //FormBox부분
+    height2 = getHeight(".WindowTitleContainer"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".ButtonContainer"); //그리드 title
-    height6 = getHeight(".filterBox2"); //필터 웹
+    height4 = getHeight(".ButtonContainer"); //그리드 title
     setMobileHeight(
-      deviceHeight - height - height2 - height3 - height4 - height5
+      getWindowDeviceHeight(true, deviceHeight) -
+        height -
+        height2 -
+        height3 -
+        height4
     );
     setWebHeight(
-      position.height - height - height2 - height3 - height6 - height5
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
     );
   }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      position.height - height - height2 - height3 - height6 - height5
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
     );
   };
   const onClose = () => {
@@ -252,7 +264,7 @@ TKendoWindow) => {
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={search} icon="search" themeColor={"primary"}>

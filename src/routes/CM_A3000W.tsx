@@ -1362,7 +1362,7 @@ const CM_A3000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>자료실</Title>
 
         <ButtonContainer>

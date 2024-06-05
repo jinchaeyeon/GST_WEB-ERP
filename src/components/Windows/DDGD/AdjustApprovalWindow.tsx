@@ -17,7 +17,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer
+  GridContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -28,6 +28,7 @@ import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import Window from "../WindowComponent/Window";
@@ -113,13 +114,19 @@ const AdjustApprovalWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
 
   const [isFilterHideStates2, setisFilterHideStates2] =

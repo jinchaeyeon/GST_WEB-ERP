@@ -1153,7 +1153,7 @@ const HU_A5020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>퇴직연금</Title>
 
         <ButtonContainer>

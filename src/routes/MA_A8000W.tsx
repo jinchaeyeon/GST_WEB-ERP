@@ -897,7 +897,7 @@ const MA_A8000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>지급처리</Title>
         <ButtonContainer>
           {permissions && (

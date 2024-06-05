@@ -566,7 +566,7 @@ const HU_B2100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>일근태 월별조회</Title>
 
         <ButtonContainer>

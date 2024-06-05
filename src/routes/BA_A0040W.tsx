@@ -2294,7 +2294,7 @@ const BA_A0040: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>품목관리</Title>
 
             <ButtonContainer>
@@ -3017,7 +3017,7 @@ const BA_A0040: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>품목관리</Title>
 
             <ButtonContainer>

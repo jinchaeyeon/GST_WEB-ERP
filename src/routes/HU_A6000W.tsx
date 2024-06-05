@@ -551,7 +551,7 @@ const HU_A6000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>일용직 인사관리</Title>
 
         <ButtonContainer>

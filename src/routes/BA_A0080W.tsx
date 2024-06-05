@@ -1728,7 +1728,7 @@ const BA_A0080: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>단가관리</Title>
         <ButtonContainer>
           {permissions && (

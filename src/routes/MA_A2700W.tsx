@@ -1191,7 +1191,7 @@ const MA_A2700W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>직접입고</Title>
 
             <ButtonContainer>
@@ -1656,7 +1656,7 @@ const MA_A2700W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>직접입고</Title>
 
             <ButtonContainer>

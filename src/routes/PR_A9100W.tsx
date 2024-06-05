@@ -1462,7 +1462,7 @@ const PR_A9100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>재공품기초재고등록</Title>
 
         <ButtonContainer>

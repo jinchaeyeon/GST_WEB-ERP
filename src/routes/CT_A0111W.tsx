@@ -239,7 +239,7 @@ const CT_A0111W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>품목별 표준원가 분석표</Title>
 
         <ButtonContainer>

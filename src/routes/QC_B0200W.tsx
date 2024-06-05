@@ -1230,7 +1230,7 @@ const QC_B0200W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>검사실적현황</Title>
 
         <ButtonContainer>

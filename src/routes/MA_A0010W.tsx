@@ -736,7 +736,7 @@ const MA_A0010W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>적재장소마스터</Title>
         <ButtonContainer>
           {permissions && (

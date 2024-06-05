@@ -1874,7 +1874,7 @@ const HU_B4000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>연차사용현황(관리자)</Title>
         <ButtonContainer>
           {permissions && (

@@ -16,7 +16,11 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { passwordExpirationInfoState } from "../../../store/atoms";
 import { TPasswordRequirements } from "../../../store/types";
-import { getHeight, validator } from "../../CommonFunction";
+import {
+  getHeight,
+  getWindowDeviceHeight,
+  validator,
+} from "../../CommonFunction";
 import { FormInput } from "../../Editors";
 import Window from "../WindowComponent/Window";
 
@@ -43,12 +47,18 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    setMobileHeight(deviceHeight - height - height3);
-    setWebHeight(position.height - height - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height3
+    );
   }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height3
+    );
   };
   const onClose = () => {
     if (

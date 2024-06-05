@@ -35,6 +35,7 @@ import {
   chkScrollHandler,
   getCodeFromValue,
   getHeight,
+  getWindowDeviceHeight,
   getYn,
   validator,
 } from "../../CommonFunction";
@@ -499,8 +500,20 @@ const KendoWindow = ({
     height2 = getHeight(".BottomContainer"); //탭 부분
     height3 = getHeight(".k-form-fieldset"); //상단조회조건
     height4 = getHeight(".WindowButtonContainer");
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   }, []);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
@@ -511,8 +524,13 @@ const KendoWindow = ({
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   };
 
   const onClose = () => {

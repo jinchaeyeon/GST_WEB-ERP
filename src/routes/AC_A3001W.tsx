@@ -177,7 +177,7 @@ const AC_A3001W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>자산명세서</Title>
         <ButtonContainer>
           {permissions && (

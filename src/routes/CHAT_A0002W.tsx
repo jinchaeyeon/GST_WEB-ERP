@@ -450,7 +450,7 @@ const CHAT_BOT_MNG: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>Chatbot 관리</Title>
         <ButtonContainer>
           <Button

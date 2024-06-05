@@ -42,6 +42,7 @@ import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
@@ -68,8 +69,6 @@ var height6 = 0;
 var height7 = 0;
 var height8 = 0;
 var height9 = 0;
-var height10 = 0;
-var height11 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -115,34 +114,57 @@ const KendoWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".WindowButtonContainer4"); //조회버튼
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
-    height6 = getHeight(".k-tabstrip-items-wrapper"); //탭 부분
-    height7 = getHeight(".FormBoxWrap"); //폼박스 부분
-    height8 = getHeight(".FormBoxWrap"); //폼박스 부분2
-    height9 = getHeight(".WindowButtonContainer"); //버튼 부분
-    height10 = getHeight(".WindowButtonContainer2"); //버튼 부분
-    height11 = getHeight(".WindowButtonContainer3"); //버튼 부분
+    height4 = getHeight(".k-tabstrip-items-wrapper"); //탭 부분
+    height5 = getHeight(".FormBoxWrap"); //폼박스 부분
+    height6 = getHeight(".FormBoxWrap"); //폼박스 부분2
+    height7 = getHeight(".WindowButtonContainer"); //버튼 부분
+    height8 = getHeight(".WindowButtonContainer2"); //버튼 부분
+    height9 = getHeight(".WindowButtonContainer3"); //버튼 부분
 
-    setMobileHeight(deviceHeight - height - height6 - height9);
-    setMobileHeight2(deviceHeight - height - height6 - height10);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height7
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height8
+    );
     setMobileHeight3(
-      deviceHeight - height - height6 - height2 - height4 - height11 - height3
+      getWindowDeviceHeight(true, deviceHeight) -
+        height -
+        height4 -
+        height2 -
+        height9 -
+        height3
     );
 
-    setWebHeight(position.height - height - height6 - height7);
-    setWebHeight2(position.height - height - height6 - height8);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height4 - height5
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height4 - height6
+    );
     setWebHeight3(
-      position.height - height - height6 - height2 - height5 - height3
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height4 -
+        height2 -
+        height3
     );
   }, [tabSelected]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height6 - height7);
-    setWebHeight2(position.height - height - height6 - height8);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height4 - height5
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height4 - height6
+    );
     setWebHeight3(
-      position.height - height - height6 - height2 - height5 - height3
+      getWindowDeviceHeight(true, position.height) -
+        height -
+        height4 -
+        height2 -
+        height3
     );
   };
 
@@ -911,7 +933,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight + height9 }}
+                    style={{ height: mobileheight + height7 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1385,7 +1407,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight2 + height10 }}
+                    style={{ height: mobileheight2 + height8 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,

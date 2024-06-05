@@ -14,7 +14,11 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { TEditorHandle } from "../../../store/types";
-import { UseGetValueFromSessionItem, getHeight } from "../../CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../../CommonFunction";
 import RichEditor from "../../RichEditor";
 import Window from "../WindowComponent/Window";
 
@@ -47,13 +51,19 @@ const KendoWindow = ({
     height2 = getHeight(".FormBoxWrap"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
 
-    setMobileHeight(deviceHeight - height - height3);
-    setWebHeight(position.height - height - height2 - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
   };
 
   const processApi = useApi();

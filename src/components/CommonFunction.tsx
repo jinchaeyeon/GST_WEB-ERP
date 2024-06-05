@@ -7,13 +7,48 @@ import { detect } from "detect-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import {
+  isFilterheightstate,
+  isMobileState,
+  loginResultState,
+  sessionItemState,
+} from "../store/atoms";
 import captionEnUs from "../store/cultures/Captions.en-US.json";
 import captionKoKr from "../store/cultures/Captions.ko-KR.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+
+export const getDeviceHeight = (bool : boolean) => { //라우터
+  let height = getHeight(".visible-mobile-only"); //필터 모바일
+  let height2 = getHeight(".filterBox"); //필터 웹
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth <= 1200;
+  if(bool == false) { //필터없는경우
+    if (isMobile) {
+      return document.documentElement.clientHeight - 70;
+    } else {
+      return document.documentElement.clientHeight - 50;
+    }
+  } else {
+    if (isMobile) {
+      return document.documentElement.clientHeight - 70 - height;
+    } else {
+      return document.documentElement.clientHeight - 50 - height2;
+    }
+  }
+};
+
+export const getWindowDeviceHeight = (bool : boolean, heights: any) => { //라우터
+  let height = getHeight(".visible-mobile-only2"); //필터 모바일
+  let height2 = getHeight(".filterBox2"); //필터 웹
+  if(bool == false) { //필터없는경우
+    return heights;
+  } else {
+    return heights - height - height2;
+  }
+};
 
 export const getBizCom = (bizComponentData: any, id: string) => {
   return bizComponentData.find((item: any) => item.bizComponentId == id) ==

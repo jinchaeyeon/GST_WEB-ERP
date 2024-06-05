@@ -627,7 +627,7 @@ const SA_B2229W: React.FC = () => {
           marginBottom: "50px",
         }}
       >
-        <TitleContainer>
+        <TitleContainer className="TitleContainer">
           <Title>실적연계분석</Title>
           <ButtonContainer>
             <Button

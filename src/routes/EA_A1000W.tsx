@@ -2010,7 +2010,7 @@ const EA_A1000: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>결재라인지정</Title>
 
         <ButtonContainer>

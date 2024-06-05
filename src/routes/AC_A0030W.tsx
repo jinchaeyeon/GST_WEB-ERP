@@ -1290,7 +1290,7 @@ const AC_A0030W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>계정관리</Title>
 
         <ButtonContainer>

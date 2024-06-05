@@ -12,6 +12,9 @@ import {
 import { SignatureChangeEvent } from "@progress/kendo-react-inputs";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
@@ -29,15 +32,13 @@ import {
   UseGetValueFromSessionItem,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 import Sign from "../../Sign/Sign";
 import Window from "../WindowComponent/Window";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
@@ -80,16 +81,32 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
     height4 = getHeight(".WindowButtonContainer");
     height5 = getHeight(".WindowButtonContainer2");
-    setMobileHeight(deviceHeight - height - height3 - height4);
-    setMobileHeight2(deviceHeight - height - height3 - height5);
-    setWebHeight((position.height - height - height3) / 2 - height4);
-    setWebHeight2((position.height - height - height3) / 2 - height5);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3 - height4
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3 - height5
+    );
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) - height - height3) / 2 -
+        height4
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height3) / 2 -
+        height5
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight((position.height - height - height3) / 2 - height4);
-    setWebHeight2((position.height - height - height3) / 2 - height5);
+    setWebHeight(
+      (getWindowDeviceHeight(false, position.height) - height - height3) / 2 -
+        height4
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height3) / 2 -
+        height5
+    );
   };
 
   var index = 0;

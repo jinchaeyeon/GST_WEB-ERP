@@ -2692,7 +2692,7 @@ FROM HU072T WHERE paycd = '4'`;
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>일용직 일근태</Title>
 
         <ButtonContainer>

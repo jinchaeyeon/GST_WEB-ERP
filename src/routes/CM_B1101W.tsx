@@ -795,7 +795,7 @@ const CM_B1101W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>고객대응시간분석</Title>
 
         <ButtonContainer>

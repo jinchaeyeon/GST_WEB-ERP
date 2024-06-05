@@ -2900,7 +2900,7 @@ const BA_A0020W_603: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>고객정보관리</Title>
 
         <ButtonContainer>

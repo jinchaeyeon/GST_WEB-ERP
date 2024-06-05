@@ -1139,7 +1139,7 @@ const SY_A0025W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>관리번호 채번정보</Title>
 
         <ButtonContainer>

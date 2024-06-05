@@ -767,7 +767,7 @@ const AC_B1240W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>계정과목별보조부</Title>
 
         <ButtonContainer>

@@ -832,7 +832,7 @@ const AC_A1000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>대체전표</Title>
 
         <ButtonContainer>

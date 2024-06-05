@@ -1363,7 +1363,7 @@ const CR_A0010W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>고객관리</Title>
 
         <ButtonContainer>

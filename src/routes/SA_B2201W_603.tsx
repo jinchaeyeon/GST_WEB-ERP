@@ -644,7 +644,7 @@ const SA_B2201W_603: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>수주잔고조회</Title>
 
         <ButtonContainer>

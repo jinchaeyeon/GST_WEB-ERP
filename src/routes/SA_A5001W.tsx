@@ -1130,7 +1130,7 @@ const SA_A5001W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>판매처리(수출)</Title>
 
             <ButtonContainer>
@@ -1593,7 +1593,7 @@ const SA_A5001W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>판매처리(수출)</Title>
 
             <ButtonContainer>

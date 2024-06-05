@@ -58,6 +58,7 @@ import {
   chkScrollHandler,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   getYn,
 } from "../../CommonFunction";
 import {
@@ -342,12 +343,24 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const [webheight6, setWebHeight6] = useState(0);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3);
-    setWebHeight2(position.height - height - height2 - height4);
-    setWebHeight3(position.height - height - height2 - height5);
-    setWebHeight4(position.height - height - height2 - height6);
-    setWebHeight5(position.height - height - height2 - height7);
-    setWebHeight6(position.height - height - height2 - height8);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height4
+    );
+    setWebHeight3(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height5
+    );
+    setWebHeight4(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height6
+    );
+    setWebHeight5(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height7
+    );
+    setWebHeight6(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height8
+    );
   };
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
@@ -362,18 +375,42 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     height6 = getHeight(".WindowButtonContainer4");
     height7 = getHeight(".WindowButtonContainer5");
     height8 = getHeight(".WindowButtonContainer6");
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setMobileHeight2(deviceHeight - height - height2 - height4);
-    setMobileHeight3(deviceHeight - height - height2 - height5);
-    setMobileHeight4(deviceHeight - height - height2 - height6);
-    setMobileHeight5(deviceHeight - height - height2 - height7);
-    setMobileHeight6(deviceHeight - height - height2 - height8);
-    setWebHeight(position.height - height - height2 - height3);
-    setWebHeight2(position.height - height - height2 - height4);
-    setWebHeight3(position.height - height - height2 - height5);
-    setWebHeight4(position.height - height - height2 - height6);
-    setWebHeight5(position.height - height - height2 - height7);
-    setWebHeight6(position.height - height - height2 - height8);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setMobileHeight2(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+    );
+    setMobileHeight3(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height5
+    );
+    setMobileHeight4(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height6
+    );
+    setMobileHeight5(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height7
+    );
+    setMobileHeight6(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height8
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height3
+    );
+    setWebHeight2(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height4
+    );
+    setWebHeight3(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height5
+    );
+    setWebHeight4(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height6
+    );
+    setWebHeight5(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height7
+    );
+    setWebHeight6(
+      getWindowDeviceHeight(false, position.height) - height - height2 - height8
+    );
   }, [tabSelected]);
 
   const loginResult = useRecoilValue(loginResultState);

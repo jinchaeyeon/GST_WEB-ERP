@@ -472,7 +472,7 @@ const Page: React.FC = () => {
   const onSaveClick = async () => {};
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>일별 출석 및 부가서비스 관리</Title>
         <ButtonContainer>
           {permissions && (

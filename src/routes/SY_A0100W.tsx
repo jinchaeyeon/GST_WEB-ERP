@@ -673,7 +673,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>데이터등록현황</Title>
 
         <ButtonContainer>

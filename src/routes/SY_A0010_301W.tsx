@@ -1157,7 +1157,7 @@ const Page: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>공통코드정보</Title>
 
         <ButtonContainer>

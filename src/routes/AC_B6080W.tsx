@@ -1007,7 +1007,7 @@ const AC_B6080W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>미수금/미지급현황</Title>
 
         <ButtonContainer>

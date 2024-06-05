@@ -290,7 +290,7 @@ function App() {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>GANTT</Title>
       </TitleContainer>
       <Gantt

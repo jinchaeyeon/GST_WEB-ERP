@@ -1192,7 +1192,7 @@ const SY_A0500W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>레이아웃 설정</Title>
 
             <ButtonContainer>
@@ -1348,7 +1348,7 @@ const SY_A0500W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>레이아웃 설정</Title>
 
             <ButtonContainer>

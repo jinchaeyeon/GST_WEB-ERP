@@ -1403,7 +1403,7 @@ const AC_A1040W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>지출결의서-자동전표</Title>
         <ButtonContainer>
           {permissions && (

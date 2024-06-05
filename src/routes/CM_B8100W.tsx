@@ -361,7 +361,7 @@ const CM_B8100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>사용자별 근무현황</Title>
 
         <ButtonContainer>

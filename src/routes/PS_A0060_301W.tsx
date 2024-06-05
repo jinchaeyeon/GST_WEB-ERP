@@ -948,7 +948,7 @@ const PS_A0060_301W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>휴일관리</Title>
         <ButtonContainer>
           {permissions && (

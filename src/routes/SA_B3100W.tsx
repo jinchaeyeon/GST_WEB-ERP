@@ -688,7 +688,7 @@ const SA_B3100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>매출집계(품목)</Title>
 
         <ButtonContainer>

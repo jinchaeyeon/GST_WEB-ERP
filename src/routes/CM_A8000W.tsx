@@ -1638,7 +1638,7 @@ const CM_A8000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>ValueBox</Title>
 
         <ButtonContainer>

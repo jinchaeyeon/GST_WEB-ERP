@@ -1357,7 +1357,7 @@ const PR_A2200W: React.FC = () => {
         <>
           {step == 0 ? (
             <GridContainer>
-              <TitleContainer>
+              <TitleContainer className="TitleContainer">
                 <Title>프로젝트 선택</Title>
                 <ButtonContainer>
                   <Button
@@ -1467,7 +1467,7 @@ const PR_A2200W: React.FC = () => {
             </GridContainer>
           ) : step == 1 ? (
             <GridContainer>
-              <TitleContainer>
+              <TitleContainer className="TitleContainer">
                 <Title>장비 선택</Title>
                 <ButtonContainer>
                   <Button
@@ -1590,7 +1590,7 @@ const PR_A2200W: React.FC = () => {
             </GridContainer>
           ) : (
             <GridContainer>
-              <TitleContainer>
+              <TitleContainer className="TitleContainer">
                 <Title>사진 및 코멘트</Title>
                 <ButtonContainer>
                   {isCaptured ? (

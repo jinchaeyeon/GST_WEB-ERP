@@ -1,35 +1,36 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import {
-    Grid,
-    GridColumn,
-    GridDataStateChangeEvent,
-    GridFooterCellProps,
-    GridPageChangeEvent,
-    GridSelectionChangeEvent,
-    getSelectedState,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-    BottomContainer,
-    ButtonContainer,
-    GridContainer,
+  BottomContainer,
+  ButtonContainer,
+  GridContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
-    UseBizComponent,
-    UseGetValueFromSessionItem,
-    getBizCom,
-    getHeight,
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  getBizCom,
+  getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import {
-    COM_CODE_DEFAULT_VALUE,
-    PAGE_SIZE,
-    SELECTED_FIELD,
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../../CommonString";
 import Window from "../WindowComponent/Window";
 
@@ -42,6 +43,9 @@ type IKendoWindow = {
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -60,9 +64,29 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 750,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".BottomContainer");
+
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height2
+    );
   };
+
   const setLoading = useSetRecoilState(isLoading);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -317,9 +341,7 @@ const KendoWindow = ({
       >
         <Grid
           style={{
-            height: isMobile
-              ? deviceHeight - height - height3
-              : position.height - height - height3,
+            height: isMobile ? mobileheight : webheight,
           }}
           data={process(
             mainDataResult.data.map((row) => ({

@@ -1788,7 +1788,7 @@ const PR_A4000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>생산실적관리</Title>
         <ButtonContainer>
           {permissions && (

@@ -159,7 +159,7 @@ export const heightstate = atom<number>({
   key: "heightstate",
   default:
     document.documentElement.clientWidth <= 1200
-      ? document.documentElement.clientHeight - 170
+      ? document.documentElement.clientHeight - 60
       : document.documentElement.clientHeight - 30,
 });
 

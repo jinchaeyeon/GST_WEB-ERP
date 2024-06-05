@@ -29,6 +29,7 @@ import {
   convertDateToStrWithTime2,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import { EDIT_FIELD, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
@@ -75,16 +76,30 @@ const KendoWindow = ({
   });
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".TitleContainer");
+    height2 = getHeight(".WindowTitleContainer");
     height3 = getHeight(".example");
     height4 = getHeight(".BottomContainer");
-    setMobileHeight(deviceHeight - height - height2 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   }, []);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height4);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) -
+        height -
+        height2 -
+        height3 -
+        height4
+    );
   };
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -470,7 +485,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <ButtonContainer>
           <Button
             onClick={upload}

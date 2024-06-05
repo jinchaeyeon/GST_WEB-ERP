@@ -26,6 +26,7 @@ import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import {
   UseBizComponent,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
@@ -45,8 +46,6 @@ let DATA_ITEM_KEY: string;
 var height = 0;
 var height2 = 0;
 var height3 = 0;
-var height4 = 0;
-var height5 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
@@ -69,16 +68,20 @@ const KendoWindow = ({
     useRecoilState(isFilterHideState2);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+    height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setMobileHeight(
+      getWindowDeviceHeight(true, deviceHeight) - height - height2 - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height2 - height3 - height5);
+    setWebHeight(
+      getWindowDeviceHeight(true, position.height) - height - height2 - height3
+    );
   };
   const setLoading = useSetRecoilState(isLoading);
 
@@ -427,7 +430,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>

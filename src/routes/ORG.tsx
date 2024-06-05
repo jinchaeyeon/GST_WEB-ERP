@@ -349,7 +349,7 @@ const ORG: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>부서관리</Title>
       </TitleContainer>
       <TabStrip selected={selected} onSelect={handleSelect}>

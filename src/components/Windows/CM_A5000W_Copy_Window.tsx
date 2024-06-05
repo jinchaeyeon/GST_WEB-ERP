@@ -155,7 +155,7 @@ const KendoWindow = ({
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
-      height3 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
       height4 = getHeight(".visible-mobile-only2"); //필터 모바일
       height5 = getHeight(".filterBox2"); //필터 웹
       height6 = getHeight(".WindowButtonContainer");
@@ -567,7 +567,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>

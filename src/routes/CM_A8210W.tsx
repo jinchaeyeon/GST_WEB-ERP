@@ -1394,7 +1394,7 @@ const CM_A8210W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>임률관리</Title>
 
         <ButtonContainer>

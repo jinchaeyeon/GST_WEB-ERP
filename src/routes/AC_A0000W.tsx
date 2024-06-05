@@ -43,6 +43,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   isValidDate,
@@ -55,7 +56,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -68,10 +69,8 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-var height5 = 0;
 
 const AC_A0000W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -88,13 +87,20 @@ const AC_A0000W: React.FC = () => {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".FormBoxWrap");
-      height4 = getHeight(".filterBox"); //필터 웹
-      height5 = getHeight(".TitleContainer");
-      setMobileHeight(deviceHeight - height);
-      setMobileHeight2(deviceHeight - height2);
-      setWebHeight(
-        deviceHeight - height - height2 - height3 - height4 - height5
-      );
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height4);
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
     }
   }, [customOptionData]);
 

@@ -901,7 +901,7 @@ const SA_A8000W: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>수금처리</Title>
             <ButtonContainer>
               {permissions && (
@@ -1211,7 +1211,7 @@ const SA_A8000W: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>수금처리</Title>
             <ButtonContainer>
               {permissions && (

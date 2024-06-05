@@ -931,7 +931,7 @@ const AC_B2080W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>제조/손익 명세서</Title>
 
         <ButtonContainer>

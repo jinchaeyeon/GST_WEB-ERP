@@ -818,7 +818,7 @@ const CM_A1000W_617: React.FC = () => {
         </>
       ) : (
         <>
-          <TitleContainer>
+          <TitleContainer className="TitleContainer">
             <Title>업무일지</Title>
 
             <ButtonContainer>

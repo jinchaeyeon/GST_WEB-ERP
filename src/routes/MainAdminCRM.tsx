@@ -410,7 +410,7 @@ const Main: React.FC = () => {
   return (
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
-        <TitleContainer>
+        <TitleContainer className="TitleContainer">
           <Title>{userName}님, 좋은 하루되세요</Title>
         </TitleContainer>
         {!isMobile ? (

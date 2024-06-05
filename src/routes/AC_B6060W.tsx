@@ -1776,7 +1776,7 @@ const AC_B6060W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>집행현황</Title>
         <ButtonContainer>
           {permissions && (

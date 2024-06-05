@@ -111,7 +111,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
-      height3 = getHeight(".TitleContainer"); //조회버튼
+      height3 = getHeight(".WindowTitleContainer"); //조회버튼
       height4 = getHeight(".visible-mobile-only2"); //필터 모바일
       height5 = getHeight(".filterBox2"); //필터 웹
 
@@ -690,7 +690,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <TitleContainer className="TitleContainer">
+        <TitleContainer className="WindowTitleContainer">
           <Title></Title>
           <ButtonContainer>
             <Button

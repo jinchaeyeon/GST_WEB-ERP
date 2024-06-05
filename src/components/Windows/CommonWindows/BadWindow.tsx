@@ -31,6 +31,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -78,8 +79,12 @@ const Badwindow = ({
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    setMobileHeight(deviceHeight - height - height3);
-    setWebHeight(position.height - height - height3);
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - height3
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height3
+    );
   }, []);
 
   let isMobile = deviceWidth <= 1200;
@@ -92,7 +97,9 @@ const Badwindow = ({
 
   const onChangePostion = (position: any) => {
     setPosition(position);
-    setWebHeight(position.height - height - height3);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - height3
+    );
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };

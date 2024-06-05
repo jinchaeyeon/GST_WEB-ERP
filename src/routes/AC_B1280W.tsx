@@ -392,7 +392,7 @@ const AC_B1280W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>단축코드별리스트</Title>
 
         <ButtonContainer>

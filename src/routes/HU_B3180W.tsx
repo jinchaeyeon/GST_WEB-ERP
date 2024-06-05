@@ -437,7 +437,7 @@ const HU_B3180W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>출퇴근부_월별</Title>
         <ButtonContainer>
           {permissions && (

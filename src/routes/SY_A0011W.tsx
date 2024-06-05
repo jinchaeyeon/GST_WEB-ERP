@@ -1352,7 +1352,7 @@ const Page: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>사용자 그룹</Title>
         <ButtonContainer>
           {permissions && (

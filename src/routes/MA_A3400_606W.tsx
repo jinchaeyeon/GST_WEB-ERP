@@ -1077,7 +1077,7 @@ const MA_A3400_606W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>출고처리</Title>
 
         <ButtonContainer>

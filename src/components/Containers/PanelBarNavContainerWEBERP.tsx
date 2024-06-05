@@ -65,7 +65,6 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isDeviceWidthState,
   isFilterHideState,
   isFilterheightstate,
@@ -78,7 +77,7 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -154,8 +153,6 @@ const PanelBarNavContainer = (props: any) => {
   const [formKey, setFormKey] = useState("");
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
-  const [routesDeviceHeight, setroutesDeviceHeight] =
-    useRecoilState(heightstate);
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
@@ -177,11 +174,9 @@ const PanelBarNavContainer = (props: any) => {
       if (newIsMobile) {
         setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
         setIsFilterheightstates(30);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 170);
       } else {
         setIsFilterHideStates(false); // 데스크톱 열린 상태로 설정
         setIsFilterheightstates(0);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
     };
     window.addEventListener("resize", handleWindowResize);
@@ -236,11 +231,9 @@ const PanelBarNavContainer = (props: any) => {
       if (isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 170);
       } else {
         setIsFilterheightstates(0);
         setIsFilterHideStates(false);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
     };
   }, [
@@ -473,11 +466,9 @@ const PanelBarNavContainer = (props: any) => {
       if (isMobile) {
         setIsFilterheightstates(30);
         setIsFilterHideStates(true);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 170);
       } else {
         setIsFilterheightstates(0);
         setIsFilterHideStates(false);
-        setroutesDeviceHeight(document.documentElement.clientHeight - 30);
       }
       setIsMobileMenuOpend(false);
       setUserOptionsWindowVisible(false);
@@ -1616,7 +1607,7 @@ const PanelBarNavContainer = (props: any) => {
               onClick={onMenuBtnClick}
             />
           </TopTitle>
-          <PageWrap isMenuOpen={isFilterheightstates}>
+          <PageWrap isMenuOpen={isMobile ? isFilterheightstates : 0}>
             {props.children}
           </PageWrap>
         </Content>

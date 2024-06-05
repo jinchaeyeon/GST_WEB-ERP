@@ -1297,7 +1297,7 @@ const HU_A2140W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>근태허가신청</Title>
 
         <ButtonContainer>

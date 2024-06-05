@@ -709,7 +709,7 @@ const HU_B4001W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title style={{ height: "10%" }}>연차사용현황(개인)</Title>
         <ButtonContainer>
           {permissions && (

@@ -2371,7 +2371,7 @@ const PR_A0060: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>설비관리</Title>
 
         <ButtonContainer>

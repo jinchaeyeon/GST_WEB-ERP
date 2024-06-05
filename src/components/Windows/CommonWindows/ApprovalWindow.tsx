@@ -54,6 +54,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getWindowDeviceHeight,
   handleKeyPressSearch,
 } from "../../CommonFunction";
 import {
@@ -160,30 +161,55 @@ const KendoWindow = ({
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
-      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
       height3 = getHeight(".BottomContainer"); //하단 버튼부분
       height4 = getHeight(".WindowButtonContainer");
       height5 = getHeight(".WindowButtonContainer2");
       height6 = getHeight(".WindowButtonContainer3");
-      height7 = getHeight(".visible-mobile-only2"); //필터 모바일
-      height8 = getHeight(".filterBox2"); //필터 웹
       setMobileHeight(
-        deviceHeight - height - height2 - height3 - height4 - height7
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height4
       );
       setMobileHeight2(
-        deviceHeight - height - height2 - height3 - height5 - height7
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height5
       );
       setMobileHeight3(
-        deviceHeight - height - height2 - height3 - height6 - height7
+        getWindowDeviceHeight(true, deviceHeight) -
+          height -
+          height2 -
+          height3 -
+          height6
       );
       setWebHeight(
-        (position.height - height - height2 - height3 - height8) / 2 - height4
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height4
       );
       setWebHeight2(
-        (position.height - height - height2 - height3 - height8) / 2 - height5
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height5
       );
       setWebHeight3(
-        (position.height - height - height2 - height3 - height8) / 2 - height6
+        (getWindowDeviceHeight(true, position.height) -
+          height -
+          height2 -
+          height3) /
+          2 -
+          height6
       );
     }
   }, [customOptionData]);
@@ -191,13 +217,28 @@ const KendoWindow = ({
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      (position.height - height - height2 - height3 - height8) / 2 - height4
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height4
     );
     setWebHeight2(
-      (position.height - height - height2 - height3 - height8) / 2 - height5
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height5
     );
     setWebHeight3(
-      (position.height - height - height2 - height3 - height8) / 2 - height6
+      (getWindowDeviceHeight(true, position.height) -
+        height -
+        height2 -
+        height3) /
+        2 -
+        height6
     );
   };
 
@@ -1507,7 +1548,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <TitleContainer className="TitleContainer">
+      <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
           <Button onClick={() => search()} icon="search" themeColor={"primary"}>

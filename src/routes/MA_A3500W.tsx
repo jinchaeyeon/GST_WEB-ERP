@@ -2406,7 +2406,7 @@ const MA_A3500W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>자재불출</Title>
 
         <ButtonContainer>

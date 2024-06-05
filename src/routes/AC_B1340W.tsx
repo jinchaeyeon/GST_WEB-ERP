@@ -283,7 +283,7 @@ const AC_B1340W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>현금출납장</Title>
 
         <ButtonContainer>

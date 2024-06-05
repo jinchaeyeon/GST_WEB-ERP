@@ -318,7 +318,7 @@ const HU_B1020W: React.FC = () => {
   };
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title style={{ height: "10%" }}>인원명부</Title>
         <ButtonContainer>
           {permissions && (

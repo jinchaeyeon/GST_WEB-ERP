@@ -1704,7 +1704,7 @@ const MA_B7200W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>기간재고조회</Title>
 
         <ButtonContainer>

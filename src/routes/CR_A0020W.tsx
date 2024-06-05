@@ -640,7 +640,7 @@ const CR_A0020W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>반려견 정보</Title>
         <ButtonContainer>
           {permissions && (

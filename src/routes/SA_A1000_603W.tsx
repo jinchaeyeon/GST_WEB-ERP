@@ -4275,7 +4275,7 @@ const SA_A1000_603W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>프로젝트관리</Title>
 
         <ButtonContainer>

@@ -900,7 +900,7 @@ const HU_A4110W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>POINT ZONE</Title>
 
         <ButtonContainer>

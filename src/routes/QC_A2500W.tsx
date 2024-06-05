@@ -964,7 +964,7 @@ const QC_A2500W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>NCR관리</Title>
 
         <ButtonContainer>

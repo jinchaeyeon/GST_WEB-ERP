@@ -923,7 +923,7 @@ const HU_A2000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>워크캘린더</Title>
 
         <ButtonContainer>

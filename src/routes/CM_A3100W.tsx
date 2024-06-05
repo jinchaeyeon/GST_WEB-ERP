@@ -638,7 +638,7 @@ const CM_A3100W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>자원예약</Title>
 
         <ButtonContainer>

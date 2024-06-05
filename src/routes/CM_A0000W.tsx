@@ -673,7 +673,7 @@ const CM_A0000W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>공지사항</Title>
 
         <ButtonContainer>

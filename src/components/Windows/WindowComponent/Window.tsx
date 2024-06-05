@@ -78,6 +78,7 @@ const Window = ({
 }: TChildren) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
+  let isMobile = deviceWidth <= 1200;
   const [windowStage, setWindowStage] = useState<
     "MINIMIZED" | "full" | "DEFAULT" | undefined
   >("DEFAULT");
@@ -203,8 +204,16 @@ const Window = ({
       onClose={onClose}
       modal={modals}
       doubleClickStageChange={false}
-      minimizeButton={windowStage == "DEFAULT" ? minButton : NoneDiv}
-      maximizeButton={windowStage == "DEFAULT" ? maxButton : maxRestoreButton}
+      minimizeButton={
+        isMobile ? NoneDiv : windowStage == "DEFAULT" ? minButton : NoneDiv
+      }
+      maximizeButton={
+        isMobile
+          ? NoneDiv
+          : windowStage == "DEFAULT"
+          ? maxButton
+          : maxRestoreButton
+      }
     >
       {children}
     </WindowKendo>

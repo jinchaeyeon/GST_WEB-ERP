@@ -1065,7 +1065,7 @@ const MA_A2310_606W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
+      <TitleContainer className="TitleContainer">
         <Title>입고확정</Title>
 
         <ButtonContainer>
