@@ -145,7 +145,7 @@ const ItemsWindow = ({
     custcd: "",
     custnm: "",
     dwgno: "",
-    useyn: yn == true ? "Y" : yn == false ? "" : "N",
+    useyn: yn == true ? "Y" : yn == false ? "%" : "N",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,

@@ -166,7 +166,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     custcd: "",
     custnm: "",
     dwgno: "",
-    useyn: "Y",
+    useyn: "%",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,

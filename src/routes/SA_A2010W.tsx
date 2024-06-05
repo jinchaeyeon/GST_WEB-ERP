@@ -59,7 +59,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DetailWindow from "../components/Windows/SA_A2010W_Window";
+import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
@@ -1994,7 +1994,7 @@ const SA_B2000: React.FC = () => {
             },
           }}
           modal={true}
-          pathname="SA_A2010W"
+          pathname="SA_A2000W"
         />
       )}
       {custWindowVisible && (
