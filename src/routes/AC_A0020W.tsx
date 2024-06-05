@@ -73,11 +73,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -773,7 +769,8 @@ var height6 = 0;
 var height7 = 0;
 
 const AC_A0020W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const setLoading = useSetRecoilState(isLoading);
@@ -819,6 +816,8 @@ const AC_A0020W: React.FC = () => {
       height7 = getHeight(".k-tabstrip-items-wrapper");
 
       const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height2 - height7);
         setMobileHeight2(getDeviceHeight(true) - height2 - height7);
         setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height7);
@@ -5449,7 +5448,7 @@ const AC_A0020W: React.FC = () => {
                       // fetchGrid,
                     }}
                   >
-                     <GridTitleContainer className="ButtonContainer4">
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle></GridTitle>
                       <ButtonContainer>
                         <Button

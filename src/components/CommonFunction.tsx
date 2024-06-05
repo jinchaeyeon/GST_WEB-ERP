@@ -8,8 +8,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import {
-  isFilterheightstate,
-  isMobileState,
   loginResultState,
   sessionItemState,
 } from "../store/atoms";

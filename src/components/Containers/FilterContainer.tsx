@@ -1,14 +1,18 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { FilterBoxWrap } from "../../CommonStyled";
-import { isFilterHideState, isFilterheightstate, isMobileState } from "../../store/atoms";
+import {
+  isFilterHideState,
+  isFilterheightstate
+} from "../../store/atoms";
 import FilterHideToggleButton from "../Buttons/FilterHideToggleButton";
 
 type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const [isFilterheightstates, setIsFilterheightstates] =

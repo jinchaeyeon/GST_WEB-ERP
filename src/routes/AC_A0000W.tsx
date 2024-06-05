@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -56,7 +56,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -71,7 +71,8 @@ var height3 = 0;
 var height4 = 0;
 
 const AC_A0000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const [mobileheight, setMobileHeight] = useState(0);
@@ -90,6 +91,8 @@ const AC_A0000W: React.FC = () => {
       height4 = getHeight(".TitleContainer");
 
       const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height4);
         setMobileHeight2(getDeviceHeight(true) - height2 - height4);
         setWebHeight(

@@ -31,12 +31,10 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   deletedNameState,
-  isDeviceWidthState,
   isFilterHideState,
   isFilterheightstate,
   isMenuOpendState,
   isMobileMenuOpendState,
-  isMobileState,
   loginResultState,
   menuList,
   menusState,
@@ -100,15 +98,14 @@ const PanelBarNavContainer = (props: any) => {
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
 
   // 반응형 처리
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   useEffect(() => {
     const handleWindowResize = () => {
-      setDeviceWidth(document.documentElement.getBoundingClientRect().width);
-      const newIsMobile =
-        document.documentElement.getBoundingClientRect().width <= 1200;
-      setIsMobile(newIsMobile);
-      if (newIsMobile) {
+      let deviceWidth = document.documentElement.clientWidth;
+      const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+      setIsMobile(deviceWidth <= 1200);
+      if (deviceWidth <= 1200) {
         setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
         setIsFilterheightstates(30);
       } else {
