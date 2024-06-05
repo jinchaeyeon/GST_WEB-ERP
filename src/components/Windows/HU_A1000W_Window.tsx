@@ -1064,47 +1064,54 @@ const CopyWindow = ({
   const [webheight13, setWebHeight13] = useState(0);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".k-tabstrip-items-wrapper"); //탭
-    height4 = getHeight(".WindowButtonContainer");
-    height5 = getHeight(".WindowButtonContainer2");
-    height6 = getHeight(".WindowButtonContainer3");
-    height7 = getHeight(".WindowButtonContainer4");
-    height8 = getHeight(".WindowButtonContainer5");
-    height9 = getHeight(".WindowButtonContainer6");
-    height10 = getHeight(".WindowButtonContainer7");
-    height11 = getHeight(".WindowButtonContainer8");
-    height12 = getHeight(".WindowButtonContainer9");
 
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight(position.height - height - height2 - height3);
-    setMobileHeight2(deviceHeight - height - height2 - height3);
-    setWebHeight2(position.height - height - height2 - height3);
-    setMobileHeight3(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight3(position.height - height - height2 - height3 - height4);
-    setMobileHeight4(deviceHeight - height - height2 - height3);
-    setWebHeight4(position.height - height - height2 - height3);
-    setMobileHeight5(deviceHeight - height - height2 - height3);
-    setWebHeight5(position.height - height - height2 - height3);
-    setMobileHeight6(deviceHeight - height - height2 - height3 - height5);
-    setWebHeight6(position.height - height - height2 - height3 - height5);
-    setMobileHeight7(deviceHeight - height - height2 - height3 - height6);
-    setWebHeight7(position.height - height - height2 - height3 - height6);
-    setMobileHeight8(deviceHeight - height - height2 - height3 - height7);
-    setWebHeight8(position.height - height - height2 - height3 - height7);
-    setMobileHeight9(deviceHeight - height - height2 - height3 - height8);
-    setWebHeight9(position.height - height - height2 - height3 - height8);
-    setMobileHeight10(deviceHeight - height - height2 - height3 - height9);
-    setWebHeight10(position.height - height - height2 - height3 - height9);
-    setMobileHeight11(deviceHeight - height - height2 - height3 - height10);
-    setWebHeight11(position.height - height - height2 - height3 - height10);
-    setMobileHeight12(deviceHeight - height - height2 - height3 - height11);
-    setWebHeight12(position.height - height - height2 - height3 - height11);
-    setMobileHeight13(deviceHeight - height - height2 - height3 - height12);
-    setWebHeight13(position.height - height - height2 - height3 - height12);
-  }, [tabSelected]);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".k-tabstrip-items-wrapper"); //탭
+      height4 = getHeight(".WindowButtonContainer");
+      height5 = getHeight(".WindowButtonContainer2");
+      height6 = getHeight(".WindowButtonContainer3");
+      height7 = getHeight(".WindowButtonContainer4");
+      height8 = getHeight(".WindowButtonContainer5");
+      height9 = getHeight(".WindowButtonContainer6");
+      height10 = getHeight(".WindowButtonContainer7");
+      height11 = getHeight(".WindowButtonContainer8");
+      height12 = getHeight(".WindowButtonContainer9");
+
+      setMobileHeight(deviceHeight - height - height2 - height3);
+      setWebHeight(position.height - height - height2 - height3);
+      setMobileHeight2(deviceHeight - height - height2 - height3);
+      setWebHeight2(position.height - height - height2 - height3);
+      setMobileHeight3(deviceHeight - height - height2 - height3 - height4);
+      setWebHeight3(position.height - height - height2 - height3 - height4);
+      setMobileHeight4(deviceHeight - height - height2 - height3);
+      setWebHeight4(position.height - height - height2 - height3);
+      setMobileHeight5(deviceHeight - height - height2 - height3);
+      setWebHeight5(position.height - height - height2 - height3);
+      setMobileHeight6(deviceHeight - height - height2 - height3 - height5);
+      setWebHeight6(position.height - height - height2 - height3 - height5);
+      setMobileHeight7(deviceHeight - height - height2 - height3 - height6);
+      setWebHeight7(position.height - height - height2 - height3 - height6);
+      setMobileHeight8(deviceHeight - height - height2 - height3 - height7);
+      setWebHeight8(position.height - height - height2 - height3 - height7);
+      setMobileHeight9(deviceHeight - height - height2 - height3 - height8);
+      setWebHeight9(position.height - height - height2 - height3 - height8);
+      setMobileHeight10(deviceHeight - height - height2 - height3 - height9);
+      setWebHeight10(position.height - height - height2 - height3 - height9);
+      setMobileHeight11(deviceHeight - height - height2 - height3 - height10);
+      setWebHeight11(position.height - height - height2 - height3 - height10);
+      setMobileHeight12(deviceHeight - height - height2 - height3 - height11);
+      setWebHeight12(position.height - height - height2 - height3 - height11);
+      setMobileHeight13(deviceHeight - height - height2 - height3 - height12);
+      setWebHeight13(position.height - height - height2 - height3 - height12);
+    }
+  }, [tabSelected, customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -1318,10 +1325,6 @@ const CopyWindow = ({
       };
     });
   }, [attdatnum8, files8]);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   const setLoading = useSetRecoilState(isLoading);
 

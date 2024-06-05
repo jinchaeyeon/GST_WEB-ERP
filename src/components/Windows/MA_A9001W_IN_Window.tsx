@@ -103,18 +103,27 @@ const CopyWindow = ({
   const [webheight2, setWebHeight2] = useState(0);
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setMobileHeight2(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight((position.height - height - height2 - height3 - height5) / 2);
-    setWebHeight2((position.height - height - height2 - height3 - height5) / 2);
-  }, []);
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height5 = getHeight(".filterBox2"); //필터 웹
+      setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+      setMobileHeight2(deviceHeight - height - height2 - height3 - height4);
+      setWebHeight(
+        (position.height - height - height2 - height3 - height5) / 2
+      );
+      setWebHeight2(
+        (position.height - height - height2 - height3 - height5) / 2
+      );
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -133,9 +142,6 @@ const CopyWindow = ({
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

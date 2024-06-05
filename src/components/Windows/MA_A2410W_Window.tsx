@@ -223,15 +223,17 @@ const DetailWindow = ({
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".FormBoxWrap");
-    height4 = getHeight(".WindowButtonContainer");
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".WindowButtonContainer");
 
-    setMobileHeight(deviceHeight - height);
-    setMobileHeight2(deviceHeight - height - height2 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height4);
-  }, []);
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height - height2 - height4);
+      setWebHeight(position.height - height - height2 - height3 - height4);
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);

@@ -77,12 +77,14 @@ const KendoWindow = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼
 
-    setMobileHeight(deviceHeight - height - height2);
-    setWebHeight(position.height - height - height2);
-  }, []);
+      setMobileHeight(deviceHeight - height - height2);
+      setWebHeight(position.height - height - height2);
+    }
+  }, [customOptionData]);
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(position.height - height - height2);

@@ -104,17 +104,22 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   const [webheight, setWebHeight] = useState(0);
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
-
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".TitleContainer"); //조회버튼
-    height4 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height5 = getHeight(".filterBox2"); //필터 웹
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".TitleContainer"); //조회버튼
+      height4 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height5 = getHeight(".filterBox2"); //필터 웹
 
-    setMobileHeight(deviceHeight - height - height2 - height3 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height5);
-  }, []);
+      setMobileHeight(deviceHeight - height - height2 - height3 - height4);
+      setWebHeight(position.height - height - height2 - height3 - height5);
+    }
+  }, [customOptionData]);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(position.height - height - height2 - height3 - height5);
@@ -132,10 +137,6 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

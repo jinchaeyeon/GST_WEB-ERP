@@ -89,14 +89,20 @@ const KendoWindow = ({
   });
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".WindowButtonContainer");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
-    setMobileHeight(deviceHeight - height - height2 - height3);
-    setWebHeight(position.height - height - height2 - height3);
-  }, []);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(deviceHeight - height - height2 - height3);
+      setWebHeight(position.height - height - height2 - height3);
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -120,10 +126,6 @@ const KendoWindow = ({
       take: initialPageState.take,
     });
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

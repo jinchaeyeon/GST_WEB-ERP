@@ -643,19 +643,25 @@ const CopyWindow = ({
   const [mobileheight3, setMobileHeight3] = useState(0);
   const [webheight, setWebHeight] = useState(0);
 
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".FormBoxWrap");
-    height4 = getHeight(".FormBoxWrap2");
-    height5 = getHeight(".WindowButtonContainer");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
-    setMobileHeight(deviceHeight - height);
-    setMobileHeight2(deviceHeight - height - height5);
-    setMobileHeight3(deviceHeight - height - height2);
-    setWebHeight(
-      position.height - height - height2 - height3 - height4 - height5
-    );
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".FormBoxWrap2");
+      height5 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height - height5);
+      setMobileHeight3(deviceHeight - height - height2);
+      setWebHeight(
+        position.height - height - height2 - height3 - height4 - height5
+      );
+    }
   }, []);
 
   const onChangePostion = (position: any) => {
@@ -707,10 +713,6 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

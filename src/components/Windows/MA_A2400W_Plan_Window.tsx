@@ -107,35 +107,36 @@ const CopyWindow = ({
   const [webheight3, setWebHeight3] = useState(0);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".WindowButtonContainer");
-    height5 = getHeight(".WindowButtonContainer2");
-    height6 = getHeight(".WindowButtonContainer3");
-    height7 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height8 = getHeight(".filterBox2"); //필터 웹
-    setMobileHeight(
-      deviceHeight - height - height2 - height4 - height7
-    );
-    setMobileHeight2(
-      deviceHeight - height - height2 - height5 - height7
-    );
-    setMobileHeight3(
-      deviceHeight - height - height2 - height3 - height6 - height7
-    );
-    setWebHeight(
-      (position.height - height - height2 - height3 - height8) / 2 - height4
-    );
-    setWebHeight2(
-      (position.height - height - height2 - height3 - height8) / 2 - height5
-    );
-    setWebHeight3(
-      (position.height - height - height2 - height3 - height8) / 2 - height6
-    );
-  }, []);
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      height4 = getHeight(".WindowButtonContainer");
+      height5 = getHeight(".WindowButtonContainer2");
+      height6 = getHeight(".WindowButtonContainer3");
+      height7 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height8 = getHeight(".filterBox2"); //필터 웹
+      setMobileHeight(deviceHeight - height - height2 - height4 - height7);
+      setMobileHeight2(deviceHeight - height - height2 - height5 - height7);
+      setMobileHeight3(
+        deviceHeight - height - height2 - height3 - height6 - height7
+      );
+      setWebHeight(
+        (position.height - height - height2 - height3 - height8) / 2 - height4
+      );
+      setWebHeight2(
+        (position.height - height - height2 - height3 - height8) / 2 - height5
+      );
+      setWebHeight3(
+        (position.height - height - height2 - height3 - height8) / 2 - height6
+      );
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -165,9 +166,6 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

@@ -327,16 +327,22 @@ const CopyWindow = ({
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".FormBoxWrap");
-    height4 = getHeight(".WindowButtonContainer");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
-    setMobileHeight(deviceHeight - height);
-    setMobileHeight2(deviceHeight - height - height2 - height4);
-    setWebHeight(position.height - height - height2 - height3 - height4);
-  }, []);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height - height2 - height4);
+      setWebHeight(position.height - height - height2 - height3 - height4);
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -357,10 +363,6 @@ const CopyWindow = ({
   const [acntsrtnm, setAcntsrtnm] = useState<string>("");
   const [acntsrtnum, setAcntsrtnum] = useState<string>("");
   const [bankacntnum, setBankacntnum] = useState<string>("");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

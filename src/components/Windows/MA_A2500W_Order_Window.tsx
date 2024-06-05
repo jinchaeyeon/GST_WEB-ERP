@@ -119,35 +119,41 @@ const CopyWindow = ({
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
+
   useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".WindowButtonContainer");
-    height5 = getHeight(".WindowButtonContainer2");
-    height6 = getHeight(".WindowButtonContainer3");
-    height7 = getHeight(".WindowButtonContainer4");
-    height8 = getHeight(".visible-mobile-only2"); //필터 모바일
-    height9 = getHeight(".filterBox2"); //필터 웹
-    setMobileHeight(deviceHeight - height - height2 - height4 - height8);
-    setMobileHeight2(deviceHeight - height - height2 - height5 - height8);
-    setMobileHeight3(deviceHeight - height - height2 - height6 - height8);
-    setMobileHeight4(
-      deviceHeight - height - height2 - height3 - height7 - height8
-    );
-    setWebHeight(
-      (position.height - height - height2 - height3 - height9) / 2 - height4
-    );
-    setWebHeight2(
-      (position.height - height - height2 - height3 - height9) / 2 - height5
-    );
-    setWebHeight3(
-      (position.height - height - height2 - height3 - height9) / 2 - height6
-    );
-    setWebHeight4(
-      (position.height - height - height2 - height3 - height9) / 2 - height7
-    );
-  }, []);
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".TitleContainer"); //조회버튼있는 title부분
+      height3 = getHeight(".BottomContainer"); //하단 버튼부분
+      height4 = getHeight(".WindowButtonContainer");
+      height5 = getHeight(".WindowButtonContainer2");
+      height6 = getHeight(".WindowButtonContainer3");
+      height7 = getHeight(".WindowButtonContainer4");
+      height8 = getHeight(".visible-mobile-only2"); //필터 모바일
+      height9 = getHeight(".filterBox2"); //필터 웹
+      setMobileHeight(deviceHeight - height - height2 - height4 - height8);
+      setMobileHeight2(deviceHeight - height - height2 - height5 - height8);
+      setMobileHeight3(deviceHeight - height - height2 - height6 - height8);
+      setMobileHeight4(
+        deviceHeight - height - height2 - height3 - height7 - height8
+      );
+      setWebHeight(
+        (position.height - height - height2 - height3 - height9) / 2 - height4
+      );
+      setWebHeight2(
+        (position.height - height - height2 - height3 - height9) / 2 - height5
+      );
+      setWebHeight3(
+        (position.height - height - height2 - height3 - height9) / 2 - height6
+      );
+      setWebHeight4(
+        (position.height - height - height2 - height3 - height9) / 2 - height7
+      );
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -183,10 +189,6 @@ const CopyWindow = ({
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

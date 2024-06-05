@@ -179,20 +179,26 @@ const KendoWindow = ({
   const [webheight, setWebHeight] = useState(0);
   var index2 = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".FormBoxWrap");
-    height4 = getHeight(".FormBoxWrap2");
-    height5 = getHeight(".WindowButtonContainer");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
-    setMobileHeight(deviceHeight - height);
-    setMobileHeight2(deviceHeight - height - height5);
-    setMobileHeight3(deviceHeight - height - height2);
-    setWebHeight(
-      position.height - height - height2 - height3 - height4 - height5
-    );
-  }, []);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".FormBoxWrap2");
+      height5 = getHeight(".WindowButtonContainer");
+
+      setMobileHeight(deviceHeight - height);
+      setMobileHeight2(deviceHeight - height - height5);
+      setMobileHeight3(deviceHeight - height - height2);
+      setWebHeight(
+        position.height - height - height2 - height3 - height4 - height5
+      );
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -213,9 +219,6 @@ const KendoWindow = ({
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_AC038, L_AC024, L_AC013, R_TAXDIV_, L_AC401, L_AC030T, L_dptcd_001",

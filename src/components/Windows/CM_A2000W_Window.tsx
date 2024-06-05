@@ -150,23 +150,29 @@ const CopyWindow = ({
   const [mobileheight4, setMobileHeight4] = useState(0);
   const [webheight4, setWebHeight4] = useState(0);
 
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar"); //공통 해더
-    height2 = getHeight(".BottomContainer"); //하단 버튼부분
-    height3 = getHeight(".WindowButtonContainer");
-    height4 = getHeight(".WindowButtonContainer2");
-    height5 = getHeight(".WindowButtonContainer3");
-    height6 = getHeight(".WindowButtonContainer4");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption(pathname, setCustomOptionData);
 
-    setMobileHeight(deviceHeight - height - height3);
-    setMobileHeight2(deviceHeight - height - height2 - height4);
-    setMobileHeight3(deviceHeight - height - height5);
-    setMobileHeight4(deviceHeight - height - height6);
-    setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
-    setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
-    setWebHeight3((position.height - height - height2) / 8 - height5);
-    setWebHeight4(((position.height - height - height2) * 5) / 8);
-  }, []);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-window-titlebar"); //공통 해더
+      height2 = getHeight(".BottomContainer"); //하단 버튼부분
+      height3 = getHeight(".WindowButtonContainer");
+      height4 = getHeight(".WindowButtonContainer2");
+      height5 = getHeight(".WindowButtonContainer3");
+      height6 = getHeight(".WindowButtonContainer4");
+
+      setMobileHeight(deviceHeight - height - height3);
+      setMobileHeight2(deviceHeight - height - height2 - height4);
+      setMobileHeight3(deviceHeight - height - height5);
+      setMobileHeight4(deviceHeight - height - height6);
+      setWebHeight(((position.height - height - height2) * 5) / 8 - height3);
+      setWebHeight2(((position.height - height - height2) * 5) / 8 - height4);
+      setWebHeight3((position.height - height - height2) / 8 - height5);
+      setWebHeight4(((position.height - height - height2) * 5) / 8);
+    }
+  }, [customOptionData]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
@@ -206,9 +212,6 @@ const CopyWindow = ({
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
