@@ -1,16 +1,11 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  BottomContainer,
-  ButtonContainer,
-  Title,
-  TitleContainer,
-} from "../../CommonStyled";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading, loginResultState, menuList } from "../../store/atoms";
-import { UseGetValueFromSessionItem } from "../CommonFunction";
+import { isLoading } from "../../store/atoms";
+import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 import Window from "./WindowComponent/Window";
 
@@ -20,6 +15,8 @@ type IWindow = {
   quorev: number;
   modal?: boolean;
 };
+var height = 0;
+var height2 = 0;
 
 const SA_A1001_603W_Window = ({
   setVisible,
@@ -31,21 +28,27 @@ const SA_A1001_603W_Window = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
 
-  const [loginResult] = useRecoilState(loginResultState);
-  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
-  const defaultCulture = loginResult ? loginResult.defaultCulture : "";
-
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 900) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 900,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
-
-  const [menulist, setMenuList] = useRecoilState(menuList);
 
   const onClose = () => {
     setVisible(false);
@@ -105,18 +108,14 @@ const SA_A1001_603W_Window = ({
       onChangePostion={onChangePostion}
       className="print-hidden"
     >
-      <TitleContainer>
-        <Title>견적서</Title>
-      </TitleContainer>
       <div
         style={{
-          height: position.height - 220,
-          width: position.width - 40,
+          height: isMobile ? mobileheight : webheight,
         }}
       >
         {url != "" ? <FileViewers fileUrl={url} /> : ""}
       </div>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기

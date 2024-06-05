@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -12,7 +12,7 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { UseGetValueFromSessionItem } from "../CommonFunction";
+import { UseGetValueFromSessionItem, getHeight } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -20,6 +20,9 @@ type IKendoWindow = {
   information: any;
   modal?: boolean;
 };
+
+var height = 0;
+var height2 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -37,9 +40,22 @@ const KendoWindow = ({
     height: isMobile == true ? deviceHeight : 250,
   });
 
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
+
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
+
   const setLoading = useSetRecoilState(isLoading);
   const [Information, setInformation] = useState<{ [name: string]: any }>(
     information
@@ -324,7 +340,10 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap border={true}>
+      <FormBoxWrap
+        border={true}
+        style={{ height: isMobile ? mobileheight : webheight }}
+      >
         <FormBox>
           <tbody>
             <tr>
@@ -341,7 +360,7 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <BottomContainer>
+      <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onConfirmClick}>
             확인

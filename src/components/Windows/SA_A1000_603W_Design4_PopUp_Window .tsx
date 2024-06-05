@@ -9,7 +9,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -24,6 +24,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getHeight,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -39,6 +40,9 @@ type IWindow = {
   setData(data: any): void; // 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
 };
+
+var height = 0;
+var height2 = 0;
 
 const CopyWindow = ({
   setVisible,
@@ -56,8 +60,20 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 600,
   });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".BottomContainer"); //조회버튼있는 title부분
+
+    setMobileHeight(deviceHeight - height - height2);
+    setWebHeight(position.height - height - height2);
+  }, []);
   const onChangePostion = (position: any) => {
     setPosition(position);
+    setWebHeight(position.height - height - height2);
   };
   const DATA_ITEM_KEY = "num";
 
@@ -225,9 +241,9 @@ const CopyWindow = ({
         modals={modal}
         onChangePostion={onChangePostion}
       >
-        <GridContainer height={"calc(100% - 80px)"}>
+        <GridContainer>
           <Grid
-            style={{ height: "100%" }} //5px = margin bottom 값
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -277,7 +293,7 @@ const CopyWindow = ({
             <GridColumn field="itemnm" title="품목명" width="150px" />
           </Grid>
         </GridContainer>
-        <BottomContainer>
+        <BottomContainer className="BottomContainer">
           <ButtonContainer>
             <Button
               themeColor={"primary"}
