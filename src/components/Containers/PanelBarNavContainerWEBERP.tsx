@@ -162,13 +162,12 @@ const PanelBarNavContainer = (props: any) => {
 
   // 반응형 처리
   let deviceWidth = document.documentElement.clientWidth;
-  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  let isMobile = deviceWidth <= 1200;
   useEffect(() => {
     const handleWindowResize = () => {
       let deviceWidth = document.documentElement.clientWidth;
-      const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
-      setIsMobile(deviceWidth <= 1200);
-      if (deviceWidth <= 1200) {
+      let isMobile = deviceWidth <= 1200;
+      if (isMobile) {
         setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
         setIsFilterheightstates(30);
       } else {

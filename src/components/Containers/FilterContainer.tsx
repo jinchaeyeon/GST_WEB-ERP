@@ -12,7 +12,7 @@ type TChildren = {
 };
 const FilterContainer = ({ children }: TChildren) => {
   let deviceWidth = document.documentElement.clientWidth;
-  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  let isMobile = deviceWidth <= 1200;
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const [isFilterheightstates, setIsFilterheightstates] =
@@ -31,7 +31,7 @@ const FilterContainer = ({ children }: TChildren) => {
     } else {
       setIsFilterheightstates(isMobile ? 30 : 0);
     }
-  }, [isFilterHideStates, isMobile]);
+  }, [isFilterHideStates]);
 
   return (
     <>

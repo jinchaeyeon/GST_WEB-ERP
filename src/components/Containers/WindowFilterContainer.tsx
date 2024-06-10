@@ -9,7 +9,7 @@ type TChildren = {
 };
 const WindowFilterContainer = ({ children }: TChildren) => {
   let deviceWidth = document.documentElement.clientWidth;
-  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  let isMobile = deviceWidth <= 1200;
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
 
