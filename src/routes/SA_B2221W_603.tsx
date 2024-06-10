@@ -340,6 +340,8 @@ const SA_B2221: React.FC = () => {
         "@p_itemlvl2": filters.itemlvl2,
         "@p_itemacnt": filters.itemacnt,
         "@p_amtgb": filters.rdoAmtgb,
+        "@p_insiz": "",
+        "@p_useyn": "",
       },
     };
 

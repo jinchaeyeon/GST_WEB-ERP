@@ -211,6 +211,8 @@ const CopyWindow = ({
         "@p_amtgb": "",
         "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
         "@p_mm": convertDateToStr(filters.mm).substring(4, 6),
+        "@p_insiz": "",
+        "@p_useyn": "",
       },
     };
     try {
