@@ -114,7 +114,6 @@ const CM_A7000W: React.FC = () => {
   var index = 0;
   var index2 = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [swiper2, setSwiper2] = useState<SwiperCore>();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
 
@@ -1500,7 +1499,7 @@ const CM_A7000W: React.FC = () => {
 
   const enterEdit2 = (dataItem: any, field: string) => {
     const newData = detailDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+      item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
         ? {
             ...item,
             [EDIT_FIELD]: field,
@@ -1527,7 +1526,7 @@ const CM_A7000W: React.FC = () => {
   const exitEdit2 = () => {
     if (tempResult.data != detailDataResult.data) {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
