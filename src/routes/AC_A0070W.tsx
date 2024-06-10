@@ -18,8 +18,8 @@ import {
   Input,
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -52,6 +52,7 @@ import {
   chkScrollHandler,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -72,7 +73,7 @@ import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import StandardWindow from "../components/Windows/CommonWindows/StandardWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -245,13 +246,54 @@ const ColumnCommandCell = (props: any) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const AC_A0070W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A0070W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height4 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height5);
+        setWebHeight2(
+          getDeviceHeight(true) - height2 - height3 - height4 - height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const listIdGetter = getter(DATA_ITEM_KEY);
@@ -277,10 +319,6 @@ const AC_A0070W: React.FC = () => {
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A0070W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A0070W", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -1345,7 +1383,7 @@ const AC_A0070W: React.FC = () => {
                 fileName="기초잔액"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }} //76vh
+                  style={{ height: mobileheight }} //76vh
                   data={process(
                     mainDataResult.data.map((item) => ({
                       ...item,
@@ -1462,7 +1500,7 @@ const AC_A0070W: React.FC = () => {
               </GridTitleContainer>
               <FormBoxWrap
                 border={true}
-                style={{ height: deviceHeight - height2, overflow: "auto" }}
+                style={{ height: mobileheight2, overflow: "auto" }}
               >
                 <FormBox>
                   <tbody>
@@ -1642,7 +1680,7 @@ const AC_A0070W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer3">
+              <GridTitleContainer className="ButtonContainer4">
                 <GridTitle>
                   <ButtonContainer style={{ justifyContent: "left" }}>
                     <Button
@@ -1667,7 +1705,7 @@ const AC_A0070W: React.FC = () => {
                 fileName="기초잔액"
               >
                 <Grid
-                  style={{ height: deviceHeight - height3 }}
+                  style={{ height: mobileheight3 }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -1755,19 +1793,19 @@ const AC_A0070W: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width={`60%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onCarryClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="redo"
+                  >
+                    회계이월처리
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
-              <ButtonContainer>
-                <Button
-                  onClick={onCarryClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="redo"
-                >
-                  회계이월처리
-                </Button>
-              </ButtonContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
@@ -1776,7 +1814,7 @@ const AC_A0070W: React.FC = () => {
                 fileName="기초잔액"
               >
                 <Grid
-                  style={{ height: "76vh" }} //76vh
+                  style={{ height: webheight }} //76vh
                   data={process(
                     mainDataResult.data.map((item) => ({
                       ...item,
@@ -1842,28 +1880,28 @@ const AC_A0070W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(40% - ${GAP}px)`}>
-              <ButtonContainer style={{ float: "right" }}>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                >
-                  저장
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="delete"
-                >
-                  삭제
-                </Button>
-              </ButtonContainer>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="ButtonContainer3">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2039,7 +2077,7 @@ const AC_A0070W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>관리항목</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2050,7 +2088,7 @@ const AC_A0070W: React.FC = () => {
                   fileName="기초잔액"
                 >
                   <Grid
-                    style={{ height: `calc(76vh - 305px)` }} // 65
+                    style={{ height: webheight2 }} // 65
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,

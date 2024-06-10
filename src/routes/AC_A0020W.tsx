@@ -837,7 +837,7 @@ const AC_A0020W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, tabSelected]);
+  }, [customOptionData, tabSelected, webheight, webheight2, webheight3, webheight4, webheight5, webheight6]);
 
   UsePermissions(setPermissions);
   const [acntcd, setAcntcd] = useState<string>("");

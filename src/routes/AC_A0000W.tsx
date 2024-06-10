@@ -105,7 +105,7 @@ const AC_A0000W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData]);
+  }, [customOptionData, webheight]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
