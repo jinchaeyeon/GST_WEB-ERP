@@ -108,7 +108,7 @@ const DateField = ["baddt", "qcdt"];
 
 const BA_A0020_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1780,23 +1780,6 @@ const BA_A0020_603: React.FC = () => {
                   <th>영업담당자</th>
                   <td>
                     <Input
-                      name="smpersonnm"
-                      type="text"
-                      value={filters.smpersonnm}
-                      onChange={filterInputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        type="button"
-                        icon="more-horizontal"
-                        fillMode="flat"
-                        onClick={onPrsnnumWndClick}
-                      />
-                    </ButtonInInput>
-                  </td>
-                  <th>PM담당자</th>
-                  <td>
-                    <Input
                       name="cpmpersonnm"
                       type="text"
                       value={filters.cpmpersonnm}
@@ -1808,6 +1791,23 @@ const BA_A0020_603: React.FC = () => {
                         icon="more-horizontal"
                         fillMode="flat"
                         onClick={onPrsnnumWndClick2}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>PM담당자</th>
+                  <td>
+                    <Input
+                      name="smpersonnm"
+                      type="text"
+                      value={filters.smpersonnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick}
                       />
                     </ButtonInInput>
                   </td>
@@ -2108,13 +2108,13 @@ const BA_A0020_603: React.FC = () => {
                             <th>영업담당자</th>
                             <td>
                               <Input
-                                name="smperson"
+                                name="cpmperson"
                                 type="text"
                                 value={
-                                  Information.smperson != ""
+                                  Information.cpmperson != ""
                                     ? userListData.find(
                                         (items: any) =>
-                                          items.user_id == Information.smperson
+                                          items.user_id == Information.cpmperson
                                       )?.user_name
                                     : ""
                                 }
@@ -2126,13 +2126,13 @@ const BA_A0020_603: React.FC = () => {
                             <th>PM담당자</th>
                             <td>
                               <Input
-                                name="cpmperson"
+                                name="smperson"
                                 type="text"
                                 value={
-                                  Information.cpmperson != ""
+                                  Information.smperson != ""
                                     ? userListData.find(
                                         (items: any) =>
-                                          items.user_id == Information.cpmperson
+                                          items.user_id == Information.smperson
                                       )?.user_name
                                     : ""
                                 }
@@ -2821,13 +2821,13 @@ const BA_A0020_603: React.FC = () => {
                           <th>영업담당자</th>
                           <td>
                             <Input
-                              name="smperson"
+                              name="cpmperson"
                               type="text"
                               value={
-                                Information.smperson != ""
+                                Information.cpmperson != ""
                                   ? userListData.find(
                                       (items: any) =>
-                                        items.user_id == Information.smperson
+                                        items.user_id == Information.cpmperson
                                     )?.user_name
                                   : ""
                               }
@@ -2839,13 +2839,13 @@ const BA_A0020_603: React.FC = () => {
                           <th>PM담당자</th>
                           <td>
                             <Input
-                              name="cpmperson"
+                              name="smperson"
                               type="text"
                               value={
-                                Information.cpmperson != ""
+                                Information.smperson != ""
                                   ? userListData.find(
                                       (items: any) =>
-                                        items.user_id == Information.cpmperson
+                                        items.user_id == Information.smperson
                                     )?.user_name
                                   : ""
                               }

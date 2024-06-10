@@ -65,14 +65,14 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_smperson",
-        field: "smperson",
+        id: "col_cpmperson",
+        field: "cpmperson",
         caption: "영업담당자",
         width: 120,
       },
       {
-        id: "col_cpmperson",
-        field: "cpmperson",
+        id: "col_smperson",
+        field: "smperson",
         caption: "PM담당자",
         width: 120,
       },
