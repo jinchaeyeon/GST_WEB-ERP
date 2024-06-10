@@ -189,7 +189,8 @@ export const useApi = () => {
 
   useEffect(() => {
     const checkSessionAndFetchItem = async () => {
-      if (window.location.pathname !== "/") {
+      if (window.location.pathname !== "/" && 
+        window.location.pathname !== "/Home") {
         if (!isSessionValid && !sessionItemFetched) {
           if (token && loginResult) {
             setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
@@ -210,7 +211,8 @@ export const useApi = () => {
   }, [isSessionValid, sessionItemFetched, token, loginResult]);
 
   const processApi = async <T>(name: string, params: any = null): Promise<T> => {    
-    if (window.location.pathname !== "/") {
+    if (window.location.pathname !== "/" &&
+      window.location.pathname !== "/Home") {
       if (!token || !loginResult) {
         resetLocalStorage(); // 토큰, 로그인결과가 없을시
         window.location.href = "/"; // 리다이렉션 처리

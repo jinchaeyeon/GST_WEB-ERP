@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -38,6 +38,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -75,6 +76,9 @@ let targetRowIndex: null | number = null;
 const dateField = ["expensedt", "carddt"];
 const numberField = ["amt", "taxamt"];
 
+var height = 0;
+var height2 = 0;
+
 const AC_A1020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -88,6 +92,26 @@ const AC_A1020W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1020W", setCustomOptionData);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const idGetter = getter(DATA_ITEM_KEY);
   const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
   //메시지 조회
@@ -98,9 +122,8 @@ const AC_A1020W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -848,7 +871,7 @@ const AC_A1020W: React.FC = () => {
           fileName="지출결의서"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "75vh" }}
+            style={{ height: isMobile? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

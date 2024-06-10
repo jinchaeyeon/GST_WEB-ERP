@@ -14,8 +14,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -60,7 +61,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0090W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -183,6 +184,10 @@ type TdataArr = {
   docuno_s: string[];
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const AC_A0090W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -190,13 +195,46 @@ const AC_A0090W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  var height = getHeight(".ButtonContainer");
-  var height1 = getHeight(".ButtonContainer2");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A0090W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight(
+          (getDeviceHeight(true) - height - height2 - height3) * 2 / 3
+        );
+        setWebHeight2(
+          (getDeviceHeight(true) - height - height2 - height3) * 1 / 3
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -219,10 +257,6 @@ const AC_A0090W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A0090W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A0090W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1612,7 +1646,7 @@ const AC_A0090W: React.FC = () => {
                 fileName="영세율표제"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1796,7 +1830,7 @@ const AC_A0090W: React.FC = () => {
                 fileName="영세율표제"
               >
                 <Grid
-                  style={{ height: deviceHeight - height1 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1887,7 +1921,7 @@ const AC_A0090W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기본정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1928,7 +1962,7 @@ const AC_A0090W: React.FC = () => {
               fileName="영세율표제"
             >
               <Grid
-                style={{ height: "45vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2016,7 +2050,7 @@ const AC_A0090W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -2094,7 +2128,7 @@ const AC_A0090W: React.FC = () => {
               fileName="영세율표제"
             >
               <Grid
-                style={{ height: "30vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,

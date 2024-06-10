@@ -18,7 +18,7 @@ import {
   Input,
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -52,6 +52,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -214,28 +215,59 @@ const ColumnCommandCell = (props: any) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const AC_A1040W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
     delete: false,
   });
   UsePermissions(setPermissions);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height1 = getHeight(".ButtonContainer2");
-  var index = 0;
-  const [swiper, setSwiper] = useState<SwiperCore>();
-  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1040W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight(
+          (getDeviceHeight(true) - height - height2 - height3) / 2
+        );
+        setWebHeight2(
+          (getDeviceHeight(true) - height - height2 - height3) / 2
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1536,7 +1568,21 @@ const AC_A1040W: React.FC = () => {
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle>요약정보</GridTitle>
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    {"요약정보"}
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1553,16 +1599,6 @@ const AC_A1040W: React.FC = () => {
                   >
                     해제
                   </Button>
-                  <Button
-                    onClick={() => {
-                      if (swiper && isMobile) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="chevron-right"
-                    themeColor={"primary"}
-                    fillMode={"flat"}
-                  ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
@@ -1573,7 +1609,7 @@ const AC_A1040W: React.FC = () => {
                 fileName="지출결의서-자동전표"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1728,7 +1764,7 @@ const AC_A1040W: React.FC = () => {
                 fileName="지출결의서-자동전표"
               >
                 <Grid
-                  style={{ height: deviceHeight - height1 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1804,7 +1840,7 @@ const AC_A1040W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1832,7 +1868,7 @@ const AC_A1040W: React.FC = () => {
               fileName="지출결의서-자동전표"
             >
               <Grid
-                style={{ height: "38vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1938,7 +1974,10 @@ const AC_A1040W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer style={{ justifyContent: "space-between" }}>
+            <GridTitleContainer
+              className="ButtonContainer2"
+              style={{ justifyContent: "space-between" }}
+            >
               <GridTitle>기본정보</GridTitle>
               <ButtonContainer>
                 <FormBoxWrap>
@@ -1970,7 +2009,7 @@ const AC_A1040W: React.FC = () => {
               fileName="지출결의서-자동전표"
             >
               <Grid
-                style={{ height: "25vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
