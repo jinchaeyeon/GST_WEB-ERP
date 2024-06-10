@@ -698,7 +698,7 @@ const SA_B2221: React.FC = () => {
                       placeholder=""
                     />
                   </td>
-                  <th data-control-name="lblImcd">품목코드</th>
+                  <th data-control-name="lblImcd">시험유형</th>
                   <td>
                     <Input
                       name="itemcd"
@@ -715,7 +715,7 @@ const SA_B2221: React.FC = () => {
                     </ButtonInInput>
                   </td>
 
-                  <th data-control-name="lblItemnm">품목명</th>
+                  <th data-control-name="lblItemnm">시험유형명</th>
                   <td>
                     <Input
                       name="itemnm"
@@ -1546,7 +1546,7 @@ const SA_B2221: React.FC = () => {
                       placeholder=""
                     />
                   </td>
-                  <th data-control-name="lblImcd">품목코드</th>
+                  <th data-control-name="lblImcd">시험유형</th>
                   <td>
                     <Input
                       name="itemcd"
@@ -1563,7 +1563,7 @@ const SA_B2221: React.FC = () => {
                     </ButtonInInput>
                   </td>
 
-                  <th data-control-name="lblItemnm">품목명</th>
+                  <th data-control-name="lblItemnm">시험유형명</th>
                   <td>
                     <Input
                       name="itemnm"

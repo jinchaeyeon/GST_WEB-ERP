@@ -2369,6 +2369,7 @@ const SA_A1100_603W: React.FC = () => {
         itemnm: selectRow.itemnm,
         ordnum: selectRow.ordnum,
         qty_t: selectRow.qty_t,
+        tkyn: selectRow.tkyn,
         quonum: selectRow.quonum,
         quorev: selectRow.quorev,
         quoseq: selectRow.quoseq,

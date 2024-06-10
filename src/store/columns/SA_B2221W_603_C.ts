@@ -7,13 +7,13 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_sub_code",
         field: "sub_code",
-        caption: "품목코드",
+        caption: "시험유형",
         width: 150,
       },
       {
         id: "col_code_name",
         field: "code_name",
-        caption: "품목명",
+        caption: "시험유형명",
         width: 150,
       },
       {
@@ -96,13 +96,13 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_sub_code_month",
         field: "sub_code",
-        caption: "품목코드",
+        caption: "시험유형",
         width: 150,
       },
       {
         id: "col_code_name_month",
         field: "code_name",
-        caption: "품목명",
+        caption: "시험유형명",
         width: 150,
       },
       {
@@ -185,13 +185,13 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_sub_code_quarter",
         field: "sub_code",
-        caption: "품목코드",
+        caption: "시험유형",
         width: 150,
       },
       {
         id: "col_code_name_quarter",
         field: "code_name",
-        caption: "품목명",
+        caption: "시험유형명",
         width: 150,
       },
       {

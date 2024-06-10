@@ -73,13 +73,19 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_week_r",
         field: "week_r",
-        caption: "기본(회복)",
+        caption: "회복(주차)",
         width: 100,
       },
       {
         id: "col_qty_t",
         field: "qty_t",
         caption: "TK",
+        width: 100,
+      },
+      {
+        id: "col_tkyn",
+        field: "tkyn",
+        caption: "TK여부",
         width: 100,
       },
       {
