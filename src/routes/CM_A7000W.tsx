@@ -1090,11 +1090,11 @@ const CM_A7000W: React.FC = () => {
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", prsnnm = "", remark = "" } = item;
+      const { rowstatus = "", prsnnm = "", remark = "", seq = "" } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.prsnnm_s.push(prsnnm);
       dataArr.remark_s.push(remark);
-      dataArr.seq_s.push("0");
+      dataArr.seq_s.push(seq);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
       const { rowstatus = "", prsnnm = "", remark = "", seq = "" } = item;
