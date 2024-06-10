@@ -47,6 +47,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_quotype",
+        field: "quotype",
+        caption: "의뢰유형",
+        width: 120,
+      },
+      {
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
@@ -100,6 +106,12 @@ export const gridList: Array<TGrid> = [
         field: "confinyn",
         caption: "계약전환여부",
         width: 110,
+      },
+      {
+        id: "col_pubdt",
+        field: "pubdt",
+        caption: "견적발행일",
+        width: 120,
       },
       {
         id: "col_cotracdt",

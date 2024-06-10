@@ -61,7 +61,7 @@ import { heightstate, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1002_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
+const dateField = ["cotracdt", "strdt", "enddt", "paydt", "pubdt"];
 const numberField = [
   "totamt",
   "finalquowonamt",
@@ -126,6 +126,8 @@ const SA_B1002_603W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        quotype: defaultOption.find((item: any) => item.id == "quotype")?.valueCode,
+        rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
         materialtype: defaultOption.find(
           (item: any) => item.id == "materialtype"
         )?.valueCode,
@@ -154,9 +156,12 @@ const SA_B1002_603W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   //   물질분류, 영업담당자
   UseBizComponent(
-    "L_CM501_603, L_SA001_603, L_sysUserMaster_001",
+    "L_SA016, L_CM501_603, L_SA001_603, L_sysUserMaster_001",
     setBizComponentData
   );
+  const [quotypeListData, setQuotypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -168,6 +173,7 @@ const SA_B1002_603W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      setQuotypeListData(getBizCom(bizComponentData, "L_SA016"));
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
       setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
@@ -191,6 +197,8 @@ const SA_B1002_603W: React.FC = () => {
     chkpersonnm: "",
     designyn: "",
     quocalyn: "",
+    rev: "",
+    quotype: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
@@ -320,6 +328,8 @@ const SA_B1002_603W: React.FC = () => {
         "@p_designyn": filters.designyn,
         "@p_quocalyn": filters.quocalyn,
         "@p_confinyn": filters.confinyn,
+        "@p_rev": filters.rev,
+        "@p_quotype": filters.quotype
       },
     };
     try {
@@ -530,6 +540,16 @@ const SA_B1002_603W: React.FC = () => {
                   />
                 </ButtonInInput>
               </td>
+              <th>REV</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="rev"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
               <th>업체명</th>
               <td>
                 <Input
@@ -546,25 +566,6 @@ const SA_B1002_603W: React.FC = () => {
                     fillMode="flat"
                   />
                 </ButtonInInput>
-              </td>
-              <th>의뢰자</th>
-              <td>
-                <Input
-                  name="custprsnnm"
-                  type="text"
-                  value={filters.custprsnnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>계약전환여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="confinyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
               </td>
             </tr>
             <tr>
@@ -590,6 +591,17 @@ const SA_B1002_603W: React.FC = () => {
                   />
                 )}
               </td>
+              <th>의뢰분야</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="quotype"
+                    value={filters.quotype}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
               <th>영업담당자</th>
               <td>
                 <Input
@@ -607,11 +619,23 @@ const SA_B1002_603W: React.FC = () => {
                   />
                 </ButtonInInput>
               </td>
+            </tr>
+            <tr>
               <th>디자인입력여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="designyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              <th>계약전환여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="confinyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
@@ -626,6 +650,15 @@ const SA_B1002_603W: React.FC = () => {
                     changeData={filterRadioChange}
                   />
                 )}
+              </td>
+              <th>의뢰자</th>
+              <td>
+                <Input
+                  name="custprsnnm"
+                  type="text"
+                  value={filters.custprsnnm}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
           </tbody>
@@ -647,6 +680,9 @@ const SA_B1002_603W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                quotype: quotypeListData.find(
+                  (items: any) => items.sub_code == row.quotype
+                )?.code_name,
                 materialtype: materialtypeListData.find(
                   (items: any) => items.sub_code == row.materialtype
                 )?.code_name,
