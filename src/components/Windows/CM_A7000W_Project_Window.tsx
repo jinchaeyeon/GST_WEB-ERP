@@ -36,12 +36,11 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -420,14 +419,20 @@ const CopyWindow = ({
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw "필수값을 채워주세요";
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw "필수값을 채워주세요";
+      } else if (
+        filters.dtgb == undefined ||
+        filters.dtgb == null ||
+        filters.dtgb == ""
+      ) {
+        throw "필수값을 채워주세요";
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
