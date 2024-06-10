@@ -69,7 +69,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import SA_B2221W_603_ITEM_Window from "../components/Windows/SA_B2221W_603_ITEM_Window";
 import SA_B2221W_603_Window from "../components/Windows/SA_B2221W_603_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
@@ -2130,12 +2130,11 @@ const SA_B2221: React.FC = () => {
         </>
       )}
       {itemWindowVisible && (
-        <ItemsWindow
+        <SA_B2221W_603_ITEM_Window
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
           modal={true}
-          yn={false}
         />
       )}
       {DetailWindowVisible && (
