@@ -277,7 +277,7 @@ const SA_B1002_603W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        quokey: data.quokey,
+        quokey: data.quonum,
       };
     });
   };
