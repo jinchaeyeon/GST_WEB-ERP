@@ -3330,7 +3330,7 @@ const SA_A1000_603W: React.FC = () => {
       ordsts: "",
       person: userId,
       person1: "",
-      pubdt: setDefaultDate2(customOptionData, "pubdt"),
+      pubdt: "",
       quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
@@ -4844,7 +4844,8 @@ const SA_A1000_603W: React.FC = () => {
                               name="pubdt"
                               value={Information.pubdt}
                               format="yyyy-MM-dd"
-                              onChange={InputChange}
+                              disabled={true}
+                              className="readonly"
                               placeholder=""
                             />
                           </td>
@@ -6135,7 +6136,8 @@ const SA_A1000_603W: React.FC = () => {
                           name="pubdt"
                           value={Information.pubdt}
                           format="yyyy-MM-dd"
-                          onChange={InputChange}
+                          disabled={true}
+                          className="readonly"
                           placeholder=""
                         />
                       </td>
