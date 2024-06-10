@@ -223,8 +223,8 @@ const SA_B2221W_603_ITEM_Window = ({
     }
 
     if (data.isSuccess == true) {
-      const totalRowCnt = data.data.TotalRowCount;
-      const rows = data.data.Rows;
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
       if (gridRef.current) {
         targetRowIndex = 0;
       }
