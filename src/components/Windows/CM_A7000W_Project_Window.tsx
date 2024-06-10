@@ -684,8 +684,8 @@ const CopyWindow = ({
             <GridColumn field="person" title="영업담당자" width="100px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
             <GridColumn field="custprsnnm" title="의뢰자명" width="120px" />
-            <GridColumn field="postnm" title="직위/직책" width="120px" />
-            <GridColumn field="dptnm" title="부서명" width="120px" />
+            <GridColumn field="postnm" title="소속" width="120px" />
+            <GridColumn field="dptnm" title="직위" width="120px" />
             <GridColumn field="address" title="주소" width="120px" />
             <GridColumn field="telno" title="전화번호" width="120px" />
             <GridColumn field="phoneno" title="휴대폰" width="120px" />
