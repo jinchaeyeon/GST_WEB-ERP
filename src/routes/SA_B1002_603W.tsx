@@ -556,7 +556,7 @@ const SA_B1002_603W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>계약확정여부</th>
+              <th>계약전환여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
