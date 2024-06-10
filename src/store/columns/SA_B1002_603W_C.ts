@@ -96,10 +96,10 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_contractyn",
-        field: "contractyn",
-        caption: "계약확정여부",
-        width: 120,
+        id: "col_confinyn",
+        field: "confinyn",
+        caption: "계약전환여부",
+        width: 110,
       },
       {
         id: "col_cotracdt",

@@ -131,7 +131,7 @@ const SA_B1002_603W: React.FC = () => {
         )?.valueCode,
         quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
           ?.valueCode,
-        contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+        confinyn: defaultOption.find((item: any) => item.id == "confinyn")
           ?.valueCode,
         designyn: defaultOption.find((item: any) => item.id == "designyn")
           ?.valueCode,
@@ -184,7 +184,7 @@ const SA_B1002_603W: React.FC = () => {
     custcd: "",
     custnm: "",
     custprsnnm: "",
-    contractyn: "",
+    confinyn: "",
     materialtype: "",
     extra_field2: "",
     chkperson: "",
@@ -319,7 +319,7 @@ const SA_B1002_603W: React.FC = () => {
         "@p_chkpersonnm": filters.chkpersonnm,
         "@p_designyn": filters.designyn,
         "@p_quocalyn": filters.quocalyn,
-        "@p_contractyn": filters.contractyn,
+        "@p_confinyn": filters.confinyn,
       },
     };
     try {
@@ -560,7 +560,7 @@ const SA_B1002_603W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="contractyn"
+                    name="confinyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />

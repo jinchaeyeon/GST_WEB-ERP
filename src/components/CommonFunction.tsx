@@ -237,6 +237,7 @@ export const dateformat = (str: string) => {
 
 export const dateformat2 = (str: string) => {
   //구분자 -> '-'
+  if (!str) return "";
   const date_str =
     str.substring(0, 4) + "-" + str.substring(4, 6) + "-" + str.substring(6);
   return date_str;
@@ -244,6 +245,7 @@ export const dateformat2 = (str: string) => {
 
 export const dateformat3 = (str: string) => {
   //구분자 -> '년 월 일'
+  if (!str) return "";
   const date_str =
     str.substring(0, 4) +
     "년 " +
@@ -256,6 +258,7 @@ export const dateformat3 = (str: string) => {
 
 export const dateformat4 = (str: string) => {
   //구분자 -> '.'
+  if (!str) return "";
   const date_str =
     str.substring(0, 4) +
     "." +
@@ -268,11 +271,13 @@ export const dateformat4 = (str: string) => {
 
 export const dateformat5 = (str: string) => {
   //구분자 -> '-'
+  if (!str) return "";
   const date_str = str.substring(0, 4) + "-" + str.substring(4, 6);
   return date_str;
 };
 
 export const dateformat6 = (str: string) => {
+  if (!str) return "";
   const date_str = str.substring(4, 6);
   return date_str;
 };

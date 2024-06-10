@@ -278,7 +278,7 @@ const SA_A1200_603W: React.FC = () => {
     result2: "",
     quorev: "",
     conplandt: "",
-    submitdt: "",
+    pubdt: "",
     seq: 0,
     passdt: 0,
   });
@@ -836,7 +836,7 @@ const SA_A1200_603W: React.FC = () => {
           result2: rows[0].result2,
           quorev: rows2[0].quorev,
           conplandt: rows2[0].conplandt,
-          submitdt: rows2[0].submitdt,
+          pubdt: rows2[0].pubdt,
           seq: rows2[0].seq,
           passdt: rows2[0].passdt,
         });
@@ -863,7 +863,7 @@ const SA_A1200_603W: React.FC = () => {
           result2: "",
           quorev: "",
           conplandt: "",
-          submitdt: "",
+          pubdt: "",
           seq: 0,
           passdt: 0,
         });
@@ -1228,15 +1228,21 @@ const SA_A1200_603W: React.FC = () => {
     let valid = true;
     dataItem.map((item: any) => {
       if (
-        convertDateToStr(item.recdt).substring(0, 4) < "1997" ||
-        convertDateToStr(item.recdt).substring(6, 8) > "31" ||
-        convertDateToStr(item.recdt).substring(6, 8) < "01" ||
-        convertDateToStr(item.recdt).substring(6, 8).length != 2
+        item.recdt.substring(0, 4) < "1997" ||
+        item.recdt.substring(6, 8) > "31" ||
+        item.recdt.substring(6, 8) < "01" ||
+        item.recdt.substring(6, 8).length != 2
       ) {
         valid = false;
       }
     });
 
+    if(valid != true) {
+      alert("필수값을 입력해주세요");
+      return false;
+    }
+
+    console.log(dataItem)
     if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
@@ -2068,12 +2074,12 @@ const SA_A1200_603W: React.FC = () => {
                             <th style={{ textAlign: "right" }}>견적제출일</th>
                             <td>
                               <Input
-                                name="submitdt"
+                                name="pubdt"
                                 type="text"
                                 style={{
                                   textAlign: "center",
                                 }}
-                                value={dateformat2(Information.submitdt)}
+                                value={dateformat2(Information.pubdt)}
                                 className="readonly"
                               />
                             </td>
@@ -2536,12 +2542,12 @@ const SA_A1200_603W: React.FC = () => {
                           <th style={{ textAlign: "right" }}>견적제출일</th>
                           <td>
                             <Input
-                              name="submitdt"
+                              name="pubdt"
                               type="text"
                               style={{
                                 textAlign: "center",
                               }}
-                              value={dateformat2(Information.submitdt)}
+                              value={dateformat2(Information.pubdt)}
                               className="readonly"
                             />
                           </td>

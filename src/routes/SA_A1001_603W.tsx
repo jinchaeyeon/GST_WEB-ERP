@@ -37,6 +37,7 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
+import NotMinusNumberCell from "../components/Cells/NotMinusNumberCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
@@ -94,24 +95,14 @@ const numberField = [
   "finalquowonamt",
   "quorev",
   "quounp",
-  "margin",
-  "discount",
   "itemcnt",
   "designcnt",
   "marginamt",
   "discountamt",
 ];
 
+const notminusnumberField = ["margin", "discount"];
 const iconField = ["confinyn"];
-
-const numberField2 = [
-  "finalquowonamt",
-  "quounp",
-  "margin",
-  "discount",
-  "marginamt",
-  "discountamt",
-];
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -2411,6 +2402,10 @@ const SA_A1001_603W: React.FC = () => {
                                 cell={
                                   numberField.includes(item.fieldName)
                                     ? NumberCell
+                                    : notminusnumberField.includes(
+                                        item.fieldName
+                                      )
+                                    ? NotMinusNumberCell
                                     : iconField.includes(item.fieldName)
                                     ? iconCell
                                     : undefined

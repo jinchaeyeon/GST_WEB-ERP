@@ -1036,6 +1036,7 @@ const CM_A7000W: React.FC = () => {
     rowstatus_s: "",
     seq_s: "",
     prsnnm_s: "",
+    remark_s: "",
     userid: userId,
     pc: pc,
     formid: "CM_A7000W",
@@ -1084,19 +1085,22 @@ const CM_A7000W: React.FC = () => {
     let dataArr: any = {
       rowstatus_s: [],
       prsnnm_s: [],
+      remark_s: [],
       seq_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", prsnnm = "" } = item;
+      const { rowstatus = "", prsnnm = "", remark = "" } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.prsnnm_s.push(prsnnm);
+      dataArr.remark_s.push(remark);
       dataArr.seq_s.push("0");
     });
     deletedMainRows.forEach((item: any, idx: number) => {
-      const { rowstatus = "", prsnnm = "", seq = "" } = item;
+      const { rowstatus = "", prsnnm = "", remark = "", seq = "" } = item;
       dataArr.rowstatus_s.push("D");
       dataArr.prsnnm_s.push(prsnnm);
+      dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
     });
     setParaDataSaved({
@@ -1122,6 +1126,7 @@ const CM_A7000W: React.FC = () => {
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
       prsnnm_s: dataArr.prsnnm_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
       userid: userId,
       pc: pc,
       formid: "CM_A7000W",
@@ -1181,6 +1186,7 @@ const CM_A7000W: React.FC = () => {
         "@p_rowstatus_s": paraDataSaved.rowstatus_s,
         "@p_seq_s": paraDataSaved.seq_s,
         "@p_prsnnm_s": paraDataSaved.prsnnm_s,
+        "@p_remark_s": paraDataSaved.remark_s,
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": "CM_A7000W",
@@ -1230,6 +1236,7 @@ const CM_A7000W: React.FC = () => {
         rowstatus_s: "",
         seq_s: "",
         prsnnm_s: "",
+        remark_s: "",
         userid: userId,
         pc: pc,
         formid: "CM_A7000W",

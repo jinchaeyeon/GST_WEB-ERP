@@ -2067,10 +2067,10 @@ const SA_A1100_603W: React.FC = () => {
     let valid = true;
     dataItem.map((item) => {
       if (
-        convertDateToStr(item.paydt).substring(0, 4) < "1997" ||
-        convertDateToStr(item.paydt).substring(6, 8) > "31" ||
-        convertDateToStr(item.paydt).substring(6, 8) < "01" ||
-        convertDateToStr(item.paydt).substring(6, 8).length != 2
+        item.paydt.substring(0, 4) < "1997" ||
+        item.paydt.substring(6, 8) > "31" ||
+        item.paydt.substring(6, 8) < "01" ||
+        item.paydt.substring(6, 8).length != 2
       ) {
         valid = false;
       }
@@ -2546,7 +2546,7 @@ const SA_A1100_603W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer className="TitleContainer">
+      <TitleContainer>
         <Title>계약관리</Title>
         <ButtonContainer>
           {permissions && (
