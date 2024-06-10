@@ -217,12 +217,12 @@ const SA_B2221W_603_ITEM_Window = ({
     };
 
     try {
-      data = await processApi<any>("popup-data", parameters);
+      data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data !== null) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.data.TotalRowCount;
       const rows = data.data.Rows;
       if (gridRef.current) {
