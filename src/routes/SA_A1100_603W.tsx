@@ -16,8 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import {
   Input,
-  NumericTextBox,
-  RadioGroup,
+  NumericTextBox
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
@@ -242,19 +241,6 @@ const SA_A1100_603W: React.FC = () => {
     });
   };
 
-  const data = [
-    { label: "시험번호기준으로 보기", value: "B" },
-    { label: "상세내역으로 보기", value: "A" },
-  ];
-
-  const handleChange = (e: any) => {
-    setSubFilters((prev) => ({
-      ...prev,
-      groupgb: e.value,
-      isSearch: true,
-      pgNum: 1,
-    }));
-  };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onAttachmentsWndClick = () => {
@@ -3130,12 +3116,6 @@ const SA_A1100_603W: React.FC = () => {
                     <ButtonContainer
                       style={{ flexWrap: "wrap", justifyContent: "left" }}
                     >
-                      <RadioGroup
-                        data={data}
-                        value={subFilters.groupgb}
-                        onChange={handleChange}
-                        style={{ flexDirection: "row" }}
-                      />
                       <Button
                         themeColor={"primary"}
                         fillMode="outline"
@@ -4038,12 +4018,6 @@ const SA_A1100_603W: React.FC = () => {
                   <GridTitleContainer>
                     <GridTitle>계약 상세내용</GridTitle>
                     <ButtonContainer>
-                      <RadioGroup
-                        data={data}
-                        value={subFilters.groupgb}
-                        onChange={handleChange}
-                        style={{ flexDirection: "row" }}
-                      />
                       <Button
                         themeColor={"primary"}
                         fillMode="outline"
