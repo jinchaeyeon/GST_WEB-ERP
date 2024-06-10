@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -47,6 +47,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -113,15 +114,63 @@ const CustomRadioCell = (props: GridCellProps) => {
     <td />
   );
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const AC_A1060W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A1060W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight4(getDeviceHeight(true) - height2 - height3 - height4);
+        setWebHeight(
+          (getDeviceHeight(true) - height - height3 - height4) / 2
+        );
+        setWebHeight2(
+          (getDeviceHeight(true) - height - height3 - height4) / 2
+        );
+        setWebHeight3(
+          (getDeviceHeight(true) - height - height3 - height4) / 2
+        );
+        setWebHeight4(
+          (getDeviceHeight(true) - height - height3 - height4) / 2
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, webheight4]);
   const [swiper, setSwiper] = useState<SwiperCore>();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -177,9 +226,6 @@ const AC_A1060W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A1060W", setMessagesData);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A1060W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1690,7 +1736,7 @@ const AC_A1060W: React.FC = () => {
                 fileName="매출전표(수출)"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1812,7 +1858,7 @@ const AC_A1060W: React.FC = () => {
                     fileName="매출전표(수출)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1887,7 +1933,7 @@ const AC_A1060W: React.FC = () => {
                     fileName="매출전표(수출)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -1967,7 +2013,7 @@ const AC_A1060W: React.FC = () => {
                     fileName="매출전표(수출)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
+                      style={{ height: mobileheight4 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -2043,7 +2089,7 @@ const AC_A1060W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기본정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -2086,7 +2132,7 @@ const AC_A1060W: React.FC = () => {
               fileName="매출전표(수출)"
             >
               <Grid
-                style={{ height: "40vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2191,7 +2237,7 @@ const AC_A1060W: React.FC = () => {
                 fileName="매출전표(수출)"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -2266,7 +2312,7 @@ const AC_A1060W: React.FC = () => {
                 fileName="매출전표(수출)"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -2346,7 +2392,7 @@ const AC_A1060W: React.FC = () => {
                 fileName="매출전표(수출)"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: webheight4 }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,

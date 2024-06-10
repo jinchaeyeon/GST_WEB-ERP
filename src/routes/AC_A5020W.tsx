@@ -13,8 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -40,6 +40,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -57,7 +58,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A5020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -93,20 +94,43 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+
 const AC_A5020W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A5020W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const idGetter = getter(DATA_ITEM_KEY);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
     delete: false,
   });
   UsePermissions(setPermissions);
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A5020W", setCustomOptionData);
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_A5020W", setMessagesData);
@@ -883,7 +907,7 @@ const AC_A5020W: React.FC = () => {
           fileName="세금계산서확정"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "75vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

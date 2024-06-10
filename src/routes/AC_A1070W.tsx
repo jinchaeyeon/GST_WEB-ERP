@@ -15,8 +15,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -46,6 +46,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -63,7 +64,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -107,20 +108,57 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const AC_A1070W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_A1070W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height4);
+        setWebHeight((getDeviceHeight(true) - height - height3 - height4) / 2);
+        setWebHeight2((getDeviceHeight(true) - height - height3 - height4) / 2);
+        setWebHeight3((getDeviceHeight(true) - height - height3 - height4) / 2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3]);
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -128,10 +166,6 @@ const AC_A1070W: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A1070W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1303,7 +1337,19 @@ const AC_A1070W: React.FC = () => {
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle>기본정보</GridTitle>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <GridTitle>기본정보</GridTitle>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -1320,16 +1366,6 @@ const AC_A1070W: React.FC = () => {
                   >
                     매입전표해제
                   </Button>
-                  <Button
-                    onClick={() => {
-                      if (swiper && isMobile) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="chevron-right"
-                    themeColor={"primary"}
-                    fillMode={"flat"}
-                  ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
@@ -1340,7 +1376,7 @@ const AC_A1070W: React.FC = () => {
                 fileName="매입전표(수입)"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1457,7 +1493,7 @@ const AC_A1070W: React.FC = () => {
                     fileName="매입전표(수입)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1532,7 +1568,7 @@ const AC_A1070W: React.FC = () => {
                     fileName="매입전표(수입)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height3 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -1610,7 +1646,7 @@ const AC_A1070W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기본정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1638,7 +1674,7 @@ const AC_A1070W: React.FC = () => {
               fileName="매입전표(수입)"
             >
               <Grid
-                style={{ height: "35vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1738,7 +1774,7 @@ const AC_A1070W: React.FC = () => {
                 fileName="매입전표(수입)"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1813,7 +1849,7 @@ const AC_A1070W: React.FC = () => {
                 fileName="매입전표(수입)"
               >
                 <Grid
-                  style={{ height: "30vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
