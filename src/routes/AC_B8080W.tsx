@@ -403,7 +403,7 @@ const AC_B8080W: React.FC = () => {
                 height: isMobile ? deviceHeight - height : "76vh",
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} /> : ""}
+              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -414,7 +414,7 @@ const AC_B8080W: React.FC = () => {
                 height: isMobile ? deviceHeight - height : "76vh",
               }}
             >
-              {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
+              {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
             </div>
           </GridContainer>
         </TabStripTab>

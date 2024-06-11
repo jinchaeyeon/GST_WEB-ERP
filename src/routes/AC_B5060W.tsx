@@ -1671,7 +1671,7 @@ const AC_B5060W: React.FC = () => {
                 height: isMobile ? deviceHeight - height : "76vh",
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} /> : ""}
+              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -2185,7 +2185,7 @@ const AC_B5060W: React.FC = () => {
               height: isMobile ? deviceHeight - height : "76vh",
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="신용카드등수취금액">
@@ -2194,7 +2194,7 @@ const AC_B5060W: React.FC = () => {
               height: isMobile ? deviceHeight - height : "76vh",
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="공제받지못할매입세액명세서">
@@ -2203,7 +2203,7 @@ const AC_B5060W: React.FC = () => {
               height: isMobile ? deviceHeight - height : "76vh",
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
           </div>
         </TabStripTab>
       </TabStrip>

@@ -123,7 +123,7 @@ const SA_A1001_603W_Window = ({
           height: isMobile ? mobileheight : webheight,
         }}
       >
-        {url != "" ? <FileViewers fileUrl={url} /> : ""}
+        {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
       </div>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>

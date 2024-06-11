@@ -101,7 +101,7 @@ const HU_B3120W: React.FC = () => {
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
   var height3 = getHeight(".k-tabstrip-items-wrapper");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1540,7 +1540,11 @@ const HU_B3120W: React.FC = () => {
                         height: deviceHeight - height2 - height3,
                       }}
                     >
-                      {url != "" ? <FileViewers fileUrl={url} /> : ""}
+                      {url != "" ? (
+                        <FileViewers fileUrl={url} isMobile={isMobile} />
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </TabStripTab>
                 </TabStrip>
@@ -1934,7 +1938,11 @@ const HU_B3120W: React.FC = () => {
                       height: "69vh",
                     }}
                   >
-                    {url != "" ? <FileViewers fileUrl={url} /> : ""}
+                    {url != "" ? (
+                      <FileViewers fileUrl={url} isMobile={isMobile} />
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </TabStripTab>
               </TabStrip>

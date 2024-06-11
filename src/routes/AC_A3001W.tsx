@@ -265,7 +265,7 @@ const AC_A3001W: React.FC = () => {
             height: isMobile ? mobileheight : webheight,
           }}
         >
-          {url != "" ? <FileViewers fileUrl={url} /> : ""}
+          {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
         </div>
       </GridContainer>
     </>

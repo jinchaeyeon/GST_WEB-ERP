@@ -921,7 +921,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
                 width: "100%",
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} /> : ""}
+              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
             </div>
           </SwiperSlide>
           <SwiperSlide key={1}>
@@ -1049,7 +1049,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
               height: webheight,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
           </div>
           <FormContext.Provider
             value={{

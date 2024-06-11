@@ -115,7 +115,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
             height: isMobile ? mobileheight : webheight,
           }}
         >
-          {url != "" ? <FileViewers fileUrl={url} /> : ""}
+          {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
         </div>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>

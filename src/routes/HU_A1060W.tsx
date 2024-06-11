@@ -1335,7 +1335,7 @@ const HU_A1060W: React.FC = () => {
                     height: deviceHeight - height2,
                   }}
                 >
-                  {url != "" ? <FileViewers fileUrl={url} /> : ""}
+                  {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
                 </div>
               </GridContainer>
             </SwiperSlide>
@@ -1513,7 +1513,7 @@ const HU_A1060W: React.FC = () => {
                   height: "72.5vh",
                 }}
               >
-                {url != "" ? <FileViewers fileUrl={url} /> : ""}
+                {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
               </div>
             </GridContainer>
           </Splitter>

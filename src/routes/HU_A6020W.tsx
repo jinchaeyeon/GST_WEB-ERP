@@ -2987,7 +2987,7 @@ FROM HU072T WHERE paycd = '4'`;
               height: isMobile ? deviceHeight - height2 : "75vh",
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="일용직 개인명세서">
@@ -3141,7 +3141,7 @@ FROM HU072T WHERE paycd = '4'`;
                         height: deviceHeight - height2 - height3,
                       }}
                     >
-                      {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
+                      {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
                     </div>
                   </GridContainer>
                 </SwiperSlide>
@@ -3214,7 +3214,7 @@ FROM HU072T WHERE paycd = '4'`;
                       height: "75vh",
                     }}
                   >
-                    {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
+                    {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
                   </div>
                 </GridContainer>
               </GridContainerWrap>

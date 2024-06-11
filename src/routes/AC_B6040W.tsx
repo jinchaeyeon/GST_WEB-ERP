@@ -230,7 +230,7 @@ const AC_B6040W: React.FC = () => {
             height: isMobile ? deviceHeight : "82vh",
           }}
         >
-          {url != "" ? <FileViewers fileUrl={url} /> : ""}
+          {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
         </div>
       </GridContainer>
     </>
