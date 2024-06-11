@@ -496,8 +496,8 @@ const QC_B0100W: React.FC = () => {
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
-          overflow: isMobile ? "auto" : undefined,
         }}
+        className="MUI"
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>

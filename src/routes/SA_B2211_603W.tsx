@@ -536,8 +536,8 @@ const SA_B2211_603W: React.FC = () => {
         style={{
           fontFamily: "TheJamsil5Bold",
           height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
-          overflow: isMobile ? "auto" : undefined,
         }}
+        className="MUI"
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>

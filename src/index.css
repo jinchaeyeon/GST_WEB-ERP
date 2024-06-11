@@ -35,6 +35,20 @@ code {
     monospace !important;
 }
 
+.MUI {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.MUI::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+
+.p-dropdwon, .p-inputtext {
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
 .k-chat {
   margin : 10px !important;
   max-width: none !important;

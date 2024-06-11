@@ -253,7 +253,6 @@ const SA_B2221W = lazy(() => import("./routes/SA_B2221W"));
 const SA_B2221W_603 = lazy(() => import("./routes/SA_B2221W_603"));
 const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
 const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
-const SA_B2228W = lazy(() => import("./routes/SA_B2228W"));
 const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
 const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
 const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));

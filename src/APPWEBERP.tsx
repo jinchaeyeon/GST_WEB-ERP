@@ -253,7 +253,6 @@ const SA_B2221W = lazy(() => import("./routes/SA_B2221W"));
 const SA_B2221W_603 = lazy(() => import("./routes/SA_B2221W_603"));
 const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
 const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
-const SA_B2228W = lazy(() => import("./routes/SA_B2228W"));
 const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
 const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
 const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
@@ -1050,8 +1049,6 @@ const AppInner: React.FC = () => {
       return SA_B2226W;
     } else if (str == "CR_A0000W") {
       return CR_A0000W;
-    } else if (str == "SA_B2228W") {
-      return SA_B2228W;
     } else {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
@@ -1400,8 +1397,6 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
                     <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
                     <AuthRoute path="/SA_B2227W" component={SA_B2227W} exact />
-                    <AuthRoute path="/SA_B2228W" component={SA_B2228W} exact />
-
                     <AuthRoute path="/SA_B2220W" component={SA_B2220W} exact />
                     {/* DDGD 관리자페이지 */}
                     <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
