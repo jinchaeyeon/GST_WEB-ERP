@@ -307,7 +307,7 @@ const CopyWindow = ({
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_QC_A2500_603W_Sub1_Q",
+      procedureName: "P_QC_A2500W_603_Sub1_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {

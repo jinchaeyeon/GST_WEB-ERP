@@ -25,8 +25,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -50,6 +50,7 @@ import {
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
@@ -61,7 +62,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -81,11 +82,16 @@ const numberField: string[] = [
   "qty12",
 ];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 /* v1.3 */
 const SA_B3101W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -94,10 +100,9 @@ const SA_B3101W: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B3101W", setMessagesData);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -106,6 +111,33 @@ const SA_B3101W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_B3101W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".Chart");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   // //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -478,13 +510,27 @@ const SA_B3101W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
-                  <GridTitle>차트</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>차트</GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <Chart
                   style={{
-                    height: deviceHeight - height,
+                    height: mobileheight,
                   }}
                 >
                   <ChartLegend position="top" orientation="horizontal" />
@@ -528,7 +574,7 @@ const SA_B3101W: React.FC = () => {
               fileName="매입매출현황"
             >
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>상세정보</GridTitle>
                     <ButtonContainer
@@ -550,7 +596,7 @@ const SA_B3101W: React.FC = () => {
                   </GridTitleContainer>
                   <Grid
                     style={{
-                      height: deviceHeight - height2,
+                      height: mobileheight2,
                     }}
                     data={gridDataResult.data}
                     {...gridDataState}
@@ -686,8 +732,10 @@ const SA_B3101W: React.FC = () => {
           </FilterContainer>
 
           <GridContainer style={{ height: "37vh" }}>
-            <GridTitle>차트</GridTitle>
-            <Chart style={{ height: !isMobile ? "100%" : "" }}>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>차트</GridTitle>
+            </GridTitleContainer>
+            <Chart className="Chart">
               <ChartLegend position="top" orientation="horizontal" />
               <ChartValueAxis>
                 <ChartValueAxisItem
@@ -719,7 +767,7 @@ const SA_B3101W: React.FC = () => {
               </ChartSeries>
               <ChartTitle text={chartTitle} />
             </Chart>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -730,8 +778,7 @@ const SA_B3101W: React.FC = () => {
               fileName="매입매출현황"
             >
               <Grid
-                style={{ height: "42vh" }}
-                // data={gridDataResult.data}
+                style={{ height: webheight }}
                 data={process(
                   gridDataResult.data.map((row) => ({
                     ...row,

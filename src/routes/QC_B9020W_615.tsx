@@ -57,7 +57,7 @@ import {
   isMobileState,
   sessionItemState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/QC_B9020_615W_C";
+import { gridList } from "../store/columns/QC_B9020W_615_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 var index = 0;
@@ -65,7 +65,7 @@ const DATA_ITEM_KEY2 = "num";
 const numberField = ["temperature", "humidity"];
 const centerField = ["insert_date", "insert_time", "defrost"];
 
-const QC_B9020_615W: React.FC = () => {
+const QC_B9020W_615: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let gridRef: any = useRef(null);
@@ -82,10 +82,10 @@ const QC_B9020_615W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_B9020_615W", setMessagesData);
+  UseMessages("QC_B9020W_615", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("QC_B9020_615W", setCustomOptionData);
+  UseCustomOption("QC_B9020W_615", setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
@@ -146,7 +146,7 @@ const QC_B9020_615W: React.FC = () => {
         convertDateToStr(filters2.yyyymmdd).substring(6, 8) < "01" ||
         convertDateToStr(filters2.yyyymmdd).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "QC_B9020_615W_001");
+        throw findMessage(messagesData, "QC_B9020W_615_001");
       } else {
         resetAllGrid();
         setPage2(initialPageState); // 페이지 초기화
@@ -416,7 +416,7 @@ const QC_B9020_615W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_B9020_615W"
+              pathname="QC_B9020W_615"
             />
           )}
         </ButtonContainer>
@@ -1230,4 +1230,4 @@ const QC_B9020_615W: React.FC = () => {
   );
 };
 
-export default QC_B9020_615W;
+export default QC_B9020W_615;

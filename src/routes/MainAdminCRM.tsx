@@ -39,7 +39,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CurrentTime from "../components/DDGDcomponents/CurrentTime";
-import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
+import DetailWindow2 from "../components/Windows/CM_A0000W_301_Window";
 import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 import { useApi } from "../hooks/api";
 import {

@@ -42,7 +42,7 @@ import {
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
-import DetailWindow from "../components/Windows/SY_A0010_301W_Window";
+import DetailWindow from "../components/Windows/SY_A0010W_301_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
@@ -119,7 +119,7 @@ const Page: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SY_A0010_301W", setCustomOptionData);
+  UseCustomOption("SY_A0010W_301", setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
@@ -1006,7 +1006,7 @@ const Page: React.FC = () => {
         pageSize: 100000,
         parameters: {
           "@p_work_type": "Q",
-          "@p_form_id": "SY_A0010_301W",
+          "@p_form_id": "SY_A0010W_301",
           "@p_table_id": "comCodeMaster",
           "@p_orgdiv": sessionOrgdiv,
           "@p_ref_key": mainDataResult.data.filter(
@@ -1066,7 +1066,7 @@ const Page: React.FC = () => {
             "@p_recdt": dataArr.recdt.join("|"),
             "@p_comment": dataArr.comment.join("|"),
             "@p_user_id": dataArr.user_id.join("|"),
-            "@p_form_id": "SY_A0010_301W",
+            "@p_form_id": "SY_A0010W_301",
             "@p_table_id": "comCodeMaster",
             "@p_orgdiv": sessionOrgdiv,
             "@p_ref_key": mainDataResult.data.filter(
@@ -1186,7 +1186,7 @@ const Page: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SY_A0010_301W"
+              pathname="SY_A0010W_301"
             />
           )}
         </ButtonContainer>
@@ -1955,7 +1955,7 @@ const Page: React.FC = () => {
           isCopy={isCopy}
           reloadData={reloadData}
           modal={true}
-          pathname="SY_A0010_301W"
+          pathname="SY_A0010W_301"
         />
       )}
 

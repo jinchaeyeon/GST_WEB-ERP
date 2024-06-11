@@ -2234,7 +2234,7 @@ const KendoWindow = ({
       {excelAttachmentsWindowVisible && (
         <PopUpAttachmentsWindow
           setVisible={setExcelAttachmentsWindowVisible}
-          para={"SY_A0010_301W_" + initialVal.group_code} // 그룹코드에 따라 양식 분리
+          para={"SY_A0010W_301_" + initialVal.group_code} // 그룹코드에 따라 양식 분리
         />
       )}
     </Window>

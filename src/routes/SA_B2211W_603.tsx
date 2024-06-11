@@ -38,7 +38,7 @@ import {
 } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
-const SA_B2211_603W: React.FC = () => {
+const SA_B2211W_603: React.FC = () => {
     const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -55,9 +55,9 @@ const SA_B2211_603W: React.FC = () => {
 
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B2211_603W", setMessagesData);
+  UseMessages("SA_B2211W_603", setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2211_603W", setCustomOptionData);
+  UseCustomOption("SA_B2211W_603", setCustomOptionData);
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = GetPropertyValueByName(
@@ -175,14 +175,14 @@ const SA_B2211_603W: React.FC = () => {
         }));
         fetchMainGrid();
       } else {
-        alert(findMessage(messagesData, "SA_B2211_603W_001"));
+        alert(findMessage(messagesData, "SA_B2211W_603_001"));
       }
     }
   }, [filters]);
 
   //조회조건 파라미터
   const parameters = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -194,7 +194,7 @@ const SA_B2211_603W: React.FC = () => {
 
   //조회조건 파라미터
   const parameters2 = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -205,7 +205,7 @@ const SA_B2211_603W: React.FC = () => {
   };
   //조회조건 파라미터
   const parameters3 = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -216,7 +216,7 @@ const SA_B2211_603W: React.FC = () => {
   };
   //조회조건 파라미터
   const parameters4 = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -227,7 +227,7 @@ const SA_B2211_603W: React.FC = () => {
   };
   //조회조건 파라미터
   const parameters5 = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -238,7 +238,7 @@ const SA_B2211_603W: React.FC = () => {
   };
   //조회조건 파라미터
   const parameters6 = {
-    procedureName: "P_SA_B2211_603W_Q",
+    procedureName: "P_SA_B2211W_603_Q",
     pageNumber: 1,
     pageSize: filters.pgSize,
     parameters: {
@@ -717,4 +717,4 @@ const SA_B2211_603W: React.FC = () => {
   );
 };
 
-export default SA_B2211_603W;
+export default SA_B2211W_603;

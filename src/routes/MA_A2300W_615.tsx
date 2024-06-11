@@ -55,7 +55,7 @@ const DATA_ITEM_KEY = "custcd";
 const DATA_ITEM_KEY2 = "group_code";
 var index = 0;
 
-const MA_A2300_615_PDAW: React.FC = () => {
+const MA_A2300W_615: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
@@ -583,7 +583,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   });
 
   const para: Iparameters = {
-    procedureName: "P_MA_A2300_615_PDAW_S",
+    procedureName: "P_MA_A2300W_615_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -595,7 +595,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
       "@p_barcode_s": ParaData.barcode_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "MA_A2300_615_PDAW",
+      "@p_form_id": "MA_A2300W_615",
     },
   };
 
@@ -1623,4 +1623,4 @@ const MA_A2300_615_PDAW: React.FC = () => {
   );
 };
 
-export default MA_A2300_615_PDAW;
+export default MA_A2300W_615;

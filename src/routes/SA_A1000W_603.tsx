@@ -112,11 +112,11 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import RevWindow from "../components/Windows/SA_A1000W_REV_Window";
-import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
-import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
-import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
-import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
-import SA_A1000_603W_Window from "../components/Windows/SA_A1000_603W_Window";
+import SA_A1000W_603_Design2_Window from "../components/Windows/SA_A1000W_603_Design2_Window";
+import SA_A1000W_603_Design3_Window from "../components/Windows/SA_A1000W_603_Design3_Window";
+import SA_A1000W_603_Design4_Window from "../components/Windows/SA_A1000W_603_Design4_Window";
+import SA_A1000W_603_Design_Window from "../components/Windows/SA_A1000W_603_Design_Window";
+import SA_A1000W_603_Window from "../components/Windows/SA_A1000W_603_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -129,7 +129,7 @@ import {
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/SA_A1000_603W_C";
+import { gridList } from "../store/columns/SA_A1000W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 type TdataArr = {
@@ -530,7 +530,7 @@ const CustomPercentCell = (props: GridCellProps) => {
   );
 };
 
-const SA_A1000_603W: React.FC = () => {
+const SA_A1000W_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -558,7 +558,7 @@ const SA_A1000_603W: React.FC = () => {
   const processApi = useApi();
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A1000_603W", setCustomOptionData);
+  UseCustomOption("SA_A1000W_603", setCustomOptionData);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -575,7 +575,7 @@ const SA_A1000_603W: React.FC = () => {
   );
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A1000_603W", setMessagesData);
+  UseMessages("SA_A1000W_603", setMessagesData);
   useEffect(() => {
     (async () => {
       const newData = mainDataResult2.data.map((item) =>
@@ -1744,7 +1744,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -1891,7 +1891,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
@@ -2136,7 +2136,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters3.pgNum,
       pageSize: filters3.pgSize,
       parameters: {
@@ -2283,7 +2283,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters4.pgNum,
       pageSize: filters4.pgSize,
       parameters: {
@@ -2354,7 +2354,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters5.pgNum,
       pageSize: filters5.pgSize,
       parameters: {
@@ -2425,7 +2425,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters6.pgNum,
       pageSize: filters6.pgSize,
       parameters: {
@@ -2504,7 +2504,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters7.pgNum,
       pageSize: filters7.pgSize,
       parameters: {
@@ -2584,7 +2584,7 @@ const SA_A1000_603W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: filters8.pgNum,
       pageSize: filters8.pgSize,
       parameters: {
@@ -3431,7 +3431,7 @@ const SA_A1000_603W: React.FC = () => {
   });
 
   const para: Iparameters = {
-    procedureName: "P_SA_A1000_603W_S",
+    procedureName: "P_SA_A1000W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -3496,7 +3496,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_progress_status_s": ParaData.progress_status_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1000_603W",
+      "@p_form_id": "SA_A1000W_603",
     },
   };
 
@@ -3525,38 +3525,38 @@ const SA_A1000_603W: React.FC = () => {
           convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
           convertDateToStr(Information.quodt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else if (
           Information.person == null ||
           Information.person == "" ||
           Information.person == undefined
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else if (
           Information.quotype == null ||
           Information.quotype == "" ||
           Information.quotype == undefined
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else if (
           Information.requestgb == null ||
           Information.requestgb == "" ||
           Information.requestgb == undefined
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else if (
           Information.numbering_id == null ||
           Information.numbering_id == "" ||
           Information.numbering_id == undefined
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else if (
           convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
           convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
           convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
           convertDateToStr(Information.materialindt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "SA_A1000_603W_001");
+          throw findMessage(messagesData, "SA_A1000W_603_001");
         } else {
           const agency =
             (Information.agency1 == "" ? "N" : Information.agency1) +
@@ -3701,7 +3701,7 @@ const SA_A1000_603W: React.FC = () => {
               progress_status_s: "",
               userid: userId,
               pc: pc,
-              form_id: "SA_A1000_603W",
+              form_id: "SA_A1000W_603",
             });
           } else {
             let dataArr: TdataArr = {
@@ -3831,7 +3831,7 @@ const SA_A1000_603W: React.FC = () => {
               progress_status_s: "",
               userid: userId,
               pc: pc,
-              form_id: "SA_A1000_603W",
+              form_id: "SA_A1000W_603",
             });
           }
         }
@@ -3953,7 +3953,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A1000_603W_S",
+    procedureName: "P_SA_A1000W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -4018,7 +4018,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_progress_status_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1000_603W",
+      "@p_form_id": "SA_A1000W_603",
     },
   };
 
@@ -4129,7 +4129,7 @@ const SA_A1000_603W: React.FC = () => {
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1001_603W?go=` +
+        `/SA_A1001W_603?go=` +
         selectedRowData.quokey.split("-")[0] +
         "-" +
         selectedRowData.quokey.split("-")[1]
@@ -4140,7 +4140,7 @@ const SA_A1000_603W: React.FC = () => {
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1200_603W?go=` +
+        `/SA_A1200W_603?go=` +
         Information.quonum +
         "-" +
         Information.quorev
@@ -4284,7 +4284,7 @@ const SA_A1000_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A1000_603W"
+              pathname="SA_A1000W_603"
             />
           )}
         </ButtonContainer>
@@ -9022,11 +9022,11 @@ const SA_A1000_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_A1000_603W"
+          pathname="SA_A1000W_603"
         />
       )}
       {designWindowVisible && (
-        <SA_A1000_603W_Design_Window
+        <SA_A1000W_603_Design_Window
           setVisible={setDesignWindowVisible}
           filters={filters}
           item={
@@ -9061,7 +9061,7 @@ const SA_A1000_603W: React.FC = () => {
         />
       )}
       {designWindowVisible2 && (
-        <SA_A1000_603W_Design2_Window
+        <SA_A1000W_603_Design2_Window
           setVisible={setDesignWindowVisible2}
           filters={filters}
           item={
@@ -9096,7 +9096,7 @@ const SA_A1000_603W: React.FC = () => {
         />
       )}
       {designWindowVisible3 && (
-        <SA_A1000_603W_Design3_Window
+        <SA_A1000W_603_Design3_Window
           setVisible={setDesignWindowVisible3}
           filters={filters}
           item={
@@ -9131,7 +9131,7 @@ const SA_A1000_603W: React.FC = () => {
         />
       )}
       {printWindowVisible && (
-        <SA_A1000_603W_Window
+        <SA_A1000W_603_Window
           setVisible={setPrintWindowVisible}
           quonum={
             mainDataResult.data.filter(
@@ -9163,7 +9163,7 @@ const SA_A1000_603W: React.FC = () => {
         />
       )}
       {designWindowVisible4 && (
-        <SA_A1000_603W_Design4_Window
+        <SA_A1000W_603_Design4_Window
           setVisible={setDesignWindowVisible4}
           filters={filters}
           item={
@@ -9245,4 +9245,4 @@ const SA_A1000_603W: React.FC = () => {
   );
 };
 
-export default SA_A1000_603W;
+export default SA_A1000W_603;

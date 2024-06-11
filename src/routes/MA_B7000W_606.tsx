@@ -65,7 +65,7 @@ import {
   isMobileState,
   loginResultState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/MA_B7000_606W_C";
+import { gridList } from "../store/columns/MA_B7000W_606_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const numberField = [
@@ -94,7 +94,7 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 var index = 0;
 
-const MA_B7000_606W: React.FC = () => {
+const MA_B7000W_606: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -119,7 +119,7 @@ const MA_B7000_606W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_B7000_606W", setCustomOptionData);
+  UseCustomOption("MA_B7000W_606", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -464,7 +464,7 @@ const MA_B7000_606W: React.FC = () => {
   }, [detail1DataResult]);
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("MA_B7000_606W", setMessagesData);
+  UseMessages("MA_B7000W_606", setMessagesData);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -651,7 +651,7 @@ const MA_B7000_606W: React.FC = () => {
   const search = () => {
     try {
       if (filters.ymdyyyy == null || filters.ymdyyyy == undefined) {
-        throw findMessage(messagesData, "MA_B7000_606W_001");
+        throw findMessage(messagesData, "MA_B7000W_606_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -682,7 +682,7 @@ const MA_B7000_606W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_B7000_606W"
+              pathname="MA_B7000W_606"
             />
           )}
         </ButtonContainer>
@@ -1267,4 +1267,4 @@ const MA_B7000_606W: React.FC = () => {
   );
 };
 
-export default MA_B7000_606W;
+export default MA_B7000W_606;

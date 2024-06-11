@@ -83,7 +83,7 @@ function App(props) {
 
     //조회조건 파라미터
     const parameters = {
-      procedureName: "P_PS_A0060_301W_Q",
+      procedureName: "P_PS_A0060W_301_Q",
       pageNumber: 1,
       pageSize: 10000,
       parameters: {

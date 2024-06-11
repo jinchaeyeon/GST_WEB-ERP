@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -24,8 +23,6 @@ import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
-  FormBox,
-  FormBoxWrap,
   GridContainer,
   GridTitle,
   GridTitleContainer,
@@ -61,7 +58,6 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import {
@@ -71,19 +67,19 @@ import {
   loginResultState,
   sessionItemState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/MA_A3400_606W_C";
+import { gridList } from "../store/columns/MA_A2310W_606_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
-const dateField = ["indt"];
+const dateField = ["outdt"];
 const numberField = ["amt", "taxamt", "qty"];
 var barcode = "";
 let temp = 0;
 let targetRowIndex: null | number = null;
 var index = 0;
 
-const MA_A3400_606W: React.FC = () => {
+const MA_A2310W_606: React.FC = () => {
     const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -94,21 +90,19 @@ const MA_A3400_606W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A3400_606W", setCustomOptionData);
-  const [isVisibleDetail, setIsVisableDetail] = useState(false);
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
-  const companyCode = loginResult ? loginResult.companyCode : "";
-  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
+
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("MA_A2310W_606", setCustomOptionData);
+  const [isVisibleDetail, setIsVisableDetail] = useState(false);
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -127,12 +121,16 @@ const MA_A3400_606W: React.FC = () => {
   };
   const pc = UseGetValueFromSessionItem("pc");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A3400_606W", setMessagesData);
+  UseMessages("MA_A2310W_606", setMessagesData);
   const processApi = useApi();
 
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_BA061", setBizComponentData);
+  UseBizComponent("L_sysUserMaster_001, L_BA061", setBizComponentData);
+
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
 
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -140,6 +138,7 @@ const MA_A3400_606W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData !== null) {
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
     }
   }, [bizComponentData]);
@@ -179,45 +178,10 @@ const MA_A3400_606W: React.FC = () => {
     }));
   };
 
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const InputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setInformation2((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
-  };
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  interface ICustData {
-    address: string;
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-
-  const setCustData = (data: ICustData) => {
-    setInformation2((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
   };
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -239,10 +203,8 @@ const MA_A3400_606W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
-  let sessionLocation = sessionItem.find(
-    (sessionItem: { code: string }) => sessionItem.code == "location"
-  )!.value;
-  if (sessionLocation == "") sessionLocation = "01";
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -254,11 +216,12 @@ const MA_A3400_606W: React.FC = () => {
     custcd: "",
     custnm: "",
     lotnum: "",
-    reckey: "",
+    ordnum: "",
     itemcd: "",
     itemnm: "",
     insiz: "",
     finyn: "",
+    invoiceno: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -268,12 +231,6 @@ const MA_A3400_606W: React.FC = () => {
     isSearch: false,
   });
 
-  const [Information2, setInformation2] = useState({
-    custcd: "",
-    custnm: "",
-    outdt: new Date(),
-  });
-
   let gridRef: any = useRef(null);
 
   //그리드 조회
@@ -281,7 +238,7 @@ const MA_A3400_606W: React.FC = () => {
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
-      procedureName: "P_MA_A3400_606W_Q",
+      procedureName: "P_MA_A2310W_606_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -293,11 +250,12 @@ const MA_A3400_606W: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_lotnum": filters.lotnum,
-        "@p_reckey": filters.reckey,
+        "@p_ordnum": filters.ordnum,
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
         "@p_finyn": filters.finyn,
+        "@p_invoiceno": filters.invoiceno,
         "@p_lotnum2": "",
       },
     };
@@ -344,7 +302,7 @@ const MA_A3400_606W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_MA_A3400_606W_Q",
+      procedureName: "P_MA_A2310W_606_Q",
       pageNumber: 1,
       pageSize: 1,
       parameters: {
@@ -356,11 +314,12 @@ const MA_A3400_606W: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_lotnum": filters.lotnum,
-        "@p_reckey": filters.reckey,
+        "@p_ordnum": filters.ordnum,
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
         "@p_finyn": filters.finyn,
+        "@p_invoiceno": filters.invoiceno,
         "@p_lotnum2": Information.lotnum,
       },
     };
@@ -397,47 +356,98 @@ const MA_A3400_606W: React.FC = () => {
         });
 
         if (valid == false) {
-          rows.map((items: any) => {
-            mainDataResult2.data.map((item) => {
-              if (item.num > temp) {
-                temp = item.num;
-              }
-            });
+          rows.map(
+            (items: {
+              amt: any;
+              amtunit: any;
+              bnatur: any;
+              contractno: any;
+              custcd: any;
+              custnm: any;
+              doexdiv: any;
+              insiz: any;
+              itemacnt: any;
+              itemcd: any;
+              itemnm: any;
+              lcno: any;
+              location: any;
+              lotnum: any;
+              ordnum: any;
+              ordseq: any;
+              orgdiv: any;
+              outdt: any;
+              outdt2: any;
+              outkind: any;
+              outtype: any;
+              person: any;
+              pgmdiv: any;
+              qty: any;
+              rcvcustcd: any;
+              recdt: any;
+              reckey: any;
+              remark: any;
+              seq1: any;
+              seq2: any;
+              shipdt: any;
+              spec: any;
+              taxamt: any;
+              uschgrat: any;
+              wonchgrat: any;
+            }) => {
+              mainDataResult2.data.map((item) => {
+                if (item.num > temp) {
+                  temp = item.num;
+                }
+              });
 
-            const newDataItem = {
-              [DATA_ITEM_KEY2]: ++temp,
-              amt: items.amt,
-              bnatur: items.bnatur,
-              indt: items.indt,
-              insiz: items.insiz,
-              invoiceno: items.invoiceno,
-              itemacnt: items.itemacnt,
-              itemcd: items.itemcd,
-              itemnm: items.itemnm,
-              janqty: items.janqty,
-              location: items.location,
-              lotnum: items.lotnum,
-              orgdiv: items.orgdiv,
-              qty: items.qty,
-              qty1: items.qty1,
-              recdt: items.recdt,
-              remark: items.remark,
-              seq1: items.seq1,
-              seq2: items.seq2,
-              spec: items.spec,
-              taxamt: items.taxamt,
-              unp: items.unp,
-              rowstatus: "N",
-            };
-
-            setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
-            setMainDataResult2((prev) => {
-              return {
-                data: [newDataItem, ...prev.data],
-                total: prev.total + 1,
+              const newDataItem = {
+                [DATA_ITEM_KEY2]: ++temp,
+                amt: items.amt,
+                amtunit: items.amtunit,
+                bnatur: items.bnatur,
+                contractno: items.contractno,
+                custcd: items.custcd,
+                custnm: items.custnm,
+                doexdiv: items.doexdiv,
+                insiz: items.insiz,
+                itemacnt: items.itemacnt,
+                itemcd: items.itemcd,
+                itemnm: items.itemnm,
+                lcno: items.lcno,
+                location: items.location,
+                lotnum: items.lotnum,
+                ordnum: items.ordnum,
+                ordseq: items.ordseq,
+                orgdiv: items.orgdiv,
+                outdt: items.outdt,
+                outdt2: items.outdt2,
+                outkind: items.outkind,
+                outtype: items.outtype,
+                person: items.person,
+                pgmdiv: items.pgmdiv,
+                qty: items.qty,
+                rcvcustcd: items.rcvcustcd,
+                recdt: items.recdt,
+                reckey: items.reckey,
+                remark: items.remark,
+                seq1: items.seq1,
+                seq2: items.seq2,
+                shipdt: items.shipdt,
+                spec: items.spec,
+                taxamt: items.taxamt,
+                uschgrat: items.uschgrat,
+                wonchgrat: items.wonchgrat,
               };
-            });
-          });
+
+              setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+              setMainDataResult2((prev) => {
+                return {
+                  data: [newDataItem, ...prev.data],
+                  total: prev.total + 1,
+                };
+              });
+            }
+          );
         } else {
           alert("동일한 행이 이미 추가되어있습니다.");
         }
@@ -491,8 +501,9 @@ const MA_A3400_606W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
-
-    setSelectedState(newSelectedState);
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   //메인 그리드 선택 이벤트
@@ -535,14 +546,14 @@ const MA_A3400_606W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A3400_606W_001");
+        throw findMessage(messagesData, "MA_A2310W_606_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A3400_606W_001");
+        throw findMessage(messagesData, "MA_A2310W_606_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -694,53 +705,85 @@ const MA_A3400_606W: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    document.addEventListener("keydown", function (evt) {
+      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
+        if (barcode != "") {
+          setInformation((prev) => ({
+            ...prev,
+            lotnum: barcode,
+            isSearch: true,
+          }));
+        }
+      } else if (
+        evt.code != "ShiftLeft" &&
+        evt.code != "Shift" &&
+        evt.code != "Enter" &&
+        evt.code != "NumpadEnter"
+      ) {
+        barcode += evt.key;
+      }
+    });
+    document.addEventListener("click", function (evt) {
+      barcode = "";
+    });
+  }, []);
+
+  const onDeleteClick = (e: any) => {
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    if (dataItem.length != 0) {
+      let dataArr: any = {
+        rekey_s: [],
+        recdt_s: [],
+        seq1_s: [],
+        seq2_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const { reckey = "", recdt = "", seq1 = "", seq2 = "" } = item;
+        dataArr.rekey_s.push(reckey);
+        dataArr.recdt_s.push(recdt);
+        dataArr.seq1_s.push(seq1);
+        dataArr.seq2_s.push(seq2);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: sessionOrgdiv,
+        location: filters.location,
+        indt: convertDateToStr(new Date()),
+        rekey_s: dataArr.rekey_s.join("|"),
+        recdt_s: dataArr.recdt_s.join("|"),
+        seq1_s: dataArr.seq1_s.join("|"),
+        seq2_s: dataArr.seq2_s.join("|"),
+        userid: userId,
+        pc: pc,
+        form_id: "MA_A2310W_606",
+        companyCode: companyCode,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
   const onAddClick = (e: any) => {
     if (mainDataResult2.data.length != 0) {
-      if (Information2.custcd == "" || Information2.custnm == "") {
-        alert("필수값을 입력해주세요.");
-        return false;
-      }
       let dataArr: any = {
-        rowstatus_s: [],
+        rekey_s: [],
+        recdt_s: [],
+        seq1_s: [],
         seq2_s: [],
-        itemcd_s: [],
-        itemnm_s: [],
-        qty_s: [],
-        unp_s: [],
-        amt_s: [],
-        lotnum_s: [],
-        remark_s: [],
-        inrecdt_s: [],
-        inseq1_s: [],
-        inseq2_s: [],
       };
 
       mainDataResult2.data.forEach((item: any, idx: number) => {
-        const {
-          rowstatus = "",
-          seq2 = "",
-          itemcd = "",
-          itemnm = "",
-          qty = "",
-          unp = "",
-          amt = "",
-          lotnum = "",
-          remark = "",
-          recdt = "",
-          seq1 = "",
-        } = item;
-        dataArr.rowstatus_s.push(rowstatus);
+        const { reckey = "", recdt = "", seq1 = "", seq2 = "" } = item;
+        dataArr.rekey_s.push(reckey);
+        dataArr.recdt_s.push(recdt);
+        dataArr.seq1_s.push(seq1);
         dataArr.seq2_s.push(seq2);
-        dataArr.itemcd_s.push(itemcd);
-        dataArr.itemnm_s.push(itemnm);
-        dataArr.qty_s.push(qty);
-        dataArr.unp_s.push(unp);
-        dataArr.amt_s.push(amt);
-        dataArr.lotnum_s.push(lotnum);
-        dataArr.remark_s.push(remark);
-        dataArr.inrecdt_s.push(recdt);
-        dataArr.inseq1_s.push(seq1);
-        dataArr.inseq2_s.push(seq2);
       });
 
       setParaData((prev) => ({
@@ -748,24 +791,14 @@ const MA_A3400_606W: React.FC = () => {
         workType: "N",
         orgdiv: sessionOrgdiv,
         location: filters.location,
-        outdt: convertDateToStr(Information2.outdt),
-        custcd: Information2.custcd,
-        custnm: Information2.custnm,
-        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        indt: convertDateToStr(new Date()),
+        rekey_s: dataArr.rekey_s.join("|"),
+        recdt_s: dataArr.recdt_s.join("|"),
+        seq1_s: dataArr.seq1_s.join("|"),
         seq2_s: dataArr.seq2_s.join("|"),
-        itemcd_s: dataArr.itemcd_s.join("|"),
-        itemnm_s: dataArr.itemnm_s.join("|"),
-        qty_s: dataArr.qty_s.join("|"),
-        unp_s: dataArr.unp_s.join("|"),
-        amt_s: dataArr.amt_s.join("|"),
-        lotnum_s: dataArr.lotnum_s.join("|"),
-        remark_s: dataArr.remark_s.join("|"),
-        inrecdt_s: dataArr.inrecdt_s.join("|"),
-        inseq1_s: dataArr.inseq1_s.join("|"),
-        inseq2_s: dataArr.inseq2_s.join("|"),
         userid: userId,
         pc: pc,
-        form_id: "MA_A3400_606W",
+        form_id: "MA_A2310W_606",
         companyCode: companyCode,
       }));
     } else {
@@ -804,27 +837,40 @@ const MA_A3400_606W: React.FC = () => {
         const newDataItem = {
           [DATA_ITEM_KEY2]: ++temp,
           amt: items.amt,
+          amtunit: items.amtunit,
           bnatur: items.bnatur,
-          indt: items.indt,
+          contractno: items.contractno,
+          custcd: items.custcd,
+          custnm: items.custnm,
+          doexdiv: items.doexdiv,
           insiz: items.insiz,
-          invoiceno: items.invoiceno,
           itemacnt: items.itemacnt,
           itemcd: items.itemcd,
           itemnm: items.itemnm,
-          janqty: items.janqty,
+          lcno: items.lcno,
           location: items.location,
           lotnum: items.lotnum,
+          ordnum: items.ordnum,
+          ordseq: items.ordseq,
           orgdiv: items.orgdiv,
+          outdt: items.outdt,
+          outdt2: items.outdt2,
+          outkind: items.outkind,
+          outtype: items.outtype,
+          person: items.person,
+          pgmdiv: items.pgmdiv,
           qty: items.qty,
-          qty1: items.qty1,
+          rcvcustcd: items.rcvcustcd,
           recdt: items.recdt,
+          reckey: items.reckey,
           remark: items.remark,
           seq1: items.seq1,
           seq2: items.seq2,
+          shipdt: items.shipdt,
           spec: items.spec,
           taxamt: items.taxamt,
-          unp: items.unp,
-          rowstatus: "N",
+          uschgrat: items.uschgrat,
+          wonchgrat: items.wonchgrat,
         };
 
         setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
@@ -876,54 +922,34 @@ const MA_A3400_606W: React.FC = () => {
     workType: "",
     orgdiv: sessionOrgdiv,
     location: "",
-    outdt: "",
-    custcd: "",
-    custnm: "",
-    rowstatus_s: "",
+    indt: "",
+    rekey_s: "",
+    recdt_s: "",
+    seq1_s: "",
     seq2_s: "",
-    itemcd_s: "",
-    itemnm_s: "",
-    qty_s: "",
-    unp_s: "",
-    amt_s: "",
-    lotnum_s: "",
-    remark_s: "",
-    inrecdt_s: "",
-    inseq1_s: "",
-    inseq2_s: "",
     userid: userId,
     pc: pc,
-    form_id: "MA_A3400_606W",
-    serviceid: companyCode,
+    form_id: "MA_A2310W_606",
+    companyCode: companyCode,
   });
 
   const para: Iparameters = {
-    procedureName: "P_MA_A3400_606W_S",
+    procedureName: "P_MA_A2310W_606_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": sessionOrgdiv,
       "@p_location": ParaData.location,
-      "@p_outdt": ParaData.outdt,
-      "@p_custcd": ParaData.custcd,
-      "@p_custnm": ParaData.custnm,
-      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_indt": ParaData.indt,
+      "@p_rekey_s": ParaData.rekey_s,
+      "@p_recdt_s": ParaData.recdt_s,
+      "@p_seq1_s": ParaData.seq1_s,
       "@p_seq2_s": ParaData.seq2_s,
-      "@p_itemcd_s": ParaData.itemcd_s,
-      "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_qty_s": ParaData.qty_s,
-      "@p_unp_s": ParaData.unp_s,
-      "@p_amt_s": ParaData.amt_s,
-      "@p_lotnum_s": ParaData.lotnum_s,
-      "@p_remark_s": ParaData.remark_s,
-      "@p_inrecdt_s": ParaData.inrecdt_s,
-      "@p_inseq1_s": ParaData.inseq1_s,
-      "@p_inseq2_s": ParaData.inseq2_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "MA_A3400_606W",
-      "@p_serviceid": ParaData.serviceid,
+      "@p_form_id": "MA_A2310W_606",
+      "@p_company_code": ParaData.companyCode,
     },
   };
 
@@ -944,35 +970,21 @@ const MA_A3400_606W: React.FC = () => {
         isSearch: true,
         pgNum: 1,
       }));
-      setInformation2({
-        custcd: "",
-        custnm: "",
-        outdt: new Date(),
-      });
+
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
         orgdiv: sessionOrgdiv,
         location: "",
-        outdt: "",
-        custcd: "",
-        custnm: "",
-        rowstatus_s: "",
+        indt: "",
+        rekey_s: "",
+        recdt_s: "",
+        seq1_s: "",
         seq2_s: "",
-        itemcd_s: "",
-        itemnm_s: "",
-        qty_s: "",
-        unp_s: "",
-        amt_s: "",
-        lotnum_s: "",
-        remark_s: "",
-        inrecdt_s: "",
-        inseq1_s: "",
-        inseq2_s: "",
         userid: userId,
         pc: pc,
-        form_id: "MA_A3400_606W",
-        serviceid: companyCode,
+        form_id: "MA_A2310W_606",
+        companyCode: companyCode,
       });
     } else {
       console.log("[오류 발생]");
@@ -1051,34 +1063,10 @@ const MA_A3400_606W: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    document.addEventListener("keydown", function (evt) {
-      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
-        if (barcode != "") {
-          setInformation((prev) => ({
-            ...prev,
-            lotnum: barcode,
-            isSearch: true,
-          }));
-        }
-      } else if (
-        evt.code != "ShiftLeft" &&
-        evt.code != "Shift" &&
-        evt.code != "Enter" &&
-        evt.code != "NumpadEnter"
-      ) {
-        barcode += evt.key;
-      }
-    });
-    document.addEventListener("click", function (evt) {
-      barcode = "";
-    });
-  }, []);
-
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>출고처리</Title>
+        <Title>입고확정</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -1086,7 +1074,7 @@ const MA_A3400_606W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_A3400_606W"
+              pathname="MA_A2310W_606"
             />
           )}
         </ButtonContainer>
@@ -1095,7 +1083,7 @@ const MA_A3400_606W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>입고일자</th>
+              <th>출고일자</th>
               <td>
                 <CommonDateRangePicker
                   value={{
@@ -1112,12 +1100,12 @@ const MA_A3400_606W: React.FC = () => {
                   className="required"
                 />
               </td>
-              <th>출고번호</th>
+              <th>수주번호</th>
               <td>
                 <Input
-                  name="reckey"
+                  name="ordnum"
                   type="text"
-                  value={filters.reckey}
+                  value={filters.ordnum}
                   onChange={filterInputChange}
                 />
               </td>
@@ -1127,6 +1115,15 @@ const MA_A3400_606W: React.FC = () => {
                   name="lotnum"
                   type="text"
                   value={filters.lotnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>invoice No</th>
+              <td>
+                <Input
+                  name="invoiceno"
+                  type="text"
+                  value={filters.invoiceno}
                   onChange={filterInputChange}
                 />
               </td>
@@ -1193,29 +1190,51 @@ const MA_A3400_606W: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer">
-                  <GridTitle>Keeping</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="check-circle"
+                  <GridTitle>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      확정
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      themeColor={"primary"}
-                      fillMode="outline"
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                  </ButtonContainer>
+                      Keeping
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="check-circle"
+                        >
+                          확정
+                        </Button>
+                        <Button
+                          onClick={onDeleteClick2}
+                          themeColor={"primary"}
+                          fillMode="outline"
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
+                        <Button
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                          icon={"chevron-right"}
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                        ></Button>
+                      </ButtonContainer>
+                    </div>
+                  </GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{ height: deviceHeight - height }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
+                      person: userListData.find(
+                        (items: any) => items.user_id == row.person
+                      )?.user_name,
                       itemacnt: itemacntListData.find(
                         (item: any) => item.sub_code == row.itemacnt
                       )?.code_name,
@@ -1273,80 +1292,8 @@ const MA_A3400_606W: React.FC = () => {
                 </Grid>
               </GridContainer>
             </SwiperSlide>
+
             <SwiperSlide key={1}>
-              <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>입력정보</GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                    >
-                      이전
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <FormBoxWrap
-                  border={true}
-                  style={{
-                    height: deviceHeight - height2,
-                    overflow: "auto",
-                  }}
-                >
-                  <FormBox>
-                    <tbody>
-                      <tr>
-                        <th>업체코드</th>
-                        <td>
-                          <Input
-                            name="custcd"
-                            type="text"
-                            value={Information2.custcd}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onCustWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>업체명</th>
-                        <td>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={Information2.custnm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                        </td>
-                        <th>출고일자</th>
-                        <td>
-                          <DatePicker
-                            name="outdt"
-                            value={Information2.outdt}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            className="required"
-                            placeholder=""
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBox>
-                </FormBoxWrap>
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>요약정보</GridTitle>
@@ -1363,12 +1310,22 @@ const MA_A3400_606W: React.FC = () => {
                     >
                       이전
                     </Button>
-                    <Button
-                      onClick={onAddClick2}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
+                    <div>
+                      <Button
+                        onClick={onDeleteClick}
+                        icon="close-circle"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        삭제
+                      </Button>
+                      <Button
+                        onClick={onAddClick2}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                    </div>
                   </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1376,13 +1333,16 @@ const MA_A3400_606W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출고처리"
+                  fileName="입고확정"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height3 }}
+                    style={{ height: deviceHeight - height2 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
+                        person: userListData.find(
+                          (items: any) => items.user_id == row.person
+                        )?.user_name,
                         itemacnt: itemacntListData.find(
                           (item: any) => item.sub_code == row.itemacnt
                         )?.code_name,
@@ -1465,32 +1425,45 @@ const MA_A3400_606W: React.FC = () => {
         </>
       ) : (
         <>
-          {isVisibleDetail && (
-            <>
+          <GridContainer style={{ height: "100%", width: "100%" }}>
+            {isVisibleDetail && (
               <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onDeleteClick}
+                      icon="close-circle"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출고처리"
+                  fileName="입고확정"
                 >
-                  <GridTitleContainer>
-                    <GridTitle>요약정보</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick2}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
                   <Grid
-                    style={{ height: "30vh" }}
+                    style={{
+                      height: "40vh",
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
+                        person: userListData.find(
+                          (items: any) => items.user_id == row.person
+                        )?.user_name,
                         itemacnt: itemacntListData.find(
                           (item: any) => item.sub_code == row.itemacnt
                         )?.code_name,
@@ -1568,60 +1541,8 @@ const MA_A3400_606W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>입력정보</GridTitle>
-                </GridTitleContainer>
-                <FormBoxWrap border={true}>
-                  <FormBox>
-                    <tbody>
-                      <tr>
-                        <th>업체코드</th>
-                        <td>
-                          <Input
-                            name="custcd"
-                            type="text"
-                            value={Information2.custcd}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onCustWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>업체명</th>
-                        <td>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={Information2.custnm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                        </td>
-                        <th>출고일자</th>
-                        <td>
-                          <DatePicker
-                            name="outdt"
-                            value={Information2.outdt}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            className="required"
-                            placeholder=""
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBox>
-                </FormBoxWrap>
-              </GridContainer>
-            </>
-          )}
-          <GridContainer>
+            )}
+
             <GridTitleContainer>
               <GridTitle>
                 <Button
@@ -1650,10 +1571,15 @@ const MA_A3400_606W: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: isVisibleDetail ? "30vh" : "72vh" }}
+              style={{
+                height: isVisibleDetail ? "30vh" : "72vh",
+              }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
+                  person: userListData.find(
+                    (items: any) => items.user_id == row.person
+                  )?.user_name,
                   itemacnt: itemacntListData.find(
                     (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
@@ -1712,14 +1638,6 @@ const MA_A3400_606W: React.FC = () => {
           </GridContainer>
         </>
       )}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={"N"}
-          setData={setCustData}
-          modal={true}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
@@ -1745,4 +1663,4 @@ const MA_A3400_606W: React.FC = () => {
   );
 };
 
-export default MA_A3400_606W;
+export default MA_A2310W_606;

@@ -65,7 +65,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
+import QC_A2500W_603_Window from "../components/Windows/QC_A2500W_603_Window";
 import { useApi } from "../hooks/api";
 import {
   heightstate,
@@ -74,7 +74,7 @@ import {
   isMobileState,
   loginResultState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/QC_A2500_603W_C";
+import { gridList } from "../store/columns/QC_A2500W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -151,10 +151,10 @@ const BA_A0020_603: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("QC_A2500_603W", setCustomOptionData);
+  UseCustomOption("QC_A2500W_603", setCustomOptionData);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_A2500_603W", setMessagesData);
+  UseMessages("QC_A2500W_603", setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -461,7 +461,7 @@ const BA_A0020_603: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_QC_A2500_603W_Q",
+      procedureName: "P_QC_A2500W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -575,7 +575,7 @@ const BA_A0020_603: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_QC_A2500_603W_Q",
+      procedureName: "P_QC_A2500W_603_Q",
       pageNumber: commentFilter.pgNum,
       pageSize: commentFilter.pgSize,
       parameters: {
@@ -776,14 +776,14 @@ const BA_A0020_603: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "QC_A2500_603W_001");
+        throw findMessage(messagesData, "QC_A2500W_603_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "QC_A2500_603W_001");
+        throw findMessage(messagesData, "QC_A2500W_603_001");
       } else {
         setTabSelected(0);
         resetAllGrid();
@@ -1278,7 +1278,7 @@ const BA_A0020_603: React.FC = () => {
           Information.qcdt == null ? "" : convertDateToStr(Information.qcdt),
         userid: userId,
         pc: pc,
-        form_id: "QC_A2500_603W",
+        form_id: "QC_A2500W_603",
       });
     }
   };
@@ -1317,11 +1317,11 @@ const BA_A0020_603: React.FC = () => {
     qcdt: "",
     userid: userId,
     pc: pc,
-    form_id: "QC_A2500_603W",
+    form_id: "QC_A2500W_603",
   });
 
   const para: Iparameters = {
-    procedureName: "P_QC_A2500_603W_S",
+    procedureName: "P_QC_A2500W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1358,7 +1358,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_qcdt": paraData.qcdt,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "QC_A2500_603W",
+      "@p_form_id": "QC_A2500W_603",
     },
   };
 
@@ -1422,7 +1422,7 @@ const BA_A0020_603: React.FC = () => {
         qcdt: "",
         userid: userId,
         pc: pc,
-        form_id: "QC_A2500_603W",
+        form_id: "QC_A2500W_603",
       });
     } else {
       console.log("[오류 발생]");
@@ -1645,7 +1645,7 @@ const BA_A0020_603: React.FC = () => {
         qcdt: "",
         userid: userId,
         pc: pc,
-        form_id: "QC_A2500_603W",
+        form_id: "QC_A2500W_603",
       });
     } else {
       alert("등록된 데이터가 없습니다.");
@@ -1664,7 +1664,7 @@ const BA_A0020_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A2500_603W"
+              pathname="QC_A2500W_603"
             />
           )}
         </ButtonContainer>
@@ -3338,19 +3338,19 @@ const BA_A0020_603: React.FC = () => {
         />
       )}
       {detailWindowVisible && (
-        <QC_A2500_603W_Window
+        <QC_A2500W_603_Window
           setVisible={setDetailWindowVisible}
           setData={setData}
           modal={true}
-          pathname="QC_A2500_603W"
+          pathname="QC_A2500W_603"
         />
       )}
       {projectWindowVisible && (
-        <QC_A2500_603W_Window
+        <QC_A2500W_603_Window
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="QC_A2500_603W"
+          pathname="QC_A2500W_603"
         />
       )}
       {PrsnnumWindowVisible && (

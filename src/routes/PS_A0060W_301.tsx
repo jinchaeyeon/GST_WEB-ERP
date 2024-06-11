@@ -55,7 +55,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import { heightstate, isLoading, isMobileState } from "../store/atoms";
-import { gridList } from "../store/columns/PS_A0060_301W_C";
+import { gridList } from "../store/columns/PS_A0060W_301_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -85,7 +85,7 @@ const CustomcomboBoxCell = (props: GridCellProps) => {
   );
 };
 
-const PS_A0060_301W: React.FC = () => {
+const PS_A0060W_301: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -104,11 +104,11 @@ const PS_A0060_301W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PS_A0060_301W", setMessagesData);
+  UseMessages("PS_A0060W_301", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("PS_A0060_301W", setCustomOptionData);
+  UseCustomOption("PS_A0060W_301", setCustomOptionData);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   //customOptionData 조회 후 디폴트 값 세팅
@@ -210,7 +210,7 @@ const PS_A0060_301W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_PS_A0060_301W_Q",
+      procedureName: "P_PS_A0060W_301_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -376,15 +376,15 @@ const PS_A0060_301W: React.FC = () => {
         filters.orgdiv == null ||
         filters.orgdiv == undefined
       ) {
-        throw findMessage(messagesData, "PS_A0060_301W_002");
+        throw findMessage(messagesData, "PS_A0060W_301_002");
       } else if (
         filters.location == "" ||
         filters.location == null ||
         filters.location == undefined
       ) {
-        throw findMessage(messagesData, "PS_A0060_301W_003");
+        throw findMessage(messagesData, "PS_A0060W_301_003");
       } else if (convertDateToStr(filters.yyyymm).substring(0, 4) < "1997") {
-        throw findMessage(messagesData, "PS_A0060_301W_004");
+        throw findMessage(messagesData, "PS_A0060W_301_004");
       } else {
         resetAllGrid();
         setFilters((prev: any) => ({
@@ -477,11 +477,11 @@ const PS_A0060_301W: React.FC = () => {
     description: "",
     id: userId,
     pc: pc,
-    form_id: "PS_A0060_301W",
+    form_id: "PS_A0060W_301",
   });
 
   const para: Iparameters = {
-    procedureName: "P_PS_A0060_301W_S",
+    procedureName: "P_PS_A0060W_301_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -528,7 +528,7 @@ const PS_A0060_301W: React.FC = () => {
     try {
       dataItem.map((item: any) => {
         if (item.date == "") {
-          throw findMessage(messagesData, "PS_A0060_301W_001");
+          throw findMessage(messagesData, "PS_A0060W_301_001");
         }
       });
     } catch (e) {
@@ -613,7 +613,7 @@ const PS_A0060_301W: React.FC = () => {
       description: dataArr.description.join("|"),
       id: userId,
       pc: pc,
-      form_id: "PS_A0060_301W",
+      form_id: "PS_A0060W_301",
     }));
   };
 
@@ -956,7 +956,7 @@ const PS_A0060_301W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="PS_A0060_301W"
+              pathname="PS_A0060W_301"
             />
           )}
         </ButtonContainer>
@@ -1161,4 +1161,4 @@ const PS_A0060_301W: React.FC = () => {
     </>
   );
 };
-export default PS_A0060_301W;
+export default PS_A0060W_301;

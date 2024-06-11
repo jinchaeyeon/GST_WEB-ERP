@@ -179,7 +179,7 @@ const KendoWindow = ({
   });
 
   const para: Iparameters = {
-    procedureName: "P_SA_A1000_603W_S",
+    procedureName: "P_SA_A1000W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -244,7 +244,7 @@ const KendoWindow = ({
       "@p_progress_status_s": ParaData.progress_status_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1000_603W",
+      "@p_form_id": "SA_A1000W_603",
     },
   };
 

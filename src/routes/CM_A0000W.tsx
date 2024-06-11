@@ -51,7 +51,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/CM_A0000W_Window";
-import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
+import DetailWindow2 from "../components/Windows/CM_A0000W_301_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,

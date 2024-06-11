@@ -22,7 +22,7 @@ type IWindow = {
 var height = 0;
 var height2 = 0;
 
-const SA_A1001_603W_Window = ({
+const SA_A1001W_603_Window = ({
   setVisible,
   quonum,
   quorev,
@@ -136,4 +136,4 @@ const SA_A1001_603W_Window = ({
   );
 };
 
-export default SA_A1001_603W_Window;
+export default SA_A1001W_603_Window;

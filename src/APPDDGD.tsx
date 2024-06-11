@@ -166,8 +166,8 @@ const MA_A0010W = lazy(() => import("./routes/MA_A0010W"));
 const MA_A1000W = lazy(() => import("./routes/MA_A1000W"));
 const MA_A2000W = lazy(() => import("./routes/MA_A2000W"));
 const MA_A2300W = lazy(() => import("./routes/MA_A2300W"));
-const MA_A2300_615_PDAW = lazy(() => import("./routes/MA_A2300_615_PDAW"));
-const MA_A2310_606W = lazy(() => import("./routes/MA_A2310_606W"));
+const MA_A2300W_615 = lazy(() => import("./routes/MA_A2300W_615"));
+const MA_A2310W_606 = lazy(() => import("./routes/MA_A2310W_606"));
 const MA_A2400W = lazy(() => import("./routes/MA_A2400W"));
 const MA_A2410W = lazy(() => import("./routes/MA_A2410W"));
 const MA_A2500W = lazy(() => import("./routes/MA_A2500W"));
@@ -175,7 +175,7 @@ const MA_A2700W = lazy(() => import("./routes/MA_A2700W"));
 const MA_A3000W = lazy(() => import("./routes/MA_A3000W"));
 const MA_A3300W = lazy(() => import("./routes/MA_A3300W"));
 const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
-const MA_A3400_606W = lazy(() => import("./routes/MA_A3400_606W"));
+const MA_A3400W_606 = lazy(() => import("./routes/MA_A3400W_606"));
 const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
 const MA_A3500W_615 = lazy(() => import("./routes/MA_A3500W_615"));
 const MA_A3600W = lazy(() => import("./routes/MA_A3600W"));
@@ -190,7 +190,7 @@ const MA_B2800W = lazy(() => import("./routes/MA_B2800W"));
 const MA_B3000W = lazy(() => import("./routes/MA_B3000W"));
 const MA_B3100W = lazy(() => import("./routes/MA_B3100W"));
 const MA_B7000W = lazy(() => import("./routes/MA_B7000W"));
-const MA_B7000_606W = lazy(() => import("./routes/MA_B7000_606W"));
+const MA_B7000W_606 = lazy(() => import("./routes/MA_B7000W_606"));
 const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
 const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
 const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
@@ -211,12 +211,12 @@ const PR_B0020W = lazy(() => import("./routes/PR_B0020W"));
 const PR_B1103W = lazy(() => import("./routes/PR_B1103W"));
 const PR_B1104W = lazy(() => import("./routes/PR_B1104W"));
 const PR_B3000W = lazy(() => import("./routes/PR_B3000W"));
-const PS_A0060_301W = lazy(() => import("./routes/PS_A0060_301W"));
+const PS_A0060W_301 = lazy(() => import("./routes/PS_A0060W_301"));
 const QC_A0060W = lazy(() => import("./routes/QC_A0060W"));
 const QC_A0120W = lazy(() => import("./routes/QC_A0120W"));
 const QC_A2000W = lazy(() => import("./routes/QC_A2000W"));
 const QC_A2500W = lazy(() => import("./routes/QC_A2500W"));
-const QC_A2500_603W = lazy(() => import("./routes/QC_A2500_603W"));
+const QC_A2500W_603 = lazy(() => import("./routes/QC_A2500W_603"));
 const QC_A3000W = lazy(() => import("./routes/QC_A3000W"));
 const QC_A6000W = lazy(() => import("./routes/QC_A6000W"));
 const QC_B0030W = lazy(() => import("./routes/QC_B0030W"));
@@ -224,11 +224,11 @@ const QC_B0040W = lazy(() => import("./routes/QC_B0040W"));
 const QC_B0100W = lazy(() => import("./routes/QC_B0100W"));
 const QC_B0200W = lazy(() => import("./routes/QC_B0200W"));
 const QC_B0300W = lazy(() => import("./routes/QC_B0300W"));
-const QC_B9020_615W = lazy(() => import("./routes/QC_B9020_615W"));
-const SA_A1000_603W = lazy(() => import("./routes/SA_A1000_603W"));
-const SA_A1001_603W = lazy(() => import("./routes/SA_A1001_603W"));
-const SA_A1100_603W = lazy(() => import("./routes/SA_A1100_603W"));
-const SA_A1200_603W = lazy(() => import("./routes/SA_A1200_603W"));
+const QC_B9020W_615 = lazy(() => import("./routes/QC_B9020W_615"));
+const SA_A1000W_603 = lazy(() => import("./routes/SA_A1000W_603"));
+const SA_A1001W_603 = lazy(() => import("./routes/SA_A1001W_603"));
+const SA_A1100W_603 = lazy(() => import("./routes/SA_A1100W_603"));
+const SA_A1200W_603 = lazy(() => import("./routes/SA_A1200W_603"));
 const SA_A2000W = lazy(() => import("./routes/SA_A2000W"));
 const SA_A2010W = lazy(() => import("./routes/SA_A2010W"));
 const SA_A2300W = lazy(() => import("./routes/SA_A2300W"));
@@ -240,13 +240,13 @@ const SA_A5001W = lazy(() => import("./routes/SA_A5001W"));
 const SA_A5010W = lazy(() => import("./routes/SA_A5010W"));
 const SA_A6000W = lazy(() => import("./routes/SA_A6000W"));
 const SA_A8000W = lazy(() => import("./routes/SA_A8000W"));
-const SA_B1002_603W = lazy(() => import("./routes/SA_B1002_603W"));
-const SA_B1101_603W = lazy(() => import("./routes/SA_B1101_603W"));
+const SA_B1002W_603 = lazy(() => import("./routes/SA_B1002W_603"));
+const SA_B1101W_603 = lazy(() => import("./routes/SA_B1101W_603"));
 const SA_B2200W = lazy(() => import("./routes/SA_B2200W"));
 const SA_B2200W_603 = lazy(() => import("./routes/SA_B2200W_603"));
 const SA_B2201W_603 = lazy(() => import("./routes/SA_B2201W_603"));
 const SA_B2211W = lazy(() => import("./routes/SA_B2211W"));
-const SA_B2211_603W = lazy(() => import("./routes/SA_B2211_603W"));
+const SA_B2211W_603 = lazy(() => import("./routes/SA_B2211W_603"));
 const SA_B2216W = lazy(() => import("./routes/SA_B2216W"));
 const SA_B2220W = lazy(() => import("./routes/SA_B2220W"));
 const SA_B2221W = lazy(() => import("./routes/SA_B2221W"));
@@ -254,14 +254,14 @@ const SA_B2221W_603 = lazy(() => import("./routes/SA_B2221W_603"));
 const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
 const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
 const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
-const SA_B2410_290W = lazy(() => import("./routes/SA_B2410_290W"));
+const SA_B2410W_290 = lazy(() => import("./routes/SA_B2410W_290"));
 const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
 const SA_B3100W = lazy(() => import("./routes/SA_B3100W"));
 const SA_B3101W = lazy(() => import("./routes/SA_B3101W"));
 const SA_B3600W = lazy(() => import("./routes/SA_B3600W"));
 const SY_A0009W = lazy(() => import("./routes/SY_A0009W"));
 const SY_A0010W = lazy(() => import("./routes/SY_A0010W"));
-const SY_A0010_301W = lazy(() => import("./routes/SY_A0010_301W"));
+const SY_A0010W_301 = lazy(() => import("./routes/SY_A0010W_301"));
 const SY_A0011W = lazy(() => import("./routes/SY_A0011W"));
 const SY_A0012W = lazy(() => import("./routes/SY_A0012W"));
 const SY_A0013W = lazy(() => import("./routes/SY_A0013W"));
@@ -616,8 +616,8 @@ const AppInner: React.FC = () => {
       return SY_A0125W;
     } else if (str == "SY_A0500W") {
       return SY_A0500W;
-    } else if (str == "PS_A0060_301W") {
-      return PS_A0060_301W;
+    } else if (str == "PS_A0060W_301") {
+      return PS_A0060W_301;
     } else if (str == "MA_A0010W") {
       return MA_A0010W;
     } else if (str == "MA_A1000W") {
@@ -626,8 +626,8 @@ const AppInner: React.FC = () => {
       return MA_A2000W;
     } else if (str == "MA_A2300W") {
       return MA_A2300W;
-    } else if (str == "MA_A2310_606W") {
-      return MA_A2310_606W;
+    } else if (str == "MA_A2310W_606") {
+      return MA_A2310W_606;
     } else if (str == "MA_A2400W") {
       return MA_A2400W;
     } else if (str == "MA_A2410W") {
@@ -692,8 +692,8 @@ const AppInner: React.FC = () => {
       return SA_B2221W;
     } else if (str == "SA_B2410W") {
       return SA_B2410W;
-    } else if (str == "SA_B2410_290W") {
-      return SA_B2410_290W;
+    } else if (str == "SA_B2410W_290") {
+      return SA_B2410W_290;
     } else if (str == "SA_B3000W") {
       return SA_B3000W;
     } else if (str == "SA_B3100W") {
@@ -756,8 +756,8 @@ const AppInner: React.FC = () => {
       return SY_A0110W;
     } else if (str == "SY_A0010W") {
       return SY_A0010W;
-    } else if (str == "SY_A0010_301W") {
-      return SY_A0010_301W;
+    } else if (str == "SY_A0010W_301") {
+      return SY_A0010W_301;
     } else if (str == "SY_A0012W") {
       return SY_A0012W;
     } else if (str == "SY_A0013W") {
@@ -910,14 +910,14 @@ const AppInner: React.FC = () => {
       return CR_A1100W;
     } else if (str == "CR_A1101W") {
       return CR_A1101W;
-    } else if (str == "QC_A2500_603W") {
-      return QC_A2500_603W;
-    } else if (str == "SA_A1000_603W") {
-      return SA_A1000_603W;
-    } else if (str == "SA_A1001_603W") {
-      return SA_A1001_603W;
-    } else if (str == "SA_A1100_603W") {
-      return SA_A1100_603W;
+    } else if (str == "QC_A2500W_603") {
+      return QC_A2500W_603;
+    } else if (str == "SA_A1000W_603") {
+      return SA_A1000W_603;
+    } else if (str == "SA_A1001W_603") {
+      return SA_A1001W_603;
+    } else if (str == "SA_A1100W_603") {
+      return SA_A1100W_603;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
     } else if (str == "SA_B2226W") {
@@ -988,8 +988,8 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/MA_A2000W" component={MA_A2000W} exact />
                     <AuthRoute path="/MA_A2300W" component={MA_A2300W} exact />
                     <AuthRoute
-                      path="/MA_A2310_606W"
-                      component={MA_A2310_606W}
+                      path="/MA_A2310W_606"
+                      component={MA_A2310W_606}
                       exact
                     />
                     <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
@@ -1021,8 +1021,8 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
                     <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
                     <AuthRoute
-                      path="/SA_A1100_603W"
-                      component={SA_A1100_603W}
+                      path="/SA_A1100W_603"
+                      component={SA_A1100W_603}
                       exact
                     />
                     <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
@@ -1030,8 +1030,8 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
                     <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
                     <AuthRoute
-                      path="/SA_B2410_290W"
-                      component={SA_B2410_290W}
+                      path="/SA_B2410W_290"
+                      component={SA_B2410W_290}
                       exact
                     />
                     <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
@@ -1164,13 +1164,13 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
                     <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
                     <AuthRoute
-                      path="/PS_A0060_301W"
-                      component={PS_A0060_301W}
+                      path="/PS_A0060W_301"
+                      component={PS_A0060W_301}
                       exact
                     />
                     <AuthRoute
-                      path="/SY_A0010_301W"
-                      component={SY_A0010_301W}
+                      path="/SY_A0010W_301"
+                      component={SY_A0010W_301}
                       exact
                     />
 
@@ -1181,19 +1181,19 @@ const AppInner: React.FC = () => {
                       exact
                     />
                     <AuthRoute
-                      path="/QC_A2500_603W"
-                      component={QC_A2500_603W}
+                      path="/QC_A2500W_603"
+                      component={QC_A2500W_603}
                       exact
                     />
                     <AuthRoute path="/CM_A7000W" component={CM_A7000W} exact />
                     <AuthRoute
-                      path="/SA_A1000_603W"
-                      component={SA_A1000_603W}
+                      path="/SA_A1000W_603"
+                      component={SA_A1000W_603}
                       exact
                     />
                     <AuthRoute
-                      path="/SA_A1001_603W"
-                      component={SA_A1001_603W}
+                      path="/SA_A1001W_603"
+                      component={SA_A1001W_603}
                       exact
                     />
                     <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />

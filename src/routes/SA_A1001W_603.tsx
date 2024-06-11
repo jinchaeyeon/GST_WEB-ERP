@@ -71,11 +71,11 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
-import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
-import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
-import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
-import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
+import SA_A1000W_603_Design2_Window from "../components/Windows/SA_A1000W_603_Design2_Window";
+import SA_A1000W_603_Design3_Window from "../components/Windows/SA_A1000W_603_Design3_Window";
+import SA_A1000W_603_Design4_Window from "../components/Windows/SA_A1000W_603_Design4_Window";
+import SA_A1000W_603_Design_Window from "../components/Windows/SA_A1000W_603_Design_Window";
+import SA_A1001W_603_Window from "../components/Windows/SA_A1001W_603_Window";
 import { useApi } from "../hooks/api";
 import {
   heightstate,
@@ -83,7 +83,7 @@ import {
   isLoading,
   isMobileState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/SA_A1001_603W_C";
+import { gridList } from "../store/columns/SA_A1001W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -137,7 +137,7 @@ const iconCell = (props: GridCellProps) => {
   );
 };
 
-const SA_A1001_603W: React.FC = () => {
+const SA_A1001W_603: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
@@ -149,7 +149,7 @@ const SA_A1001_603W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A1001_603W", setCustomOptionData);
+  UseCustomOption("SA_A1001W_603", setCustomOptionData);
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -170,7 +170,7 @@ const SA_A1001_603W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A1001_603W", setMessagesData);
+  UseMessages("SA_A1001W_603", setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
 
@@ -525,7 +525,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -692,7 +692,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001W_603_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
@@ -939,14 +939,14 @@ const SA_A1001_603W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A1001_603W_001");
+        throw findMessage(messagesData, "SA_A1001W_603_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A1001_603W_001");
+        throw findMessage(messagesData, "SA_A1001W_603_001");
       } else {
         setValues2(false);
         setPage(initialPageState); // 페이지 초기화
@@ -1310,7 +1310,7 @@ const SA_A1001_603W: React.FC = () => {
   });
 
   const para: Iparameters = {
-    procedureName: "P_SA_A1001_603W_S",
+    procedureName: "P_SA_A1001W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1328,7 +1328,7 @@ const SA_A1001_603W: React.FC = () => {
       "@p_amt_s": ParaData.amt_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1001_603W",
+      "@p_form_id": "SA_A1001W_603",
     },
   };
 
@@ -1561,7 +1561,7 @@ const SA_A1001_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A1001_603W"
+              pathname="SA_A1001W_603"
             />
           )}
         </ButtonContainer>
@@ -2476,7 +2476,7 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {printWindowVisible && (
-        <SA_A1001_603W_Window
+        <SA_A1001W_603_Window
           setVisible={setPrintWindowVisible}
           quonum={
             mainDataResult.data.filter(
@@ -2524,7 +2524,7 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {designWindowVisible && (
-        <SA_A1000_603W_Design_Window
+        <SA_A1000W_603_Design_Window
           setVisible={setDesignWindowVisible}
           filters={filters}
           item={
@@ -2544,7 +2544,7 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {designWindowVisible2 && (
-        <SA_A1000_603W_Design2_Window
+        <SA_A1000W_603_Design2_Window
           setVisible={setDesignWindowVisible2}
           filters={filters}
           item={
@@ -2564,7 +2564,7 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {designWindowVisible3 && (
-        <SA_A1000_603W_Design3_Window
+        <SA_A1000W_603_Design3_Window
           setVisible={setDesignWindowVisible3}
           filters={filters}
           item={
@@ -2584,7 +2584,7 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {designWindowVisible4 && (
-        <SA_A1000_603W_Design4_Window
+        <SA_A1000W_603_Design4_Window
           setVisible={setDesignWindowVisible4}
           filters={filters}
           item={
@@ -2620,4 +2620,4 @@ const SA_A1001_603W: React.FC = () => {
   );
 };
 
-export default SA_A1001_603W;
+export default SA_A1001W_603;

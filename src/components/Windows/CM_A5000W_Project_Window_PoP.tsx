@@ -435,7 +435,7 @@ const KendoWindow = ({
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1000_603W?go=` +
+        `/SA_A1000W_603?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev
@@ -451,7 +451,7 @@ const KendoWindow = ({
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1000_603W?go=` +
+        `/SA_A1000W_603?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev

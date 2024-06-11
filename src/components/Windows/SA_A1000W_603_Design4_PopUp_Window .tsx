@@ -136,7 +136,7 @@ const CopyWindow = ({
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: 1,
       pageSize: Math.floor(page.skip / initialPageState.take) + 1,
       parameters: {

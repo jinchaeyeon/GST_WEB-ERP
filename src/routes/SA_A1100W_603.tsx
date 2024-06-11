@@ -59,7 +59,7 @@ import {
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { gridList } from "../store/columns/SA_A1100_603W_C";
+import { gridList } from "../store/columns/SA_A1100W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -183,7 +183,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 let deletedMainRows6: any[] = [];
-const SA_A1100_603W: React.FC = () => {
+const SA_A1100W_603: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
@@ -217,7 +217,7 @@ const SA_A1100_603W: React.FC = () => {
   const [page6, setPage6] = useState(initialPageState);
   const [checked, setChecked] = useState(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A1100_603W", setMessagesData);
+  UseMessages("SA_A1100W_603", setMessagesData);
   interface ICustData {
     address: string;
     custcd: string;
@@ -611,7 +611,7 @@ const SA_A1100_603W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A1100_603W", setCustomOptionData);
+  UseCustomOption("SA_A1100W_603", setCustomOptionData);
 
   const history = useHistory();
   const location = useLocation();
@@ -737,7 +737,7 @@ const SA_A1100_603W: React.FC = () => {
 
     //조회프로시저  파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
+      procedureName: "P_SA_A1100W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -885,7 +885,7 @@ const SA_A1100_603W: React.FC = () => {
 
     //조회프로시저  파라미터
     const parameters1: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
+      procedureName: "P_SA_A1100W_603_Q",
       pageNumber: subFilters.pgNum,
       pageSize: subFilters.pgSize,
       parameters: {
@@ -1016,7 +1016,7 @@ const SA_A1100_603W: React.FC = () => {
     //조회프로시저  파라미터
     //조회프로시저  파라미터
     const parameters2: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
+      procedureName: "P_SA_A1100W_603_Q",
       pageNumber: subFilters2.pgNum,
       pageSize: subFilters2.pgSize,
       parameters: {
@@ -1079,7 +1079,7 @@ const SA_A1100_603W: React.FC = () => {
     //조회프로시저  파라미터
     //조회프로시저  파라미터
     const parameters2: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
+      procedureName: "P_SA_A1100W_603_Q",
       pageNumber: subFilters6.pgNum,
       pageSize: subFilters6.pgSize,
       parameters: {
@@ -1264,14 +1264,14 @@ const SA_A1100_603W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A1100_603W_001");
+        throw findMessage(messagesData, "SA_A1100W_603_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_A1100_603W_001");
+        throw findMessage(messagesData, "SA_A1100W_603_001");
       } else {
         resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -1911,7 +1911,7 @@ const SA_A1100_603W: React.FC = () => {
   });
 
   const infopara: Iparameters = {
-    procedureName: "P_SA_A1100_603W_S",
+    procedureName: "P_SA_A1100W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1947,7 +1947,7 @@ const SA_A1100_603W: React.FC = () => {
       "@p_remark_s": ParaData.remark_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1100_603W",
+      "@p_form_id": "SA_A1100W_603",
     },
   };
 
@@ -2301,7 +2301,7 @@ const SA_A1100_603W: React.FC = () => {
       "@p_recdt": paraDataSaved.recdt,
       "@p_comment": paraDataSaved.comment,
       "@p_user_id": paraDataSaved.user_id,
-      "@p_form_id": "SA_A1100_603W",
+      "@p_form_id": "SA_A1100W_603",
       "@p_table_id": "SA204T",
       "@p_orgdiv": sessionOrgdiv,
       "@p_ref_key": paraDataSaved.ref_key,
@@ -2541,7 +2541,7 @@ const SA_A1100_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A1100_603W"
+              pathname="SA_A1100W_603"
             />
           )}
         </ButtonContainer>
@@ -4178,7 +4178,7 @@ const SA_A1100_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_A1100_603W"
+          pathname="SA_A1100W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>
@@ -4198,4 +4198,4 @@ const SA_A1100_603W: React.FC = () => {
   );
 };
 
-export default SA_A1100_603W;
+export default SA_A1100W_603;

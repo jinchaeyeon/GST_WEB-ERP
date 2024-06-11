@@ -678,7 +678,7 @@ const CopyWindow = ({
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Q",
+      procedureName: "P_SA_A1000W_603_Q",
       pageNumber: 1,
       pageSize: PAGE_SIZE,
       parameters: {
@@ -2515,7 +2515,7 @@ const CopyWindow = ({
     });
 
     const para: Iparameters = {
-      procedureName: "P_SA_A1000_603W_Sub1_S",
+      procedureName: "P_SA_A1000W_603_Sub1_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
@@ -2615,7 +2615,7 @@ const CopyWindow = ({
 
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": "SA_A1000_603W",
+        "@p_form_id": "SA_A1000W_603",
       },
     };
 

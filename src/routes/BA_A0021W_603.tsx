@@ -848,7 +848,7 @@ const BA_A0021W_603: React.FC = () => {
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1001_603W?go=` +
+        `/SA_A1001W_603?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev
@@ -867,7 +867,7 @@ const BA_A0021W_603: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     const origin = window.location.origin;
-    window.open(origin + `/SA_A1100_603W?go=` + selectedRowData.contractno);
+    window.open(origin + `/SA_A1100W_603?go=` + selectedRowData.contractno);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {

@@ -74,7 +74,7 @@ import {
   isLoading,
   isMobileState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/SA_A1200_603W_C";
+import { gridList } from "../store/columns/SA_A1200W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -87,7 +87,7 @@ const requiredField = ["recdt"];
 let temp = 0;
 let deletedMainRows: any = [];
 
-const SA_A1200_603W: React.FC = () => {
+const SA_A1200W_603: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   var height = getHeight(".k-tabstrip-items-wrapper");
   var height1 = getHeight(".ButtonContainer");
@@ -116,7 +116,7 @@ const SA_A1200_603W: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A1200_603W", setCustomOptionData);
+  UseCustomOption("SA_A1200W_603", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -634,7 +634,7 @@ const SA_A1200_603W: React.FC = () => {
 
     //조회프로시저  파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1200_603W_Q",
+      procedureName: "P_SA_A1200W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -763,7 +763,7 @@ const SA_A1200_603W: React.FC = () => {
 
     //조회프로시저  파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_A1200_603W_Q",
+      procedureName: "P_SA_A1200W_603_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
@@ -1073,7 +1073,7 @@ const SA_A1200_603W: React.FC = () => {
   });
 
   const infopara: Iparameters = {
-    procedureName: "P_SA_A1200_603W_S",
+    procedureName: "P_SA_A1200W_603_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1090,7 +1090,7 @@ const SA_A1200_603W: React.FC = () => {
       "@p_relationgb": ParaData.relationgb,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1200_603W",
+      "@p_form_id": "SA_A1200W_603",
     },
   };
 
@@ -1321,7 +1321,7 @@ const SA_A1200_603W: React.FC = () => {
       "@p_recdt": paraDataSaved.recdt,
       "@p_comment": paraDataSaved.comment,
       "@p_user_id": paraDataSaved.user_id,
-      "@p_form_id": "SA_A1200_603W",
+      "@p_form_id": "SA_A1200W_603",
       "@p_table_id": "SA050T",
       "@p_orgdiv": sessionOrgdiv,
       "@p_ref_key": paraDataSaved.ref_key,
@@ -1491,7 +1491,7 @@ const SA_A1200_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A1200_603W"
+              pathname="SA_A1200W_603"
             />
           )}
         </ButtonContainer>
@@ -2718,7 +2718,7 @@ const SA_A1200_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_A1200_603W"
+          pathname="SA_A1200W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>
@@ -2738,4 +2738,4 @@ const SA_A1200_603W: React.FC = () => {
   );
 };
 
-export default SA_A1200_603W;
+export default SA_A1200W_603;

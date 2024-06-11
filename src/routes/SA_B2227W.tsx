@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   GridContainer,
@@ -10,24 +10,38 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { UseGetValueFromSessionItem } from "../components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  getDeviceHeight,
+} from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  heightstate,
-  isLoading,
-  isMobileState,
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 const SA_B2227W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false));
+      setWebHeight(getDeviceHeight(false));
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const processApi = useApi();
@@ -215,7 +229,7 @@ const SA_B2227W: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          height: isMobile ? mobileheight : webheight,
         }}
         className="MUI"
       >
@@ -228,7 +242,7 @@ const SA_B2227W: React.FC = () => {
               <GridContainer>
                 <ClusterMap data={Map} />
               </GridContainer>
-              <GridContainer style={{ marginTop: "15px" }}>
+              <GridContainer style={{ paddingTop: "15px" }}>
                 <GridTitleContainer>
                   <GridTitle>지역별 고객사 집계</GridTitle>
                 </GridTitleContainer>
@@ -238,7 +252,7 @@ const SA_B2227W: React.FC = () => {
                   width={getWidth(Column1)}
                 />
               </GridContainer>
-              <GridContainer style={{ marginTop: "15px" }}>
+              <GridContainer style={{ paddingTop: "15px" }}>
                 <GridTitleContainer>
                   <GridTitle>국가별 고객사 집계</GridTitle>
                 </GridTitleContainer>
@@ -258,7 +272,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ marginBottom: "10px" }}
+                  style={{ paddingBottom: "10px" }}
                 >
                   <GridTitle>개발분야별 고객현황</GridTitle>
                   <BarChart
@@ -277,7 +291,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ marginBottom: "10px" }}
+                  style={{ paddingBottom: "10px" }}
                 >
                   <GridTitle>기업구분별 고객현황</GridTitle>
                   <BarChart
@@ -296,7 +310,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ marginBottom: "10px" }}
+                  style={{ paddingBottom: "10px" }}
                 >
                   <GridTitle>신규 고객현황</GridTitle>
                   <BarChart
@@ -315,7 +329,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ marginBottom: "10px" }}
+                  style={{ paddingBottom: "10px" }}
                 >
                   <GridTitle>거래기준별 고객현황</GridTitle>
                   <BarChart
