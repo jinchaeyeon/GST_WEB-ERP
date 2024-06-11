@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -13,6 +13,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
+  getDeviceHeight,
   setDefaultDate,
 } from "../components/CommonFunction";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
@@ -30,10 +31,7 @@ import { useApi } from "../hooks/api";
 import {
   colors,
   colorsName,
-  heightstate,
-  isDeviceWidthState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 
 interface TList {
@@ -324,9 +322,26 @@ const SA_B3600W: React.FC = () => {
       );
     }
   };
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false));
+        setWebHeight(getDeviceHeight(false));
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   useEffect(() => {
     if (filters.isSearch && customOptionData != null) {
@@ -463,8 +478,8 @@ const SA_B3600W: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
-          overflow: isMobile ? "auto" : undefined,
+          height: isMobile ? mobileheight : webheight,
+          overflow: "auto",
         }}
       >
         <ThemeProvider theme={theme}>
@@ -493,7 +508,7 @@ const SA_B3600W: React.FC = () => {
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={deviceWidth < 600 ? "1.8rem" : "3.3rem"}
+                    fontsize={isMobile ? "1.8rem" : "3.3rem"}
                     form={"SA_B3600W"}
                   />
                 </Grid>
@@ -566,7 +581,7 @@ const SA_B3600W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2} style={{ paddingBottom: "50px" }}>
             <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
               <PaginatorTable
                 value={AllList}

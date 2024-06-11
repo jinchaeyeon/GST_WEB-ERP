@@ -11,6 +11,21 @@ body {
   min-height: -webkit-fill-available !important;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #999999; /* 스크롤바 색상 */
+  border-radius: 10px; /* 스크롤바 둥근 테두리 */
+}
+::-webkit-scrollbar-track {
+  background: #cfcfcf47;  /*스크롤바 뒷 배경 색상*/
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+
 html {
   height: -webkit-fill-available !important;
 }
