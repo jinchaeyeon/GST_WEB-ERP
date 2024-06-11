@@ -1,6 +1,23 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -8,8 +25,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInGridInput,
   FormBox,
   FormBoxWrap,
+  GridContainer,
   GridTitle,
   GridTitleContainer,
 } from "../../CommonStyled";
@@ -17,15 +36,29 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  dateformat,
   getBizCom,
+  getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
+  numberWithCommas,
   numberWithCommas3,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import Window from "./WindowComponent/Window";
 
 type IWindow = {
@@ -34,6 +67,40 @@ type IWindow = {
   item: any;
   save?: boolean;
   modal?: boolean;
+};
+
+const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY3 = "num";
+let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
+let deletedRows: object[] = [];
+let deletedRows2: object[] = [];
+let deletedRows3: object[] = [];
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_MA035, L_SA002_603", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field == "pgmdiv" ? "L_MA035" : field == "optioncd" ? "L_SA002_603" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      {...props}
+      disabled={
+        field == "pgmdiv" && props.dataItem.rowstatus_item != "N" ? true : false
+      }
+    />
+  ) : (
+    <td />
+  );
 };
 
 type TdataArr = {
@@ -101,10 +168,287 @@ type TdataArr = {
   chasuspace_s: string[];
   amt_s: string[];
   ref_key_s: string[];
+
+  rowstatus_gun: string[];
+  group_seq_gun: string[];
+  remark3_gun: string[];
+  animalqty_gun: string[];
+  femaleqty_gun: string[];
+  maleqty_gun: string[];
+  remark_gun: string[];
+  injectwgt_gun: string[];
+
+  rowstatus_item: string[];
+  reqnum_item: string[];
+  reqrev_item: string[];
+  reqseq_item: string[];
+  qty_item: string[];
+  experimentqty_item: string[];
+  spareqty_item: string[];
+  pgmdiv_item: string[];
+  remark_item: string[];
+  inreqdt_item: string[];
 };
 
 var height = 0;
 var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
+export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TItemInfo = {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+};
+
+const defaultItemInfo = {
+  itemcd: "",
+  itemno: "",
+  itemnm: "",
+  insiz: "",
+  model: "",
+  itemacnt: "",
+  itemacntnm: "",
+  bnatur: "",
+  spec: "",
+  invunit: "",
+  invunitnm: "",
+  unitwgt: "",
+  wgtunit: "",
+  wgtunitnm: "",
+  maker: "",
+  dwgno: "",
+  remark: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
+  extra_field1: "",
+  extra_field2: "",
+  extra_field7: "",
+  extra_field6: "",
+  extra_field8: "",
+  packingsiz: "",
+  unitqty: "",
+  color: "",
+  gubun: "",
+  qcyn: "",
+  outside: "",
+  itemthick: "",
+  itemlvl4: "",
+  itemlvl5: "",
+  custitemnm: "",
+};
+
+interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+}
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setItemInfo } = useContext(FormContext);
+  let isInEdit = field == dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
+  };
+
+  const setItemData2 = (data: IItemData) => {
+    const {
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
+    });
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      <>
+        {value}
+        <ButtonInGridInput>
+          <Button
+            name="itemcd"
+            onClick={onItemWndClick2}
+            icon="more-horizontal"
+            fillMode="flat"
+          />
+        </ButtonInGridInput>
+      </>
+    </td>
+  );
+
+  return (
+    <>
+      {render == undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {itemWindowVisible2 && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible2}
+          workType={"ROW_ADD"}
+          setData={setItemData2}
+          yn={false}
+        />
+      )}
+    </>
+  );
+};
 
 const CopyWindow = ({
   setVisible,
@@ -125,10 +469,19 @@ const CopyWindow = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
   const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".WindowButtonContainer2");
+    height5 = getHeight(".WindowButtonContainer3");
 
     setMobileHeight(
       getWindowDeviceHeight(false, deviceHeight) - height - height2
@@ -139,8 +492,29 @@ const CopyWindow = ({
     setMobileHeight3(
       getWindowDeviceHeight(false, deviceHeight) - height - height2
     );
+    setMobileHeight4(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
+    );
+    setMobileHeight5(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
+    );
+    setMobileHeight6(
+      getWindowDeviceHeight(false, deviceHeight) - height - height2 - height5
+    );
     setWebHeight(
       getWindowDeviceHeight(false, position.height) - height - height2
+    );
+    setWebHeight2(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2 -
+        height3
+    );
+    setWebHeight3(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2 -
+        height4
+    );
+    setWebHeight4(
+      (getWindowDeviceHeight(false, position.height) - height - height2) / 2 -
+        height5
     );
   }, []);
   var index = 0;
@@ -157,6 +531,116 @@ const CopyWindow = ({
   const onClose = () => {
     setVisible(false);
   };
+
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
+
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+  const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
+  const [tempState3, setTempState3] = useState<State>({
+    sort: [],
+  });
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
+  const [tempResult2, setTempResult2] = useState<DataResult>(
+    process([], tempState2)
+  );
+  const [tempResult3, setTempResult3] = useState<DataResult>(
+    process([], tempState3)
+  );
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState2, setSelectedState2] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState3, setSelectedState3] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
+
+  useEffect(() => {
+    (async () => {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] ==
+        parseInt(Object.getOwnPropertyNames(selectedState)[0])
+          ? {
+              ...item,
+              itemcd: itemInfo.itemcd,
+              itemno: itemInfo.itemno,
+              itemnm: itemInfo.itemnm,
+              insiz: itemInfo.insiz,
+              model: itemInfo.model,
+              bnatur: itemInfo.bnatur,
+              spec: itemInfo.spec,
+              //invunit
+              qtyunit: itemInfo.invunit,
+              invunitnm: itemInfo.invunitnm,
+              unitwgt: itemInfo.unitwgt,
+              wgtunit: itemInfo.wgtunit,
+              wgtunitnm: itemInfo.wgtunitnm,
+              maker: itemInfo.maker,
+              dwgno: itemInfo.dwgno,
+              remark: itemInfo.remark,
+              itemlvl1: itemInfo.itemlvl1,
+              itemlvl2: itemInfo.itemlvl2,
+              itemlvl3: itemInfo.itemlvl3,
+              extra_field1: itemInfo.extra_field1,
+              extra_field2: itemInfo.extra_field2,
+              extra_field7: itemInfo.extra_field7,
+              extra_field6: itemInfo.extra_field6,
+              extra_field8: itemInfo.extra_field8,
+              packingsiz: itemInfo.packingsiz,
+              unitqty: itemInfo.unitqty,
+              color: itemInfo.color,
+              gubun: itemInfo.gubun,
+              qcyn: itemInfo.qcyn,
+              outside: itemInfo.outside,
+              itemthick: itemInfo.itemthick,
+              itemlvl4: itemInfo.itemlvl4,
+              itemlvl5: itemInfo.itemlvl5,
+              custitemnm: itemInfo.custitemnm,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    })();
+  }, [itemInfo]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA171, L_BA173, L_BA174", setBizComponentData);
@@ -232,9 +716,44 @@ const CopyWindow = ({
       const totalRowCnt = data.tables[0].RowCount;
       const totalRowCnt2 = data.tables[1].RowCount;
       const totalRowCnt3 = data.tables[4].RowCount;
+      const totalRowCnt4 = data.tables[7].RowCount;
+      const totalRowCnt5 = data.tables[8].RowCount;
+      const totalRowCnt6 = data.tables[9].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[4].Rows;
+      const rows4 = data.tables[7].Rows;
+      const rows5 = data.tables[8].Rows;
+      const rows6 = data.tables[9].Rows;
+
+      setMainDataResult(() => {
+        return {
+          data: rows4,
+          total: totalRowCnt4 == -1 ? 0 : totalRowCnt4,
+        };
+      });
+      setMainDataResult2(() => {
+        return {
+          data: rows5,
+          total: totalRowCnt5 == -1 ? 0 : totalRowCnt5,
+        };
+      });
+      setMainDataResult3(() => {
+        return {
+          data: rows6,
+          total: totalRowCnt6 == -1 ? 0 : totalRowCnt6,
+        };
+      });
+
+      if (totalRowCnt4 > 0) {
+        setSelectedState({ [rows4[0][DATA_ITEM_KEY]]: true });
+      }
+      if (totalRowCnt5 > 0) {
+        setSelectedState2({ [rows5[0][DATA_ITEM_KEY2]]: true });
+      }
+      if (totalRowCnt6 > 0) {
+        setSelectedState3({ [rows6[0][DATA_ITEM_KEY3]]: true });
+      }
 
       if (totalRowCnt > 0) {
         setInformation((prev) => ({
@@ -796,6 +1315,26 @@ const CopyWindow = ({
       chasuspace_s: [],
       amt_s: [],
       ref_key_s: [],
+
+      rowstatus_gun: [],
+      group_seq_gun: [],
+      remark3_gun: [],
+      animalqty_gun: [],
+      femaleqty_gun: [],
+      maleqty_gun: [],
+      remark_gun: [],
+      injectwgt_gun: [],
+
+      rowstatus_item: [],
+      reqnum_item: [],
+      reqrev_item: [],
+      reqseq_item: [],
+      qty_item: [],
+      experimentqty_item: [],
+      spareqty_item: [],
+      pgmdiv_item: [],
+      remark_item: [],
+      inreqdt_item: [],
     };
 
     //기본
@@ -865,6 +1404,26 @@ const CopyWindow = ({
     dataArr.chasuspace_s.push(Information.chasuspace_base.toString());
     dataArr.amt_s.push("0");
     dataArr.ref_key_s.push(Information.ref_key_base);
+
+    dataArr.rowstatus_item.push("");
+    dataArr.reqnum_item.push("");
+    dataArr.reqrev_item.push("0");
+    dataArr.reqseq_item.push("0");
+    dataArr.qty_item.push("0");
+    dataArr.experimentqty_item.push("0");
+    dataArr.spareqty_item.push("0");
+    dataArr.pgmdiv_item.push("");
+    dataArr.remark_item.push("");
+    dataArr.inreqdt_item.push("");
+
+    dataArr.rowstatus_gun.push("");
+    dataArr.group_seq_gun.push("0");
+    dataArr.remark3_gun.push("");
+    dataArr.animalqty_gun.push("0");
+    dataArr.femaleqty_gun.push("0");
+    dataArr.maleqty_gun.push("0");
+    dataArr.remark_gun.push("");
+    dataArr.injectwgt_gun.push("");
 
     //용량시험설정
     dataArr.rowstatus_s.push(
@@ -937,6 +1496,779 @@ const CopyWindow = ({
     dataArr.chasuspace_s.push("0");
     dataArr.amt_s.push("0");
     dataArr.ref_key_s.push("");
+
+    dataArr.rowstatus_item.push("");
+    dataArr.reqnum_item.push("");
+    dataArr.reqrev_item.push("0");
+    dataArr.reqseq_item.push("0");
+    dataArr.qty_item.push("0");
+    dataArr.experimentqty_item.push("0");
+    dataArr.spareqty_item.push("0");
+    dataArr.pgmdiv_item.push("");
+    dataArr.remark_item.push("");
+    dataArr.inreqdt_item.push("");
+
+    dataArr.rowstatus_gun.push("");
+    dataArr.group_seq_gun.push("0");
+    dataArr.remark3_gun.push("");
+    dataArr.animalqty_gun.push("0");
+    dataArr.femaleqty_gun.push("0");
+    dataArr.maleqty_gun.push("0");
+    dataArr.remark_gun.push("");
+    dataArr.injectwgt_gun.push("");
+
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    let valid = true;
+    dataItem.map((item) => {
+      if (item.itemcd == "") {
+        valid = false;
+      }
+    });
+
+    if (valid != true) {
+      alert("필수값을 채워주세요");
+      return false;
+    }
+
+    dataItem.forEach((item: any) => {
+      const {
+        rowstatus,
+        reqnum,
+        reqrev,
+        reqseq,
+        qty,
+        experimentqty,
+        spareqty,
+        pgmdiv,
+        remark,
+        inreqdt,
+        itemcd,
+      } = item;
+
+      dataArr.rowstatus_s.push("");
+      dataArr.seq_s.push("0");
+      dataArr.itemcd_s.push("");
+      dataArr.injectcnt_s.push("0");
+      dataArr.injectcycle_s.push("0");
+      dataArr.maleqty_s.push("0");
+      dataArr.femaleqty_s.push("0");
+      dataArr.totqty_s.push("0");
+      dataArr.sampleqty_s.push("0");
+      dataArr.urineqty_s.push("0");
+      dataArr.tkqty_s.push("0");
+      dataArr.experimentqty_s.push("0");
+      dataArr.autopsyqty_s.push("0");
+      dataArr.spareqty_s.push("0");
+      dataArr.recoverqty_s.push("0");
+      dataArr.cageqty_s.push("0");
+      dataArr.rackqty_s.push("0");
+      dataArr.infusionqty_s.push("0");
+      dataArr.infusiontime_s.push("0");
+      dataArr.point_s.push("0");
+      dataArr.capacity_s.push("0");
+      dataArr.geomcheqty_s.push("0");
+      dataArr.geomcheprodqty_s.push("0");
+      dataArr.infusioncount_s.push("0");
+      dataArr.testcnt_s.push("0");
+      dataArr.strainqty_s.push("0");
+      dataArr.matterqty_s.push("0");
+      dataArr.affiliationqty_s.push("0");
+      dataArr.plateqty_s.push("0");
+      dataArr.cellqty_s.push("0");
+      dataArr.virusqty_s.push("0");
+      dataArr.runtime_s.push("0");
+      dataArr.gunqty_s.push("0");
+      dataArr.concentrationcnt_s.push("0");
+      dataArr.one_week_s.push("0");
+      dataArr.two_week_s.push("0");
+      dataArr.one_twoweek_s.push("0");
+      dataArr.guaranteeperiod_s.push("0");
+      dataArr.testperiod_s.push("0");
+      dataArr.refineperiod_s.push("0");
+      dataArr.autopsyperiod_s.push("0");
+      dataArr.recoverweek_s.push("0");
+      dataArr.recoverday_s.push("0");
+      dataArr.genderyn_s.push("");
+      dataArr.breedmeth_s.push("");
+      dataArr.cagetype_s.push("");
+      dataArr.prodmac_s.push("");
+      dataArr.assaytype_s.push("");
+      dataArr.assaytype1_s.push("0");
+      dataArr.assaytype2_s.push("0");
+
+      dataArr.chlditemcd_s.push(itemcd);
+      dataArr.column_itemcd_s.push("");
+      dataArr.column_itemnm_s.push("");
+      dataArr.gubun_s.push("T");
+      dataArr.remark_s.push("");
+      dataArr.qty_s.push("0");
+      dataArr.optioncd_s.push("");
+      dataArr.bonyn_s.push("");
+      dataArr.pointqty_s.push("0");
+      dataArr.chasu_s.push("0");
+      dataArr.chasuspace_s.push("0");
+      dataArr.amt_s.push("0");
+      dataArr.ref_key_s.push("");
+
+      dataArr.rowstatus_item.push(rowstatus);
+      dataArr.reqnum_item.push(reqnum);
+      dataArr.reqrev_item.push(reqrev);
+      dataArr.reqseq_item.push(reqseq);
+      dataArr.qty_item.push(qty);
+      dataArr.experimentqty_item.push(experimentqty);
+      dataArr.spareqty_item.push(spareqty);
+      dataArr.pgmdiv_item.push(pgmdiv);
+      dataArr.remark_item.push(remark);
+      dataArr.inreqdt_item.push(
+        inreqdt == "99991231" || inreqdt == undefined ? "" : inreqdt
+      );
+
+      dataArr.rowstatus_gun.push("");
+      dataArr.group_seq_gun.push("0");
+      dataArr.remark3_gun.push("");
+      dataArr.animalqty_gun.push("0");
+      dataArr.femaleqty_gun.push("0");
+      dataArr.maleqty_gun.push("0");
+      dataArr.remark_gun.push("");
+      dataArr.injectwgt_gun.push("");
+    });
+
+    deletedRows.forEach((item: any) => {
+      const {
+        rowstatus,
+        reqnum,
+        reqrev,
+        reqseq,
+        qty,
+        experimentqty,
+        spareqty,
+        pgmdiv,
+        remark,
+        inreqdt,
+        itemcd,
+      } = item;
+
+      dataArr.rowstatus_s.push("");
+      dataArr.seq_s.push("0");
+      dataArr.itemcd_s.push("");
+      dataArr.injectcnt_s.push("0");
+      dataArr.injectcycle_s.push("0");
+      dataArr.maleqty_s.push("0");
+      dataArr.femaleqty_s.push("0");
+      dataArr.totqty_s.push("0");
+      dataArr.sampleqty_s.push("0");
+      dataArr.urineqty_s.push("0");
+      dataArr.tkqty_s.push("0");
+      dataArr.experimentqty_s.push("0");
+      dataArr.autopsyqty_s.push("0");
+      dataArr.spareqty_s.push("0");
+      dataArr.recoverqty_s.push("0");
+      dataArr.cageqty_s.push("0");
+      dataArr.rackqty_s.push("0");
+      dataArr.infusionqty_s.push("0");
+      dataArr.infusiontime_s.push("0");
+      dataArr.point_s.push("0");
+      dataArr.capacity_s.push("0");
+      dataArr.geomcheqty_s.push("0");
+      dataArr.geomcheprodqty_s.push("0");
+      dataArr.infusioncount_s.push("0");
+      dataArr.testcnt_s.push("0");
+      dataArr.strainqty_s.push("0");
+      dataArr.matterqty_s.push("0");
+      dataArr.affiliationqty_s.push("0");
+      dataArr.plateqty_s.push("0");
+      dataArr.cellqty_s.push("0");
+      dataArr.virusqty_s.push("0");
+      dataArr.runtime_s.push("0");
+      dataArr.gunqty_s.push("0");
+      dataArr.concentrationcnt_s.push("0");
+      dataArr.one_week_s.push("0");
+      dataArr.two_week_s.push("0");
+      dataArr.one_twoweek_s.push("0");
+      dataArr.guaranteeperiod_s.push("0");
+      dataArr.testperiod_s.push("0");
+      dataArr.refineperiod_s.push("0");
+      dataArr.autopsyperiod_s.push("0");
+      dataArr.recoverweek_s.push("0");
+      dataArr.recoverday_s.push("0");
+      dataArr.genderyn_s.push("");
+      dataArr.breedmeth_s.push("");
+      dataArr.cagetype_s.push("");
+      dataArr.prodmac_s.push("");
+      dataArr.assaytype_s.push("");
+      dataArr.assaytype1_s.push("0");
+      dataArr.assaytype2_s.push("0");
+
+      dataArr.chlditemcd_s.push(itemcd);
+      dataArr.column_itemcd_s.push("");
+      dataArr.column_itemnm_s.push("");
+      dataArr.gubun_s.push("T");
+      dataArr.remark_s.push("");
+      dataArr.qty_s.push("0");
+      dataArr.optioncd_s.push("");
+      dataArr.bonyn_s.push("");
+      dataArr.pointqty_s.push("0");
+      dataArr.chasu_s.push("0");
+      dataArr.chasuspace_s.push("0");
+      dataArr.amt_s.push("0");
+      dataArr.ref_key_s.push("");
+
+      dataArr.rowstatus_item.push(rowstatus);
+      dataArr.reqnum_item.push(reqnum);
+      dataArr.reqrev_item.push(reqrev);
+      dataArr.reqseq_item.push(reqseq);
+      dataArr.qty_item.push(qty);
+      dataArr.experimentqty_item.push(experimentqty);
+      dataArr.spareqty_item.push(spareqty);
+      dataArr.pgmdiv_item.push(pgmdiv);
+      dataArr.remark_item.push(remark);
+      dataArr.inreqdt_item.push(
+        inreqdt == "99991231" || inreqdt == undefined ? "" : inreqdt
+      );
+
+      dataArr.rowstatus_gun.push("");
+      dataArr.group_seq_gun.push("0");
+      dataArr.remark3_gun.push("");
+      dataArr.animalqty_gun.push("0");
+      dataArr.femaleqty_gun.push("0");
+      dataArr.maleqty_gun.push("0");
+      dataArr.remark_gun.push("");
+      dataArr.injectwgt_gun.push("");
+    });
+
+    const dataItem2 = mainDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    dataItem2.forEach((item: any) => {
+      const {
+        rowstatus,
+        group_seq,
+        remark3,
+        animalqty,
+        femaleqty,
+        maleqty,
+        remark,
+        injectwgt,
+      } = item;
+
+      dataArr.rowstatus_s.push("");
+      dataArr.seq_s.push("0");
+      dataArr.itemcd_s.push("");
+      dataArr.injectcnt_s.push("0");
+      dataArr.injectcycle_s.push("0");
+      dataArr.maleqty_s.push("0");
+      dataArr.femaleqty_s.push("0");
+      dataArr.totqty_s.push("0");
+      dataArr.sampleqty_s.push("0");
+      dataArr.urineqty_s.push("0");
+      dataArr.tkqty_s.push("0");
+      dataArr.experimentqty_s.push("0");
+      dataArr.autopsyqty_s.push("0");
+      dataArr.spareqty_s.push("0");
+      dataArr.recoverqty_s.push("0");
+      dataArr.cageqty_s.push("0");
+      dataArr.rackqty_s.push("0");
+      dataArr.infusionqty_s.push("0");
+      dataArr.infusiontime_s.push("0");
+      dataArr.point_s.push("0");
+      dataArr.capacity_s.push("0");
+      dataArr.geomcheqty_s.push("0");
+      dataArr.geomcheprodqty_s.push("0");
+      dataArr.infusioncount_s.push("0");
+      dataArr.testcnt_s.push("0");
+      dataArr.strainqty_s.push("0");
+      dataArr.matterqty_s.push("0");
+      dataArr.affiliationqty_s.push("0");
+      dataArr.plateqty_s.push("0");
+      dataArr.cellqty_s.push("0");
+      dataArr.virusqty_s.push("0");
+      dataArr.runtime_s.push("0");
+      dataArr.gunqty_s.push("0");
+      dataArr.concentrationcnt_s.push("0");
+      dataArr.one_week_s.push("0");
+      dataArr.two_week_s.push("0");
+      dataArr.one_twoweek_s.push("0");
+      dataArr.guaranteeperiod_s.push("0");
+      dataArr.testperiod_s.push("0");
+      dataArr.refineperiod_s.push("0");
+      dataArr.autopsyperiod_s.push("0");
+      dataArr.recoverweek_s.push("0");
+      dataArr.recoverday_s.push("0");
+      dataArr.genderyn_s.push("");
+      dataArr.breedmeth_s.push("");
+      dataArr.cagetype_s.push("");
+      dataArr.prodmac_s.push("");
+      dataArr.assaytype_s.push("");
+      dataArr.assaytype1_s.push("0");
+      dataArr.assaytype2_s.push("0");
+
+      dataArr.chlditemcd_s.push("");
+      dataArr.column_itemcd_s.push("");
+      dataArr.column_itemnm_s.push("");
+      dataArr.gubun_s.push("T");
+      dataArr.remark_s.push("");
+      dataArr.qty_s.push("0");
+      dataArr.optioncd_s.push("");
+      dataArr.bonyn_s.push("");
+      dataArr.pointqty_s.push("0");
+      dataArr.chasu_s.push("0");
+      dataArr.chasuspace_s.push("0");
+      dataArr.amt_s.push("0");
+      dataArr.ref_key_s.push("");
+
+      dataArr.rowstatus_item.push("");
+      dataArr.reqnum_item.push("");
+      dataArr.reqrev_item.push("0");
+      dataArr.reqseq_item.push("0");
+      dataArr.qty_item.push("0");
+      dataArr.experimentqty_item.push("0");
+      dataArr.spareqty_item.push("0");
+      dataArr.pgmdiv_item.push("");
+      dataArr.remark_item.push("");
+      dataArr.inreqdt_item.push("");
+
+      dataArr.rowstatus_gun.push(rowstatus);
+      dataArr.group_seq_gun.push(group_seq);
+      dataArr.remark3_gun.push(remark3);
+      dataArr.animalqty_gun.push(animalqty);
+      dataArr.femaleqty_gun.push(femaleqty);
+      dataArr.maleqty_gun.push(maleqty);
+      dataArr.remark_gun.push(remark);
+      dataArr.injectwgt_gun.push(injectwgt);
+    });
+
+    deletedRows2.forEach((item: any) => {
+      const {
+        rowstatus,
+        group_seq,
+        remark3,
+        animalqty,
+        femaleqty,
+        maleqty,
+        remark,
+        injectwgt,
+      } = item;
+
+      dataArr.rowstatus_s.push("");
+      dataArr.seq_s.push("0");
+      dataArr.itemcd_s.push("");
+      dataArr.injectcnt_s.push("0");
+      dataArr.injectcycle_s.push("0");
+      dataArr.maleqty_s.push("0");
+      dataArr.femaleqty_s.push("0");
+      dataArr.totqty_s.push("0");
+      dataArr.sampleqty_s.push("0");
+      dataArr.urineqty_s.push("0");
+      dataArr.tkqty_s.push("0");
+      dataArr.experimentqty_s.push("0");
+      dataArr.autopsyqty_s.push("0");
+      dataArr.spareqty_s.push("0");
+      dataArr.recoverqty_s.push("0");
+      dataArr.cageqty_s.push("0");
+      dataArr.rackqty_s.push("0");
+      dataArr.infusionqty_s.push("0");
+      dataArr.infusiontime_s.push("0");
+      dataArr.point_s.push("0");
+      dataArr.capacity_s.push("0");
+      dataArr.geomcheqty_s.push("0");
+      dataArr.geomcheprodqty_s.push("0");
+      dataArr.infusioncount_s.push("0");
+      dataArr.testcnt_s.push("0");
+      dataArr.strainqty_s.push("0");
+      dataArr.matterqty_s.push("0");
+      dataArr.affiliationqty_s.push("0");
+      dataArr.plateqty_s.push("0");
+      dataArr.cellqty_s.push("0");
+      dataArr.virusqty_s.push("0");
+      dataArr.runtime_s.push("0");
+      dataArr.gunqty_s.push("0");
+      dataArr.concentrationcnt_s.push("0");
+      dataArr.one_week_s.push("0");
+      dataArr.two_week_s.push("0");
+      dataArr.one_twoweek_s.push("0");
+      dataArr.guaranteeperiod_s.push("0");
+      dataArr.testperiod_s.push("0");
+      dataArr.refineperiod_s.push("0");
+      dataArr.autopsyperiod_s.push("0");
+      dataArr.recoverweek_s.push("0");
+      dataArr.recoverday_s.push("0");
+      dataArr.genderyn_s.push("");
+      dataArr.breedmeth_s.push("");
+      dataArr.cagetype_s.push("");
+      dataArr.prodmac_s.push("");
+      dataArr.assaytype_s.push("");
+      dataArr.assaytype1_s.push("0");
+      dataArr.assaytype2_s.push("0");
+
+      dataArr.chlditemcd_s.push("");
+      dataArr.column_itemcd_s.push("");
+      dataArr.column_itemnm_s.push("");
+      dataArr.gubun_s.push("T");
+      dataArr.remark_s.push("");
+      dataArr.qty_s.push("0");
+      dataArr.optioncd_s.push("");
+      dataArr.bonyn_s.push("");
+      dataArr.pointqty_s.push("0");
+      dataArr.chasu_s.push("0");
+      dataArr.chasuspace_s.push("0");
+      dataArr.amt_s.push("0");
+      dataArr.ref_key_s.push("");
+
+      dataArr.rowstatus_item.push("");
+      dataArr.reqnum_item.push("");
+      dataArr.reqrev_item.push("0");
+      dataArr.reqseq_item.push("0");
+      dataArr.qty_item.push("0");
+      dataArr.experimentqty_item.push("0");
+      dataArr.spareqty_item.push("0");
+      dataArr.pgmdiv_item.push("");
+      dataArr.remark_item.push("");
+      dataArr.inreqdt_item.push("");
+
+      dataArr.rowstatus_gun.push(rowstatus);
+      dataArr.group_seq_gun.push(group_seq);
+      dataArr.remark3_gun.push(remark3);
+      dataArr.animalqty_gun.push(animalqty);
+      dataArr.femaleqty_gun.push(femaleqty);
+      dataArr.maleqty_gun.push(maleqty);
+      dataArr.remark_gun.push(remark);
+      dataArr.injectwgt_gun.push(injectwgt);
+    });
+
+    const dataItem3 = mainDataResult3.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    dataItem3.forEach((item: any) => {
+      const {
+        affiliationqty,
+        amt,
+        animalkind,
+        assaytype,
+        assaytype1,
+        assaytype2,
+        autopsyperiod,
+        autopsyqty,
+        bonqty,
+        bonyn,
+        breedmeth,
+        cageqty,
+        cagetype,
+        capacity,
+        cellqty,
+        chasu,
+        chasuspace,
+        chlditemcd,
+        column_itemcd,
+        column_itemnm,
+        concentrationcnt,
+        experimentqty,
+        femaleqty,
+        genderyn,
+        geomcheprodqty,
+        geomcheqty,
+        guaranteeperiod,
+        gubun,
+        gunqty,
+        infusioncount,
+        infusionqty,
+        infusiontime,
+        injectcnt,
+        injectcycle,
+        itemcd,
+        maleqty,
+        matterqty,
+        one_twoweek,
+        one_week,
+        optioncd,
+        orgdiv: sessionOrgdiv,
+        plateqty,
+        point,
+        pointqty,
+        prodmac,
+        qty,
+        rackqty,
+        recoverday,
+        recoverqty,
+        recoverweek,
+        ref_key,
+        refineperiod,
+        remark,
+        runtime,
+        sampleqty,
+        seq,
+        spareqty,
+        strainqty,
+        table_id,
+        table_key,
+        testcnt,
+        testperiod,
+        teststs,
+        tkqty,
+        totqty,
+        two_week,
+        urineqty,
+        virusqty,
+        rowstatus,
+      } = item;
+
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq_s.push(seq);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.injectcnt_s.push(injectcnt);
+      dataArr.injectcycle_s.push(injectcycle);
+      dataArr.maleqty_s.push(maleqty);
+      dataArr.femaleqty_s.push(femaleqty);
+      dataArr.totqty_s.push(totqty);
+      dataArr.sampleqty_s.push(sampleqty);
+      dataArr.urineqty_s.push(urineqty);
+      dataArr.tkqty_s.push(tkqty);
+      dataArr.experimentqty_s.push(experimentqty);
+      dataArr.autopsyqty_s.push(autopsyqty);
+      dataArr.spareqty_s.push(spareqty);
+      dataArr.recoverqty_s.push(recoverqty);
+      dataArr.cageqty_s.push(cageqty);
+      dataArr.rackqty_s.push(rackqty);
+      dataArr.infusionqty_s.push(infusionqty);
+      dataArr.infusiontime_s.push(infusiontime);
+      dataArr.point_s.push(point);
+      dataArr.capacity_s.push(capacity);
+      dataArr.geomcheqty_s.push(geomcheqty);
+      dataArr.geomcheprodqty_s.push(geomcheprodqty);
+      dataArr.infusioncount_s.push(infusioncount);
+      dataArr.testcnt_s.push(testcnt);
+      dataArr.strainqty_s.push(strainqty);
+      dataArr.matterqty_s.push(matterqty);
+      dataArr.affiliationqty_s.push(affiliationqty);
+      dataArr.plateqty_s.push(plateqty);
+      dataArr.cellqty_s.push(cellqty);
+      dataArr.virusqty_s.push(virusqty);
+      dataArr.runtime_s.push(runtime);
+      dataArr.gunqty_s.push(gunqty);
+      dataArr.concentrationcnt_s.push(concentrationcnt);
+      dataArr.one_week_s.push(one_week);
+      dataArr.two_week_s.push(two_week);
+      dataArr.one_twoweek_s.push(one_twoweek);
+      dataArr.guaranteeperiod_s.push(guaranteeperiod);
+      dataArr.testperiod_s.push(testperiod);
+      dataArr.refineperiod_s.push(refineperiod);
+      dataArr.autopsyperiod_s.push(autopsyperiod);
+      dataArr.recoverweek_s.push(recoverweek);
+      dataArr.recoverday_s.push(recoverday);
+      dataArr.genderyn_s.push(genderyn);
+      dataArr.breedmeth_s.push(breedmeth);
+      dataArr.cagetype_s.push(cagetype);
+      dataArr.prodmac_s.push(prodmac);
+      dataArr.assaytype_s.push(assaytype);
+      dataArr.assaytype1_s.push(assaytype1);
+      dataArr.assaytype2_s.push(assaytype2);
+
+      dataArr.chlditemcd_s.push(chlditemcd);
+      dataArr.column_itemcd_s.push(column_itemcd);
+      dataArr.column_itemnm_s.push(column_itemnm);
+      dataArr.gubun_s.push(gubun);
+      dataArr.remark_s.push(remark);
+      dataArr.qty_s.push(qty);
+      dataArr.optioncd_s.push(optioncd);
+      dataArr.bonyn_s.push(bonyn);
+      dataArr.pointqty_s.push(pointqty);
+      dataArr.chasu_s.push(chasu);
+      dataArr.chasuspace_s.push(chasuspace);
+      dataArr.amt_s.push(amt);
+      dataArr.ref_key_s.push(ref_key);
+
+      dataArr.rowstatus_item.push("");
+      dataArr.reqnum_item.push("");
+      dataArr.reqrev_item.push("0");
+      dataArr.reqseq_item.push("0");
+      dataArr.qty_item.push("0");
+      dataArr.experimentqty_item.push("0");
+      dataArr.spareqty_item.push("0");
+      dataArr.pgmdiv_item.push("");
+      dataArr.remark_item.push("");
+      dataArr.inreqdt_item.push("");
+
+      dataArr.rowstatus_gun.push("");
+      dataArr.group_seq_gun.push("0");
+      dataArr.remark3_gun.push("");
+      dataArr.animalqty_gun.push("0");
+      dataArr.femaleqty_gun.push("0");
+      dataArr.maleqty_gun.push("0");
+      dataArr.remark_gun.push("");
+      dataArr.injectwgt_gun.push("");
+    });
+
+    deletedRows3.forEach((item: any) => {
+      const {
+        affiliationqty,
+        amt,
+        animalkind,
+        assaytype,
+        assaytype1,
+        assaytype2,
+        autopsyperiod,
+        autopsyqty,
+        bonqty,
+        bonyn,
+        breedmeth,
+        cageqty,
+        cagetype,
+        capacity,
+        cellqty,
+        chasu,
+        chasuspace,
+        chlditemcd,
+        column_itemcd,
+        column_itemnm,
+        concentrationcnt,
+        experimentqty,
+        femaleqty,
+        genderyn,
+        geomcheprodqty,
+        geomcheqty,
+        guaranteeperiod,
+        gubun,
+        gunqty,
+        infusioncount,
+        infusionqty,
+        infusiontime,
+        injectcnt,
+        injectcycle,
+        itemcd,
+        maleqty,
+        matterqty,
+        one_twoweek,
+        one_week,
+        optioncd,
+        orgdiv: sessionOrgdiv,
+        plateqty,
+        point,
+        pointqty,
+        prodmac,
+        qty,
+        rackqty,
+        recoverday,
+        recoverqty,
+        recoverweek,
+        ref_key,
+        refineperiod,
+        remark,
+        runtime,
+        sampleqty,
+        seq,
+        spareqty,
+        strainqty,
+        table_id,
+        table_key,
+        testcnt,
+        testperiod,
+        teststs,
+        tkqty,
+        totqty,
+        two_week,
+        urineqty,
+        virusqty,
+        rowstatus,
+      } = item;
+
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq_s.push(seq);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.injectcnt_s.push(injectcnt);
+      dataArr.injectcycle_s.push(injectcycle);
+      dataArr.maleqty_s.push(maleqty);
+      dataArr.femaleqty_s.push(femaleqty);
+      dataArr.totqty_s.push(totqty);
+      dataArr.sampleqty_s.push(sampleqty);
+      dataArr.urineqty_s.push(urineqty);
+      dataArr.tkqty_s.push(tkqty);
+      dataArr.experimentqty_s.push(experimentqty);
+      dataArr.autopsyqty_s.push(autopsyqty);
+      dataArr.spareqty_s.push(spareqty);
+      dataArr.recoverqty_s.push(recoverqty);
+      dataArr.cageqty_s.push(cageqty);
+      dataArr.rackqty_s.push(rackqty);
+      dataArr.infusionqty_s.push(infusionqty);
+      dataArr.infusiontime_s.push(infusiontime);
+      dataArr.point_s.push(point);
+      dataArr.capacity_s.push(capacity);
+      dataArr.geomcheqty_s.push(geomcheqty);
+      dataArr.geomcheprodqty_s.push(geomcheprodqty);
+      dataArr.infusioncount_s.push(infusioncount);
+      dataArr.testcnt_s.push(testcnt);
+      dataArr.strainqty_s.push(strainqty);
+      dataArr.matterqty_s.push(matterqty);
+      dataArr.affiliationqty_s.push(affiliationqty);
+      dataArr.plateqty_s.push(plateqty);
+      dataArr.cellqty_s.push(cellqty);
+      dataArr.virusqty_s.push(virusqty);
+      dataArr.runtime_s.push(runtime);
+      dataArr.gunqty_s.push(gunqty);
+      dataArr.concentrationcnt_s.push(concentrationcnt);
+      dataArr.one_week_s.push(one_week);
+      dataArr.two_week_s.push(two_week);
+      dataArr.one_twoweek_s.push(one_twoweek);
+      dataArr.guaranteeperiod_s.push(guaranteeperiod);
+      dataArr.testperiod_s.push(testperiod);
+      dataArr.refineperiod_s.push(refineperiod);
+      dataArr.autopsyperiod_s.push(autopsyperiod);
+      dataArr.recoverweek_s.push(recoverweek);
+      dataArr.recoverday_s.push(recoverday);
+      dataArr.genderyn_s.push(genderyn);
+      dataArr.breedmeth_s.push(breedmeth);
+      dataArr.cagetype_s.push(cagetype);
+      dataArr.prodmac_s.push(prodmac);
+      dataArr.assaytype_s.push(assaytype);
+      dataArr.assaytype1_s.push(assaytype1);
+      dataArr.assaytype2_s.push(assaytype2);
+
+      dataArr.chlditemcd_s.push(chlditemcd);
+      dataArr.column_itemcd_s.push(column_itemcd);
+      dataArr.column_itemnm_s.push(column_itemnm);
+      dataArr.gubun_s.push(gubun);
+      dataArr.remark_s.push(remark);
+      dataArr.qty_s.push(qty);
+      dataArr.optioncd_s.push(optioncd);
+      dataArr.bonyn_s.push(bonyn);
+      dataArr.pointqty_s.push(pointqty);
+      dataArr.chasu_s.push(chasu);
+      dataArr.chasuspace_s.push(chasuspace);
+      dataArr.amt_s.push(amt);
+      dataArr.ref_key_s.push(ref_key);
+
+      dataArr.rowstatus_item.push("");
+      dataArr.reqnum_item.push("");
+      dataArr.reqrev_item.push("0");
+      dataArr.reqseq_item.push("0");
+      dataArr.qty_item.push("0");
+      dataArr.experimentqty_item.push("0");
+      dataArr.spareqty_item.push("0");
+      dataArr.pgmdiv_item.push("");
+      dataArr.remark_item.push("");
+      dataArr.inreqdt_item.push("");
+
+      dataArr.rowstatus_gun.push("");
+      dataArr.group_seq_gun.push("0");
+      dataArr.remark3_gun.push("");
+      dataArr.animalqty_gun.push("0");
+      dataArr.femaleqty_gun.push("0");
+      dataArr.maleqty_gun.push("0");
+      dataArr.remark_gun.push("");
+      dataArr.injectwgt_gun.push("");
+    });
 
     const para: Iparameters = {
       procedureName: "P_SA_A1000_603W_Sub1_S",
@@ -1017,6 +2349,26 @@ const CopyWindow = ({
         "@p_amt_s": dataArr.amt_s.join("|"),
         "@p_ref_key_s": dataArr.ref_key_s.join("|"),
 
+        "@p_rowstatus_gun": dataArr.rowstatus_gun.join("|"),
+        "@p_group_seq_gun": dataArr.group_seq_gun.join("|"),
+        "@p_remark3_gun": dataArr.remark3_gun.join("|"),
+        "@p_animalqty_gun": dataArr.animalqty_gun.join("|"),
+        "@p_femaleqty_gun": dataArr.femaleqty_gun.join("|"),
+        "@p_maleqty_gun": dataArr.maleqty_gun.join("|"),
+        "@p_remark_gun": dataArr.remark_gun.join("|"),
+        "@p_injectwgt_gun": dataArr.injectwgt_gun.join("|"),
+
+        "@p_rowstatus_item": dataArr.rowstatus_item.join("|"),
+        "@p_reqnum_item": dataArr.reqnum_item.join("|"),
+        "@p_reqrev_item": dataArr.reqrev_item.join("|"),
+        "@p_reqseq_item": dataArr.reqseq_item.join("|"),
+        "@p_qty_item": dataArr.qty_item.join("|"),
+        "@p_experimentqty_item": dataArr.experimentqty_item.join("|"),
+        "@p_spareqty_item": dataArr.spareqty_item.join("|"),
+        "@p_pgmdiv_item": dataArr.pgmdiv_item.join("|"),
+        "@p_remark_item": dataArr.remark_item.join("|"),
+        "@p_inreqdt_item": dataArr.inreqdt_item.join("|"),
+
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": "SA_A1000_603W",
@@ -1040,6 +2392,734 @@ const CopyWindow = ({
       alert(data.resultMessage);
     }
     setLoading(false);
+  };
+
+  const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState2(event.dataState);
+  };
+  const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3(event.dataState);
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange2 = (e: any) => {
+    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange3 = (e: any) => {
+    setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState(newSelectedState);
+  };
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedState2(newSelectedState);
+  };
+  const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState3,
+      dataItemKey: DATA_ITEM_KEY3,
+    });
+    setSelectedState3(newSelectedState);
+  };
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+  const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  const editNumberFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  const editNumberFooterCell3 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult3.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  const onAddClick = () => {
+    mainDataResult.data.map((item) => {
+      if (item[DATA_ITEM_KEY] > temp) {
+        temp = item[DATA_ITEM_KEY];
+      }
+    });
+    const newDataItem = {
+      [DATA_ITEM_KEY]: ++temp,
+      experimentqty: 0,
+      inreqdt: "99991231",
+      insiz: "",
+      itemcd: "",
+      itemnm: "",
+      pgmdiv: "B",
+      qty: 0,
+      rate: 0,
+      remark: "",
+      reqnum: "",
+      reqrev: 0,
+      reqseq: 0,
+      spareqty: 0,
+      rowstatus: "N",
+    };
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+    setMainDataResult((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick2 = () => {
+    mainDataResult2.data.map((item) => {
+      if (item[DATA_ITEM_KEY2] > temp2) {
+        temp2 = item[DATA_ITEM_KEY2];
+      }
+    });
+    const newDataItem = {
+      [DATA_ITEM_KEY2]: ++temp2,
+      animalqty: 0,
+      femaleqty: 0,
+      group_seq: 0,
+      injectwgt: "",
+      maleqty: 0,
+      orgdiv: sessionOrgdiv,
+      ref_key: item.quonum + "-" + item.quorev + "-" + item.quoseq,
+      remark: "",
+      remark3: "",
+      table_id: "SA051T",
+      rowstatus: "N",
+    };
+    setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+
+    setMainDataResult2((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+  const onAddClick3 = () => {
+    mainDataResult3.data.map((item) => {
+      if (item[DATA_ITEM_KEY3] > temp3) {
+        temp3 = item[DATA_ITEM_KEY3];
+      }
+    });
+    const newDataItem = {
+      [DATA_ITEM_KEY3]: ++temp3,
+      affiliationqty: 0,
+      amt: 0,
+      animalkind: "",
+      assaytype: "",
+      assaytype1: 0,
+      assaytype2: 0,
+      autopsyperiod: 0,
+      autopsyqty: 0,
+      bonqty: 0,
+      bonyn: "N",
+      breedmeth: "",
+      cageqty: 0,
+      cagetype: "",
+      capacity: 0,
+      cellqty: 0,
+      chasu: 0,
+      chasuspace: 0,
+      chlditemcd: "",
+      column_itemcd: "",
+      column_itemnm: "",
+      concentrationcnt: 0,
+      experimentqty: 0,
+      femaleqty: 0,
+      genderyn: "",
+      geomcheprodqty: 0,
+      geomcheqty: 0,
+      guaranteeperiod: 0,
+      gubun: "O",
+      gunqty: 0,
+      infusioncount: 0,
+      infusionqty: 0,
+      infusiontime: 0,
+      injectcnt: 0,
+      injectcycle: 0,
+      itemcd: "",
+      maleqty: 0,
+      matterqty: 0,
+      one_twoweek: 0,
+      one_week: 0,
+      optioncd: "",
+      orgdiv: sessionOrgdiv,
+      plateqty: 0,
+      point: 0,
+      pointqty: 0,
+      prodmac: "",
+      qty: 0,
+      rackqty: 0,
+      recoverday: 0,
+      recoverqty: 0,
+      recoverweek: 0,
+      ref_key: "",
+      refineperiod: 0,
+      remark: "",
+      runtime: 0,
+      sampleqty: 0,
+      seq: 0,
+      spareqty: 0,
+      strainqty: 0,
+      table_id: "SA051T",
+      table_key: item.quonum + "-" + item.quorev + "-" + item.quoseq,
+      testcnt: 0,
+      testperiod: 0,
+      teststs: "",
+      tkqty: 0,
+      totqty: 0,
+      two_week: 0,
+      update_form_id: null,
+      update_pc: null,
+      update_time: null,
+      update_userid: null,
+      urineqty: 0,
+      virusqty: 0,
+      rowstatus: "N",
+    };
+    setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
+
+    setMainDataResult3((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult.data.forEach((item: any, index: number) => {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedRows.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState({
+        [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onDeleteClick2 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedRows2.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult2.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult2.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult2((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState2({
+        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onDeleteClick3 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult3.data.forEach((item: any, index: number) => {
+      if (!selectedState3[item[DATA_ITEM_KEY3]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedRows3.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult3.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult3.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult3((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState3({
+        [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+  const onMainItemChange2 = (event: GridItemChangeEvent) => {
+    setMainDataState2((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+  const onMainItemChange3 = (event: GridItemChangeEvent) => {
+    setMainDataState3((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult3,
+      setMainDataResult3,
+      DATA_ITEM_KEY3
+    );
+  };
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+  const enterEdit = (dataItem: any, field: string) => {
+    if (
+      field != "rowstatus" &&
+      field != "itemcd" &&
+      field != "itemnm" &&
+      field != "insiz" &&
+      field != "rate"
+    ) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field != "rowstatus") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field != "rowstatus") {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult3((prev) => {
+        return {
+          data: mainDataResult3.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              rate:
+                editedField == "experimentqty" || editedField == "spareqty"
+                  ? Math.round((item.spareqty / item.experimentqty) * 100)
+                  : item.rate,
+              qty:
+                editedField == "experimentqty" || editedField == "spareqty"
+                  ? item.spareqty + item.experimentqty
+                  : item.qty,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit2 = () => {
+    if (tempResult2.data != mainDataResult2.data) {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+  const exitEdit3 = () => {
+    if (tempResult3.data != mainDataResult3.data) {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult3.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -1633,20 +3713,31 @@ const CopyWindow = ({
                 style={{ height: mobileheight3, overflow: "auto" }}
               >
                 <GridTitleContainer>
-                  <GridTitle>
-                    {" "}
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      용량설정시험
+                    </GridTitle>
                     <Button
                       onClick={() => {
                         if (swiper && isMobile) {
-                          swiper.slideTo(1);
+                          swiper.slideTo(3);
                         }
                       }}
-                      icon="chevron-left"
+                      icon="chevron-right"
                       themeColor={"primary"}
                       fillMode={"flat"}
                     ></Button>
-                    용량설정시험
-                  </GridTitle>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <FormBox>
                   <tbody>
@@ -2020,6 +4111,356 @@ const CopyWindow = ({
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
+            </SwiperSlide>
+            <SwiperSlide key={3}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      시험자재예약
+                    </GridTitle>
+                    <div>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={onAddClick}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(4);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormContext.Provider
+                  value={{
+                    itemInfo,
+                    setItemInfo,
+                  }}
+                >
+                  <Grid
+                    style={{ height: mobileheight4 }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        inreqdt: row.inreqdt
+                          ? new Date(dateformat(row.inreqdt))
+                          : new Date(dateformat("99991231")),
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    onDataStateChange={onMainDataStateChange}
+                    {...mainDataState}
+                    //선택 subDataState
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="40px" />
+                    <GridColumn
+                      field="pgmdiv"
+                      title="구분"
+                      cell={CustomComboBoxCell}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="itemcd"
+                      title="품목코드"
+                      width="150px"
+                      cell={ColumnCommandCell}
+                      footerCell={mainTotalFooterCell}
+                      headerCell={RequiredHeader}
+                    />
+                    <GridColumn field="itemnm" title="품목명" width="150px" />
+                    <GridColumn field="insiz" title="규격" width="200px" />
+                    <GridColumn
+                      field="experimentqty"
+                      title="실험동물수"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="spareqty"
+                      title="여유동물수"
+                      width="120px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="rate"
+                      title="여유비율(%)"
+                      width="120px"
+                      cell={NumberCell}
+                    />
+                    <GridColumn
+                      field="qty"
+                      title="총수량"
+                      width="120px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="inreqdt"
+                      title="입고요청일"
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn field="remark" title="비고" width="120px" />
+                  </Grid>
+                </FormContext.Provider>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={4}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer2">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(3);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      군구성테이블
+                    </GridTitle>
+                    <div>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={onAddClick2}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick2}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(5);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight5 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState2}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="40px" />
+                  <GridColumn
+                    field="remark3"
+                    title="구분"
+                    width="200px"
+                    footerCell={mainTotalFooterCell2}
+                  />
+                  <GridColumn
+                    field="animalqty"
+                    title="동물수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="femaleqty"
+                    title="암컷수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="maleqty"
+                    title="수컷수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="injectwgt"
+                    title="투여용량"
+                    width="120px"
+                  />
+                  <GridColumn field="remark" title="총수량" width="200px" />
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={5}>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(4);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      옵션
+                    </GridTitle>
+                    <div>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={onAddClick3}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick3}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={save == true ? false : true}
+                      />
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight6 }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
+                  )}
+                  onDataStateChange={onMainDataStateChange3}
+                  {...mainDataState3}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange3}
+                  cellRender={customCellRender3}
+                  rowRender={customRowRender3}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="40px" />
+                  <GridColumn
+                    field="optioncd"
+                    title="옵션"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    footerCell={mainTotalFooterCell3}
+                  />
+                  <GridColumn
+                    field="qty"
+                    title="수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell3}
+                  />
+                  <GridColumn field="remark" title="총수량" width="200px" />
+                </Grid>
+              </GridContainer>
             </SwiperSlide>
           </Swiper>
         ) : (
@@ -2922,6 +5363,290 @@ const CopyWindow = ({
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
+              <FormContext.Provider
+                value={{
+                  itemInfo,
+                  setItemInfo,
+                }}
+              >
+                <GridContainer>
+                  <GridTitleContainer className="WindowButtonContainer">
+                    <GridTitle>시험자재예약</GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        themeColor={"primary"}
+                        onClick={onAddClick}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={save == true ? false : true}
+                      />
+                      <Button
+                        themeColor={"primary"}
+                        fillMode="outline"
+                        onClick={onDeleteClick}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={save == true ? false : true}
+                      />
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: webheight2 }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        inreqdt: row.inreqdt
+                          ? new Date(dateformat(row.inreqdt))
+                          : new Date(dateformat("99991231")),
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    onDataStateChange={onMainDataStateChange}
+                    {...mainDataState}
+                    //선택 subDataState
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="40px" />
+                    <GridColumn
+                      field="pgmdiv"
+                      title="구분"
+                      cell={CustomComboBoxCell}
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="itemcd"
+                      title="품목코드"
+                      width="150px"
+                      cell={ColumnCommandCell}
+                      footerCell={mainTotalFooterCell}
+                      headerCell={RequiredHeader}
+                    />
+                    <GridColumn field="itemnm" title="품목명" width="150px" />
+                    <GridColumn field="insiz" title="규격" width="200px" />
+                    <GridColumn
+                      field="experimentqty"
+                      title="실험동물수"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="spareqty"
+                      title="여유동물수"
+                      width="120px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="rate"
+                      title="여유비율(%)"
+                      width="120px"
+                      cell={NumberCell}
+                    />
+                    <GridColumn
+                      field="qty"
+                      title="총수량"
+                      width="120px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="inreqdt"
+                      title="입고요청일"
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn field="remark" title="비고" width="120px" />
+                  </Grid>
+                </GridContainer>
+              </FormContext.Provider>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer2">
+                  <GridTitle>군구성테이블</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={onAddClick2}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={save == true ? false : true}
+                    />
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onDeleteClick2}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={save == true ? false : true}
+                    />
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: webheight3 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState2}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="40px" />
+                  <GridColumn
+                    field="remark3"
+                    title="구분"
+                    width="200px"
+                    footerCell={mainTotalFooterCell2}
+                  />
+                  <GridColumn
+                    field="animalqty"
+                    title="동물수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="femaleqty"
+                    title="암컷수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="maleqty"
+                    title="수컷수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell2}
+                  />
+                  <GridColumn
+                    field="injectwgt"
+                    title="투여용량"
+                    width="120px"
+                  />
+                  <GridColumn field="remark" title="총수량" width="200px" />
+                </Grid>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer className="WindowButtonContainer3">
+                  <GridTitle>옵션</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={onAddClick3}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={save == true ? false : true}
+                    />
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onDeleteClick3}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={save == true ? false : true}
+                    />
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: webheight4 }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
+                  )}
+                  onDataStateChange={onMainDataStateChange3}
+                  {...mainDataState3}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange3}
+                  cellRender={customCellRender3}
+                  rowRender={customRowRender3}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="40px" />
+                  <GridColumn
+                    field="optioncd"
+                    title="옵션"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    footerCell={mainTotalFooterCell3}
+                  />
+                  <GridColumn
+                    field="qty"
+                    title="수량"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={editNumberFooterCell3}
+                  />
+                  <GridColumn field="remark" title="총수량" width="200px" />
+                </Grid>
+              </GridContainer>
             </FormBoxWrap>
           </>
         )}

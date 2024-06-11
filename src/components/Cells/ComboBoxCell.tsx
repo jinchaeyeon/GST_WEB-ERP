@@ -20,6 +20,7 @@ interface CustomCellProps extends GridCellProps {
   colorprops?: boolean;
   page?: string;
   color?: string;
+  disabled?: boolean;
 }
 
 const ComboBoxCell = (props: CustomCellProps) => {
@@ -38,6 +39,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     colorprops = false,
     page = "",
     color = "black",
+    disabled = false,
   } = props;
   const processApi = useApi();
   const [listData, setListData]: any = useState(bizComponent.data.Rows);
@@ -173,6 +175,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
               columns={newColumns}
               textField={textField}
               onChange={handleChange}
+              disabled={disabled}
             />
           ) : value ? (
             value[textField]
@@ -193,6 +196,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
               columns={newColumns}
               textField={textField}
               onChange={handleChange}
+              disabled={disabled}
             />
           ) : value ? (
             value[textField]
@@ -235,6 +239,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
             columns={newColumns}
             textField={textField}
             onChange={handleChange}
+            disabled={disabled}
           />
         ) : value ? (
           value[textField]
