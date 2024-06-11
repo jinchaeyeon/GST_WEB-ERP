@@ -2810,6 +2810,7 @@ const CopyWindow = ({
   );
   const enterEdit = (dataItem: any, field: string) => {
     if (
+      save == true &&
       field != "rowstatus" &&
       field != "itemcd" &&
       field != "itemnm" &&
@@ -2851,7 +2852,7 @@ const CopyWindow = ({
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (save == true && field != "rowstatus") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -2884,7 +2885,7 @@ const CopyWindow = ({
   };
 
   const enterEdit3 = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (save == true && field != "rowstatus") {
       const newData = mainDataResult3.data.map((item) =>
         item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
