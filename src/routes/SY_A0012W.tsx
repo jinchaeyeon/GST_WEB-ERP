@@ -20,6 +20,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -54,6 +55,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -71,10 +73,8 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0012W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -505,18 +505,19 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
-const SY_A0120: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+var height = 0;
+var height2 = 0;
 
+const SY_A0120: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -551,6 +552,28 @@ const SY_A0120: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SY_A0012W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -1484,178 +1507,162 @@ const SY_A0120: React.FC = () => {
               setMainDataState,
             }}
           >
-            <div>
-              <div>
-                <GridContainer
+            <GridContainer>
+              <GridTitleContainer className="ButtonContainer">
+                {isMobile ? null : <GridTitle>사용자 리스트</GridTitle>}
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                )}
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export = exporter)}
+                data={mainDataResult.data}
+                fileName="사용자 정보"
+              >
+                <Grid
                   style={{
-                    paddingBottom: "15px",
-                    height: "100%",
-                    width: "100%",
+                    height: isMobile ? mobileheight : webheight,
                   }}
+                  data={process(
+                    mainDataResult.data.map((row, idx) => ({
+                      ...row,
+                      birdt: row.birdt
+                        ? new Date(dateformat(row.birdt))
+                        : new Date(dateformat("99991231")),
+                      apply_start_date: row.apply_start_date
+                        ? new Date(dateformat(row.apply_start_date))
+                        : new Date(dateformat("99991231")),
+                      apply_end_date: row.apply_end_date
+                        ? new Date(dateformat(row.apply_end_date))
+                        : new Date(dateformat("99991231")),
+                      home_menu_id_web: menuListData.find(
+                        (item: any) => item.sub_code == row.home_menu_id_web
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //incell 수정 기능
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
                 >
-                  <GridTitleContainer className="ButtonContainer">
-                    {isMobile ? null : <GridTitle>사용자 리스트</GridTitle>}
-                    {permissions && (
-                      <ButtonContainer>
-                        <Button
-                          onClick={onAddClick}
-                          themeColor={"primary"}
-                          icon="plus"
-                          title="행 추가"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                        <Button
-                          onClick={onRemoveClick}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          icon="minus"
-                          title="행 삭제"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                        <Button
-                          onClick={onSaveClick}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          icon="save"
-                          title="저장"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                      </ButtonContainer>
-                    )}
-                  </GridTitleContainer>
-                  <ExcelExport
-                    ref={(exporter) => (_export = exporter)}
-                    data={mainDataResult.data}
-                    fileName="사용자 정보"
-                  >
-                    <Grid
-                      style={{
-                        height: isMobile ? deviceHeight - height : "77.8vh",
-                      }}
-                      data={process(
-                        mainDataResult.data.map((row, idx) => ({
-                          ...row,
-                          birdt: row.birdt
-                            ? new Date(dateformat(row.birdt))
-                            : new Date(dateformat("99991231")),
-                          apply_start_date: row.apply_start_date
-                            ? new Date(dateformat(row.apply_start_date))
-                            : new Date(dateformat("99991231")),
-                          apply_end_date: row.apply_end_date
-                            ? new Date(dateformat(row.apply_end_date))
-                            : new Date(dateformat("99991231")),
-                          home_menu_id_web: menuListData.find(
-                            (item: any) => item.sub_code == row.home_menu_id_web
-                          )?.code_name,
-                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                        })),
-                        mainDataState
-                      )}
-                      {...mainDataState}
-                      onDataStateChange={onMainDataStateChange}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onMainSelectionChange}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult.total}
-                      skip={page.skip}
-                      take={page.take}
-                      pageable={true}
-                      onPageChange={pageChange}
-                      //원하는 행 위치로 스크롤 기능
-                      ref={gridRef}
-                      rowHeight={30}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      //incell 수정 기능
-                      onItemChange={onMainItemChange}
-                      cellRender={customCellRender}
-                      rowRender={customRowRender}
-                      editField={EDIT_FIELD}
-                    >
-                      <GridColumn
-                        field="rowstatus"
-                        title=" "
-                        width="50px"
-                        editable={false}
-                      />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"]
-                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          ?.map((item: any, idx: number) => {
-                            const caption = getCaption(item.id, item.caption);
-                            return (
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={caption}
-                                  width={item.width}
-                                  cell={
-                                    NameField.includes(item.fieldName)
-                                      ? NameCell
-                                      : CustomField.includes(item.fieldName)
-                                      ? CustomComboBoxCell
-                                      : EncryptedField2.includes(item.fieldName)
-                                      ? EncryptedCell2
-                                      : EncryptedField.includes(item.fieldName)
-                                      ? EncryptedCell
-                                      : checkField.includes(item.fieldName)
-                                      ? CheckBoxCell
-                                      : DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : CustomRadioField.includes(
-                                          item.fieldName
-                                        )
-                                      ? CustomRadioCell
-                                      : CustonCommandField.includes(
-                                          item.fieldName
-                                        )
-                                      ? ColumnCommandCell
-                                      : CustomPopupField.includes(
-                                          item.fieldName
-                                        )
-                                      ? ColumnPopUpCell
-                                      : undefined
-                                  }
-                                  headerCell={
-                                    requiredHeaderField.includes(item.fieldName)
-                                      ? RequiredHeader
-                                      : undefined
-                                  }
-                                  className={
-                                    editableField.includes(item.fieldName)
-                                      ? "editable-new-only"
-                                      : requiredField.includes(item.fieldName)
-                                      ? "required"
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                            );
-                          })}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </div>
-            </div>
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="50px"
+                    editable={false}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map((item: any, idx: number) => {
+                        const caption = getCaption(item.id, item.caption);
+                        return (
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={caption}
+                              width={item.width}
+                              cell={
+                                NameField.includes(item.fieldName)
+                                  ? NameCell
+                                  : CustomField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : EncryptedField2.includes(item.fieldName)
+                                  ? EncryptedCell2
+                                  : EncryptedField.includes(item.fieldName)
+                                  ? EncryptedCell
+                                  : checkField.includes(item.fieldName)
+                                  ? CheckBoxCell
+                                  : DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : CustomRadioField.includes(item.fieldName)
+                                  ? CustomRadioCell
+                                  : CustonCommandField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : CustomPopupField.includes(item.fieldName)
+                                  ? ColumnPopUpCell
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredHeaderField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              className={
+                                editableField.includes(item.fieldName)
+                                  ? "editable-new-only"
+                                  : requiredField.includes(item.fieldName)
+                                  ? "required"
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                        );
+                      })}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
           </FormContext3.Provider>
         </FormContext2.Provider>
       </FormContext.Provider>

@@ -26,8 +26,14 @@ import {
   modifySubItems,
   treeToFlat,
 } from "@progress/kendo-react-treelist";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -53,6 +59,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   getYn,
@@ -70,7 +77,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0013W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -213,14 +220,19 @@ const userMenuColumns: TreeListColumnProps[] = [
   { field: "path", title: "경로", width: "100px", cell: CustomComboBoxCell },
 ];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const Page: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -230,17 +242,50 @@ const Page: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("SY_A0013W", setCustomOptionData);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
+      height5 = getHeight(".ButtonContainer4");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height4);
+        setMobileHeight4(getDeviceHeight(true) - height - height5);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2((getDeviceHeight(true) - height) / 2 - height3);
+        setWebHeight3((getDeviceHeight(true) - height) / 2 - height4);
+        setWebHeight4(getDeviceHeight(true) - height - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, webheight4]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2128,7 +2173,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -2264,7 +2309,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight2 }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,
@@ -2376,7 +2421,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height3,
+                      height: mobileheight3,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -2431,7 +2476,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: deviceHeight - height4,
+                      height: mobileheight4,
                       overflowY: "scroll",
                     }}
                     data={mapTree(
@@ -2475,7 +2520,7 @@ const Page: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width={`35%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>사용자 리스트</GridTitle>
                 {permissions && (
                   <ButtonContainer>
@@ -2506,7 +2551,7 @@ const Page: React.FC = () => {
                 fileName="사용자 권한"
               >
                 <Grid
-                  style={{ height: isMobile ? "50vh" : "77.8vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row, idx) => ({
                       ...row,
@@ -2588,7 +2633,7 @@ const Page: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(40% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>권한그룹 정보</GridTitle>
                   {permissions && (
                     <ButtonContainer>
@@ -2609,7 +2654,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: "31vh" }}
+                    style={{ height: webheight2 }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,
@@ -2682,7 +2727,7 @@ const Page: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>사용자별 메뉴 권한</GridTitle>
                   {permissions && (
                     <ButtonContainer>
@@ -2703,7 +2748,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <TreeList
-                    style={{ height: "43vh", overflow: "auto" }}
+                    style={{ height: webheight3, overflow: "auto" }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
                         [EXPANDED_FIELD]: expanded.includes(
@@ -2742,7 +2787,7 @@ const Page: React.FC = () => {
               </GridContainer>
             </GridContainer>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer4">
                 <GridTitle>[참조] 전체 메뉴</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2752,7 +2797,7 @@ const Page: React.FC = () => {
               >
                 <TreeList
                   style={{
-                    height: isMobile ? "50vh" : "78.2vh",
+                    height: webheight4,
                     overflowY: "scroll",
                   }}
                   data={mapTree(

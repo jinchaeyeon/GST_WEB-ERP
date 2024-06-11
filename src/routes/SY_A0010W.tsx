@@ -25,8 +25,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -51,6 +51,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -60,9 +61,7 @@ import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -94,10 +93,13 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 const Page: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -111,10 +113,8 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -146,6 +146,32 @@ const Page: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SY_A0010W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(getDeviceHeight(true) - height - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1290,12 +1316,7 @@ const Page: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{
-                  width: "100%",
-                  overflow: "auto",
-                }}
-              >
+              <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
                   {permissions !== null && (
                     <ButtonContainer>
@@ -1329,7 +1350,7 @@ const Page: React.FC = () => {
                 >
                   <Grid
                     ref={gridRef}
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
                       items: item.items.map((row: any) => ({
@@ -1411,19 +1432,14 @@ const Page: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <GridContainer
-                style={{
-                  width: "100%",
-                  overflow: "auto",
-                }}
-              >
+              <GridContainer>
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={detailDataResult.data}
                   fileName="공통코드정보"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1614,7 +1630,7 @@ const Page: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width={`30%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
                 {permissions !== null && (
                   <ButtonContainer>
@@ -1648,7 +1664,7 @@ const Page: React.FC = () => {
               >
                 <Grid
                   ref={gridRef}
-                  style={{ height: "77.8vh" }}
+                  style={{ height: webheight }}
                   data={newData.map((item: { items: any[] }) => ({
                     ...item,
                     items: item.items.map((row: any) => ({
@@ -1712,7 +1728,7 @@ const Page: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(70% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1721,7 +1737,7 @@ const Page: React.FC = () => {
                 fileName="공통코드정보"
               >
                 <Grid
-                  style={{ height: "78vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
