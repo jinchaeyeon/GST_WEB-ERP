@@ -60,6 +60,8 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { OrganizationChart } from "primereact/organizationchart";
+import { createDataTree } from "@progress/kendo-react-treelist";
 
 var index = 0;
 
@@ -72,42 +74,45 @@ interface IPrsnnum {
   postcd: string;
 }
 
-interface OrgProps {
-  user_name: string;
-  postcd: string | undefined;
-  profile_img?: string;
-  backgroundColor: string;
+interface NodeData {
+  name: string;
+  image: string;
+  title: string;
 }
 
-interface OrgData {
-  orgdiv: string;
+interface Node {
+  type: string;
+  label: string;
+  data: NodeData;
+}
+
+interface Department {
   dptcd: string;
   dptnm: string;
-  location: string;
-  mfcsaldv: string;
   prntdptcd: string;
-  prntdptnm: string;
-  refdptcd: string;
-  remark: string;
-  useyn: string;
-  postcd: string;
+  children?: Department[];
+}
+interface BaseDataItem {
+  expanded: boolean;
+  label: string;
 }
 
-// 직급별 정렬
-const getPositionOrder = (postcd: string): number => {
-  switch (postcd) {
-    case "PM":
-      return 1;
-    case "팀장":
-      return 2;
-    case "주임":
-      return 3;
-    case "사원":
-      return 4;
-    default:
-      return 5;
-  }
-};
+interface DataItem extends BaseDataItem {
+  expanded: boolean;
+  label: string;
+  children: (DataItem | DataItem3)[];
+}
+
+interface DataItem3 {
+  expanded: boolean;
+  type: string;
+  data: {
+    image: string;
+    name: string;
+    title: string | undefined;
+  };
+  children: DataItem3[];
+}
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -116,7 +121,7 @@ const HU_A1000W: React.FC = () => {
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -138,11 +143,18 @@ const HU_A1000W: React.FC = () => {
   const [showOrg, setShowOrg] = useState(false);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [information, setInformation] = useState<OrgData[]>([]);
-  const [information2, setInformation2] = useState<OrgProps[]>([]);
-  const [combinedResult, setCombinedResult] = useState<any[]>([]);
-  const [profileImg, setProfileImg] = useState<any[]>([]);
-  const [dptcdArray, setDptcdArray] = useState<string[]>([]);
+  const [information, setInformation] = useState<
+    Array<{
+      expanded: boolean;
+      type: string;
+      data: {
+        name: string;
+        image: string;
+        title: string;
+      };
+      children: DataItem3[];
+    }>
+  >([]);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -185,8 +197,6 @@ const HU_A1000W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdData = getBizCom(bizComponentData, "L_dptcd_001");
       setDptcdListData2(dptcdData);
-      setDptcdArray(dptcdData.map((item: any) => item.dptcd));
-      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
       setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
@@ -279,7 +289,7 @@ const HU_A1000W: React.FC = () => {
       ...prev,
       [name]: value,
     }));
-  }; 
+  };
 
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
@@ -734,34 +744,24 @@ const HU_A1000W: React.FC = () => {
     if (paraDataDeleted.work_type != "") fetchToDelete();
   });
 
-  // 조직도 로직
-  //조회조건 초기값
+  // 조직도
+  const [tree, setTree] = useState<Department[]>([]);
+  const idToNodeMap: { [key: string]: Department } = {};
+  // 부서조회
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
     orgdiv: sessionOrgdiv,
-    location: "",
+    location: sessionLocation,
     dptcd: "",
     dptnm: "",
     user_name: "",
     serviceid: companyCode,
     find_row_value: "",
-    isSearch: true,
-  });
-  const [subFilters, setsubFilters] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "USERINFO",
-    orgdiv: sessionOrgdiv,
-    dptcd: "",
-    dptnm: "",
-    user_name: "",
-    serviceid: companyCode,
-    location: "",
-    find_row_value: "",
-    pgNum: 1,
     isSearch: true,
   });
 
+  // 프로필 사진조회
   const [picFilters, setpicFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
@@ -779,87 +779,74 @@ const HU_A1000W: React.FC = () => {
     isSearch: true,
   });
 
-  const fetchData = async (filters2: any) => {
-    const parameters: Iparameters = {
+  // 부서 조회 후 트리형식으로 변환
+  const fetchData2 = async (filters2: any) => {
+    let data: any;
+    const subparameters: Iparameters = {
       procedureName: "P_SY_A0125W_Q",
-      pageNumber: 1,
-      pageSize: 500,
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": filters2.workType,
-        "@p_orgdiv": filters2.orgdiv,
-        "@p_location": filters2.location,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_location": sessionLocation,
         "@p_dptcd": filters2.dptcd,
         "@p_dptnm": filters2.dptnm,
         "@p_user_name": filters2.user_name,
-        "@p_serviceid": filters2.serviceid,
+        "@p_serviceid": companyCode,
       },
     };
-
     try {
-      const data = await processApi<any>("procedure", parameters);
-      if (data.isSuccess == true) {
-        setInformation(data.tables[0].Rows);
-      } else {
-        console.log("[에러발생]");
-      }
+      data = await processApi<any>("procedure", subparameters);
     } catch (error) {
-      console.error("API 호출 중 오류:", error);
+      data = null;
     }
-  };
-  useEffect(() => {
-    fetchData(filters2);
-  }, [filters2]);
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      // 트리 구조로 변환하는 함수
+      rows.forEach((row: Department) => {
+        const nodeId: string = row.dptcd; // 노드의 고유 식별자
+        const parentId: string = row.prntdptcd; // 부모 노드의 고유 식별자
 
-  const fetchData2 = async (subFilters: any, dptcdArray: string[]) => {
-    let tempCombinedResult: any[] = [];
+        // 노드 생성
+        const node: Department = { ...row, children: [] };
 
-    for (const dptcd of dptcdArray) {
-      const subparameters: Iparameters = {
-        procedureName: "P_SY_A0125W_Q",
-        pageNumber: subFilters.pgNum,
-        pageSize: subFilters.pgSize,
-        parameters: {
-          "@p_work_type": subFilters.workType,
-          "@p_orgdiv": subFilters.orgdiv,
-          "@p_location": subFilters.location,
-          "@p_dptcd": dptcd, // 각 부서 코드를 전달
-          "@p_dptnm": subFilters.dptnm,
-          "@p_user_name": subFilters.user_name,
-          "@p_serviceid": subFilters.serviceid,
-        },
-      };
+        // idToNodeMap에 노드 추가
+        idToNodeMap[nodeId] = node;
 
-      try {
-        const data = await processApi<any>("procedure", subparameters);
-        if (data.isSuccess == true) {
-          tempCombinedResult = [...tempCombinedResult, ...data.tables[0].Rows];
+        // 부모 노드가 없는 경우 최상위 노드로 처리
+        if (parentId === "") {
+          tree.push(node);
         } else {
-          console.log("[에러발생]");
+          // 부모 노드가 있는 경우 부모 노드에 자식 노드로 추가
+          const parentNode = idToNodeMap[parentId];
+          if (parentNode) {
+            if (row.prntdptcd === parentNode.dptcd) {
+              parentNode.children = parentNode.children ?? [];
+              parentNode.children.push(node);
+            }
+          }
         }
-      } catch (error) {
-        console.error("API 호출 중 오류:", error);
-      }
+      });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
     }
-    setCombinedResult(tempCombinedResult);
   };
 
-  useEffect(() => {
-    fetchData2(subFilters, dptcdArray);
-  }, [dptcdArray]);
-
+  // id, 프로필 이미지
   const fetchData3 = async (picFilters: any) => {
-    //if (!permissions?.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SY_A0012W_Q ",
+      procedureName: "P_SY_A0012W_Q",
       pageNumber: picFilters.pgNum,
       pageSize: picFilters.pgSize,
       parameters: {
         "@p_work_type": picFilters.work_type,
         "@p_orgdiv": picFilters.cboOrgdiv,
         "@p_location": picFilters.cboLocation,
-        "@p_dptcd": picFilters.dptcd,
+        "@p_dptcd": "",
         "@p_lang_id": picFilters.lang_id,
         "@p_user_category": picFilters.user_category,
         "@p_user_id": picFilters.user_id,
@@ -878,353 +865,160 @@ const HU_A1000W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
-      const profileImageData = rows.map((row: any) => {
-        return {
-          user_id: row.user_id,
-          profile_img: row.profile_image,
-        };
-      });
-      setProfileImg(profileImageData);
+      const informationData = rows.map((row: any) => ({
+        dptcd: row.dptcd,
+        expanded: false,
+        type: "person",
+        data: {
+          image: row.profile_image
+            ? `data:image/jpeg;base64,${row.profile_image}`
+            : "/logo192.png",
+          name: row.user_name,
+          title: row.postcd,
+        },
+        children: [],
+      }));
+      setInformation(informationData);
     }
   };
 
-  useEffect(() => {
-    fetchData3(picFilters);
-  }, [picFilters]);
+  const orgData = (data: any[], information: any[]): DataItem[] => {
+    const departmentNodes: DataItem[] = [];
 
-  interface ProfileProps {
-    user_name: string;
-    postcd: string | undefined;
-    profile_img?: string;
-    color?: string;
-  }
+    // 각 부서에 대한 노드 생성
+    data.forEach((item) => {
+      const matchingUsers = information.filter(
+        (user) => user.dptcd === item.dptcd
+      );
 
-  const Profile = ({ user_name, postcd, profile_img, color }: ProfileProps) => {
-    const isProfileNeeded = (postcd: string | undefined) => {
-      return postcd == "이사" || postcd == "PM";
-    };
+      // 사용자 데이터를 필터링하고 직위 코드 순으로 정렬
+      const usersData = matchingUsers
+        .filter((user) => user.data.title !== "01") // title이 "01"이 아닌 사용자만 필터링
+        .map((user) => ({
+          ...user,
+          children: [] as DataItem3[],
+        }))
+        .sort((a, b) => a.data.title.localeCompare(b.data.title));
 
-    return (
-      <>
-        {isProfileNeeded(postcd) ? (
-          <div
-            style={{
-              background: "#f3f3f3",
-              borderRadius: "15px",
-              height: "200px",
-              width: "165px",
-              boxShadow: "12px 12px rgba(0,0,0,0.1)",
-              transition: "all 0.3s cubic-bezier(.25,.8,.25,1)",
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column" as FlexDirection,
-              border: "1px solid #e4e2e2",
-              marginBottom: "30px",
-            }}
-          >
-            <img
-              src={
-                profile_img
-                  ? `data:image/jpeg;base64,${profile_img}`
-                  : "./logo192.png"
-              }
-              alt="Profile"
-              style={{
-                borderRadius: "65555px",
-                borderStyle: "solid",
-                borderColor: "#e2e2e2",
-                borderWidth: "2px",
-                width: "80px",
-                height: "80px",
-                objectFit: "cover",
-                margin: "auto",
-                marginTop: "50px",
-                padding: "3px",
-              }}
-            />
-            <div
-              style={{
-                color: "#ffffff",
-                height: "40px",
-                width: "100%",
-                position: "relative",
-                fontFamily: "sans-serif",
-                fontWeight: "900",
-                fontSize: "18px",
-                textAlign: "center",
-                lineHeight: "40px",
-                marginTop: "10px",
-                backgroundColor: color,
-              }}
-            >
-              {user_name}
-            </div>
-            <p
-              style={{
-                color: "#000000",
-                textAlign: "center",
-                fontFamily: "sans-serif",
-                position: "relative",
-                fontWeight: "700",
-                fontSize: "15px",
-                marginTop: "10px",
-                paddingBottom: "40px",
-              }}
-            >
-              {postcd}
-            </p>
-          </div>
-        ) : (
-          <div
-            style={{
-              background: "#f3f3f3",
-              borderRadius: "10px",
-              height: "85px",
-              width: "250px",
-              boxShadow: "12px 12px rgba(0,0,0,0.1)",
-              display: "flex",
-              marginBottom: "20px",
-              position: "relative",
-            }}
-          >
-            <img
-              src={
-                profile_img
-                  ? `data:image/jpeg;base64,${profile_img}`
-                  : "./logo192.png"
-              }
-              alt="Profile"
-              style={{
-                borderRadius: "65555px",
-                borderStyle: "solid",
-                borderColor: "#e2e2e2",
-                borderWidth: "2px",
-                width: "60px",
-                height: "60px",
-                objectFit: "cover",
-                margin: "15px 0 0 20px",
-              }}
-            />
-            <p
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                paddingLeft: "15px",
-              }}
-            >
-              <span
-                style={{
-                  fontWeight: "600",
-                  color: "#3f3f3f",
-                  fontSize: "17px",
-                  paddingBottom: "10px",
-                }}
-              >
-                {user_name}
-              </span>
-              <span
-                style={{ fontWeight: "600", fontSize: "15px", color: color }}
-              >
-                {postcd}
-              </span>
-            </p>
-          </div>
-        )}
-      </>
-    );
+      // 각 사용자에 대해 자식 노드를 추가
+      const userMap: { [key: string]: DataItem3 } = {};
+      usersData.forEach((user) => {
+        userMap[user.data.name] = user;
+      });
+
+      usersData.forEach((user) => {
+        const parent = usersData.find(
+          (u) => u.dptcd === user.dptcd && u.data.title < user.data.title // 직위 코드가 낮을수록 상위 직위
+        );
+        if (parent) {
+          parent.children.push(user);
+        }
+      });
+
+      // 숫자로 정렬된 후 각 title을 한글로 변환
+      usersData.forEach((user) => {
+        const matchedPostcdItem = postcdListData.find(
+          (postcdItem) => postcdItem.sub_code === user.data.title
+        );
+        if (matchedPostcdItem) {
+          user.data.title = matchedPostcdItem.code_name;
+        }
+      });
+
+      // 최상위 사용자들만 필터링
+      const topUsers = usersData.filter(
+        (user) => !usersData.some((u) => u.children.includes(user))
+      );
+
+      const userNodes: DataItem3[] = topUsers.map((user) => ({
+        expanded: false,
+        type: "person",
+        data: {
+          image: user.data.image,
+          name: user.data.name,
+          title: user.data.title,
+        },
+        children: user.children,
+      }));
+
+      const childrenNodes = item.children
+        ? orgData(item.children, information)
+        : [];
+
+      // departmentNode를 생성하고 children에 사용자 데이터를 추가
+      const departmentNode: DataItem = {
+        label: item.dptnm,
+        expanded: childrenNodes.length > 0 || userNodes.length > 0,
+        children: [...childrenNodes, ...userNodes],
+      };
+
+      // departmentNodes 배열에 해당 부서 노드 추가
+      departmentNodes.push(departmentNode);
+    });
+
+    return departmentNodes;
   };
 
-  const OrgData = () => {
-    const departmentColors = [
-      "#FCB9AA",
-      "#FFDBCC",
-      "#ECEAE4",
-      "#A2E1DB",
-      "#55CBCD",
-      "#CCE2CB",
-      "#B6CFB6",
-      "#97C1A9",
-    ];
+  // 최상위 노드 생성
+  const transformedData = [
+    {
+      expanded: true,
+      type: "person",
+      data: {
+        image: "",
+        name: "",
+        title: "",
+      },
+      children: orgData(tree, information), // 하위 부서 및 사용자 정보 추가
+    },
+  ];
 
-    const getDepartmentColor = (index: number): string => {
-      // 색상 인덱스가 배열의 범위를 초과하는 경우를 대비하여 나머지 연산을 사용합니다.
-      const colorIndex = index % departmentColors.length;
-      return departmentColors[colorIndex];
-    };
+  // 대표이사 정보 찾기
+  const ceo = information.find((user) => user.data.title === "01");
 
-    return (
-      <>
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              width: "100%",
-              paddingTop: "20px",
-            }}
-          >
-            {information.map((info, index) => (
-              <div
-                key={index}
-                className="department"
-                style={{
-                  marginBottom: "80px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  flexWrap: "wrap",
-                  marginRight: "20px",
-                }}
-              >
-                {info.prntdptcd == "" && (
-                  <div
-                    style={{
-                      marginBottom: "80px",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <p
-                      style={{
-                        borderRadius: "8px",
-                        height: "50px",
-                        width: "170px",
-                        position: "relative",
-                        fontSize: "24px",
-                        fontWeight: "bolder",
-                        color: "white",
-                        textAlign: "center",
-                        lineHeight: "45px",
-                        backgroundColor: getDepartmentColor(index),
-                      }}
-                    >
-                      {info.dptnm}
-                    </p>
-                    {combinedResult
-                      .filter((person) => person.dptcd == info.dptcd)
-                      .map((person, personIndex) => {
-                        const profileData = profileImg.find(
-                          (item) => item.user_id == person.user_id
-                        );
+  // 대표이사 정보가 있을 경우 데이터 설정
+  if (ceo) {
+    transformedData[0].data.name = ceo.data.name;
+    transformedData[0].data.title = "대표이사";
+    transformedData[0].data.image = ceo.data.image;
+  }
 
-                        return (
-                          <div key={personIndex}>
-                            {personIndex == 0 && (
-                              <div
-                                style={{
-                                  width: "2px",
-                                  height: "30px",
-                                  backgroundColor: "grey",
-                                  marginLeft: "50%",
-                                }}
-                              />
-                            )}
-                            <Profile
-                              user_name={person.user_name}
-                              postcd={
-                                postcdListData.find(
-                                  (item: any) => item.sub_code == person.postcd
-                                )?.code_name
-                              }
-                              profile_img={
-                                profileData ? profileData.profile_img : null
-                              }
-                              color={getDepartmentColor(index)}
-                            />
-                          </div>
-                        );
-                      })}
-                  </div>
-                )}
-                <div
-                  className="subdepartmentContainer"
-                  style={{
-                    marginTop: "20px",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                    width: "100%",
-                  }}
-                >
-                  {index !== information.length - 1 && (
-                    <div style={{ paddingTop: "10px" }} />
-                  )}
-                  <div>
-                    {information
-                      .filter((subInfo) => subInfo.prntdptcd == info.dptcd)
-                      .map((subInfo, subIndex, array) => (
-                        <div
-                          key={subIndex}
-                          style={{
-                            borderRadius: "8px",
-                            height: "50px",
-                            width: "170px",
-                            position: "relative",
-                            fontSize: "24px",
-                            fontWeight: "bolder",
-                            color: "white",
-                            textAlign: "center",
-                            lineHeight: "45px",
-                            backgroundColor: getDepartmentColor(index),
-                          }}
-                        >
-                          {subIndex !== 0 || (array.length > 1 && <div />)}
-                          <p className="departmentText">{subInfo.dptnm}</p>
-                          {combinedResult
-                            .filter((person) => person.dptcd == subInfo.dptcd)
-                            .map((person, personIndex) => {
-                              const profileData = profileImg.find(
-                                (item) => item.user_id == person.user_id
-                              );
-                              return (
-                                <div key={personIndex}>
-                                  {personIndex == 0 && (
-                                    <div
-                                      style={{
-                                        width: "2px",
-                                        height: "30px",
-                                        backgroundColor: "grey",
-                                        marginLeft: "50%",
-                                      }}
-                                    />
-                                  )}
-                                  <div className="subProfile">
-                                    <Profile
-                                      user_name={person.user_name}
-                                      postcd={
-                                        postcdListData.find(
-                                          (item: any) =>
-                                            item.sub_code == person.postcd
-                                        )?.code_name
-                                      }
-                                      profile_img={
-                                        profileData
-                                          ? profileData.profile_img
-                                          : null
-                                      }
-                                      color={getDepartmentColor(index)}
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            })}
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+  useEffect(() => {
+    fetchData2(filters2);
+    fetchData3(picFilters);
+  }, []);
+
+  const [selection, setSelection] = useState([]);
+
+  const nodeTemplate = (node: Node) => {
+    if (node.type === "person") {
+      return (
+        <div className="flex flex-column">
+          <div className="flex flex-column align-items-center">
+            <img
+              alt={node.data.name}
+              src={node.data.image}
+              className="mb-3 w-3rem h-3rem"
+            />
+            <span className="font-bold mb-2">{node.data.name}</span>
+            <span>{node.data.title}</span>
           </div>
         </div>
-      </>
+      );
+    }
+
+    return node.label;
+  };
+  const OrgData = () => {
+    return (
+      <div style={{ overflow: "auto", height: "79vh" }}>
+        <OrganizationChart
+          value={transformedData}
+          selectionMode="multiple"
+          selection={selection}
+          nodeTemplate={nodeTemplate}
+        />
+      </div>
     );
   };
 
