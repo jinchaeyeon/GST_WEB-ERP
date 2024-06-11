@@ -123,10 +123,10 @@ const FlowChartReadOnly = (props) => {
 
   return (
     <>
-      <GridContainerWrap height={isMobile ? props.height : "84vh"}>
+      <GridContainerWrap height={props.height}>
         <GridContainer
           width="100%"
-          height={isMobile ? "100%" : ""}
+          height={"100%"}
           style={{ border: "1px solid #d3d3d3" }}
         >
           <div

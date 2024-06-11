@@ -15,6 +15,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import React, {
   MouseEvent,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -29,6 +30,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ContextMenu,
+  FilterBox,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -48,7 +50,9 @@ import {
   UsePermissions,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
+  handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -66,11 +70,8 @@ import DetailWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
   clickedState,
-  heightstate,
   infoState,
-  isDeviceWidthState,
   isLoading,
-  isMobileState,
   pointsState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
@@ -96,31 +97,57 @@ const boardStyle: CSSProperties = {
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 const SY_A0500W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const layout = useMemo(() => new Layout(), []);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
     delete: false,
   });
   UsePermissions(setPermissions);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const containerStyle: CSSProperties = {
-    width: isMobile ? `${deviceWidth - 30}px` : "100%",
-    height: isMobile ? deviceHeight - height : "80vh",
-    border: "1px solid gray",
-  };
-  //커스텀 옵션 조회
-  const setLoading = useSetRecoilState(isLoading);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("SY_A0500W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+      height4 = getHeight(".FormBoxWrap");
+      console.log(getDeviceHeight(false) - height2 - height3 - height4)
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(false) - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height3);
+        setWebHeight2(getDeviceHeight(false) - height2 - height3 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
+  //커스텀 옵션 조회
+  const setLoading = useSetRecoilState(isLoading);
+
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const [[knightX, knightY, indexs], setKnightPos] = useState<Position>(
@@ -1206,25 +1233,6 @@ const SY_A0500W: React.FC = () => {
               )}
             </ButtonContainer>
           </TitleContainer>
-          <FilterContainer>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>사업장</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="location"
-                        value={filters.location}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FilterContainer>
           <Swiper
             onSwiper={(swiper) => {
               setSwiper(swiper);
@@ -1239,6 +1247,42 @@ const SY_A0500W: React.FC = () => {
                   width: "100%",
                 }}
               >
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>사업장</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="location"
+                              value={filters.location}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle></GridTitle>
+                  <ButtonContainer style={{ justifyContent: "right" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-right"
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
@@ -1246,7 +1290,7 @@ const SY_A0500W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: mobileheight,
                       overflow: "auto",
                     }}
                     data={process(
@@ -1315,7 +1359,7 @@ const SY_A0500W: React.FC = () => {
               key={1}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle></GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
@@ -1333,12 +1377,17 @@ const SY_A0500W: React.FC = () => {
               <GridContainer
                 style={{
                   width: "100%",
-                  height: deviceHeight - height,
                   overflow: "auto",
                 }}
               >
                 <DndProvider backend={HTML5Backend}>
-                  <div style={containerStyle}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: mobileheight2,
+                      border: "1px solid gray",
+                    }}
+                  >
                     <div style={boardStyle}>{squares}</div>
                   </div>
                 </DndProvider>
@@ -1364,16 +1413,35 @@ const SY_A0500W: React.FC = () => {
           </TitleContainer>
           <GridContainerWrap onClick={deletemenu}>
             <GridContainer width="20%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={mainDataResult.data}
                 fileName="레이아웃 설정"
               >
                 <Grid
-                  style={{ height: isMobile ? "40vh" : "87.5vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1436,7 +1504,7 @@ const SY_A0500W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(80% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>프로세스 레이아웃</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -1495,7 +1563,7 @@ const SY_A0500W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap>
+              <FormBoxWrap className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1545,7 +1613,13 @@ const SY_A0500W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <DndProvider backend={HTML5Backend}>
-                <div style={containerStyle}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: webheight2,
+                    border: "1px solid gray",
+                  }}
+                >
                   <div style={boardStyle}>{squares}</div>
                 </div>
               </DndProvider>

@@ -489,9 +489,12 @@ export const GridContainer = styled.div<TGridContainer>`
   margin-left: ${(props) => (props.margin ? props.margin.left ?? "" : "")};
   margin-right: ${(props) => (props.margin ? props.margin.right ?? "" : "")};
 
-  .k-grid,
+  .k-grid {
+    padding: 0px;
+  }
+  
   .k-scheduler {
-    margin: 5px 0;
+    padding: 5px 0;
   }
   .k-grid .k-command-cell {
     text-align: center;

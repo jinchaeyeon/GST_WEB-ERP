@@ -7,7 +7,7 @@ import {
   GridEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { useRecoilState } from "recoil";
@@ -32,33 +32,64 @@ import {
   UseGetValueFromSessionItem,
   chkScrollHandler,
   convertDateToStr,
+  getDeviceHeight,
   getHeight,
-  useGeoLocation
+  useGeoLocation,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isMobileState,
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var index = 0;
-
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 const DATA_ITEM_KEY = "datnum";
 
 const SY_B0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("SY_B0060W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false) - height);
+        setMobileHeight2(((getDeviceHeight(false) - height2) / 2) - height3);
+        setMobileHeight3(((getDeviceHeight(false) - height2) / 2) - height4);
+        setWebHeight(getDeviceHeight(false) - height - height5);
+        setWebHeight2(((getDeviceHeight(false) - height) / 2) - height3);
+        setWebHeight3(((getDeviceHeight(false) - height) / 2) - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3]);
 
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -70,10 +101,6 @@ const SY_B0060W: React.FC = () => {
   const geoLocation = useGeoLocation();
 
   const pc = UseGetValueFromSessionItem("pc");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SY_B0060W", setCustomOptionData);
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -537,95 +564,89 @@ const SY_B0060W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer style={{ flexDirection: "column" }}>
-              <MainTopContainer className="ButtonContainer">
-                <ButtonContainer>
-                  <Button
-                    icon={"home"}
-                    fillMode={"flat"}
-                    themeColor={"primary"}
-                  >
-                    HOMEPAGE
-                  </Button>
-                  <Button
-                    icon={"email"}
-                    fillMode={"flat"}
-                    themeColor={"primary"}
-                  >
-                    E-MAIL
-                  </Button>
-                </ButtonContainer>
-              </MainTopContainer>
+              <div className="ButtonContainer">
+                <MainTopContainer>
+                  <ButtonContainer>
+                    <Button
+                      icon={"home"}
+                      fillMode={"flat"}
+                      themeColor={"primary"}
+                    >
+                      HOMEPAGE
+                    </Button>
+                    <Button
+                      icon={"email"}
+                      fillMode={"flat"}
+                      themeColor={"primary"}
+                    >
+                      E-MAIL
+                    </Button>
+                  </ButtonContainer>
+                </MainTopContainer>
 
-              {!visible ? (
-                <>
-                  <MainWorkStartEndContainer>
-                    <TextContainer theme={"#2289c3"}>
-                      {workTimeDataResult.strtime} -{workTimeDataResult.endtime}
-                    </TextContainer>
-                    <Button
-                      themeColor={"primary"}
-                      onClick={() => {
-                        fetchWorkTimeSaved("start");
+                {!visible ? (
+                  <>
+                    <MainWorkStartEndContainer>
+                      <TextContainer theme={"#2289c3"}>
+                        {workTimeDataResult.strtime} -
+                        {workTimeDataResult.endtime}
+                      </TextContainer>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={() => {
+                          fetchWorkTimeSaved("start");
+                        }}
+                      >
+                        출근
+                      </Button>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={() => {
+                          fetchWorkTimeSaved("end");
+                        }}
+                      >
+                        퇴근
+                      </Button>
+                    </MainWorkStartEndContainer>
+                    <ApprovalBox
+                      style={{
+                        width: "100%",
+                        fontSize: "0.8em",
                       }}
                     >
-                      출근
-                    </Button>
-                    <Button
-                      themeColor={"primary"}
-                      onClick={() => {
-                        fetchWorkTimeSaved("end");
-                      }}
-                    >
-                      퇴근
-                    </Button>
-                  </MainWorkStartEndContainer>
-                  <ApprovalBox
-                    style={{
-                      width: "100%",
-                      fontSize: "0.8em",
-                    }}
-                    className="ButtonContainer2"
-                  >
-                    <ApprovalInner>
-                      <div>미결</div>
-                      <div>{approvalValueState.app}</div>
-                    </ApprovalInner>
-                    <ApprovalInner>
-                      <div>참조</div>
-                      <div>{approvalValueState.ref}</div>
-                    </ApprovalInner>
-                    <ApprovalInner>
-                      <div>반려</div>
-                      <div>{approvalValueState.rtr}</div>
-                    </ApprovalInner>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                      icon="info"
-                    >
-                      공지
-                    </Button>
-                  </ApprovalBox>
-                </>
-              ) : (
-                ""
-              )}
-              <GridContainer
-                style={{
-                  width: "100%",
-                  height: deviceHeight - height - height2,
-                  marginTop: "2vh",
-                }}
-              >
-                <FlowChartReadOnly
-                  data={mainDataResult2.data}
-                  filters={filters2}
-                  height={deviceHeight - height - height2}
-                />
-              </GridContainer>
+                      <ApprovalInner>
+                        <div>미결</div>
+                        <div>{approvalValueState.app}</div>
+                      </ApprovalInner>
+                      <ApprovalInner>
+                        <div>참조</div>
+                        <div>{approvalValueState.ref}</div>
+                      </ApprovalInner>
+                      <ApprovalInner>
+                        <div>반려</div>
+                        <div>{approvalValueState.rtr}</div>
+                      </ApprovalInner>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="info"
+                      >
+                        공지
+                      </Button>
+                    </ApprovalBox>
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
+              <FlowChartReadOnly
+                data={mainDataResult2.data}
+                filters={filters2}
+                height={mobileheight}
+              />
             </GridContainer>
           </SwiperSlide>
 
@@ -639,7 +660,7 @@ const SY_B0060W: React.FC = () => {
                 justifyContent: "left",
                 width: "100%",
               }}
-              className="ButtonContainer3"
+              className="ButtonContainer2"
             >
               <Button
                 onClick={() => {
@@ -659,12 +680,12 @@ const SY_B0060W: React.FC = () => {
               }}
             >
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer4">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>공지사항</GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height: (deviceHeight - height3 - height4 - height5) / 2,
+                    height: mobileheight2,
                   }}
                   data={process(
                     noticeDataResult.data.map((row) => ({
@@ -711,12 +732,12 @@ const SY_B0060W: React.FC = () => {
                 </Grid>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer5">
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>업무지시요청</GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height: (deviceHeight - height3 - height4 - height5) / 2,
+                    height: mobileheight3,
                   }}
                   data={process(workOrderDataResult.data, workOrderDataState)}
                   {...workOrderDataState}
@@ -754,7 +775,7 @@ const SY_B0060W: React.FC = () => {
         </Swiper>
       ) : (
         <>
-          <MainTopContainer>
+          <MainTopContainer className="ButtonContainer">
             <ButtonContainer>
               <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
                 HOMEPAGE
@@ -807,21 +828,22 @@ const SY_B0060W: React.FC = () => {
           </MainTopContainer>
           <GridContainerWrap>
             <GridContainer width="65%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer5">
                 <GridTitle>레이아웃</GridTitle>
               </GridTitleContainer>
               <FlowChartReadOnly
                 data={mainDataResult2.data}
                 filters={filters2}
+                height={webheight}
               />
             </GridContainer>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>공지사항</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "380px" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     noticeDataResult.data.map((row) => ({
                       ...row,
@@ -867,11 +889,11 @@ const SY_B0060W: React.FC = () => {
                 </Grid>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>업무지시요청</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "380px" }}
+                  style={{ height: webheight3 }}
                   data={process(workOrderDataResult.data, workOrderDataState)}
                   {...workOrderDataState}
                   onDataStateChange={onWorkOrderDataStateChange}
