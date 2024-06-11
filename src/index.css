@@ -317,14 +317,6 @@ input.readonly {
   }
 }
 
-.overflow_scrollhidden {
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 .swiper-slide {
   text-align: center !important;
   font-size: 18px !important;

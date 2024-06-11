@@ -10,8 +10,8 @@ import {
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import "swiper/css";
 import {
   ButtonContainer,
@@ -29,20 +29,26 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   dateformat7,
+  getDeviceHeight,
+  getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import FlowChart from "../components/Layout/FlowChart";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
-const SY_A0060W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+const SY_A0060W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -53,6 +59,34 @@ const SY_A0060W: React.FC = () => {
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SY_A0060W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [tabSelected, setTabSelected] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+
+        if (deviceWidth <= 1200) {
+          setTabSelected(0);
+        }
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, tabSelected]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -75,7 +109,7 @@ const SY_A0060W: React.FC = () => {
     setWorkType("U");
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
-  const [tabSelected, setTabSelected] = useState(0);
+
   const [clicks, setClicks] = useState(true);
 
   const handleSelectTab = (e: any) => {
@@ -288,23 +322,27 @@ const SY_A0060W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <TabStrip
-            style={{
-              width: isMobile ? "100%" : "100%",
-              height: deviceHeight,
-            }}
             selected={tabSelected}
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
             <TabStripTab title="레이아웃 리스트">
-              <Grid style={{ marginBottom: "30px" }} container spacing={2}>
+              <Grid
+                style={{ height: mobileheight, overflow: "auto" }}
+                container
+                spacing={2}
+              >
                 {mainDataResult.data.map((item) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-                    <Card
-                      onClick={(e) =>
-                        alert("모바일에서는 수정이 불가능합니다.")
-                      }
-                    >
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    xl={3}
+                    onClick={(e) => alert("모바일에서는 수정이 불가능합니다.")}
+                  >
+                    <Card>
                       <CardActionArea>
                         {item.preview_image == "" ||
                         item.preview_image == undefined ||
@@ -384,10 +422,6 @@ const SY_A0060W: React.FC = () => {
             </ButtonContainer>
           </TitleContainer>
           <TabStrip
-            style={{
-              width: isMobile ? "100%" : "100%",
-              height: "",
-            }}
             selected={tabSelected}
             onSelect={handleSelectTab}
             scrollable={isMobile}
@@ -414,8 +448,8 @@ const SY_A0060W: React.FC = () => {
                   </tbody>
                 </FilterBox>
               </FilterContainer>
-              <Box className="overflow_scrollhidden" style={{ height: "78vh" }}>
-                <GridTitleContainer>
+              <Box>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
@@ -428,10 +462,22 @@ const SY_A0060W: React.FC = () => {
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <Grid style={{ marginBottom: "30px" }} container spacing={2}>
+                <Grid
+                  style={{ height: webheight, overflow: "auto" }}
+                  container
+                  spacing={2}
+                >
                   {mainDataResult.data.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-                      <Card onClick={(e) => DetailView(item)}>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      xl={3}
+                      onClick={(e) => DetailView(item)}
+                    >
+                      <Card>
                         <CardActionArea>
                           {item.preview_image == "" ||
                           item.preview_image == undefined ||

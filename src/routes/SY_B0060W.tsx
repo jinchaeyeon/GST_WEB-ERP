@@ -77,11 +77,11 @@ const SY_B0060W: React.FC = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(false) - height);
-        setMobileHeight2(((getDeviceHeight(false) - height2) / 2) - height3);
-        setMobileHeight3(((getDeviceHeight(false) - height2) / 2) - height4);
+        setMobileHeight2((getDeviceHeight(false) - height2) / 2 - height3);
+        setMobileHeight3((getDeviceHeight(false) - height2) / 2 - height4);
         setWebHeight(getDeviceHeight(false) - height - height5);
-        setWebHeight2(((getDeviceHeight(false) - height) / 2) - height3);
-        setWebHeight3(((getDeviceHeight(false) - height) / 2) - height4);
+        setWebHeight2((getDeviceHeight(false) - height) / 2 - height3);
+        setWebHeight3((getDeviceHeight(false) - height) / 2 - height4);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);

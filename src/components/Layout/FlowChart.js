@@ -877,7 +877,7 @@ const FlowChart = (props) => {
       <GridContainerWrap>
         <GridContainer
           width="65%"
-          height="84vh"
+          height={"100%"}
           style={{ border: "1px solid #d3d3d3" }}
         >
           <div
@@ -936,11 +936,11 @@ const FlowChart = (props) => {
         <GridContainer
           width={`calc(35% - ${GAP}px)`}
           style={{ overflowY: "scroll" }}
-          height="84vh"
+          height={"100%"}
         >
-          <GridTitleContainer style={{ marginRight: "5px" }}>
+          <GridTitleContainer style={{ paddingRight: "5px" }}>
             <GridTitle>편집</GridTitle>
-            <ButtonContainer style={{ marginBottom: "5px" }}>
+            <ButtonContainer style={{ paddingBottom: "5px" }}>
               <ButtonKendo
                 onClick={onDeleteClick}
                 fillMode="outline"
@@ -959,7 +959,7 @@ const FlowChart = (props) => {
               </ButtonKendo>
             </ButtonContainer>
           </GridTitleContainer>
-          <GridContainer style={{ marginRight: "5px" }}>
+          <GridContainer style={{ paddingRight: "5px" }}>
             <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}

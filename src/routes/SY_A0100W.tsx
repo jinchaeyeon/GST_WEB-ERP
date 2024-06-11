@@ -25,8 +25,8 @@ import {
 import { Checkbox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -46,6 +46,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -53,7 +54,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let targetRowIndex: null | number = null;
@@ -69,12 +70,14 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
 const App: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [usedUserCnt, setUsedUserCnt] = useState(0);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [group, setGroup] = React.useState(initialGroup);
@@ -82,7 +85,7 @@ const App: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   let gridRef: any = useRef(null);
   const idGetter = getter(DATA_ITEM_KEY);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -91,8 +94,7 @@ const App: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SY_A0100W", setMessagesData);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -114,6 +116,29 @@ const App: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SY_A0100W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, tabSelected]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -152,7 +177,6 @@ const App: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
     resetAllGrid();
@@ -527,7 +551,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "77.8vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({

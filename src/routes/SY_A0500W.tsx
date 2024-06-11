@@ -128,7 +128,7 @@ const SY_A0500W: React.FC = () => {
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".TitleContainer");
       height4 = getHeight(".FormBoxWrap");
-      console.log(getDeviceHeight(false) - height2 - height3 - height4)
+    
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
