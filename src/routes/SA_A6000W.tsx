@@ -20,6 +20,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -54,6 +55,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -72,10 +74,8 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -201,14 +201,18 @@ const CustomPercentCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+
 const SA_A6000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -249,7 +253,7 @@ const SA_A6000W: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const position = loginResult ? loginResult.position : "";
   const pc = UseGetValueFromSessionItem("pc");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -333,6 +337,53 @@ const SA_A6000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A6000W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".ButtonContainer2");
+      height6 = getHeight(".ButtonContainer3");
+      height7 = getHeight(".ButtonContainer4");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(
+          getDeviceHeight(true) - height - height2 - height4 - height5
+        );
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height6);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height7);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setWebHeight3(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight4(getDeviceHeight(true) - height - height2 - height7);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    tabSelected,
+  ]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -2245,7 +2296,6 @@ const SA_A6000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{ width: "100%", height: isMobile ? "" : "83vh" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
         scrollable={isMobile}
@@ -2291,7 +2341,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2363,33 +2413,47 @@ const SA_A6000W: React.FC = () => {
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer2">
-                    <FormBoxWrap border={true}>
-                      <FormBox>
-                        <tr>
-                          <th>이전년도 계약변경건 실적</th>
-                          <td>
-                            <Input
-                              name="amt"
-                              type="text"
-                              value={numberWithCommas(information.amt)}
-                              style={{ textAlign: "right" }}
-                              className="readonly"
-                            />
-                          </td>
-                          <td colSpan={2}>
-                            <Button
-                              onClick={onSave}
-                              fillMode="outline"
-                              themeColor={"primary"}
-                              icon="save"
-                            >
-                              저장
-                            </Button>
-                          </td>
-                        </tr>
-                      </FormBox>
-                    </FormBoxWrap>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
+                  <FormBoxWrap border={true} className="FormBoxWrap">
+                    <FormBox>
+                      <tr>
+                        <th>이전년도 계약변경건 실적</th>
+                        <td>
+                          <Input
+                            name="amt"
+                            type="text"
+                            value={numberWithCommas(information.amt)}
+                            style={{ textAlign: "right" }}
+                            className="readonly"
+                          />
+                        </td>
+                        <td colSpan={2}>
+                          <Button
+                            onClick={onSave}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="save"
+                          >
+                            저장
+                          </Button>
+                        </td>
+                      </tr>
+                    </FormBox>
+                  </FormBoxWrap>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -2398,7 +2462,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 - 7 }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2473,7 +2537,7 @@ const SA_A6000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="40%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       {convertDateToStr(filters.yyyy).substring(0, 4)}년
                     </GridTitle>
@@ -2486,7 +2550,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: "70vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2556,7 +2620,7 @@ const SA_A6000W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
                   <GridTitleContainer>
-                    <FormBoxWrap border={true}>
+                    <FormBoxWrap border={true} className="FormBoxWrap">
                       <FormBox>
                         <tr>
                           <th>이전년도 계약변경건 실적</th>
@@ -2591,7 +2655,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: "65vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2727,7 +2791,7 @@ const SA_A6000W: React.FC = () => {
                       fileName="판매계획관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2859,7 +2923,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height4 }}
+                      style={{ height: mobileheight4 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -2947,7 +3011,7 @@ const SA_A6000W: React.FC = () => {
                   }}
                 >
                   <GridContainer width="40%">
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>
                         {convertDateToStr(filters.yyyy).substring(0, 4)}년
                       </GridTitle>
@@ -2969,7 +3033,7 @@ const SA_A6000W: React.FC = () => {
                       fileName="판매계획관리"
                     >
                       <Grid
-                        style={{ height: "70vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -3055,7 +3119,7 @@ const SA_A6000W: React.FC = () => {
                   </GridContainer>
                 </FormContext.Provider>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3083,7 +3147,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: "70.5vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
