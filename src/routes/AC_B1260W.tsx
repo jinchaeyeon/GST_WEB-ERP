@@ -22,7 +22,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -49,6 +49,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
@@ -63,14 +64,16 @@ import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const AC_B1260W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -79,7 +82,26 @@ const AC_B1260W: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -88,6 +110,57 @@ const AC_B1260W: React.FC = () => {
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_B1260W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight6(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight7(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight8(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight9(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight10(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight2((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight3((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight4((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight5((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight6((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight7((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight8((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight9((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight10((getDeviceHeight(true) - height2 - height3) / 2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+    webheight7,
+    webheight8,
+    webheight9,
+    webheight10,
+  ]);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -587,7 +660,7 @@ const AC_B1260W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [tabSelected, setTabSelected] = React.useState(0);
+
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetGrid();
@@ -925,7 +998,7 @@ const AC_B1260W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -945,7 +1018,7 @@ const AC_B1260W: React.FC = () => {
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: mobileheight }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -974,7 +1047,7 @@ const AC_B1260W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       <Button
@@ -996,7 +1069,7 @@ const AC_B1260W: React.FC = () => {
                     fileName="단축코드별집계"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1142,14 +1215,14 @@ const AC_B1260W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="45vh">
+                <GridContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: "100%" }}
+                    style={{ height: webheight }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -1185,7 +1258,7 @@ const AC_B1260W: React.FC = () => {
                   fileName="단축코드별집계"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight2 }}
                     data={process(
                       gridDataResult.data.map((row) => ({
                         ...row,
@@ -1340,7 +1413,7 @@ const AC_B1260W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -1360,7 +1433,7 @@ const AC_B1260W: React.FC = () => {
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: mobileheight3 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -1389,7 +1462,7 @@ const AC_B1260W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       <Button
@@ -1411,7 +1484,7 @@ const AC_B1260W: React.FC = () => {
                     fileName="단축코드별집계"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight4 }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1557,14 +1630,14 @@ const AC_B1260W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="45vh">
+                <GridContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: "100%" }}
+                    style={{ height: webheight3 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -1599,7 +1672,7 @@ const AC_B1260W: React.FC = () => {
                   fileName="단축코드별집계"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight4 }}
                     data={process(
                       gridDataResult.data.map((row) => ({
                         ...row,
@@ -1754,7 +1827,7 @@ const AC_B1260W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -1774,7 +1847,7 @@ const AC_B1260W: React.FC = () => {
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: mobileheight5 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -1803,7 +1876,7 @@ const AC_B1260W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       <Button
@@ -1825,7 +1898,7 @@ const AC_B1260W: React.FC = () => {
                     fileName="단축코드별집계"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight6 }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1971,14 +2044,14 @@ const AC_B1260W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="45vh">
+                <GridContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: "100%" }}
+                    style={{ height: webheight5 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2013,7 +2086,7 @@ const AC_B1260W: React.FC = () => {
                   fileName="단축코드별집계"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight6 }}
                     data={process(
                       gridDataResult.data.map((row) => ({
                         ...row,
@@ -2168,7 +2241,7 @@ const AC_B1260W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -2188,7 +2261,7 @@ const AC_B1260W: React.FC = () => {
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: mobileheight7 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2217,7 +2290,7 @@ const AC_B1260W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       <Button
@@ -2239,7 +2312,7 @@ const AC_B1260W: React.FC = () => {
                     fileName="단축코드별집계"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight8 }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2385,14 +2458,14 @@ const AC_B1260W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="45vh">
+                <GridContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: "100%" }}
+                    style={{ height: webheight8 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2427,7 +2500,7 @@ const AC_B1260W: React.FC = () => {
                   fileName="단축코드별집계"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight9 }}
                     data={process(
                       gridDataResult.data.map((row) => ({
                         ...row,
@@ -2582,7 +2655,7 @@ const AC_B1260W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -2602,7 +2675,7 @@ const AC_B1260W: React.FC = () => {
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: mobileheight9 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2631,7 +2704,7 @@ const AC_B1260W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>
                       <Button
@@ -2653,7 +2726,7 @@ const AC_B1260W: React.FC = () => {
                     fileName="단축코드별집계"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight10 }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -2799,14 +2872,14 @@ const AC_B1260W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="45vh">
+                <GridContainer>
                   <Chart
                     seriesColors={
                       window.location.href.split("/")[2].split(".")[1] == "ddgd"
                         ? DDGDcolorList
                         : WebErpcolorList
                     }
-                    style={{ height: "100%" }}
+                    style={{ height: webheight9 }}
                   >
                     <ChartValueAxis>
                       <ChartValueAxisItem
@@ -2841,7 +2914,7 @@ const AC_B1260W: React.FC = () => {
                   fileName="단축코드별집계"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight10 }}
                     data={process(
                       gridDataResult.data.map((row) => ({
                         ...row,

@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -60,7 +61,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -103,15 +104,60 @@ type TDetailData = {
   itemtaxamt_s: string[];
   remark3_s: string[];
 };
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
 const AC_B5040W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B5040W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height2);
+        setMobileHeight4(getDeviceHeight(true) - height - height2);
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+        setWebHeight2(getDeviceHeight(true) - height - height2);
+        setWebHeight3(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
+
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -124,10 +170,7 @@ const AC_B5040W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B5040W", setMessagesData);
-  const [tabSelected, setTabSelected] = React.useState(0);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B5040W", setCustomOptionData);
+
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
     "L_AC405, R_Override, R_gubunD, L_AC402, L_AC003, L_AC403, L_AC404",
@@ -429,6 +472,9 @@ const AC_B5040W: React.FC = () => {
     }
   }, [filters]);
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     resetAllGrid();
     setTabSelected(e.selected);
     if (e.selected == 0) {
@@ -1190,10 +1236,8 @@ const AC_B5040W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitle>
                   </GridTitleContainer>
-                  <GridContainer
-                    style={{ height: deviceHeight - height - height1 }}
-                  >
-                    <FormBoxWrap border={true}>
+                  <GridContainer>
+                    <FormBoxWrap border={true} style={{ height: mobileheight }}>
                       <GridTitleContainer>
                         <GridTitle>세금계산서오류사항변경</GridTitle>
                       </GridTitleContainer>
@@ -1277,7 +1321,7 @@ const AC_B5040W: React.FC = () => {
                     fileName="전자세금계산서비교현황"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1357,7 +1401,7 @@ const AC_B5040W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <GridTitleContainer>
                   <GridTitle>세금계산서오류사항변경</GridTitle>
                 </GridTitleContainer>
@@ -1405,7 +1449,7 @@ const AC_B5040W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
@@ -1426,7 +1470,7 @@ const AC_B5040W: React.FC = () => {
                   fileName="전자세금계산서비교현황"
                 >
                   <Grid
-                    style={{ height: "60vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1592,7 +1636,7 @@ const AC_B5040W: React.FC = () => {
               fileName="전자세금계산서비교현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "74vh" }}
+                style={{ height: isMobile ? mobileheight3 : webheight2 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1730,7 +1774,7 @@ const AC_B5040W: React.FC = () => {
               fileName="전자세금계산서비교현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "74vh" }}
+                style={{ height: isMobile ? mobileheight4 : webheight3 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

@@ -12,8 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -34,6 +34,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -42,26 +43,71 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
+var height = 0;
+var height2 = 0;
+
 const AC_B6060W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B6060W", setCustomOptionData);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-tabstrip-items-wrapper");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height2);
+        setMobileHeight3(getDeviceHeight(true) - height - height2);
+        setMobileHeight4(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(getDeviceHeight(true) - height - height2);
+        setWebHeight3(getDeviceHeight(true) - height - height2);
+        setWebHeight4(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -92,10 +138,6 @@ const AC_B6060W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B6060W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B6060W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -151,8 +193,6 @@ const AC_B6060W: React.FC = () => {
   const [selectedState4, setSelectedState4] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -1869,7 +1909,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+                style={{ height: isMobile ? mobileheight : webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1935,7 +1975,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+                style={{ height: isMobile ? mobileheight2 : webheight2 }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -1995,7 +2035,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+                style={{ height: isMobile ? mobileheight3 : webheight3 }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
@@ -2058,7 +2098,7 @@ const AC_B6060W: React.FC = () => {
               fileName="집행현황"
             >
               <Grid
-                style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+                style={{ height: isMobile ? mobileheight4 : webheight4 }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,

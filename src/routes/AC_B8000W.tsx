@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -40,6 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -53,7 +54,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -86,18 +87,176 @@ const numberField = [
 
 const dateField = ["shipdt"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+
 const AC_B8000W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
-  var height6 = getHeight(".ButtonContainer6");
-  var height7 = getHeight(".k-tabstrip-items-wrapper");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [mobileheight11, setMobileHeight11] = useState(0);
+  const [mobileheight12, setMobileHeight12] = useState(0);
+  const [mobileheight13, setMobileHeight13] = useState(0);
+  const [mobileheight14, setMobileHeight14] = useState(0);
+  const [mobileheight15, setMobileHeight15] = useState(0);
+  const [mobileheight16, setMobileHeight16] = useState(0);
+  const [mobileheight17, setMobileHeight17] = useState(0);
+  const [mobileheight18, setMobileHeight18] = useState(0);
+  const [mobileheight19, setMobileHeight19] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
+  const [webheight11, setWebHeight11] = useState(0);
+  const [webheight12, setWebHeight12] = useState(0);
+  const [webheight13, setWebHeight13] = useState(0);
+  const [webheight14, setWebHeight14] = useState(0);
+  const [webheight15, setWebHeight15] = useState(0);
+  const [webheight16, setWebHeight16] = useState(0);
+  const [webheight17, setWebHeight17] = useState(0);
+  const [webheight18, setWebHeight18] = useState(0);
+  const [webheight19, setWebHeight19] = useState(0);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B8000W", setCustomOptionData);
+  const [isFilterHideStates, setIsFilterHideStates] =
+  useRecoilState(isFilterHideState);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      height6 = getHeight(".ButtonContainer6");
+      height7 = getHeight(".TitleContainer");
+      height8 = getHeight(".k-tabstrip-items-wrapper");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height7 - height8);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height7 - height8);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height7 - height8);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height7 - height8);
+        setMobileHeight5(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight6(getDeviceHeight(true) - height6 - height7 - height8);
+        setMobileHeight7(getDeviceHeight(true) - height - height7 - height8);
+        setMobileHeight8(getDeviceHeight(true) - height2 - height7 - height8);
+        setMobileHeight9(getDeviceHeight(true) - height3 - height7 - height8);
+        setMobileHeight10(getDeviceHeight(true) - height4 - height7 - height8);
+        setMobileHeight11(getDeviceHeight(true) - height - height7 - height8);
+        setMobileHeight12(getDeviceHeight(true) - height2 - height7 - height8);
+        setMobileHeight13(getDeviceHeight(true) - height3 - height7 - height8);
+        setMobileHeight14(getDeviceHeight(true) - height4 - height7 - height8);
+        setMobileHeight15(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight16(getDeviceHeight(true) - height6 - height7 - height8);
+        setMobileHeight17(getDeviceHeight(true) - height - height7 - height8);
+        setMobileHeight18(getDeviceHeight(true) - height2 - height7 - height8);
+        setMobileHeight19(getDeviceHeight(true) - height3 - height7 - height8);
+        setWebHeight((getDeviceHeight(true) - height7 - height8) / 3 - height);
+        setWebHeight2(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+        );
+        setWebHeight3(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+        );
+        setWebHeight4(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height4
+        );
+        setWebHeight5(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height5
+        );
+        setWebHeight6(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height6
+        );
+        setWebHeight7(getDeviceHeight(true) - height7 - height8 - height);
+        setWebHeight8(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+        );
+        setWebHeight9(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+        );
+        setWebHeight10(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height4
+        );
+        setWebHeight11(
+          (getDeviceHeight(true) - height7 - height8) / 2 - height
+        );
+        setWebHeight12(
+          (getDeviceHeight(true) - height7 - height8) / 2 - height2
+        );
+        setWebHeight13(getDeviceHeight(true) - height7 - height8 - height3);
+        setWebHeight14(
+          (getDeviceHeight(true) - height7 - height8) / 2 - height4
+        );
+        setWebHeight15(
+          (getDeviceHeight(true) - height7 - height8) / 2 - height5
+        );
+        setWebHeight16(getDeviceHeight(true) - height7 - height8 - height6);
+        setWebHeight17(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height
+        );
+        setWebHeight18(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+        );
+        setWebHeight19(
+          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight7,
+    webheight8,
+    webheight9,
+    webheight10,
+    webheight11,
+    webheight12,
+    webheight13,
+    webheight14,
+    webheight15,
+    webheight16,
+    webheight17,
+    webheight18,
+    webheight19,
+  ]);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const setLoading = useSetRecoilState(isLoading);
@@ -211,11 +370,8 @@ const AC_B8000W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
-  const [tabSelected, setTabSelected] = React.useState(0);
 
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B8000W", setCustomOptionData);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1181,6 +1337,9 @@ const AC_B8000W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     resetAllGrid();
     if (e.selected == 0) {
       setFilters((prev) => ({
@@ -2376,7 +2535,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height7 }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2490,7 +2649,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height7 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2604,7 +2763,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height3 - height7 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -2695,7 +2854,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height4 - height7 }}
+                      style={{ height: mobileheight4 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -2786,7 +2945,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height5 - height7 }}
+                      style={{ height: mobileheight5 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -2865,7 +3024,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height6 - height7 }}
+                      style={{ height: mobileheight6 }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -2920,7 +3079,7 @@ const AC_B8000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="50%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>매출표제일반(개인 제외)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2931,7 +3090,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3004,7 +3163,7 @@ const AC_B8000W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>매입표제일반(개인 제외)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3015,7 +3174,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -3090,7 +3249,7 @@ const AC_B8000W: React.FC = () => {
               </GridContainerWrap>
               <GridContainerWrap>
                 <GridContainer width="50%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>매출합계일반(개인 포함)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3101,7 +3260,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3151,7 +3310,7 @@ const AC_B8000W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>매입합계일반(개인 포함)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3162,7 +3321,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -3214,7 +3373,7 @@ const AC_B8000W: React.FC = () => {
               </GridContainerWrap>
               <GridContainerWrap>
                 <GridContainer width="50%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>매출합계ETAX(개인 포함)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3225,7 +3384,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight5 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -3275,7 +3434,7 @@ const AC_B8000W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer6">
                     <GridTitle>매입합계ETAX(개인 포함)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3286,7 +3445,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight6 }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -3438,7 +3597,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height7 }}
+                      style={{ height: mobileheight7 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3552,7 +3711,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height7 }}
+                      style={{ height: mobileheight8 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -3666,7 +3825,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height3 - height7 }}
+                      style={{ height: mobileheight9 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3765,7 +3924,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height4 - height7 }}
+                      style={{ height: mobileheight10 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -3840,7 +3999,7 @@ const AC_B8000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="50%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>신용, 직불카드(개인 제외)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3851,7 +4010,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "84.5vh" }}
+                      style={{ height: webheight7 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3925,7 +4084,7 @@ const AC_B8000W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>신용카드매입합계자료</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -3936,7 +4095,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "25vh" }}
+                        style={{ height: webheight8 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -4011,7 +4170,7 @@ const AC_B8000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>신용, 직불카드 외</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -4022,7 +4181,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "25vh" }}
+                        style={{ height: webheight9 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -4094,7 +4253,7 @@ const AC_B8000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>신용카드매입합계자료(개인)</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -4105,7 +4264,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "25vh" }}
+                        style={{ height: webheight10 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -4280,7 +4439,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height7 }}
+                      style={{ height: mobileheight11 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -4394,7 +4553,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height7 }}
+                      style={{ height: mobileheight12 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -4508,7 +4667,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height3 - height7 }}
+                      style={{ height: mobileheight13 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -4622,7 +4781,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height4 - height7 }}
+                      style={{ height: mobileheight14 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -4733,7 +4892,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height5 - height7 }}
+                      style={{ height: mobileheight15 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -4832,7 +4991,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height6 - height7 }}
+                      style={{ height: mobileheight16 }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -4908,7 +5067,7 @@ const AC_B8000W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="25%">
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer">
                       <GridTitle>매출집계자료(전자계산서 외)</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -4919,7 +5078,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight11 }}
                         data={process(
                           mainDataResult.data.map((row) => ({
                             ...row,
@@ -4994,7 +5153,7 @@ const AC_B8000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>매출집계자료(전자계산서분)</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -5005,7 +5164,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "45vh" }}
+                        style={{ height: webheight12 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -5081,7 +5240,7 @@ const AC_B8000W: React.FC = () => {
                   </GridContainer>
                 </GridContainer>
                 <GridContainer width={`calc(25% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>매출명세자료(전자계산서 외)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -5092,7 +5251,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "84.5vh" }}
+                      style={{ height: webheight13 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -5166,7 +5325,7 @@ const AC_B8000W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(25% - ${GAP}px)`}>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>매입집계자료(전자계산서 외)</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -5177,7 +5336,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight14 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -5249,7 +5408,7 @@ const AC_B8000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer5">
                       <GridTitle>매입집계자료(전자계산서분)</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -5260,7 +5419,7 @@ const AC_B8000W: React.FC = () => {
                       fileName="홈택스관리"
                     >
                       <Grid
-                        style={{ height: "45vh" }}
+                        style={{ height: webheight15 }}
                         data={process(
                           mainDataResult5.data.map((row) => ({
                             ...row,
@@ -5333,7 +5492,7 @@ const AC_B8000W: React.FC = () => {
                   </GridContainer>
                 </GridContainer>
                 <GridContainer width={`calc(25% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer6">
                     <GridTitle>매입명세자료(전자계산서 외)</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -5344,7 +5503,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: "84.5vh" }}
+                      style={{ height: webheight16 }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -5509,7 +5668,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height7 }}
+                      style={{ height: mobileheight17 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -5606,7 +5765,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height2 - height7 }}
+                      style={{ height: mobileheight18 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -5710,7 +5869,7 @@ const AC_B8000W: React.FC = () => {
                     fileName="홈택스관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height3 - height7 }}
+                      style={{ height: mobileheight19 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -5789,7 +5948,7 @@ const AC_B8000W: React.FC = () => {
           ) : (
             <>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>합계</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -5800,7 +5959,7 @@ const AC_B8000W: React.FC = () => {
                   fileName="홈택스관리"
                 >
                   <Grid
-                    style={{ height: "25vh" }}
+                    style={{ height: webheight17 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -5856,7 +6015,7 @@ const AC_B8000W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>기타영세율적용</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -5867,7 +6026,7 @@ const AC_B8000W: React.FC = () => {
                   fileName="홈택스관리"
                 >
                   <Grid
-                    style={{ height: "25vh" }}
+                    style={{ height: webheight18 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
@@ -5942,7 +6101,7 @@ const AC_B8000W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>수출하는 재화</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -5953,7 +6112,7 @@ const AC_B8000W: React.FC = () => {
                   fileName="홈택스관리"
                 >
                   <Grid
-                    style={{ height: "25vh" }}
+                    style={{ height: webheight19 }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,

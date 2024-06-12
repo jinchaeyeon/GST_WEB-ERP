@@ -12,8 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -40,6 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -49,7 +50,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B8040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -79,9 +80,48 @@ const numberField2 = [
 
 const dateField = ["reqdt", "taxdt", "actdt"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const AC_B8040W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B8040W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height4 - height);
+        setMobileHeight2(getDeviceHeight(true) - height4 - height2);
+        setMobileHeight3(getDeviceHeight(true) - height4 - height3);
+        setWebHeight((getDeviceHeight(true) - height4) / 2);
+        setWebHeight2((getDeviceHeight(true) - height4) / 2 - height);
+        setWebHeight3((getDeviceHeight(true) - height4) / 2 - height);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -91,11 +131,9 @@ const AC_B8040W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -167,9 +205,7 @@ const AC_B8040W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B8040W", setCustomOptionData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -872,7 +908,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -974,7 +1010,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1068,7 +1104,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: deviceHeight - height3 }}
+                  style={{ height: mobileheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -1148,7 +1184,7 @@ const AC_B8040W: React.FC = () => {
               fileName="부가세비교"
             >
               <Grid
-                style={{ height: "40vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1215,6 +1251,9 @@ const AC_B8040W: React.FC = () => {
           </GridContainer>
           <GridContainerWrap>
             <GridContainer width="50%">
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle />
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult2.data}
                 ref={(exporter) => {
@@ -1223,7 +1262,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: "40vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1291,6 +1330,9 @@ const AC_B8040W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridTitleContainer className="ButtonContainer">
+                <GridTitle />
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult3.data}
                 ref={(exporter) => {
@@ -1299,7 +1341,7 @@ const AC_B8040W: React.FC = () => {
                 fileName="부가세비교"
               >
                 <Grid
-                  style={{ height: "40vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
