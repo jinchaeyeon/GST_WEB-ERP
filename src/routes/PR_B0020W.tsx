@@ -33,9 +33,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -59,6 +59,7 @@ import {
   UseCustomOption,
   UseMessages,
   UsePermissions,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
 } from "../components/CommonFunction";
@@ -71,7 +72,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -90,17 +91,17 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const PR_B0020W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -120,6 +121,35 @@ const PR_B0020W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_B0020W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(getDeviceHeight(true) - height - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -678,7 +708,7 @@ const PR_B0020W: React.FC = () => {
                 fileName="바코드 출력"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={newData.map((item: { items: any[] }) => ({
                     ...item,
                     items: item.items.map((row: any) => ({
@@ -797,10 +827,7 @@ const PR_B0020W: React.FC = () => {
                   </ButtonContainer>
                 </ButtonContainer>
               </GridTitleContainer>
-              <PrimaryP
-                style={{ marginTop: "5px" }}
-                className="ButtonContainer2"
-              >
+              <PrimaryP className="ButtonContainer2">
                 ※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한
                 개만 추가 가능
               </PrimaryP>
@@ -809,7 +836,8 @@ const PR_B0020W: React.FC = () => {
                   display: "flex",
                   justifyContent: "center",
                   flexWrap: "wrap",
-                  height: deviceHeight - height - height2,
+                  height: mobileheight2,
+                  overflow: "auto",
                 }}
                 ref={componentRef}
               >
@@ -878,7 +906,7 @@ const PR_B0020W: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width="30%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>코드내역</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -900,7 +928,7 @@ const PR_B0020W: React.FC = () => {
                 fileName="바코드 출력"
               >
                 <Grid
-                  style={{ height: "80vh" }}
+                  style={{ height: webheight }}
                   data={newData.map((item: { items: any[] }) => ({
                     ...item,
                     items: item.items.map((row: any) => ({
@@ -979,7 +1007,7 @@ const PR_B0020W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(70% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>바코드 추가목록</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -1012,6 +1040,8 @@ const PR_B0020W: React.FC = () => {
                   display: "flex",
                   justifyContent: "center",
                   flexWrap: "wrap",
+                  height: webheight2,
+                  overflow: "auto",
                 }}
                 ref={componentRef}
               >

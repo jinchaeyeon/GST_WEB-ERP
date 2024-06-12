@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -38,6 +38,7 @@ import {
   dateformat2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -55,11 +56,8 @@ import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IItemData, IWindowPosition } from "../hooks/interfaces";
 import {
-  heightstate,
-  isDeviceWidthState,
   isLoading,
-  isMobileState,
-  sessionItemState,
+  sessionItemState
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -71,27 +69,21 @@ let targetRowIndex: null | number = null;
 const numberField = ["qty"];
 const centerField = ["proddt", "strtime", "endtime"];
 
+var height = 0;
+var height2 = 0;
+
 const PR_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  let deviceHeightWindow = document.documentElement.clientHeight;
-  var height = getHeight(".ButtonContainer");
-    const [permissions, setPermissions] = useState<TPermissions>({
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
     delete: false,
   });
   UsePermissions(setPermissions);
-  const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
-    top: isMobile == true ? 0 : (deviceHeightWindow - 800) / 2,
-    width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceHeightWindow : 800,
-  });
+
   const onChangePostion = (position: any) => {
     setPosition(position);
   };
@@ -118,6 +110,36 @@ const PR_B3000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_B3000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceWidth : 800,
+  });
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -599,7 +621,7 @@ const PR_B3000W: React.FC = () => {
           fileName="작업일보"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row, idx) => ({
                 ...row,

@@ -20,6 +20,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -53,6 +54,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
@@ -75,10 +77,8 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/PR_A9000W_Window";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -584,11 +584,12 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const PR_A9000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -602,7 +603,7 @@ const PR_A9000W: React.FC = () => {
   const [editedField2, setEditedField2] = useState("");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -619,6 +620,36 @@ const PR_A9000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A9000W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, tabSelected]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -802,7 +833,6 @@ const PR_A9000W: React.FC = () => {
   const [tempResult2, setTempResult2] = useState<DataResult>(
     process([], tempState2)
   );
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -2682,7 +2712,6 @@ const PR_A9000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
         scrollable={isMobile}
@@ -2737,9 +2766,7 @@ const PR_A9000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: isMobile
-                        ? deviceHeight - height - height1
-                        : "68vh",
+                      height: isMobile ? mobileheight : webheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -2835,7 +2862,7 @@ const PR_A9000W: React.FC = () => {
             }}
           >
             <GridContainer width="100%">
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>재공기타입출고내역</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -2876,7 +2903,7 @@ const PR_A9000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height1 : "68vh",
+                    height: isMobile ? mobileheight2 : webheight2,
                   }}
                   data={process(
                     detailDataResult.data.map((row) => ({

@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -15,6 +15,7 @@ import {
   convertDateToStr,
   dateformat2,
   getBizCom,
+  getDeviceHeight,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -31,10 +32,7 @@ import { useApi } from "../hooks/api";
 import {
   colors,
   colorsName,
-  heightstate,
-  isDeviceWidthState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 
 interface TList {
@@ -74,13 +72,31 @@ const PR_B1104W: React.FC = () => {
       },
     },
   });
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_B1104W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false));
+        setWebHeight(getDeviceHeight(false));
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -433,7 +449,7 @@ const PR_B1104W: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          height: isMobile ? mobileheight : webheight,
         }}
         className="MUI"
       >
@@ -552,7 +568,7 @@ const PR_B1104W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
               <GridTitle title="작업공정정보" />
               <Timelines value={DetailList} theme={theme} />

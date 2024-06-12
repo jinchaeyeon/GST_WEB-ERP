@@ -6,7 +6,7 @@ import { Divider } from "primereact/divider";
 import { DropdownChangeEvent } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
@@ -17,6 +17,7 @@ import {
   convertDateToStr,
   dateformat2,
   getBizCom,
+  getDeviceHeight,
   setDefaultDate,
   toDate2,
 } from "../components/CommonFunction";
@@ -30,13 +31,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  heightstate,
-  isDeviceWidthState,
-  isLoading,
-  isMobileState,
-} from "../store/atoms";
+import { colors, isLoading } from "../store/atoms";
 
 const PR_B1103W: React.FC = () => {
   const processApi = useApi();
@@ -59,14 +54,31 @@ const PR_B1103W: React.FC = () => {
       },
     },
   });
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_B1103W", setCustomOptionData);
 
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false));
+        setWebHeight(getDeviceHeight(false));
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -523,7 +535,7 @@ const PR_B1103W: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          height: isMobile ? mobileheight : webheight,
         }}
         className="MUI"
       >
@@ -590,7 +602,7 @@ const PR_B1103W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
               <PaginatorTable
                 value={AllList}
