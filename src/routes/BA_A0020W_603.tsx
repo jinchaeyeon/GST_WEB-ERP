@@ -5,6 +5,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -34,6 +35,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -54,9 +56,7 @@ import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState
 } from "../store/atoms";
@@ -238,19 +238,79 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const BA_A0020W_603: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("BA_A0020W_603", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      if (tabSelected == 0) {
+        height4 = getHeight(".FormBoxWrap");
+      }
+      height5 = getHeight(".TitleContainer");
+      height6 = getHeight(".ButtonContainer3");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height6 - height5 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height5 - height3);
+        setMobileHeight4(getDeviceHeight(true) - height2 - height5 - height3);
+        setMobileHeight5(getDeviceHeight(true) - height2 - height5 - height3);
+        setWebHeight(
+          getDeviceHeight(true) - height - height4 - height5 - height3
+        );
+        setWebHeight2(height4 - height2);
+        setWebHeight3(height4 - height2);
+        setWebHeight4(height4 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -407,7 +467,6 @@ const BA_A0020W_603: React.FC = () => {
     });
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
@@ -462,10 +521,6 @@ const BA_A0020W_603: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("BA_A0020W_603", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("BA_A0020W_603", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -2991,7 +3046,21 @@ const BA_A0020W_603: React.FC = () => {
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle>요약정보</GridTitle>
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    요약정보
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
                 <ButtonContainer>
                   <Button
                     onClick={onAddClick}
@@ -3018,7 +3087,7 @@ const BA_A0020W_603: React.FC = () => {
                 fileName="고객정보관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height1 }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -3104,7 +3173,7 @@ const BA_A0020W_603: React.FC = () => {
               scrollable={isMobile}
             >
               <TabStripTab title="기본">
-                <ButtonContainer className="ButtonContainer2">
+                <ButtonContainer className="ButtonContainer3">
                   <Button
                     onClick={onSaveClick}
                     fillMode="outline"
@@ -3117,7 +3186,7 @@ const BA_A0020W_603: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height - height2,
+                    height: mobileheight2,
                     overflow: "auto",
                   }}
                 >
@@ -3708,7 +3777,7 @@ const BA_A0020W_603: React.FC = () => {
                       fileName="고객정보관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height2 }}
+                        style={{ height: mobileheight3 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3828,7 +3897,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight4 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3943,7 +4012,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight5 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -4020,7 +4089,7 @@ const BA_A0020W_603: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -4048,7 +4117,7 @@ const BA_A0020W_603: React.FC = () => {
               fileName="고객정보관리"
             >
               <Grid
-                style={{ height: "25vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -4130,10 +4199,10 @@ const BA_A0020W_603: React.FC = () => {
             scrollable={isMobile}
           >
             <TabStripTab title="기본">
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <GridTitleContainer>
                   <GridTitle></GridTitle>
-                  <ButtonContainer>
+                  <ButtonContainer className="ButtonContainer2">
                     <Button
                       onClick={onSaveClick}
                       fillMode="outline"
@@ -4696,7 +4765,7 @@ const BA_A0020W_603: React.FC = () => {
                 }}
               >
                 <GridContainer>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
@@ -4729,7 +4798,7 @@ const BA_A0020W_603: React.FC = () => {
                     fileName="고객정보관리"
                   >
                     <Grid
-                      style={{ height: "37vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -4812,7 +4881,7 @@ const BA_A0020W_603: React.FC = () => {
             </TabStripTab>
             <TabStripTab title="투자" disabled={workType == "N" ? true : false}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
@@ -4845,7 +4914,7 @@ const BA_A0020W_603: React.FC = () => {
                   fileName="고객정보관리"
                 >
                   <Grid
-                    style={{ height: "37vh" }}
+                    style={{ height: webheight3 }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,
@@ -4928,7 +4997,7 @@ const BA_A0020W_603: React.FC = () => {
               disabled={workType == "N" ? true : false}
             >
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
@@ -4961,7 +5030,7 @@ const BA_A0020W_603: React.FC = () => {
                   fileName="고객정보관리"
                 >
                   <Grid
-                    style={{ height: "37vh" }}
+                    style={{ height: webheight4 }}
                     data={process(
                       mainDataResult4.data.map((row) => ({
                         ...row,
