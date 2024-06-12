@@ -336,7 +336,6 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
-var height6 = 0;
 
 const AC_A6000W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
@@ -356,21 +355,20 @@ const AC_A6000W: React.FC = () => {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".ButtonContainer3");
-      height4 = getHeight(".ButtonContainer4");
-      height5 = getHeight(".FormBoxWrap");
-      height6 = getHeight(".TitleContainer");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".TitleContainer");
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
-        setMobileHeight(getDeviceHeight(true) - height - height6);
-        setMobileHeight2(getDeviceHeight(true) - height2 - height6);
-        setMobileHeight3(getDeviceHeight(true) - height3 - height6);
-        setWebHeight(getDeviceHeight(true) - height - height6);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height5);
         setWebHeight2(
-          (getDeviceHeight(true) - height3 - height4 - height5 - height6) / 2
+          (getDeviceHeight(true) - height4 - height5) / 2 - height3
         );
         setWebHeight3(
-          (getDeviceHeight(true) - height3 - height4 - height5 - height6) / 2
+          (getDeviceHeight(true) - height4 - height5) / 2 - height3
         );
       };
       handleWindowResize();
@@ -2573,7 +2571,7 @@ const AC_A6000W: React.FC = () => {
                 }}
               >
                 <GridContainer>
-                  <GridTitleContainer className="ButtonContainer3">
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>수금계획</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -2701,7 +2699,7 @@ const AC_A6000W: React.FC = () => {
                 }}
               >
                 <GridContainer>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>지출계획</GridTitle>
                     <ButtonContainer>
                       <Button

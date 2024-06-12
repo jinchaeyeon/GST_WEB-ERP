@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -37,6 +37,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -53,10 +54,8 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2200W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -72,13 +71,16 @@ const numberField = [
   "contracamt",
 ];
 
+var height = 0;
+var height2 = 0;
+
 const SA_B2200W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -96,9 +98,30 @@ const SA_B2200W_603: React.FC = () => {
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부, 수주일자/납기일자, 사업부구분, 대분류, 중분류, 소분류, 수량단위, 화폐단위
     setBizComponentData
   );
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
+
   //공통코드 리스트 조회 ()
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -640,7 +663,7 @@ const SA_B2200W_603: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer style={{ width: "100%" }}>
+      <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -652,7 +675,9 @@ const SA_B2200W_603: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "76vh" }}
+            style={{
+              height: isMobile ? mobileheight : webheight,
+            }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

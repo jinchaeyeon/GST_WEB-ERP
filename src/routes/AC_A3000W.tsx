@@ -98,8 +98,8 @@ const AC_A3000W: React.FC = () => {
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height3);
         setMobileHeight2(getDeviceHeight(true) - height2 - height3);
-        setWebHeight((getDeviceHeight(true) - height - height2 - height3) / 2);
-        setWebHeight2((getDeviceHeight(true) - height - height2 - height3) / 2);
+        setWebHeight(((getDeviceHeight(true) - height3) / 2) - height);
+        setWebHeight2(((getDeviceHeight(true) - height3) / 2) - height2);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);

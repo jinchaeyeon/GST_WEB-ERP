@@ -141,9 +141,15 @@ const AC_A1070W: React.FC = () => {
         setMobileHeight(getDeviceHeight(true) - height - height4);
         setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height4);
         setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height4);
-        setWebHeight((getDeviceHeight(true) - height - height3 - height4) / 2);
-        setWebHeight2((getDeviceHeight(true) - height - height3 - height4) / 2);
-        setWebHeight3((getDeviceHeight(true) - height - height3 - height4) / 2);
+        setWebHeight(
+          ((getDeviceHeight(true) - height4) / 2) - height
+        );
+        setWebHeight2(
+          ((getDeviceHeight(true) - height4) / 2) - height3
+        );
+        setWebHeight3(
+          ((getDeviceHeight(true) - height4) / 2) - height3
+        );
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);

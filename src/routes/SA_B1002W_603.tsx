@@ -12,8 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -38,6 +38,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -57,7 +58,7 @@ import { useLocation } from "react-router-dom";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1002W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -75,10 +76,10 @@ const numberField = [
   "discountamt",
 ];
 
+var height = 0;
+var height2 = 0;
+
 const SA_B1002W_603: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -113,6 +114,29 @@ const SA_B1002W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
 
   const location = useLocation();
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -126,7 +150,8 @@ const SA_B1002W_603: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        quotype: defaultOption.find((item: any) => item.id == "quotype")?.valueCode,
+        quotype: defaultOption.find((item: any) => item.id == "quotype")
+          ?.valueCode,
         rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
         materialtype: defaultOption.find(
           (item: any) => item.id == "materialtype"
@@ -329,7 +354,7 @@ const SA_B1002W_603: React.FC = () => {
         "@p_quocalyn": filters.quocalyn,
         "@p_confinyn": filters.confinyn,
         "@p_rev": filters.rev,
-        "@p_quotype": filters.quotype
+        "@p_quotype": filters.quotype,
       },
     };
     try {
@@ -676,7 +701,7 @@ const SA_B1002W_603: React.FC = () => {
           fileName="견적현황조회"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "77.5vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

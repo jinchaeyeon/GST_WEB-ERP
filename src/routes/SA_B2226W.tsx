@@ -11,7 +11,7 @@ import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Knob } from "primereact/knob";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import Card from "../components/BIOComponents/CardBox";
@@ -23,6 +23,7 @@ import {
   UseMessages,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -37,10 +38,7 @@ import { useApi } from "../hooks/api";
 import {
   colors,
   colorsName,
-  heightstate,
-  isDeviceWidthState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 
 interface TList {
@@ -54,9 +52,25 @@ interface TList {
 }
 
 const SA_B2226W: React.FC = () => {
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false));
+      setWebHeight(getDeviceHeight(false));
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
@@ -391,7 +405,7 @@ const SA_B2226W: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          height: isMobile ? mobileheight : webheight,
         }}
         className="MUI"
       >

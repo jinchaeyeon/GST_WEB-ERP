@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -21,6 +21,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -32,14 +33,30 @@ import { useApi } from "../hooks/api";
 import {
   colors,
   colorsName,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const SA_B2211W_603: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false));
+      setWebHeight(getDeviceHeight(false));
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -83,8 +100,7 @@ const SA_B2211W_603: React.FC = () => {
       },
     },
   });
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -535,7 +551,7 @@ const SA_B2211W_603: React.FC = () => {
       <div
         style={{
           fontFamily: "TheJamsil5Bold",
-          height: isMobile ? `calc(${deviceHeight + 120}px)` : "",
+          height: isMobile ? mobileheight : webheight,
         }}
         className="MUI"
       >

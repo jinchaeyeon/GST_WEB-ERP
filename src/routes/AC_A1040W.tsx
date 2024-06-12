@@ -19,7 +19,7 @@ import {
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -71,7 +71,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import StandardWindow from "../components/Windows/CommonWindows/StandardWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -251,12 +251,8 @@ const AC_A1040W: React.FC = () => {
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height3);
         setMobileHeight2(getDeviceHeight(true) - height2 - height3);
-        setWebHeight(
-          (getDeviceHeight(true) - height - height2 - height3) / 2
-        );
-        setWebHeight2(
-          (getDeviceHeight(true) - height - height2 - height3) / 2
-        );
+        setWebHeight((getDeviceHeight(true) - height3) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height3) / 2 - height2);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
