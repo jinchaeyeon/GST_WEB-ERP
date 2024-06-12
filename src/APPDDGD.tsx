@@ -131,7 +131,6 @@ const CT_A0111W = lazy(() => import("./routes/CT_A0111W"));
 const EA_A1000W = lazy(() => import("./routes/EA_A1000W"));
 const EA_A2000W = lazy(() => import("./routes/EA_A2000W"));
 const EA_A3000W = lazy(() => import("./routes/EA_A3000W"));
-const GANTT = lazy(() => import("./routes/GANTT"));
 const HU_A1000W = lazy(() => import("./routes/HU_A1000W"));
 const HU_A1060W = lazy(() => import("./routes/HU_A1060W"));
 const HU_A2000W = lazy(() => import("./routes/HU_A2000W"));
@@ -886,8 +885,6 @@ const AppInner: React.FC = () => {
       return CHAT_A0001W;
     } else if (str == "CHAT_A0002W") {
       return CHAT_A0002W;
-    } else if (str == "GANTT") {
-      return GANTT;
     } else if (str == "SA_B3600W") {
       return SA_B3600W;
     } else if (str == "PR_B1103W") {
@@ -1147,7 +1144,6 @@ const AppInner: React.FC = () => {
                       exact
                     />
                     {/* 연구개발 */}
-                    <AuthRoute path="/GANTT" component={GANTT} exact />
                     <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                     <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />

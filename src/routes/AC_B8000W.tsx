@@ -144,7 +144,7 @@ const AC_B8000W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_B8000W", setCustomOptionData);
   const [isFilterHideStates, setIsFilterHideStates] =
-  useRecoilState(isFilterHideState);
+    useRecoilState(isFilterHideState);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -179,31 +179,33 @@ const AC_B8000W: React.FC = () => {
         setMobileHeight17(getDeviceHeight(true) - height - height7 - height8);
         setMobileHeight18(getDeviceHeight(true) - height2 - height7 - height8);
         setMobileHeight19(getDeviceHeight(true) - height3 - height7 - height8);
-        setWebHeight((getDeviceHeight(true) - height7 - height8) / 3 - height);
+        setWebHeight((getDeviceHeight(true) - height7 - height8) / 2 - height);
         setWebHeight2(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+          (getDeviceHeight(true) - height7 - height8) / 2 - height2
         );
         setWebHeight3(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+          (getDeviceHeight(true) - height7 - height8) / 2 - height3
         );
         setWebHeight4(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height4
+          (getDeviceHeight(true) - height7 - height8) / 2 - height4
         );
         setWebHeight5(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height5
+          (getDeviceHeight(true) - height7 - height8) / 2 - height5
         );
         setWebHeight6(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height6
+          (getDeviceHeight(true) - height7 - height8) / 2 - height6
         );
-        setWebHeight7(getDeviceHeight(true) - height7 - height8 - height);
+        setWebHeight7(
+          ((getDeviceHeight(true) - height7 - height8) / 2) * 3 - height
+        );
         setWebHeight8(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+          (getDeviceHeight(true) - height7 - height8) / 2 - height2
         );
         setWebHeight9(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+          (getDeviceHeight(true) - height7 - height8) / 2 - height3
         );
         setWebHeight10(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height4
+          (getDeviceHeight(true) - height7 - height8) / 2 - height4
         );
         setWebHeight11(
           (getDeviceHeight(true) - height7 - height8) / 2 - height
@@ -220,13 +222,13 @@ const AC_B8000W: React.FC = () => {
         );
         setWebHeight16(getDeviceHeight(true) - height7 - height8 - height6);
         setWebHeight17(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height
+          (getDeviceHeight(true) - height7 - height8) / 2 - height
         );
         setWebHeight18(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height2
+          (getDeviceHeight(true) - height7 - height8) / 2 - height2
         );
         setWebHeight19(
-          (getDeviceHeight(true) - height7 - height8) / 3 - height3
+          (getDeviceHeight(true) - height7 - height8) / 2 - height3
         );
       };
       handleWindowResize();

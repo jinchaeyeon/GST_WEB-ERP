@@ -3,11 +3,12 @@ import {
   ChatMessageSendEvent,
 } from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
-import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { UseGetValueFromSessionItem } from "../components/CommonFunction";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  UseGetValueFromSessionItem,
+  getDeviceHeight,
+} from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
-import { isDeviceWidthState, isMobileState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 interface IData {
@@ -64,9 +65,26 @@ const CHAT_BOT: React.FC = () => {
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
   const userid = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  let deviceHeight = document.documentElement.clientHeight - 50;
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false));
+      setWebHeight(getDeviceHeight(false));
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";
     const welcomeAnswer = "무엇이든 물어보세요.";
@@ -211,7 +229,7 @@ const CHAT_BOT: React.FC = () => {
   return (
     <div
       style={{
-        height: isMobile ? deviceHeight : "90vh",
+        height: isMobile ? mobileheight : webheight,
         display: "flex",
         overflow: "auto",
       }}

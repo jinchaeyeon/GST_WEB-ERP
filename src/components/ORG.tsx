@@ -6,15 +6,15 @@ import {
 import { CSSProperties, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Title, TitleContainer } from "../CommonStyled";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { Iparameters } from "../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
-} from "../components/CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
-import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+} from "./CommonFunction";
+import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "./CommonString";
 
 interface OrgProps {
   user_name: string;

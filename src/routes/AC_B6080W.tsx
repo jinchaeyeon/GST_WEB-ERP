@@ -160,21 +160,21 @@ const AC_B6080W: React.FC = () => {
         setMobileHeight10(getDeviceHeight(true) - height - height2 - height3);
         setMobileHeight11(getDeviceHeight(true) - height - height2 - height3);
         setMobileHeight12(getDeviceHeight(true) - height - height2 - height3);
-        setWebHeight((getDeviceHeight(true) - height - height2) / 3);
-        setWebHeight2((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight3((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight4((getDeviceHeight(true) - height - height2) / 3);
-        setWebHeight5((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight6((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight7((getDeviceHeight(true) - height - height2) / 3);
-        setWebHeight8((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight9((getDeviceHeight(true) - height - height2) / 3 - height4);
-        setWebHeight10((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight((getDeviceHeight(true) - height - height2) / 2);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight4((getDeviceHeight(true) - height - height2) / 2);
+        setWebHeight5((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight6((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight7((getDeviceHeight(true) - height - height2) / 2);
+        setWebHeight8((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight9((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight10((getDeviceHeight(true) - height - height2) / 2);
         setWebHeight11(
-          (getDeviceHeight(true) - height - height2) / 3 - height4
+          (getDeviceHeight(true) - height - height2) / 2 - height4
         );
         setWebHeight12(
-          (getDeviceHeight(true) - height - height2) / 3 - height4
+          (getDeviceHeight(true) - height - height2) / 2 - height4
         );
       };
       handleWindowResize();

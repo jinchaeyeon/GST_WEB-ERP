@@ -14,8 +14,13 @@ import {
   treeToFlat,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
-import React, { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -23,8 +28,10 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import {
+  getDeviceHeight,
+  getHeight,
   UseGetValueFromSessionItem,
-  UsePermissions
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -33,7 +40,7 @@ import {
 } from "../components/CommonString";
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { columns } from "../store/columns/CHAT_A0002_C";
 import { Iparameters, TPermissions } from "../store/types";
 
@@ -71,10 +78,32 @@ const headerSelectionValue = (dataState: any, selectedState: any) => {
 };
 
 let deletedMainRows: IQnaData[] = [];
+let height = 0;
 
 const CHAT_BOT_MNG: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+
+      height = getHeight(".TitleContainer");
+
+      setMobileHeight(getDeviceHeight(false) - height);
+      setWebHeight(getDeviceHeight(false) - height);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+
   const setLoading = useSetRecoilState(isLoading);
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -483,7 +512,7 @@ const CHAT_BOT_MNG: React.FC = () => {
       <GridContainer>
         <TreeList
           style={{
-            height: isMobile ? deviceHeight : "90vh",
+            height: isMobile ? mobileheight : webheight,
             overflow: "auto",
           }}
           data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
