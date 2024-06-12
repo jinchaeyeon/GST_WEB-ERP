@@ -208,8 +208,6 @@ type TButtonContainer = {
 export const ButtonContainer = styled.div<TButtonContainer>`
   display: flex;
   justify-content: flex-end;
-  padding-top: 5px;
-  padding-bottom: 5px;
   flex-direction: ${(props) =>
     props.flexDirection ? props.flexDirection : "row"};
   align-items: center;
@@ -634,7 +632,6 @@ export const GridTitleContainer = styled.div`
   @media (max-width: 1200px) {
     display: inline-block;
     width: 100%;
-    padding: 0 5px 0 0;
   }
 `;
 

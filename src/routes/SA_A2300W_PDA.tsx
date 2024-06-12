@@ -17,7 +17,7 @@ import {
   SchedulerItemProps,
 } from "@progress/kendo-react-scheduler";
 import { SchedulerItemMouseEvent } from "@progress/kendo-react-scheduler/dist/npm/models";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -29,11 +29,12 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
+  getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { OSState, heightstate, isLoading } from "../store/atoms";
+import { OSState, isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const CUSTOMER_ITEM_KEY = "custcd";
@@ -47,6 +48,11 @@ let lastInputTime: number;
 let elapsed: number[];
 let barcodeString: string;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const SA_A2300_PDA: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -56,11 +62,11 @@ const SA_A2300_PDA: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
 
   //   const [permissions, setPermissions] = useState<TPermissions>({
-//    save: false,
-//    print: false,
-//    view: false,
-//    delete: false,
-//  });
+  //    save: false,
+  //    print: false,
+  //    view: false,
+  //    delete: false,
+  //  });
   // UsePermissions(setPermissions);
   const [permissions, setPermissions] = useState<TPermissions | null>({
     save: true,
@@ -68,21 +74,48 @@ const SA_A2300_PDA: React.FC = () => {
     delete: true,
     print: true,
   });
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
-  var height6 = getHeight(".ButtonContainer6");
-  var height7 = getHeight(".ButtonContainer7");
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [tabPage, setTabPage] = useState<number>(1);
+  
+  useLayoutEffect(() => {
+    height = getHeight(".TitleContainer");
+    height2 = getHeight(".ButtonContainer");
+    height3 = getHeight(".ButtonContainer2");
+    height4 = getHeight(".ButtonContainer3");
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false) - height);
+      setMobileHeight2(getDeviceHeight(false) - height - height2);
+      setMobileHeight3(getDeviceHeight(false) - height - height3);
+      setMobileHeight4(getDeviceHeight(false) - height - height4);
+      setWebHeight(getDeviceHeight(false) - height);
+      setWebHeight2(getDeviceHeight(false) - height - height2);
+      setWebHeight3(getDeviceHeight(false) - height - height3);
+      setWebHeight4(getDeviceHeight(false) - height - height4);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight, webheight2, webheight3, webheight4, tabPage]);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_A2300W_PDA", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
 
-  const [tabPage, setTabPage] = useState<number>(1);
   const tabPageRef = useRef(0);
   tabPageRef.current = tabPage;
 
@@ -189,14 +222,14 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage1 = (
     <>
-      <TitleContainer className="ButtonContainer4">
+      <TitleContainer className="TitleContainer">
         <Title>출고처리(PDA)</Title>
       </TitleContainer>
       {osstate == true ? (
         <div
           style={{
             backgroundColor: "#ccc",
-            height: deviceHeight + height4,
+            height: isMobile ? mobileheight : webheight,
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -207,7 +240,7 @@ const SA_A2300_PDA: React.FC = () => {
         </div>
       ) : (
         <Scheduler
-          height={deviceHeight + height4}
+          height={isMobile ? mobileheight : webheight}
           data={
             schedulerDataResult.length > 0 ? schedulerDataResult : undefined
           }
@@ -489,7 +522,7 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage2 = (
     <>
-      <TitleContainer className="ButtonContainer5">
+      <TitleContainer className="TitleContainer">
         <Title>업체 선택</Title>
       </TitleContainer>
       <GridContainer>
@@ -514,7 +547,7 @@ const SA_A2300_PDA: React.FC = () => {
           </Button>
         </ButtonContainer>
         <Grid
-          style={{ height: deviceHeight - height1 + height5 }}
+          style={{ height: isMobile ? mobileheight2 : webheight2 }}
           data={process(
             customerDataResult.data.map((row) => ({
               ...row,
@@ -767,7 +800,7 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage3 = (
     <>
-      <TitleContainer className="ButtonContainer6">
+      <TitleContainer className="TitleContainer">
         <Title>품목 리스트</Title>
       </TitleContainer>
       <GridContainer>
@@ -792,7 +825,7 @@ const SA_A2300_PDA: React.FC = () => {
           </Button>
         </ButtonContainer>
         <Grid
-          style={{ height: deviceHeight - height2 + height6 }}
+          style={{ height: isMobile ? mobileheight3 : webheight3 }}
           data={process(
             orderDataResult.data.map((row) => ({
               ...row,
@@ -1165,7 +1198,7 @@ const SA_A2300_PDA: React.FC = () => {
 
   const tabPage4 = (
     <>
-      <TitleContainer className="ButtonContainer7">
+      <TitleContainer className="TitleContainer">
         <Title>LOT 목록</Title>
       </TitleContainer>
       <GridContainer>
@@ -1200,7 +1233,7 @@ const SA_A2300_PDA: React.FC = () => {
           </ButtonContainer>
         </ButtonContainer>
         <Grid
-          style={{ height: deviceHeight - height3 + height7 }}
+          style={{ height: isMobile ? mobileheight4 : webheight4 }}
           data={process(
             lotDataResult.data.map((row) => ({
               ...row,

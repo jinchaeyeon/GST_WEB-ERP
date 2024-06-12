@@ -13,8 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -43,10 +43,11 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -63,9 +64,7 @@ import DetailWindow from "../components/Windows/SA_A2000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -99,6 +98,11 @@ const numberField2 = [
   "wonamt",
   "outqty",
 ];
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const SA_B2000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -109,10 +113,6 @@ const SA_B2000: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [page, setPage] = useState(initialPageState);
@@ -153,7 +153,7 @@ const SA_B2000: React.FC = () => {
     });
   };
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -168,6 +168,35 @@ const SA_B2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A2010W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(getDeviceHeight(true) - height - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1337,7 +1366,7 @@ const SA_B2000: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: mobileheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1458,7 +1487,7 @@ const SA_B2000: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height2,
+                      height: mobileheight2,
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({
@@ -1739,7 +1768,7 @@ const SA_B2000: React.FC = () => {
           </FilterContainer>
           <GridContainerWrap>
             <GridContainer width={`50%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -1775,7 +1804,7 @@ const SA_B2000: React.FC = () => {
                 fileName="수주처리"
               >
                 <Grid
-                  style={{ height: "73.2vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1865,7 +1894,7 @@ const SA_B2000: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1876,7 +1905,7 @@ const SA_B2000: React.FC = () => {
                 fileName="수주처리"
               >
                 <Grid
-                  style={{ height: "73.5vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,

@@ -16,7 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -51,6 +51,7 @@ import {
   dateformat2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -78,10 +79,8 @@ import SA_A1000W_603_Design_Window from "../components/Windows/SA_A1000W_603_Des
 import SA_A1001W_603_Window from "../components/Windows/SA_A1001W_603_Window";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isFilterHideState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -137,19 +136,70 @@ const iconCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+
 const SA_A1001W_603: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A1001W_603", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-tabstrip-items-wrapper");
+      height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+      height7 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(
+          getDeviceHeight(false) - height - height2 - height4 - height5
+        );
+        setMobileHeight3(
+          getDeviceHeight(false) - height - height2 - height4 - height6
+        );
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(
+          getDeviceHeight(false) -
+            height -
+            height2 -
+            height4 -
+            height7 -
+            height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, tabSelected]);
+
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -283,7 +333,6 @@ const SA_A1001W_603: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
@@ -1569,7 +1618,6 @@ const SA_A1001W_603: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%" }}
         scrollable={isMobile}
       >
         <TabStripTab title="견적(조회)">
@@ -1743,11 +1791,9 @@ const SA_A1001W_603: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            {!isMobile && (
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
-            )}
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -1757,7 +1803,7 @@ const SA_A1001W_603: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height : "65vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1843,10 +1889,7 @@ const SA_A1001W_603: React.FC = () => {
         >
           {isMobile ? (
             <>
-              <ButtonContainer
-                className="ButtonContainer"
-                style={{ gap: "3px" }}
-              >
+              <ButtonContainer className="ButtonContainer2">
                 <Button themeColor={"primary"} onClick={onPrint} icon="print">
                   견적서 출력
                 </Button>
@@ -1900,7 +1943,7 @@ const SA_A1001W_603: React.FC = () => {
               >
                 <SwiperSlide key={0}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>
                         <ButtonContainer
                           style={{ justifyContent: "space-between" }}
@@ -1922,8 +1965,7 @@ const SA_A1001W_603: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height1 - height2 + 25,
-                        overflow: "auto",
+                        height: mobileheight2,
                       }}
                     >
                       <FormBox>
@@ -2045,7 +2087,7 @@ const SA_A1001W_603: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>
                         <ButtonContainer
                           style={{ justifyContent: "space-between" }}
@@ -2075,8 +2117,7 @@ const SA_A1001W_603: React.FC = () => {
                     >
                       <Grid
                         style={{
-                          height:
-                            deviceHeight - height - height1 - height2 + 25,
+                          height: mobileheight3,
                         }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
@@ -2164,7 +2205,7 @@ const SA_A1001W_603: React.FC = () => {
             </>
           ) : (
             <>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
                 <ButtonContainer>
                   <Button themeColor={"primary"} onClick={onPrint} icon="print">
@@ -2211,7 +2252,7 @@ const SA_A1001W_603: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2328,7 +2369,7 @@ const SA_A1001W_603: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>견적리스트</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2339,7 +2380,7 @@ const SA_A1001W_603: React.FC = () => {
                   fileName="견적관리"
                 >
                   <Grid
-                    style={{ height: "63.8vh" }}
+                    style={{ height: webheight2 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,

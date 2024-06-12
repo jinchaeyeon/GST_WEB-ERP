@@ -42,6 +42,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -83,6 +84,7 @@ import {
   dateformat2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
@@ -122,10 +124,8 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isFilterHideState,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -530,6 +530,26 @@ const CustomPercentCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+var height10 = 0;
+var height11 = 0;
+var height12 = 0;
+var height13 = 0;
+var height14 = 0;
+var height15 = 0;
+var height16 = 0;
+var height17 = 0;
+var height18 = 0;
+var height19 = 0;
+
 const SA_A1000W_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -538,14 +558,7 @@ const SA_A1000W_603: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const idGetter7 = getter(DATA_ITEM_KEY7);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -559,6 +572,125 @@ const SA_A1000W_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A1000W_603", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [mobileheight11, setMobileHeight11] = useState(0);
+  const [mobileheight12, setMobileHeight12] = useState(0);
+  const [mobileheight13, setMobileHeight13] = useState(0);
+  const [mobileheight14, setMobileHeight14] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-tabstrip-items-wrapper");
+      height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+      height7 = getHeight(".ButtonContainer5");
+      height8 = getHeight(".ButtonContainer6");
+      height9 = getHeight(".ButtonContainer7");
+      height10 = getHeight(".ButtonContainer8");
+      height11 = getHeight(".ButtonContainer9");
+      height12 = getHeight(".ButtonContainer10");
+      height13 = getHeight(".ButtonContainer11");
+      height14 = getHeight(".FormBoxWrap");
+      height15 = getHeight(".FormBoxWrap2");
+      height16 = getHeight(".FormBoxWrap3");
+      height17 = getHeight(".FormBoxWrap4");
+      height18 = getHeight(".FormBoxWrap5");
+      height19 = getHeight(".FormBoxWrap6");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight4(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight5(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight6(
+          getDeviceHeight(false) - height - height2 - height4 - height5
+        );
+        setMobileHeight7(getDeviceHeight(false) - height - height2 - height6);
+        setMobileHeight8(getDeviceHeight(false) - height - height2 - height7);
+        setMobileHeight9(getDeviceHeight(false) - height - height2 - height8);
+        setMobileHeight10(getDeviceHeight(false) - height - height2 - height9);
+        setMobileHeight11(getDeviceHeight(false) - height - height2 - height10);
+        setMobileHeight12(getDeviceHeight(false) - height - height2 - height11);
+        setMobileHeight13(getDeviceHeight(false) - height - height2 - height12);
+        setMobileHeight14(getDeviceHeight(false) - height - height2 - height13);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(
+          (getDeviceHeight(false) - height - height2) * 2 -
+            height4 -
+            height14 -
+            height15 -
+            height16 -
+            height17 -
+            height5
+        );
+        setWebHeight3(
+          getDeviceHeight(false) -
+            height -
+            height2 -
+            height6 -
+            height18 -
+            height7 -
+            height19 -
+            height8
+        );
+        setWebHeight4(
+          (getDeviceHeight(false) - height - height2) / 3 - height9
+        );
+        setWebHeight5(
+          (getDeviceHeight(false) - height - height2) / 3 - height10
+        );
+        setWebHeight6(
+          (getDeviceHeight(false) - height - height2) / 3 - height11
+        );
+        setWebHeight7(getDeviceHeight(false) - height - height2 - height12);
+        setWebHeight8(getDeviceHeight(false) - height - height2 - height13);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+    webheight7,
+    webheight8,
+    tabSelected,
+  ]);
+
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
@@ -1249,7 +1381,6 @@ const SA_A1000W_603: React.FC = () => {
     deletedMainRows2 = [];
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
@@ -4292,7 +4423,6 @@ const SA_A1000W_603: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%" }}
         scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
@@ -4512,7 +4642,7 @@ const SA_A1000W_603: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "68vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -4609,7 +4739,7 @@ const SA_A1000W_603: React.FC = () => {
             <>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle></GridTitle>
-                <ButtonContainer style={{ gap: "3px" }}>
+                <ButtonContainer>
                   <Button
                     themeColor={"primary"}
                     onClick={onPrint}
@@ -4664,8 +4794,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      height: deviceHeight - height - height2,
-                      overflow: "auto",
+                      height: mobileheight2,
                     }}
                   >
                     <GridTitleContainer>
@@ -4869,8 +4998,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      height: deviceHeight - height - height2,
-                      overflow: "auto",
+                      height: mobileheight3,
                     }}
                   >
                     <GridTitleContainer>
@@ -5004,8 +5132,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      height: deviceHeight - height - height2,
-                      overflow: "auto",
+                      height: mobileheight4,
                     }}
                   >
                     <GridTitleContainer>
@@ -5132,8 +5259,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      height: deviceHeight - height - height2,
-                      overflow: "auto",
+                      height: mobileheight5,
                     }}
                   >
                     <GridTitleContainer>
@@ -5751,186 +5877,173 @@ const SA_A1000W_603: React.FC = () => {
                   </FormBoxWrap>
                 </SwiperSlide>
                 <SwiperSlide key={4}>
-                  <FormBoxWrap
-                    border={true}
-                    style={{
-                      height: deviceHeight - height - height2,
-                      overflow: "auto",
+                  <FormContext.Provider
+                    value={{
+                      itemInfo,
+                      setItemInfo,
                     }}
                   >
-                    <FormContext.Provider
-                      value={{
-                        itemInfo,
-                        setItemInfo,
-                      }}
-                    >
-                      <GridContainer>
-                        <GridTitleContainer className="ButtonContainer3">
-                          <GridTitle>
-                            {" "}
-                            <Button
-                              onClick={() => {
-                                if (swiper && isMobile) {
-                                  swiper.slideTo(3);
-                                }
-                              }}
-                              icon="chevron-left"
-                              themeColor={"primary"}
-                              fillMode={"flat"}
-                            ></Button>
-                            의뢰품목
-                          </GridTitle>
-                          <ButtonContainer>
-                            <Button
-                              fillMode="outline"
-                              themeColor={"primary"}
-                              icon="palette"
-                              onClick={onDesignWndClick}
-                            >
-                              디자인상세
-                            </Button>
-                            <Button
-                              onClick={onAddClick}
-                              themeColor={"primary"}
-                              icon="plus"
-                              title="행 추가"
-                            ></Button>
-                            <Button
-                              onClick={onDeleteClick}
-                              fillMode="outline"
-                              themeColor={"primary"}
-                              icon="minus"
-                              title="행 삭제"
-                            ></Button>
-                          </ButtonContainer>
-                        </GridTitleContainer>
-                        <ExcelExport
-                          data={mainDataResult2.data}
-                          ref={(exporter) => {
-                            _export2 = exporter;
-                          }}
-                          fileName="프로젝트관리"
-                        >
-                          <Grid
-                            style={{
-                              height: deviceHeight - height - height2 - height3,
+                    <GridContainer>
+                      <GridTitleContainer className="ButtonContainer3">
+                        <GridTitle>
+                          {" "}
+                          <Button
+                            onClick={() => {
+                              if (swiper && isMobile) {
+                                swiper.slideTo(3);
+                              }
                             }}
-                            data={process(
-                              mainDataResult2.data.map((row) => ({
-                                ...row,
-                                rowstatus:
-                                  row.rowstatus == null ||
-                                  row.rowstatus == "" ||
-                                  row.rowstatus == undefined
-                                    ? ""
-                                    : row.rowstatus,
-                                startdt: row.startdt
-                                  ? new Date(dateformat(row.startdt))
-                                  : new Date(dateformat("99991231")),
-                                enddt: row.enddt
-                                  ? new Date(dateformat(row.enddt))
-                                  : new Date(dateformat("99991231")),
-                                quosts: quostsListData.find(
-                                  (items: any) => items.sub_code == row.quosts
-                                )?.code_name,
-                                itemlvl1: itemlvl1ListData.find(
-                                  (items: any) => items.sub_code == row.itemlvl1
-                                )?.code_name,
-                                ordsts: ordstsListData.find(
-                                  (items: any) => items.sub_code == row.ordsts
-                                )?.code_name,
-                                [SELECTED_FIELD]:
-                                  selectedState2[idGetter2(row)],
-                              })),
-                              mainDataState2
-                            )}
-                            {...mainDataState2}
-                            onDataStateChange={onMainDataStateChange2}
-                            //선택 기능
-                            dataItemKey={DATA_ITEM_KEY2}
-                            selectedField={SELECTED_FIELD}
-                            selectable={{
-                              enabled: true,
-                              mode: "single",
-                            }}
-                            onSelectionChange={onSelectionChange2}
-                            //스크롤 조회 기능
-                            fixedScroll={true}
-                            total={mainDataResult2.total}
-                            skip={page2.skip}
-                            take={page2.take}
-                            pageable={true}
-                            onPageChange={pageChange2}
-                            //정렬기능
-                            sortable={true}
-                            onSortChange={onMainSortChange2}
-                            //컬럼순서조정
-                            reorderable={true}
-                            //컬럼너비조정
-                            resizable={true}
-                            onItemChange={onItemChange2}
-                            cellRender={customCellRender2}
-                            rowRender={customRowRender2}
-                            editField={EDIT_FIELD}
+                            icon="chevron-left"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                          의뢰품목
+                        </GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="palette"
+                            onClick={onDesignWndClick}
                           >
-                            <GridColumn
-                              field="rowstatus"
-                              title=" "
-                              width="50px"
-                            />
-                            {customOptionData !== null &&
-                              customOptionData.menuCustomColumnOptions[
-                                "grdList2"
-                              ]
-                                ?.sort(
-                                  (a: any, b: any) => a.sortOrder - b.sortOrder
-                                )
-                                ?.map(
-                                  (item: any, idx: number) =>
-                                    item.sortOrder !== -1 && (
-                                      <GridColumn
-                                        key={idx}
-                                        id={item.id}
-                                        field={item.fieldName}
-                                        title={item.caption}
-                                        width={item.width}
-                                        cell={
-                                          RadioField.includes(item.fieldName)
-                                            ? CustomRadioCell
-                                            : numberField.includes(
-                                                item.fieldName
-                                              )
-                                            ? NumberCell
-                                            : dateField.includes(item.fieldName)
-                                            ? DateCell
-                                            : itemField.includes(item.fieldName)
-                                            ? ColumnCommandCell
-                                            : undefined
-                                        }
-                                        headerCell={
-                                          headerField.includes(item.fieldName)
-                                            ? RequiredHeader
-                                            : undefined
-                                        }
-                                        footerCell={
-                                          item.sortOrder == 0
-                                            ? mainTotalFooterCell2
-                                            : undefined
-                                        }
-                                      />
-                                    )
-                                )}
-                          </Grid>
-                        </ExcelExport>
-                      </GridContainer>
-                    </FormContext.Provider>
-                  </FormBoxWrap>
+                            디자인상세
+                          </Button>
+                          <Button
+                            onClick={onAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onDeleteClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
+                      <ExcelExport
+                        data={mainDataResult2.data}
+                        ref={(exporter) => {
+                          _export2 = exporter;
+                        }}
+                        fileName="프로젝트관리"
+                      >
+                        <Grid
+                          style={{
+                            height: mobileheight6,
+                          }}
+                          data={process(
+                            mainDataResult2.data.map((row) => ({
+                              ...row,
+                              rowstatus:
+                                row.rowstatus == null ||
+                                row.rowstatus == "" ||
+                                row.rowstatus == undefined
+                                  ? ""
+                                  : row.rowstatus,
+                              startdt: row.startdt
+                                ? new Date(dateformat(row.startdt))
+                                : new Date(dateformat("99991231")),
+                              enddt: row.enddt
+                                ? new Date(dateformat(row.enddt))
+                                : new Date(dateformat("99991231")),
+                              quosts: quostsListData.find(
+                                (items: any) => items.sub_code == row.quosts
+                              )?.code_name,
+                              itemlvl1: itemlvl1ListData.find(
+                                (items: any) => items.sub_code == row.itemlvl1
+                              )?.code_name,
+                              ordsts: ordstsListData.find(
+                                (items: any) => items.sub_code == row.ordsts
+                              )?.code_name,
+                              [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                            })),
+                            mainDataState2
+                          )}
+                          {...mainDataState2}
+                          onDataStateChange={onMainDataStateChange2}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY2}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange2}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult2.total}
+                          skip={page2.skip}
+                          take={page2.take}
+                          pageable={true}
+                          onPageChange={pageChange2}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange2}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onItemChange2}
+                          cellRender={customCellRender2}
+                          rowRender={customRowRender2}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions["grdList2"]
+                              ?.sort(
+                                (a: any, b: any) => a.sortOrder - b.sortOrder
+                              )
+                              ?.map(
+                                (item: any, idx: number) =>
+                                  item.sortOrder !== -1 && (
+                                    <GridColumn
+                                      key={idx}
+                                      id={item.id}
+                                      field={item.fieldName}
+                                      title={item.caption}
+                                      width={item.width}
+                                      cell={
+                                        RadioField.includes(item.fieldName)
+                                          ? CustomRadioCell
+                                          : numberField.includes(item.fieldName)
+                                          ? NumberCell
+                                          : dateField.includes(item.fieldName)
+                                          ? DateCell
+                                          : itemField.includes(item.fieldName)
+                                          ? ColumnCommandCell
+                                          : undefined
+                                      }
+                                      headerCell={
+                                        headerField.includes(item.fieldName)
+                                          ? RequiredHeader
+                                          : undefined
+                                      }
+                                      footerCell={
+                                        item.sortOrder == 0
+                                          ? mainTotalFooterCell2
+                                          : undefined
+                                      }
+                                    />
+                                  )
+                              )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </FormContext.Provider>
                 </SwiperSlide>
               </Swiper>
             </>
           ) : (
             <>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
@@ -5975,7 +6088,7 @@ const SA_A1000W_603: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <GridTitleContainer>
                   <GridTitle>기준정보</GridTitle>
                 </GridTitleContainer>
@@ -6156,7 +6269,7 @@ const SA_A1000W_603: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap2">
                 <GridTitleContainer>
                   <GridTitle>의뢰자정보</GridTitle>
                 </GridTitleContainer>
@@ -6267,7 +6380,7 @@ const SA_A1000W_603: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap3">
                 <GridTitleContainer>
                   <GridTitle>모니터정보</GridTitle>
                 </GridTitleContainer>
@@ -6366,7 +6479,7 @@ const SA_A1000W_603: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap4">
                 <GridTitleContainer>
                   <GridTitle>의뢰정보</GridTitle>
                 </GridTitleContainer>
@@ -6971,7 +7084,7 @@ const SA_A1000W_603: React.FC = () => {
                   }}
                 >
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>의뢰품목</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -7006,7 +7119,7 @@ const SA_A1000W_603: React.FC = () => {
                     >
                       <Grid
                         style={{
-                          height: isMobile ? "50vh" : `calc(80vh - 500px)`,
+                          height: webheight2,
                         }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
@@ -7149,9 +7262,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      display: isMobile ? "block" : "flex",
-                      height: deviceHeight - height - height4,
-                      overflow: "auto",
+                      height: mobileheight7,
                     }}
                   >
                     <FormBox>
@@ -7456,9 +7567,8 @@ const SA_A1000W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>
-                      {" "}
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
@@ -7491,9 +7601,7 @@ const SA_A1000W_603: React.FC = () => {
                   <FormBoxWrap
                     border={true}
                     style={{
-                      display: isMobile ? "block" : "flex",
-                      height: deviceHeight - height - height4,
-                      overflow: "auto",
+                      height: mobileheight8,
                     }}
                   >
                     <GridContainer style={{ flexDirection: "column" }}>
@@ -7578,7 +7686,7 @@ const SA_A1000W_603: React.FC = () => {
                     }}
                     fileName="프로젝트관리"
                   >
-                    <GridTitleContainer className="ButtonContainer4">
+                    <GridTitleContainer className="ButtonContainer6">
                       <GridTitle>
                         <ButtonContainer
                           style={{ justifyContent: "space-between" }}
@@ -7610,7 +7718,7 @@ const SA_A1000W_603: React.FC = () => {
                       </GridTitle>
                     </GridTitleContainer>
                     <Grid
-                      style={{ height: deviceHeight - height - height4 }}
+                      style={{ height: mobileheight9 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -7674,7 +7782,7 @@ const SA_A1000W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={3}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer7">
                     <GridTitle>
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
@@ -7714,7 +7822,7 @@ const SA_A1000W_603: React.FC = () => {
                       fileName="프로젝트관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height4 }}
+                        style={{ height: mobileheight10 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -7785,7 +7893,7 @@ const SA_A1000W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={4}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer8">
                     <GridTitle>
                       {" "}
                       <ButtonContainer
@@ -7825,7 +7933,7 @@ const SA_A1000W_603: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height4 }}
+                      style={{ height: mobileheight11 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -7902,7 +8010,7 @@ const SA_A1000W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={5}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer4">
+                  <GridTitleContainer className="ButtonContainer9">
                     <GridTitle>
                       {" "}
                       <ButtonContainer style={{ justifyContent: "left" }}>
@@ -7928,7 +8036,7 @@ const SA_A1000W_603: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height4 }}
+                      style={{ height: mobileheight12 }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -8000,7 +8108,7 @@ const SA_A1000W_603: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="50%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>상세이력</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -8014,7 +8122,8 @@ const SA_A1000W_603: React.FC = () => {
                   </GridTitleContainer>
                   <FormBoxWrap
                     border={true}
-                    style={{ display: isMobile ? "block" : "flex" }}
+                    className="FormBoxWrap5"
+                    style={{ display: "flex" }}
                   >
                     <FormBox width={"50%"}>
                       <GridTitleContainer>
@@ -8315,13 +8424,10 @@ const SA_A1000W_603: React.FC = () => {
                     </FormBox>
                   </FormBoxWrap>
 
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>계약성사관리</GridTitle>
                   </GridTitleContainer>
-                  <FormBoxWrap
-                    border={true}
-                    style={{ display: isMobile ? "block" : "flex" }}
-                  >
+                  <FormBoxWrap border={true} className="FormBoxWrap6">
                     <GridContainer style={{ flexDirection: "column" }}>
                       <FormBox>
                         <tbody>
@@ -8403,11 +8509,11 @@ const SA_A1000W_603: React.FC = () => {
                       }}
                       fileName="프로젝트관리"
                     >
-                      <GridTitleContainer>
+                      <GridTitleContainer className="ButtonContainer6">
                         <GridTitle>코멘트</GridTitle>
                       </GridTitleContainer>
                       <Grid
-                        style={{ height: "58.5vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -8472,261 +8578,254 @@ const SA_A1000W_603: React.FC = () => {
                   </GridContainer>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
-                    <GridTitle>상담</GridTitle>
-                  </GridTitleContainer>
-                  <FormBoxWrap border={true}>
-                    <GridContainer width={"100%"}>
-                      <ExcelExport
-                        data={mainDataResult4.data}
-                        ref={(exporter) => {
-                          _export4 = exporter;
+                  <GridContainer width={"100%"}>
+                    <GridTitleContainer className="ButtonContainer7">
+                      <GridTitle>상담</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult4.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
+                      }}
+                      fileName="프로젝트관리"
+                    >
+                      <Grid
+                        style={{ height: webheight4 }}
+                        data={process(
+                          mainDataResult4.data.map((row) => ({
+                            ...row,
+                            person: userListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                          })),
+                          mainDataState4
+                        )}
+                        {...mainDataState4}
+                        onDataStateChange={onMainDataStateChange4}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
                         }}
-                        fileName="프로젝트관리"
+                        onSelectionChange={onSelectionChange4}
+                        onRowDoubleClick={onLinkChange}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4.total}
+                        skip={page4.skip}
+                        take={page4.take}
+                        pageable={true}
+                        onPageChange={pageChange4}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
                       >
-                        <Grid
-                          style={{ height: "29vh" }}
-                          data={process(
-                            mainDataResult4.data.map((row) => ({
-                              ...row,
-                              person: userListData.find(
-                                (items: any) => items.user_id == row.person
-                              )?.user_name,
-                              [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-                            })),
-                            mainDataState4
-                          )}
-                          {...mainDataState4}
-                          onDataStateChange={onMainDataStateChange4}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY4}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSelectionChange4}
-                          onRowDoubleClick={onLinkChange}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult4.total}
-                          skip={page4.skip}
-                          take={page4.take}
-                          pageable={true}
-                          onPageChange={pageChange4}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange4}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions["grdList4"]
-                              ?.sort(
-                                (a: any, b: any) => a.sortOrder - b.sortOrder
-                              )
-                              ?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      id={item.id}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      cell={
-                                        dateField.includes(item.fieldName)
-                                          ? DateCell
-                                          : undefined
-                                      }
-                                      width={item.width}
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? mainTotalFooterCell4
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
-                        </Grid>
-                      </ExcelExport>
-                    </GridContainer>
-                  </FormBoxWrap>
-                  <GridTitleContainer>
-                    <GridTitle>컨설팅</GridTitle>
-                  </GridTitleContainer>
-                  <FormBoxWrap border={true}>
-                    <GridContainer width={"100%"}>
-                      <ExcelExport
-                        data={mainDataResult5.data}
-                        ref={(exporter) => {
-                          _export5 = exporter;
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    width={item.width}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <GridContainer width={"100%"}>
+                    <GridTitleContainer className="ButtonContainer8">
+                      <GridTitle>컨설팅</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult5.data}
+                      ref={(exporter) => {
+                        _export5 = exporter;
+                      }}
+                      fileName="프로젝트관리"
+                    >
+                      <Grid
+                        style={{ height: webheight5 }}
+                        data={process(
+                          mainDataResult5.data.map((row) => ({
+                            ...row,
+                            user_id: userListData.find(
+                              (items: any) => items.user_id == row.user_id
+                            )?.user_name,
+                            ans_person: userListData.find(
+                              (items: any) => items.user_id == row.ans_person
+                            )?.user_name,
+                            medicine_type: meditypeListData.find(
+                              (items: any) =>
+                                items.sub_code == row.medicine_type
+                            )?.code_name,
+                            require_type: statusListData.find(
+                              (items: any) => items.sub_code == row.require_type
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                          })),
+                          mainDataState5
+                        )}
+                        {...mainDataState5}
+                        onDataStateChange={onMainDataStateChange5}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY5}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
                         }}
-                        fileName="프로젝트관리"
+                        onSelectionChange={onSelectionChange5}
+                        onRowDoubleClick={onLinkChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult5.total}
+                        skip={page5.skip}
+                        take={page5.take}
+                        pageable={true}
+                        onPageChange={pageChange5}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange5}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
                       >
-                        <Grid
-                          style={{ height: "30vh" }}
-                          data={process(
-                            mainDataResult5.data.map((row) => ({
-                              ...row,
-                              user_id: userListData.find(
-                                (items: any) => items.user_id == row.user_id
-                              )?.user_name,
-                              ans_person: userListData.find(
-                                (items: any) => items.user_id == row.ans_person
-                              )?.user_name,
-                              medicine_type: meditypeListData.find(
-                                (items: any) =>
-                                  items.sub_code == row.medicine_type
-                              )?.code_name,
-                              require_type: statusListData.find(
-                                (items: any) =>
-                                  items.sub_code == row.require_type
-                              )?.code_name,
-                              [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                            })),
-                            mainDataState5
-                          )}
-                          {...mainDataState5}
-                          onDataStateChange={onMainDataStateChange5}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY5}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSelectionChange5}
-                          onRowDoubleClick={onLinkChange2}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult5.total}
-                          skip={page5.skip}
-                          take={page5.take}
-                          pageable={true}
-                          onPageChange={pageChange5}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange5}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions["grdList5"]
-                              ?.sort(
-                                (a: any, b: any) => a.sortOrder - b.sortOrder
-                              )
-                              ?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      id={item.id}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      cell={
-                                        dateField.includes(item.fieldName)
-                                          ? DateCell
-                                          : undefined
-                                      }
-                                      width={item.width}
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? mainTotalFooterCell5
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
-                        </Grid>
-                      </ExcelExport>
-                    </GridContainer>
-                  </FormBoxWrap>
-                  <GridTitleContainer>
-                    <GridTitle>견적</GridTitle>
-                  </GridTitleContainer>
-                  <FormBoxWrap border={true}>
-                    <GridContainer width={"100%"}>
-                      <ExcelExport
-                        data={mainDataResult6.data}
-                        ref={(exporter) => {
-                          _export6 = exporter;
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList5"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    width={item.width}
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell5
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                  <GridContainer width={"100%"}>
+                    <GridTitleContainer className="ButtonContainer9">
+                      <GridTitle>견적</GridTitle>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult6.data}
+                      ref={(exporter) => {
+                        _export6 = exporter;
+                      }}
+                      fileName="프로젝트관리"
+                    >
+                      <Grid
+                        style={{ height: webheight6 }}
+                        data={process(
+                          mainDataResult6.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState6[idGetter6(row)],
+                          })),
+                          mainDataState6
+                        )}
+                        {...mainDataState6}
+                        onDataStateChange={onMainDataStateChange6}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY6}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
                         }}
-                        fileName="프로젝트관리"
+                        onSelectionChange={onSelectionChange6}
+                        onRowDoubleClick={onLinkChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult6.total}
+                        skip={page6.skip}
+                        take={page6.take}
+                        pageable={true}
+                        onPageChange={pageChange6}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange6}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
                       >
-                        <Grid
-                          style={{ height: "30vh" }}
-                          data={process(
-                            mainDataResult6.data.map((row) => ({
-                              ...row,
-                              [SELECTED_FIELD]: selectedState6[idGetter6(row)],
-                            })),
-                            mainDataState6
-                          )}
-                          {...mainDataState6}
-                          onDataStateChange={onMainDataStateChange6}
-                          //선택 기능
-                          dataItemKey={DATA_ITEM_KEY6}
-                          selectedField={SELECTED_FIELD}
-                          selectable={{
-                            enabled: true,
-                            mode: "single",
-                          }}
-                          onSelectionChange={onSelectionChange6}
-                          onRowDoubleClick={onLinkChange3}
-                          //스크롤 조회 기능
-                          fixedScroll={true}
-                          total={mainDataResult6.total}
-                          skip={page6.skip}
-                          take={page6.take}
-                          pageable={true}
-                          onPageChange={pageChange6}
-                          //정렬기능
-                          sortable={true}
-                          onSortChange={onMainSortChange6}
-                          //컬럼순서조정
-                          reorderable={true}
-                          //컬럼너비조정
-                          resizable={true}
-                        >
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions["grdList6"]
-                              ?.sort(
-                                (a: any, b: any) => a.sortOrder - b.sortOrder
-                              )
-                              ?.map(
-                                (item: any, idx: number) =>
-                                  item.sortOrder !== -1 && (
-                                    <GridColumn
-                                      key={idx}
-                                      id={item.id}
-                                      field={item.fieldName}
-                                      title={item.caption}
-                                      width={item.width}
-                                      cell={
-                                        dateField.includes(item.fieldName)
-                                          ? DateCell
-                                          : numberField.includes(item.fieldName)
-                                          ? NumberCell
-                                          : undefined
-                                      }
-                                      footerCell={
-                                        item.sortOrder == 0
-                                          ? mainTotalFooterCell6
-                                          : numberField.includes(item.fieldName)
-                                          ? gridSumQtyFooterCell6
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                              )}
-                        </Grid>
-                      </ExcelExport>
-                    </GridContainer>
-                  </FormBoxWrap>
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList6"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell6
+                                        : numberField.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell6
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
                 </GridContainer>
               </GridContainerWrap>
             </>
@@ -8747,7 +8846,7 @@ const SA_A1000W_603: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer5">
+                  <GridTitleContainer className="ButtonContainer10">
                     <GridTitle>
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
@@ -8774,7 +8873,7 @@ const SA_A1000W_603: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height5 }}
+                      style={{ height: mobileheight13 }}
                       data={process(
                         mainDataResult7.data.map((row) => ({
                           ...row,
@@ -8853,7 +8952,7 @@ const SA_A1000W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ marginBottom: "10px", width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer5">
+                  <GridTitleContainer className="ButtonContainer11">
                     <GridTitle>
                       {" "}
                       <Button
@@ -8873,7 +8972,7 @@ const SA_A1000W_603: React.FC = () => {
                     activeStep={step}
                     orientation="vertical"
                     style={{
-                      height: deviceHeight - height - height5,
+                      height: mobileheight14,
                       overflow: "auto",
                     }}
                   >
@@ -8892,7 +8991,7 @@ const SA_A1000W_603: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="70%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer10">
                     <GridTitle>시험리스트</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -8903,7 +9002,7 @@ const SA_A1000W_603: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: "78.9vh" }}
+                      style={{ height: webheight7 }}
                       data={process(
                         mainDataResult7.data.map((row) => ({
                           ...row,
@@ -8979,14 +9078,15 @@ const SA_A1000W_603: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </GridContainer>
-                <GridContainer
-                  width={`calc(30% - ${GAP}px)`}
-                  style={{ marginBottom: "10px" }}
-                >
-                  <GridTitleContainer>
+                <GridContainer width={`calc(30% - ${GAP}px)`}>
+                  <GridTitleContainer className="ButtonContainer11">
                     <GridTitle>진행상황</GridTitle>
                   </GridTitleContainer>
-                  <Stepper activeStep={step} orientation="vertical">
+                  <Stepper
+                    activeStep={step}
+                    orientation="vertical"
+                    style={{ height: webheight8, overflow: "auto" }}
+                  >
                     {mainDataResult8.data.map((item, index) => (
                       <Step key={index}>
                         <StepLabel StepIconComponent={customizedMarker}>
