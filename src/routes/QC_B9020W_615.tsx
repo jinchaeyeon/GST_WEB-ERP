@@ -23,7 +23,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,18 +45,15 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
+  getHeight,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  sessionItemState,
-} from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B9020W_615_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -65,14 +62,15 @@ const DATA_ITEM_KEY2 = "num";
 const numberField = ["temperature", "humidity"];
 const centerField = ["insert_date", "insert_time", "defrost"];
 
+var height = 0;
+var height2 = 0;
+
 const QC_B9020W_615: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   let gridRef: any = useRef(null);
   const processApi = useApi();
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [swiper, setSwiper] = useState<SwiperCore>();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -86,7 +84,34 @@ const QC_B9020W_615: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_B9020W_615", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [tabSelected, setTabSelected] = React.useState(0);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false) - height);
+        setMobileHeight2(getDeviceHeight(true) - height);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight]);
+
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
       setFilters2((prev) => ({
@@ -434,8 +459,8 @@ const QC_B9020W_615: React.FC = () => {
             <GridContainer
               style={{
                 width: "100%",
-                overflow: "scroll",
-                height: deviceHeight,
+                overflow: "auto",
+                height: mobileheight,
               }}
             >
               <Accordion defaultExpanded>
@@ -723,7 +748,7 @@ const QC_B9020W_615: React.FC = () => {
             <GridContainer
               style={{
                 width: "100%",
-                overflow: "scroll",
+                overflow: "auto",
               }}
             >
               <FilterContainer>
@@ -755,8 +780,7 @@ const QC_B9020W_615: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight,
-                      overflow: "auto",
+                      height: mobileheight2,
                     }}
                     data={process(
                       mainDataResult2.data.map((row, idx) => ({
@@ -1145,7 +1169,7 @@ const QC_B9020W_615: React.FC = () => {
                 fileName="온습도 모니터링"
               >
                 <Grid
-                  style={{ height: "75vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult2.data.map((row, idx) => ({
                       ...row,

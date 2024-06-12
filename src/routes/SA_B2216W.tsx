@@ -25,11 +25,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  isLoading
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 const SA_B2216W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
@@ -421,7 +417,7 @@ const SA_B2216W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <PaginatorTable
                 value={UserList}

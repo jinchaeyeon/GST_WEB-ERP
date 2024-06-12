@@ -26,6 +26,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -61,6 +62,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -87,11 +89,9 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -360,6 +360,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const QC_A2000: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -372,12 +378,6 @@ const QC_A2000: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".k-tabstrip-items-wrapper");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -440,7 +440,7 @@ const QC_A2000: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -472,6 +472,44 @@ const QC_A2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_A2000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setWebHeight3(getDeviceHeight(true) - height - height2 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, tabSelected]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -555,8 +593,6 @@ const QC_A2000: React.FC = () => {
   const [tempResult3, setTempResult3] = useState<DataResult>(
     process([], tempState3)
   );
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -1461,7 +1497,7 @@ const QC_A2000: React.FC = () => {
           find_row_value: "",
           pgNum: 1,
         }));
-        if(tabSelected == 1) {
+        if (tabSelected == 1) {
           if (swiper && isMobile) {
             swiper.slideTo(0);
           }
@@ -2567,11 +2603,6 @@ const QC_A2000: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{
-          height: isMobile ? "" : "76.5vh",
-          width: "100%",
-          paddingBottom: "15px",
-        }}
         selected={tabSelected}
         onSelect={handleSelectTab}
         scrollable={isMobile}
@@ -2611,9 +2642,7 @@ const QC_A2000: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: isMobile
-                        ? deviceHeight - height - height4
-                        : "63.5vh",
+                      height: isMobile ? mobileheight : webheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -2733,7 +2762,7 @@ const QC_A2000: React.FC = () => {
                       fileName="수입검사"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height4 }}
+                        style={{ height: mobileheight2 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -2875,7 +2904,7 @@ const QC_A2000: React.FC = () => {
                     fileName="수입검사"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height3 - height4 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         detailDataResult2.data.map((row) => ({
                           ...row,
@@ -2969,7 +2998,7 @@ const QC_A2000: React.FC = () => {
                 }}
               >
                 <GridContainer width="80%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>검사상세정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -2996,7 +3025,7 @@ const QC_A2000: React.FC = () => {
                     fileName="수입검사"
                   >
                     <Grid
-                      style={{ height: "63vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         detailDataResult.data.map((row) => ({
                           ...row,
@@ -3084,7 +3113,7 @@ const QC_A2000: React.FC = () => {
                 </GridContainer>
               </FormContext2.Provider>
               <GridContainer width={`calc(20% - ${GAP}px)`}>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>불량상세정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -3117,7 +3146,7 @@ const QC_A2000: React.FC = () => {
                   fileName="수입검사"
                 >
                   <Grid
-                    style={{ height: "63vh" }}
+                    style={{ height: webheight3 }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
                         ...row,

@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -39,6 +39,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -54,10 +55,8 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  sessionItemState,
+  sessionItemState
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -77,15 +76,15 @@ let targetRowIndex: null | number = null;
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const QC_B0300W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const pc = UseGetValueFromSessionItem("pc");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -117,6 +116,31 @@ const QC_B0300W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_B0300W", setCustomOptionData);
 
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".FormBoxWrap");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -590,8 +614,8 @@ const QC_B0300W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <FormBoxWrap border={true}>
-        <FormBox className="ButtonContainer">
+      <FormBoxWrap border={true} className="FormBoxWrap">
+        <FormBox>
           {isMobile ? (
             <table style={{ width: "100%" }}>
               <tbody>
@@ -623,9 +647,7 @@ const QC_B0300W: React.FC = () => {
           )}
         </FormBox>
       </FormBoxWrap>
-      <GridContainer
-        style={{ width: isMobile ? "100%" : "100%", overflow: "auto" }}
-      >
+      <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -633,12 +655,12 @@ const QC_B0300W: React.FC = () => {
           }}
           fileName="단기공정능력현황"
         >
-          <GridTitleContainer className="ButtonContainer2">
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
             style={{
-              height: isMobile ? deviceHeight - height - height2 : "69vh",
+              height: isMobile ? mobileheight : webheight,
             }}
             data={process(
               mainDataResult.data.map((row, idx) => ({

@@ -500,15 +500,6 @@ export const GridContainer = styled.div<TGridContainer>`
   .k-grid td {
     white-space: nowrap; //그리드 셀 말줄임표
   }
-  .k-chart.QC_A0120_TAB1 {
-    width: 50%;
-  }
-  .k-chart.QC_A0120_TAB2 {
-    width: 50%;
-  }
-  .k-chart.QC_A0120_TAB3 {
-    width: 50%;
-  }
   .k-radio-list.k-list-horizontal {
     justify-content: center;
   }
@@ -530,16 +521,6 @@ export const GridContainer = styled.div<TGridContainer>`
   @media (max-width: ${(props) =>
       props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
     width: 100%;
-
-    .k-chart.QC_A0120_TAB1 {
-      width: 100%;
-    }
-    .k-chart.QC_A0120_TAB2 {
-      width: 100%;
-    }
-    .k-chart.QC_A0120_TAB3 {
-      width: 100%;
-    }
   }
 `;
 

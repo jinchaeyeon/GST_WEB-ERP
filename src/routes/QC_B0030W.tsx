@@ -11,8 +11,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -41,6 +41,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -57,7 +58,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { ICustData, IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0030W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -72,6 +73,11 @@ const dateField = ["outdt", "proddt"];
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const QC_B0030W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
@@ -85,13 +91,8 @@ const QC_B0030W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -106,6 +107,41 @@ const QC_B0030W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_B0030W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height4);
+        setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
+        setWebHeight2((getDeviceHeight(true) - height) / 2 - height3);
+        setWebHeight3((getDeviceHeight(true) - height) / 2 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -970,7 +1006,6 @@ const QC_B0030W: React.FC = () => {
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      marginBottom: "4px",
                     }}
                   >
                     {filters.dtgb == "A" ? "제품입고내역" : "제품출하내역"}
@@ -997,7 +1032,7 @@ const QC_B0030W: React.FC = () => {
                 >
                   {filters.dtgb == "A" ? (
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1064,7 +1099,7 @@ const QC_B0030W: React.FC = () => {
                     </Grid>
                   ) : (
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1140,7 +1175,6 @@ const QC_B0030W: React.FC = () => {
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      marginBottom: "4px",
                     }}
                   >
                     <div>
@@ -1178,7 +1212,7 @@ const QC_B0030W: React.FC = () => {
                   fileName="LOT추적"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1260,7 +1294,7 @@ const QC_B0030W: React.FC = () => {
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <GridTitleContainer className="ButtonContainer3">
-                  <GridTitle style={{ marginBottom: "4px" }}>
+                  <GridTitle>
                     <div>
                       <Button
                         onClick={() => {
@@ -1284,7 +1318,7 @@ const QC_B0030W: React.FC = () => {
                   fileName="LOT추적"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height3 }}
+                    style={{ height: mobileheight3 }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
                         ...row,
@@ -1352,7 +1386,7 @@ const QC_B0030W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>
                 {filters.dtgb == "A" ? "제품입고내역" : "제품출하내역"}
               </GridTitle>
@@ -1366,7 +1400,7 @@ const QC_B0030W: React.FC = () => {
             >
               {filters.dtgb == "A" ? (
                 <Grid
-                  style={{ height: "34.3vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1433,7 +1467,7 @@ const QC_B0030W: React.FC = () => {
                 </Grid>
               ) : (
                 <Grid
-                  style={{ height: "34.3vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1503,7 +1537,7 @@ const QC_B0030W: React.FC = () => {
           </GridContainer>
           <GridContainerWrap>
             <GridContainer width="50%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>공정별 LOT 추적</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1514,7 +1548,7 @@ const QC_B0030W: React.FC = () => {
                 fileName="LOT추적"
               >
                 <Grid
-                  style={{ height: "38vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
@@ -1593,7 +1627,7 @@ const QC_B0030W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle>소요자재 LOT</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1604,7 +1638,7 @@ const QC_B0030W: React.FC = () => {
                 fileName="LOT추적"
               >
                 <Grid
-                  style={{ height: "38vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     detailDataResult2.data.map((row) => ({
                       ...row,

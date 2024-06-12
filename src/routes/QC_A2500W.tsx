@@ -13,8 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -42,6 +42,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -61,9 +62,7 @@ import DetailWindow from "../components/Windows/QC_A2500W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -92,6 +91,10 @@ let targetRowIndex2: null | number = null;
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const QC_A2500W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -100,11 +103,9 @@ const QC_A2500W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var height = getHeight(".ButtonContainer");
   var height2 = getHeight(".ButtonContainer2");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -160,6 +161,35 @@ const QC_A2500W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_A2500W", setCustomOptionData);
 
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight((getDeviceHeight(true) - height3) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height3) / 2 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1151,7 +1181,9 @@ const QC_A2500W: React.FC = () => {
                   fileName="NCR관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{
+                      height: mobileheight,
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1269,7 +1301,9 @@ const QC_A2500W: React.FC = () => {
                   fileName="NCR관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{
+                      height: mobileheight2,
+                    }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1350,7 +1384,7 @@ const QC_A2500W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>불량내역</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -1361,7 +1395,7 @@ const QC_A2500W: React.FC = () => {
               fileName="NCR관리"
             >
               <Grid
-                style={{ height: "34vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1435,7 +1469,7 @@ const QC_A2500W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1463,7 +1497,7 @@ const QC_A2500W: React.FC = () => {
               fileName="NCR관리"
             >
               <Grid
-                style={{ height: "34vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,

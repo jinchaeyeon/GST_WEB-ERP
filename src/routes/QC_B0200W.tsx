@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -44,6 +44,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -58,12 +59,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -94,6 +90,13 @@ let targetRowIndex4: null | number = null;
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const QC_B0200W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -105,7 +108,7 @@ const QC_B0200W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -114,13 +117,6 @@ const QC_B0200W: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".k-tabstrip-items-wrapper");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -207,6 +203,55 @@ const QC_B0200W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_B0200W", setCustomOptionData);
 
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height5);
+        setWebHeight4((getDeviceHeight(true) - height - height2) / 2 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    tabSelected,
+  ]);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -283,8 +328,6 @@ const QC_B0200W: React.FC = () => {
   const [detailDataResult3, setDetailDataResult3] = useState<DataResult>(
     process([], detailDataState3)
   );
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -1369,11 +1412,6 @@ const QC_B0200W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <TabStrip
-        style={{
-          width: "100%",
-          height: isMobile ? "" : "81vh",
-          paddingBottom: "15px",
-        }}
         selected={tabSelected}
         onSelect={handleSelectTab}
         scrollable={isMobile}
@@ -1392,7 +1430,7 @@ const QC_B0200W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height5 : "67.5vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1489,7 +1527,6 @@ const QC_B0200W: React.FC = () => {
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
-                          marginBottom: "4px",
                         }}
                       >
                         검사대상
@@ -1515,7 +1552,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height5 }}
+                        style={{ height: mobileheight2 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -1606,7 +1643,6 @@ const QC_B0200W: React.FC = () => {
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
-                          marginBottom: "4px",
                         }}
                       >
                         <div>
@@ -1644,7 +1680,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height3 - height5 }}
+                        style={{ height: mobileheight3 }}
                         data={process(
                           detailDataResult2.data.map((row) => ({
                             ...row,
@@ -1711,7 +1747,7 @@ const QC_B0200W: React.FC = () => {
                 <SwiperSlide key={2}>
                   <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <GridTitleContainer className="ButtonContainer4">
-                      <GridTitle style={{ marginBottom: "4px" }}>
+                      <GridTitle>
                         <div>
                           <Button
                             onClick={() => {
@@ -1735,7 +1771,7 @@ const QC_B0200W: React.FC = () => {
                       fileName="검사실적현황"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height4 - height5 }}
+                        style={{ height: mobileheight4 }}
                         data={process(
                           detailDataResult3.data.map((row) => ({
                             ...row,
@@ -1813,7 +1849,7 @@ const QC_B0200W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>검사대상</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1824,7 +1860,7 @@ const QC_B0200W: React.FC = () => {
                   fileName="검사실적현황"
                 >
                   <Grid
-                    style={{ height: "32vh" }}
+                    style={{ height: webheight2 }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -1906,7 +1942,7 @@ const QC_B0200W: React.FC = () => {
               </GridContainer>
               <GridContainerWrap>
                 <GridContainer width={`20%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>검사항목</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1917,7 +1953,7 @@ const QC_B0200W: React.FC = () => {
                     fileName="검사실적현황"
                   >
                     <Grid
-                      style={{ height: "31.5vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         detailDataResult2.data.map((row) => ({
                           ...row,
@@ -1979,7 +2015,7 @@ const QC_B0200W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(80% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>검사상세정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1990,7 +2026,7 @@ const QC_B0200W: React.FC = () => {
                     fileName="검사실적현황"
                   >
                     <Grid
-                      style={{ height: "31.5vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         detailDataResult3.data.map((row) => ({
                           ...row,

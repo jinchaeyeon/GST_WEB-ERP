@@ -35,11 +35,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  isLoading
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 interface TList {
   badcnt?: number;
@@ -442,11 +438,7 @@ const SA_B2226W: React.FC = () => {
                         "년도 실적 현황"
                       }
                     />
-                    <Grid
-                      container
-                      spacing={2}
-                      style={{ marginTop: "10px", marginBottom: "15px" }}
-                    >
+                    <Grid container spacing={2}>
                       {cardOption.map((item) => (
                         <Grid item xs={12} sm={6} md={4} lg={4} xl={2.4}>
                           <Card
@@ -489,7 +481,7 @@ const SA_B2226W: React.FC = () => {
                         "년도 목표 현황"
                       }
                     />
-                    <Grid container spacing={2} style={{ marginTop: "10px" }}>
+                    <Grid container spacing={2}>
                       <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
                         <Card
                           title={"목표 금액"}
@@ -569,7 +561,7 @@ const SA_B2226W: React.FC = () => {
               "년도 품목별 계약 현황"
             }
           />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <DoubleChart
                 data={ItemList}

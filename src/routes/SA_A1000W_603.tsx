@@ -8951,7 +8951,7 @@ const SA_A1000W_603: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={1}>
-                <GridContainer style={{ marginBottom: "10px", width: "100%" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer11">
                     <GridTitle>
                       {" "}

@@ -18,7 +18,7 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Column, ColumnEditorOptions } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -50,6 +50,7 @@ import {
   convertDateToStrWithTime2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   setDefaultDate,
   toDate,
@@ -67,13 +68,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import QC_A2500W_603_Window from "../components/Windows/QC_A2500W_603_Window";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isFilterHideState,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isFilterHideState, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -106,7 +101,12 @@ type TdataArr = {
 
 const DateField = ["baddt", "qcdt"];
 
-const BA_A0020_603: React.FC = () => {
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
+const QC_A2500W_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -121,11 +121,7 @@ const BA_A0020_603: React.FC = () => {
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = 29;
-  var height2 = getHeight(".ButtonContainer2") - 23;
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [loginResult] = useRecoilState(loginResultState);
@@ -155,6 +151,57 @@ const BA_A0020_603: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("QC_A2500W_603", setMessagesData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight4(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight5(getDeviceHeight(false) - height - height2 - height4);
+        setMobileHeight6(getDeviceHeight(false) - height - height2 - height4);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight4((getDeviceHeight(true) - height - height2) / 3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    tabSelected,
+  ]);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -786,6 +833,7 @@ const BA_A0020_603: React.FC = () => {
         throw findMessage(messagesData, "QC_A2500W_603_001");
       } else {
         setTabSelected(0);
+        setWorkType("");
         resetAllGrid();
         setFilters((prev: any) => ({
           ...prev,
@@ -818,6 +866,9 @@ const BA_A0020_603: React.FC = () => {
       }
     }
     setTabSelected(e.selected);
+    if (e.selected == 0) {
+      setWorkType("");
+    }
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -1380,6 +1431,7 @@ const BA_A0020_603: React.FC = () => {
     if (data.isSuccess == true) {
       if (workType == "N" || paraData.workType == "D") {
         setTabSelected(0);
+        setWorkType("");
       } else {
         setTabSelected(1);
       }
@@ -1672,7 +1724,6 @@ const BA_A0020_603: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%" }}
         scrollable={isMobile}
       >
         <TabStripTab title="요약정보">
@@ -1862,7 +1913,7 @@ const BA_A0020_603: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "69vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1980,8 +2031,7 @@ const BA_A0020_603: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height2,
-                        overflow: "auto",
+                        height: mobileheight2,
                       }}
                     >
                       <GridTitleContainer>
@@ -2222,7 +2272,12 @@ const BA_A0020_603: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
-                    <FormBoxWrap border={true}>
+                    <FormBoxWrap
+                      border={true}
+                      style={{
+                        height: mobileheight3,
+                      }}
+                    >
                       <GridTitleContainer>
                         <GridTitle>
                           <ButtonContainer
@@ -2290,8 +2345,7 @@ const BA_A0020_603: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height2,
-                        overflow: "auto",
+                        height: mobileheight4,
                       }}
                     >
                       <GridTitleContainer>
@@ -2387,7 +2441,7 @@ const BA_A0020_603: React.FC = () => {
                         resizableColumns
                         reorderableColumns
                         scrollable
-                        scrollHeight="25vh"
+                        scrollHeight={`calc(${mobileheight2}px)`}
                         editMode="cell"
                         showGridlines
                       >
@@ -2427,8 +2481,7 @@ const BA_A0020_603: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height2,
-                        overflow: "auto",
+                        height: mobileheight5,
                       }}
                     >
                       <GridTitleContainer>
@@ -2465,7 +2518,6 @@ const BA_A0020_603: React.FC = () => {
                       <Typography
                         style={{
                           color: "black",
-
                           fontWeight: 500,
                           marginBottom: "10px",
                           display: "flex",
@@ -2528,7 +2580,7 @@ const BA_A0020_603: React.FC = () => {
                         resizableColumns
                         reorderableColumns
                         scrollable
-                        scrollHeight="25vh"
+                        scrollHeight={`calc(${mobileheight3}px)`}
                         editMode="cell"
                         showGridlines
                       >
@@ -2568,8 +2620,7 @@ const BA_A0020_603: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height2,
-                        overflow: "auto",
+                        height: mobileheight6,
                       }}
                     >
                       <GridTitleContainer>
@@ -2592,7 +2643,6 @@ const BA_A0020_603: React.FC = () => {
                       <Typography
                         style={{
                           color: "black",
-
                           fontWeight: 500,
                           marginBottom: "10px",
                           display: "flex",
@@ -2658,7 +2708,7 @@ const BA_A0020_603: React.FC = () => {
                         resizableColumns
                         reorderableColumns
                         scrollable
-                        scrollHeight="25vh"
+                        scrollHeight={`calc(${mobileheight4}px)`}
                         editMode="cell"
                         showGridlines
                       >
@@ -2973,7 +3023,6 @@ const BA_A0020_603: React.FC = () => {
                     <Typography
                       style={{
                         color: "black",
-
                         fontWeight: 500,
                         marginBottom: "10px",
                         display: "flex",
@@ -3003,7 +3052,6 @@ const BA_A0020_603: React.FC = () => {
                     <Card
                       style={{
                         width: "100%",
-                        marginRight: "15px",
                         borderRadius: "10px",
                         backgroundColor: "white",
                       }}
@@ -3029,7 +3077,10 @@ const BA_A0020_603: React.FC = () => {
                         </GridTitleContainer>
                         <DataTable
                           value={commentDataResult.data}
-                          tableStyle={{ marginTop: "5px", fontSize: "14px" }}
+                          tableStyle={{
+                            marginTop: "5px",
+                            fontSize: "14px",
+                          }}
                           selectionMode="single"
                           dataKey={COMMENT_DATA_ITEM_KEY}
                           emptyMessage="No DATA."
@@ -3042,7 +3093,7 @@ const BA_A0020_603: React.FC = () => {
                           resizableColumns
                           reorderableColumns
                           scrollable
-                          scrollHeight="25vh"
+                          scrollHeight={`calc(${webheight2}px)`}
                           editMode="cell"
                           showGridlines
                         >
@@ -3085,7 +3136,6 @@ const BA_A0020_603: React.FC = () => {
                       <Typography
                         style={{
                           color: "black",
-
                           fontWeight: 500,
                           marginBottom: "10px",
                           display: "flex",
@@ -3116,7 +3166,6 @@ const BA_A0020_603: React.FC = () => {
                       <Card
                         style={{
                           width: "100%",
-                          marginRight: "15px",
                           borderRadius: "10px",
                           backgroundColor: "white",
                           marginTop: "10px",
@@ -3143,7 +3192,9 @@ const BA_A0020_603: React.FC = () => {
                           </GridTitleContainer>
                           <DataTable
                             value={commentDataResult2.data}
-                            tableStyle={{ marginTop: "5px" }}
+                            tableStyle={{
+                              marginTop: "5px",
+                            }}
                             selectionMode="single"
                             dataKey={COMMENT_DATA_ITEM_KEY2}
                             emptyMessage="No DATA."
@@ -3156,7 +3207,7 @@ const BA_A0020_603: React.FC = () => {
                             resizableColumns
                             reorderableColumns
                             scrollable
-                            scrollHeight="25vh"
+                            scrollHeight={`calc(${webheight3}px)`}
                             editMode="cell"
                             showGridlines
                           >
@@ -3197,14 +3248,13 @@ const BA_A0020_603: React.FC = () => {
                     </GridContainer>
                   </FormBoxWrap>
                   <FormBoxWrap border={true}>
-                    <GridContainer style={{ marginTop: "5px" }}>
+                    <GridContainer>
                       <GridTitleContainer>
                         <GridTitle>결과 및 Feedback</GridTitle>
                       </GridTitleContainer>
                       <Typography
                         style={{
                           color: "black",
-
                           fontWeight: 500,
                           marginBottom: "10px",
                           display: "flex",
@@ -3235,7 +3285,6 @@ const BA_A0020_603: React.FC = () => {
                       <Card
                         style={{
                           width: "100%",
-                          marginRight: "15px",
                           borderRadius: "10px",
                           backgroundColor: "white",
                           marginTop: "10px",
@@ -3262,7 +3311,10 @@ const BA_A0020_603: React.FC = () => {
                           </GridTitleContainer>
                           <DataTable
                             value={commentDataResult3.data}
-                            tableStyle={{ minWidth: "100%", marginTop: "5px" }}
+                            tableStyle={{
+                              minWidth: "100%",
+                              marginTop: "5px",
+                            }}
                             selectionMode="single"
                             dataKey={COMMENT_DATA_ITEM_KEY3}
                             emptyMessage="No DATA."
@@ -3275,7 +3327,7 @@ const BA_A0020_603: React.FC = () => {
                             resizableColumns
                             reorderableColumns
                             scrollable
-                            scrollHeight="25vh"
+                            scrollHeight={`calc(${webheight4}px)`}
                             editMode="cell"
                             showGridlines
                           >
@@ -3394,4 +3446,4 @@ const BA_A0020_603: React.FC = () => {
   );
 };
 
-export default BA_A0020_603;
+export default QC_A2500W_603;
