@@ -20,7 +20,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -54,6 +54,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -76,16 +77,18 @@ const DATA_ITEM_KEY = "num";
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const QC_A0120: React.FC = () => {
   const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".k-tabstrip-items-wrapper");
   const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
 
   let gridRef: any = useRef(null);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -116,6 +119,35 @@ const QC_A0120: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_A0120W", setCustomOptionData);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight((getDeviceHeight(true) - height - height2) / 2);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, tabSelected]);
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("QC_A0120W", setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
@@ -173,7 +205,6 @@ const QC_A0120: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     setPage(initialPageState); // 페이지 초기화
@@ -433,10 +464,6 @@ const QC_A0120: React.FC = () => {
     }
   };
 
-  type TCusomizedGrid = {
-    maxWidth: string;
-  };
-
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -474,10 +501,9 @@ const QC_A0120: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const CusomizedGrid = (props: TCusomizedGrid) => {
-    const { maxWidth } = props;
+  const CusomizedGrid = () => {
     return (
-      <GridContainer maxWidth={maxWidth}>
+      <GridContainer>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>상세정보</GridTitle>
           {isMobile ? (
@@ -535,7 +561,7 @@ const QC_A0120: React.FC = () => {
         >
           <Grid
             style={{
-              height: !isMobile ? "67vh" : deviceHeight - height - height2,
+              height: !isMobile ? webheight2 : mobileheight2,
             }}
             data={process(
               detail1DataResult.data.map((row) => ({
@@ -669,7 +695,7 @@ const QC_A0120: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>불량내역조회</Title>
+        <Title>불량현황조회</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -816,7 +842,7 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -824,7 +850,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="공정별" />
                       <ChartLegend position="bottom" />
@@ -843,7 +868,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={1}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -851,7 +876,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="설비별" />
                       <ChartLegend position="bottom" />
@@ -870,7 +894,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={2}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -878,7 +902,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -897,7 +920,7 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={3}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -905,7 +928,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -925,7 +947,7 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
                 <GridContainer width="100%">
                   <SwiperSlide key={4}>
-                    <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    <CusomizedGrid></CusomizedGrid>
                   </SwiperSlide>
                 </GridContainer>
               </Swiper>
@@ -946,9 +968,14 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="공정별" />
                       <ChartLegend position="bottom" />
@@ -967,9 +994,14 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={1}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="설비별" />
                       <ChartLegend position="bottom" />
@@ -989,9 +1021,14 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={2}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -1010,9 +1047,14 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={3}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -1032,7 +1074,7 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
                 <GridContainer width="100%">
                   <SwiperSlide key={4}>
-                    <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    <CusomizedGrid></CusomizedGrid>
                   </SwiperSlide>
                 </GridContainer>
               </Swiper>
@@ -1053,9 +1095,14 @@ const QC_A0120: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <Chart
-                      style={{ width: "100%", height: deviceHeight - height2 }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB3"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -1074,9 +1121,14 @@ const QC_A0120: React.FC = () => {
                   </SwiperSlide>
                   <SwiperSlide key={1}>
                     <Chart
-                      style={{ width: "100%" }}
+                      style={{ width: "100%", height: mobileheight }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB3"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -1096,7 +1148,7 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
                 <GridContainer width="100%">
                   <SwiperSlide key={4}>
-                    <CusomizedGrid maxWidth="100%"></CusomizedGrid>
+                    <CusomizedGrid></CusomizedGrid>
                   </SwiperSlide>
                 </GridContainer>
               </Swiper>
@@ -1106,7 +1158,6 @@ const QC_A0120: React.FC = () => {
       ) : (
         <>
           <TabStrip
-            style={{ width: "100%", height: "79vh" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
             scrollable={isMobile}
@@ -1120,7 +1171,7 @@ const QC_A0120: React.FC = () => {
                 >
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -1128,7 +1179,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="공정별" />
                       <ChartLegend position="bottom" />
@@ -1145,7 +1195,7 @@ const QC_A0120: React.FC = () => {
                       </ChartSeries>
                     </Chart>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -1153,7 +1203,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="설비별" />
                       <ChartLegend position="bottom" />
@@ -1172,7 +1221,7 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -1180,7 +1229,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -1197,7 +1245,7 @@ const QC_A0120: React.FC = () => {
                       </ChartSeries>
                     </Chart>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
                       seriesColors={
                         window.location.href.split("/")[2].split(".")[1] ==
                         "ddgd"
@@ -1205,7 +1253,6 @@ const QC_A0120: React.FC = () => {
                           : WebErpcolorList
                       }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB1"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -1224,7 +1271,7 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                 </GridContainer>
                 <GridContainer width={`calc(40% - ${GAP}px)`}>
-                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                  <CusomizedGrid></CusomizedGrid>
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
@@ -1233,9 +1280,14 @@ const QC_A0120: React.FC = () => {
                 <GridContainer width="60%">
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="공정별" />
                       <ChartLegend position="bottom" />
@@ -1252,9 +1304,14 @@ const QC_A0120: React.FC = () => {
                       </ChartSeries>
                     </Chart>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="설비별" />
                       <ChartLegend position="bottom" />
@@ -1274,9 +1331,14 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -1293,9 +1355,14 @@ const QC_A0120: React.FC = () => {
                       </ChartSeries>
                     </Chart>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "50%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB2"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -1314,7 +1381,7 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                 </GridContainer>
                 <GridContainer width={`calc(40% - ${GAP}px)`}>
-                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                  <CusomizedGrid></CusomizedGrid>
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
@@ -1323,9 +1390,14 @@ const QC_A0120: React.FC = () => {
                 <GridContainer width="30%">
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "100%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB3"}
                     >
                       <ChartTitle text="불량유형별" />
                       <ChartLegend position="bottom" />
@@ -1344,9 +1416,14 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                   <GridContainerWrap>
                     <Chart
-                      style={{ height: "36vh" }}
+                      style={{ height: webheight, width: "100%" }}
+                      seriesColors={
+                        window.location.href.split("/")[2].split(".")[1] ==
+                        "ddgd"
+                          ? DDGDcolorList
+                          : WebErpcolorList
+                      }
                       onSeriesClick={onChartSeriesClick}
-                      className={"QC_A0120_TAB3"}
                     >
                       <ChartTitle text="품목별" />
                       <ChartLegend position="bottom" />
@@ -1365,7 +1442,7 @@ const QC_A0120: React.FC = () => {
                   </GridContainerWrap>
                 </GridContainer>
                 <GridContainer width={`calc(70% - ${GAP}px)`}>
-                  <CusomizedGrid maxWidth="1200px"></CusomizedGrid>
+                  <CusomizedGrid></CusomizedGrid>
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
