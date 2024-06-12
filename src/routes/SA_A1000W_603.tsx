@@ -111,12 +111,12 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import RevWindow from "../components/Windows/SA_A1000W_REV_Window";
 import SA_A1000W_603_Design2_Window from "../components/Windows/SA_A1000W_603_Design2_Window";
 import SA_A1000W_603_Design3_Window from "../components/Windows/SA_A1000W_603_Design3_Window";
 import SA_A1000W_603_Design4_Window from "../components/Windows/SA_A1000W_603_Design4_Window";
 import SA_A1000W_603_Design_Window from "../components/Windows/SA_A1000W_603_Design_Window";
 import SA_A1000W_603_Window from "../components/Windows/SA_A1000W_603_Window";
+import RevWindow from "../components/Windows/SA_A1000W_REV_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {

@@ -103,7 +103,7 @@ const SA_A1200W_603: React.FC = () => {
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorktype] = useState<"N" | "U">("U");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -1237,12 +1237,12 @@ const SA_A1200W_603: React.FC = () => {
       }
     });
 
-    if(valid != true) {
+    if (valid != true) {
       alert("필수값을 입력해주세요");
       return false;
     }
 
-    console.log(dataItem)
+    console.log(dataItem);
     if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
@@ -1474,7 +1474,7 @@ const SA_A1200W_603: React.FC = () => {
       <TitleContainer className="TitleContainer">
         <Title>계약가능성관리</Title>
         <ButtonContainer>
-          {tabSelected == 1 ? (
+          {tabSelected == 1 && isMobile ? (
             <Button
               onClick={onSaveClick}
               fillMode="outline"
