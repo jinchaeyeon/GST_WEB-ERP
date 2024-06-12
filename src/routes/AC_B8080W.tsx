@@ -1,8 +1,8 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -21,6 +21,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -29,16 +30,21 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
-const AC_B8080W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const processApi = useApi();
+var height = 0;
+var height2 = 0;
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+const AC_B8080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const processApi = useApi();
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -57,6 +63,27 @@ const AC_B8080W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_B8080W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-tabstrip-items-wrapper");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -400,10 +427,14 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: isMobile ? deviceHeight - height : "76vh",
+                height: isMobile ? mobileheight : webheight,
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+              {url != "" ? (
+                <FileViewers fileUrl={url} isMobile={isMobile} />
+              ) : (
+                ""
+              )}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -411,10 +442,14 @@ const AC_B8080W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: isMobile ? deviceHeight - height : "76vh",
+                height: isMobile ? mobileheight2 : webheight2,
               }}
             >
-              {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
+              {url2 != "" ? (
+                <FileViewers fileUrl={url2} isMobile={isMobile} />
+              ) : (
+                ""
+              )}
             </div>
           </GridContainer>
         </TabStripTab>

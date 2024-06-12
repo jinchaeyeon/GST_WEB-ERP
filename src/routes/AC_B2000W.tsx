@@ -13,8 +13,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -44,6 +44,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -52,7 +53,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -63,15 +64,162 @@ const numberField = ["carriedamt", "dramt", "cramt", "balamt"];
 const dateField = ["acntdt1"];
 const centerField = ["acntdate"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const AC_B2000W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".FormBoxWrap");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [mobileheight11, setMobileHeight11] = useState(0);
+  const [mobileheight12, setMobileHeight12] = useState(0);
+  const [mobileheight13, setMobileHeight13] = useState(0);
+  const [mobileheight14, setMobileHeight14] = useState(0);
+  const [mobileheight15, setMobileHeight15] = useState(0);
+  const [mobileheight16, setMobileHeight16] = useState(0);
+  const [mobileheight17, setMobileHeight17] = useState(0);
+  const [mobileheight18, setMobileHeight18] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
+  const [webheight11, setWebHeight11] = useState(0);
+  const [webheight12, setWebHeight12] = useState(0);
+  const [webheight13, setWebHeight13] = useState(0);
+  const [webheight14, setWebHeight14] = useState(0);
+  const [webheight15, setWebHeight15] = useState(0);
+  const [webheight16, setWebHeight16] = useState(0);
+  const [webheight17, setWebHeight17] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B2000W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".FormBoxWrap");
+      height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".ButtonContainer");
+      height5 = getHeight(".ButtonContainer2");
+      height6 = getHeight(".FormBoxWrap2");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight4(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+        setMobileHeight5(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight6(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight7(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+        setMobileHeight8(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight9(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight10(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+        setMobileHeight11(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight12(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight13(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight14(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight15(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight16(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight17(getDeviceHeight(true) - height2 - height3 - height4);
+        setMobileHeight18(getDeviceHeight(true) - height2 - height3 - height4);
+        setWebHeight(
+          getDeviceHeight(true) - height6 - height2 - height3 - height5
+        );
+        setWebHeight2((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight3(
+          (getDeviceHeight(true) - height2 - height3) / 2 - height5
+        );
+        setWebHeight4(
+          getDeviceHeight(true) - height6 - height2 - height3 - height5
+        );
+        setWebHeight5((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight6(
+          (getDeviceHeight(true) - height2 - height3) / 2 - height5
+        );
+        setWebHeight7(
+          getDeviceHeight(true) - height6 - height2 - height3 - height5
+        );
+        setWebHeight8((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight9(
+          (getDeviceHeight(true) - height2 - height3) / 2 - height5
+        );
+        setWebHeight10(
+          getDeviceHeight(true) - height6 - height2 - height3 - height5
+        );
+        setWebHeight11((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight12(
+          (getDeviceHeight(true) - height2 - height3) / 2 - height5
+        );
+        setWebHeight13(getDeviceHeight(true) - height2 - height3);
+        setWebHeight14((getDeviceHeight(true) - height2 - height3) / 2);
+        setWebHeight15(
+          (getDeviceHeight(true) - height2 - height3) / 2 - height5
+        );
+        setWebHeight16(
+          (getDeviceHeight(true) - height6 - height2 - height3) / 2 - height5
+        );
+        setWebHeight17(
+          (getDeviceHeight(true) - height6 - height2 - height3) / 2 - height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight7,
+    webheight8,
+    webheight9,
+    webheight10,
+    webheight11,
+    webheight12,
+    webheight13,
+    webheight14,
+    webheight15,
+    webheight16,
+    webheight17,
+  ]);
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -82,7 +230,7 @@ const AC_B2000W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B2000W", setMessagesData);
-  const [tabSelected, setTabSelected] = React.useState(0);
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -93,9 +241,6 @@ const AC_B2000W: React.FC = () => {
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B2000W", setCustomOptionData);
 
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -1223,7 +1368,7 @@ const AC_B2000W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1 - height2,
+                        height: mobileheight,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -1305,7 +1450,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1397,7 +1542,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -1468,7 +1613,7 @@ const AC_B2000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -1487,6 +1632,9 @@ const AC_B2000W: React.FC = () => {
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1495,7 +1643,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: "65vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1547,7 +1695,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -1615,6 +1763,9 @@ const AC_B2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle />
+                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -1623,7 +1774,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "42vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -1751,7 +1902,7 @@ const AC_B2000W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1 - height2,
+                        height: mobileheight4,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -1833,7 +1984,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight5 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1923,7 +2074,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight6 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -1994,7 +2145,7 @@ const AC_B2000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2013,6 +2164,9 @@ const AC_B2000W: React.FC = () => {
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2021,7 +2175,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: "70vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2073,7 +2227,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight5 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2139,6 +2293,9 @@ const AC_B2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle />
+                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -2147,7 +2304,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "42vh" }}
+                        style={{ height: webheight6 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2275,7 +2432,7 @@ const AC_B2000W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1 - height2,
+                        height: mobileheight7,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -2357,7 +2514,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight8 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2447,7 +2604,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight9 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -2518,7 +2675,7 @@ const AC_B2000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2537,6 +2694,9 @@ const AC_B2000W: React.FC = () => {
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2545,7 +2705,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: "70vh" }}
+                      style={{ height: webheight7 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2597,7 +2757,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight8 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2663,6 +2823,9 @@ const AC_B2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle />
+                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -2671,7 +2834,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "42vh" }}
+                        style={{ height: webheight9 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2799,7 +2962,7 @@ const AC_B2000W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1 - height2,
+                        height: mobileheight10,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -2881,7 +3044,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight11 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2971,7 +3134,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight12 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3042,7 +3205,7 @@ const AC_B2000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3061,6 +3224,9 @@ const AC_B2000W: React.FC = () => {
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -3069,7 +3235,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: "70vh" }}
+                      style={{ height: webheight10 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3121,7 +3287,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight11 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3187,6 +3353,9 @@ const AC_B2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle />
+                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -3195,7 +3364,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "42vh" }}
+                        style={{ height: webheight12 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -3303,7 +3472,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight13 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3384,7 +3553,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight14 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -3474,7 +3643,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight15 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -3553,7 +3722,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: "80vh" }}
+                      style={{ height: webheight13 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3605,7 +3774,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight14 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3671,6 +3840,9 @@ const AC_B2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2">
+                      <GridTitle />
+                    </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -3679,7 +3851,7 @@ const AC_B2000W: React.FC = () => {
                       fileName="경영정보조회"
                     >
                       <Grid
-                        style={{ height: "42vh" }}
+                        style={{ height: webheight15 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -3779,9 +3951,7 @@ const AC_B2000W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitle>
                   </GridTitleContainer>
-                  <GridContainer
-                    style={{ height: deviceHeight - height - height1 }}
-                  >
+                  <GridContainer style={{ height: mobileheight16 }}>
                     <FormBoxWrap border={true} className="FormBoxWrap">
                       <FormBox>
                         <tbody>
@@ -3868,7 +4038,7 @@ const AC_B2000W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1,
+                        height: mobileheight17,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -3954,7 +4124,7 @@ const AC_B2000W: React.FC = () => {
                     fileName="경영정보조회"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight18 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -4023,7 +4193,7 @@ const AC_B2000W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap2">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -4068,6 +4238,9 @@ const AC_B2000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle />
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
@@ -4076,7 +4249,7 @@ const AC_B2000W: React.FC = () => {
                   fileName="경영정보조회"
                 >
                   <Grid
-                    style={{ height: "30vh" }}
+                    style={{ height: webheight16 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -4135,6 +4308,9 @@ const AC_B2000W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle />
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
                   ref={(exporter) => {
@@ -4143,7 +4319,7 @@ const AC_B2000W: React.FC = () => {
                   fileName="경영정보조회"
                 >
                   <Grid
-                    style={{ height: "40vh" }}
+                    style={{ height: webheight17 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,

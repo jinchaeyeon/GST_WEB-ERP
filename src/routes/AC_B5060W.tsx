@@ -13,8 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -36,6 +36,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -45,7 +46,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -54,16 +55,18 @@ const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 const numberField = ["maesu", "amt", "vat"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const AC_B5060W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -82,6 +85,87 @@ const AC_B5060W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [tabSelected2, setTabSelected2] = React.useState(0);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".k-tabstrip-items-wrapper");
+      height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".ButtonContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(
+          getDeviceHeight(true) - height - height2 - height3 - height2
+        );
+        setMobileHeight3(
+          getDeviceHeight(true) - height - height2 - height3 - height2
+        );
+        setMobileHeight4(getDeviceHeight(true) - height - height2);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight6(
+          getDeviceHeight(true) - height - height2 - height3 - height2
+        );
+        setMobileHeight7(
+          getDeviceHeight(true) - height - height2 - height3 - height2
+        );
+        setMobileHeight8(getDeviceHeight(true) - height - height2);
+        setMobileHeight9(getDeviceHeight(true) - height - height2);
+        setMobileHeight10(getDeviceHeight(true) - height - height2);
+        setWebHeight((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height2);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height2);
+        setWebHeight4(getDeviceHeight(true) - height - height2);
+        setWebHeight5((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight6((getDeviceHeight(true) - height - height2) / 2 - height2);
+        setWebHeight7((getDeviceHeight(true) - height - height2) / 2 - height2);
+        setWebHeight8(getDeviceHeight(true) - height - height2);
+        setWebHeight9(getDeviceHeight(true) - height - height2);
+        setWebHeight10(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+    webheight7,
+    webheight8,
+    webheight9,
+    webheight10,
+  ]);
+
   const handleSelectTab = (e: any) => {
     setUrl("");
     setTabSelected(e.selected);
@@ -1199,7 +1283,7 @@ const AC_B5060W: React.FC = () => {
                     fileName="세금계산서합계표"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1284,7 +1368,7 @@ const AC_B5060W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height: deviceHeight - height - height1 - height,
+                              height: mobileheight2,
                             }}
                             data={process(
                               mainDataResult2.data.map((row) => ({
@@ -1366,7 +1450,7 @@ const AC_B5060W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height: deviceHeight - height - height1 - height,
+                              height: mobileheight3,
                             }}
                             data={process(
                               mainDataResult3.data.map((row) => ({
@@ -1444,7 +1528,7 @@ const AC_B5060W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>기본정보</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1455,7 +1539,7 @@ const AC_B5060W: React.FC = () => {
                   fileName="세금계산서합계표"
                 >
                   <Grid
-                    style={{ height: "30vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1520,7 +1604,7 @@ const AC_B5060W: React.FC = () => {
                       fileName="세금계산서합계표"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -1595,7 +1679,7 @@ const AC_B5060W: React.FC = () => {
                       fileName="세금계산서합계표"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -1668,10 +1752,14 @@ const AC_B5060W: React.FC = () => {
           <GridContainer>
             <div
               style={{
-                height: isMobile ? deviceHeight - height : "76vh",
+                height: isMobile ? mobileheight4 : webheight4,
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+              {url != "" ? (
+                <FileViewers fileUrl={url} isMobile={isMobile} />
+              ) : (
+                ""
+              )}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -1714,7 +1802,7 @@ const AC_B5060W: React.FC = () => {
                     fileName="세금계산서합계표"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight5 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1799,7 +1887,7 @@ const AC_B5060W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height: deviceHeight - height - height1 - height,
+                              height: mobileheight6,
                             }}
                             data={process(
                               mainDataResult2.data.map((row) => ({
@@ -1881,7 +1969,7 @@ const AC_B5060W: React.FC = () => {
                         >
                           <Grid
                             style={{
-                              height: deviceHeight - height - height1 - height,
+                              height: mobileheight7,
                             }}
                             data={process(
                               mainDataResult3.data.map((row) => ({
@@ -1959,7 +2047,7 @@ const AC_B5060W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>기본정보</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -1970,7 +2058,7 @@ const AC_B5060W: React.FC = () => {
                   fileName="세금계산서합계표"
                 >
                   <Grid
-                    style={{ height: "30vh" }}
+                    style={{ height: webheight5 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2035,7 +2123,7 @@ const AC_B5060W: React.FC = () => {
                       fileName="세금계산서합계표"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight6 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2110,7 +2198,7 @@ const AC_B5060W: React.FC = () => {
                       fileName="세금계산서합계표"
                     >
                       <Grid
-                        style={{ height: "35vh" }}
+                        style={{ height: webheight7 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2182,28 +2270,28 @@ const AC_B5060W: React.FC = () => {
         <TabStripTab title="매입처별세금계산서합계표">
           <div
             style={{
-              height: isMobile ? deviceHeight - height : "76vh",
+              height: isMobile ? mobileheight8 : webheight8,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="신용카드등수취금액">
           <div
             style={{
-              height: isMobile ? deviceHeight - height : "76vh",
+              height: isMobile ? mobileheight9 : webheight9,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="공제받지못할매입세액명세서">
           <div
             style={{
-              height: isMobile ? deviceHeight - height : "76vh",
+              height: isMobile ? mobileheight10 : webheight10,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
       </TabStrip>

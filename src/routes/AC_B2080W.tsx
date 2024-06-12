@@ -24,8 +24,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -49,6 +49,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
@@ -59,7 +60,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -86,15 +87,108 @@ const numberField = [
 
 const dateField = ["acntdt"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const AC_B2080W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [mobileheight10, setMobileHeight10] = useState(0);
+  const [mobileheight11, setMobileHeight11] = useState(0);
+  const [mobileheight12, setMobileHeight12] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
+  const [webheight9, setWebHeight9] = useState(0);
+  const [webheight10, setWebHeight10] = useState(0);
+  const [webheight11, setWebHeight11] = useState(0);
+  const [webheight12, setWebHeight12] = useState(0);
+
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("AC_B2080W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight6(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight7(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight8(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight9(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight10(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight11(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight12(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight4((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight5((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight6((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight7((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight8((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight9((getDeviceHeight(true) - height - height2) / 3 - height4);
+        setWebHeight10((getDeviceHeight(true) - height - height2) / 3);
+        setWebHeight11(
+          (getDeviceHeight(true) - height - height2) / 3 - height4
+        );
+        setWebHeight12(
+          (getDeviceHeight(true) - height - height2) / 3 - height4
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight7,
+    webheight8,
+    webheight9,
+    webheight10,
+    webheight11,
+    webheight12,
+  ]);
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [tabSelected, setTabSelected] = React.useState(0);
-    const [permissions, setPermissions] = useState<TPermissions>({
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -104,8 +198,6 @@ const AC_B2080W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B2080W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("AC_B2080W", setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
@@ -1024,7 +1116,7 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -1038,7 +1130,7 @@ const AC_B2080W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <Chart style={{ height: deviceHeight - height - height1 }}>
+                  <Chart style={{ height: mobileheight }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1092,7 +1184,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1162,7 +1254,7 @@ const AC_B2080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>
+                    <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
                           if (swiper && isMobile) {
@@ -1172,7 +1264,7 @@ const AC_B2080W: React.FC = () => {
                       >
                         요약정보 보기
                       </Button>
-                    </GridTitle>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -1182,7 +1274,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1253,8 +1345,8 @@ const AC_B2080W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer>
+                  <Chart style={{ height: webheight }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1274,6 +1366,9 @@ const AC_B2080W: React.FC = () => {
                   </Chart>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1282,7 +1377,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1349,6 +1444,9 @@ const AC_B2080W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -1357,7 +1455,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1438,7 +1536,7 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -1452,7 +1550,7 @@ const AC_B2080W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <Chart style={{ height: deviceHeight - height - height1 }}>
+                  <Chart style={{ height: mobileheight4 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1506,7 +1604,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight5 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1574,9 +1672,9 @@ const AC_B2080W: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
               <SwiperSlide key={2}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>
+                    <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
                           if (swiper && isMobile) {
@@ -1586,7 +1684,7 @@ const AC_B2080W: React.FC = () => {
                       >
                         요약정보 보기
                       </Button>
-                    </GridTitle>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -1596,7 +1694,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight6 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1669,8 +1767,8 @@ const AC_B2080W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer>
+                  <Chart style={{ height: webheight4 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1690,6 +1788,9 @@ const AC_B2080W: React.FC = () => {
                   </Chart>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -1698,7 +1799,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight5 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1765,6 +1866,9 @@ const AC_B2080W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -1773,7 +1877,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: webheight6 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -1856,7 +1960,7 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -1870,7 +1974,7 @@ const AC_B2080W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <Chart style={{ height: deviceHeight - height - height1 }}>
+                  <Chart style={{ height: mobileheight7 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -1924,7 +2028,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight8 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1994,7 +2098,7 @@ const AC_B2080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>
+                    <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
                           if (swiper && isMobile) {
@@ -2004,7 +2108,7 @@ const AC_B2080W: React.FC = () => {
                       >
                         요약정보 보기
                       </Button>
-                    </GridTitle>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -2014,7 +2118,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight9 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2087,8 +2191,8 @@ const AC_B2080W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer>
+                  <Chart style={{ height: webheight7 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -2108,6 +2212,9 @@ const AC_B2080W: React.FC = () => {
                   </Chart>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2116,7 +2223,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight8 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2183,6 +2290,9 @@ const AC_B2080W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -2191,7 +2301,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: webheight9 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2274,7 +2384,7 @@ const AC_B2080W: React.FC = () => {
               }}
             >
               <SwiperSlide key={0}>
-                <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <ButtonContainer>
                       <Button
@@ -2288,7 +2398,7 @@ const AC_B2080W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <Chart style={{ height: deviceHeight - height - height1 }}>
+                  <Chart style={{ height: mobileheight10 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -2342,7 +2452,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight11 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2412,7 +2522,7 @@ const AC_B2080W: React.FC = () => {
               <SwiperSlide key={2}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <GridTitle>
+                    <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
                           if (swiper && isMobile) {
@@ -2422,7 +2532,7 @@ const AC_B2080W: React.FC = () => {
                       >
                         요약정보 보기
                       </Button>
-                    </GridTitle>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -2432,7 +2542,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight12 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2505,8 +2615,8 @@ const AC_B2080W: React.FC = () => {
           ) : (
             <>
               <GridContainer width="100%">
-                <GridContainer height="28vh">
-                  <Chart style={{ height: "100%" }}>
+                <GridContainer>
+                  <Chart style={{ height: webheight10 }}>
                     <ChartLegend position="top" orientation="horizontal" />
                     <ChartTooltip format="{0}" />
                     <ChartValueAxis>
@@ -2526,6 +2636,9 @@ const AC_B2080W: React.FC = () => {
                   </Chart>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
                     ref={(exporter) => {
@@ -2534,7 +2647,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "25vh" }}
+                      style={{ height: webheight11 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2601,6 +2714,9 @@ const AC_B2080W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <GridTitle />
+                  </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -2609,7 +2725,7 @@ const AC_B2080W: React.FC = () => {
                     fileName="제조/손익 명세서"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: webheight12 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
