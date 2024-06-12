@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -46,6 +46,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   numberWithCommas3,
@@ -60,7 +61,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0021W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -96,11 +97,71 @@ const numberField = [
 ];
 const dateField = ["recdt", "strdt", "enddt"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const BA_A0021W_603: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [tabSelected2, setTabSelected2] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+  useRecoilState(isFilterHideState);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("BA_A0021W_603", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".FormBoxWrap");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height4);
+        setMobileHeight2(getDeviceHeight(true) - height - height3 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height4);
+        setMobileHeight4(getDeviceHeight(true) - height3 - height4);
+        setMobileHeight5(getDeviceHeight(true) - height3 - height4);
+        setMobileHeight6(getDeviceHeight(true) - height3 - height4);
+        setWebHeight(getDeviceHeight(true) - height3 - height4);
+        setWebHeight2(getDeviceHeight(false) - height2 - height3 - height3 - height4);
+        setWebHeight3(getDeviceHeight(false) - height3 - height3 - height4);
+        setWebHeight4(getDeviceHeight(false) - height3 - height3 - height4);
+        setWebHeight5(getDeviceHeight(false) - height3 - height3 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    tabSelected2,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
+
   var index = 0;
   var index2 = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -232,9 +293,6 @@ const BA_A0021W_603: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("BA_A0021W_603", setCustomOptionData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -252,9 +310,11 @@ const BA_A0021W_603: React.FC = () => {
       }));
     }
   }, [customOptionData]);
-  const [tabSelected, setTabSelected] = React.useState(0);
-  const [tabSelected2, setTabSelected2] = React.useState(0);
+
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     setTabSelected(e.selected);
     setTabSelected2(0);
   };
@@ -1126,7 +1186,7 @@ const BA_A0021W_603: React.FC = () => {
                   fileName="고객이력관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1239,7 +1299,7 @@ const BA_A0021W_603: React.FC = () => {
                         <FormBoxWrap
                           border={true}
                           style={{
-                            height: deviceHeight - height - height1,
+                            height: mobileheight2,
                             overflow: "auto",
                           }}
                         >
@@ -1507,7 +1567,7 @@ const BA_A0021W_603: React.FC = () => {
                           }
                           form_id={"BA_A0021W_603"}
                           table_id={"BA020T"}
-                          style={{ height: deviceHeight - height - 65 }}
+                          style={{ height: mobileheight3 }}
                         />
                       </GridContainer>
                     </SwiperSlide>
@@ -1523,7 +1583,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height + 5 }}
+                        style={{ height: mobileheight4 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -1613,7 +1673,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height + 5 }}
+                        style={{ height: mobileheight5 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -1699,7 +1759,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height + 5 }}
+                        style={{ height: mobileheight6 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -1866,7 +1926,7 @@ const BA_A0021W_603: React.FC = () => {
                   fileName="고객이력관리"
                 >
                   <Grid
-                    style={{ height: "70vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1952,7 +2012,7 @@ const BA_A0021W_603: React.FC = () => {
                 scrollable={isMobile}
               >
                 <TabStripTab title="고객정보">
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap">
                     <GridTitleContainer>
                       <GridTitle>고객 기본정보</GridTitle>
                     </GridTitleContainer>
@@ -2209,7 +2269,7 @@ const BA_A0021W_603: React.FC = () => {
                       }
                       form_id={"BA_A0021W_603"}
                       table_id={"BA020T"}
-                      style={{ height: "60vh" }}
+                      style={{ height: webheight2 }}
                     />
                   </GridContainer>
                 </TabStripTab>
@@ -2223,7 +2283,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: "75vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2313,7 +2373,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: "75vh" }}
+                        style={{ height: webheight4 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2399,7 +2459,7 @@ const BA_A0021W_603: React.FC = () => {
                       fileName="고객이력관리"
                     >
                       <Grid
-                        style={{ height: "75vh" }}
+                        style={{ height: webheight5 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
