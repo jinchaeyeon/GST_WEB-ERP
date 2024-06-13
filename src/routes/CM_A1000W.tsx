@@ -71,7 +71,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -1968,7 +1968,6 @@ const CM_A1000W: React.FC = () => {
                 <TextArea
                   value={infomation.memo}
                   name="memo"
-                  rows={27}
                   onChange={InputChange}
                   style={{ height: mobileheight3 }}
                 />
@@ -1998,14 +1997,12 @@ const CM_A1000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <div style={{ height: webheight, overflow: "auto" }}>
-                <TextArea
-                  value={infomation.memo}
-                  name="memo"
-                  rows={27}
-                  onChange={InputChange}
-                />
-              </div>
+              <TextArea
+                value={infomation.memo}
+                name="memo"
+                onChange={InputChange}
+                style={{ height: webheight }}
+              />
             </GridContainer>
             <GridContainer width={`calc(100% - 370px)`}>
               <FilterContainer>
