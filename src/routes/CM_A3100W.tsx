@@ -26,7 +26,7 @@ import {
   TimelineView,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -42,15 +42,17 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import {
+  UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime,
   findMessage,
+  getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
-import { PAGE_SIZE } from "../components/CommonString";
+import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
 import { useApi } from "../hooks/api";
 import {
@@ -72,9 +74,11 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 
   return newDataState;
 };
+var height = 0;
+var height2 = 0;
 
 const CM_A3100W: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -83,11 +87,37 @@ const CM_A3100W: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A3100W", setMessagesData);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
   var height = getHeight(".ButtonContainer");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A3100W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -667,9 +697,35 @@ const CM_A3100W: React.FC = () => {
               style={{
                 width: "100%",
                 overflow: "auto",
-                height: deviceHeight,
+                height: mobileheight,
               }}
             >
+              <GridTitleContainer>
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    달력
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+              <Calendar
+                id="CM_A3100W_CALENDAR"
+                focusedDate={filters.todt}
+                value={filters.todt}
+                onChange={filterInputChange}
+              />
+              <GridTitleContainer>
+                <GridTitle>자원</GridTitle>
+              </GridTitleContainer>
               {resultState.length > 0
                 ? resultState.map((item: any, index: any) => {
                     return (
@@ -731,35 +787,46 @@ const CM_A3100W: React.FC = () => {
           <SwiperSlide key={1}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle></GridTitle>
-                <ButtonContainer style={{ justifyContent: "space-between" }}>
-                  <Button
-                    onClick={() => {
-                      if (swiper && isMobile) {
-                        swiper.slideTo(0);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
-                  <Button
-                    //onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <div>
+                      <Button
+                        //onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        저장
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitle>
               </GridTitleContainer>
               {osstate == true ? (
                 <div
                   style={{
                     backgroundColor: "#ccc",
-                    height: deviceHeight - height,
+                    height: mobileheight2,
                     width: "100%",
                     display: "flex",
                     alignItems: "center",
@@ -794,7 +861,7 @@ const CM_A3100W: React.FC = () => {
                     },
                   ]}
                   form={FormWithCustomEditor}
-                  height={deviceHeight - height}
+                  height={mobileheight2}
                 >
                   <TimelineView showWorkHours={false} />
                   <DayView showWorkHours={false} />
@@ -805,18 +872,31 @@ const CM_A3100W: React.FC = () => {
               )}
             </GridContainer>
           </SwiperSlide>
+          <SwiperSlide key={2}>
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer>
+                <GridTitle>
+                  <ButtonContainer style={{ justifyContent: "left" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitle>
+              </GridTitleContainer>
+            </GridContainer>
+          </SwiperSlide>
         </Swiper>
       ) : (
         <>
           <GridContainerWrap>
-            <GridContainer
-              width="355px"
-              style={{
-                height: isMobile ? "100%" : "88vh",
-                marginTop: "5px",
-                paddingRight: "10px",
-              }}
-            >
+            <GridContainer width="30%">
               <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>달력</GridTitle>
@@ -828,7 +908,7 @@ const CM_A3100W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </GridContainer>
-              <GridContainer style={{ marginTop: "5px" }}>
+              <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>자원</GridTitle>
                 </GridTitleContainer>
@@ -889,15 +969,9 @@ const CM_A3100W: React.FC = () => {
                   : ""}
               </GridContainer>
             </GridContainer>
-            <GridContainer
-              style={{
-                height: isMobile ? "100%" : "88vh",
-                paddingRight: "10px",
-              }}
-              width={`calc(100% - 370px)`}
-            >
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
@@ -914,7 +988,7 @@ const CM_A3100W: React.FC = () => {
                   <div
                     style={{
                       backgroundColor: "#ccc",
-                      height: "100%",
+                      height: webheight, // 88vh
                       width: "100%",
                       display: "flex",
                       alignItems: "center",
@@ -949,6 +1023,7 @@ const CM_A3100W: React.FC = () => {
                       },
                     ]}
                     form={FormWithCustomEditor}
+                    height={webheight}
                   >
                     <TimelineView showWorkHours={false} />
                     <DayView showWorkHours={false} />
@@ -958,7 +1033,6 @@ const CM_A3100W: React.FC = () => {
                   </Scheduler>
                 )}
               </GridContainer>
-              <GridContainer style={{ marginTop: "10px" }}></GridContainer>
             </GridContainer>
           </GridContainerWrap>
         </>

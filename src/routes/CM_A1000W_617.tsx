@@ -12,8 +12,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -40,6 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -51,7 +52,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1000W_617_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -59,8 +60,13 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const dateField = ["recdt"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const CM_A1000W_617: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -70,19 +76,48 @@ const CM_A1000W_617: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A1000W_617", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height4);
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height3 - height4
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
+
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const pc = UseGetValueFromSessionItem("pc");
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1000W_617", setMessagesData);
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A1000W_617", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -561,7 +596,10 @@ const CM_A1000W_617: React.FC = () => {
     <>
       {isMobile ? (
         <>
-          <TitleContainer style={{ textAlign: "center" }}>
+          <TitleContainer
+            className="TitleContainer"
+            style={{ textAlign: "center" }}
+          >
             <Title>업무일지</Title>
             <ButtonContainer>
               {permissions && (
@@ -638,7 +676,7 @@ const CM_A1000W_617: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: mobileheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -732,7 +770,7 @@ const CM_A1000W_617: React.FC = () => {
                 </ButtonContainer>
                 <FormBoxWrap
                   style={{
-                    height: deviceHeight - height2,
+                    height: mobileheight2,
                     overflow: "auto",
                   }}
                   border={true}
@@ -861,7 +899,7 @@ const CM_A1000W_617: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -897,7 +935,7 @@ const CM_A1000W_617: React.FC = () => {
               fileName="업무일지"
             >
               <Grid
-                style={{ height: "35vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -960,7 +998,7 @@ const CM_A1000W_617: React.FC = () => {
               </Grid>
             </ExcelExport>
           </GridContainer>
-          <FormBoxWrap border={true}>
+          <FormBoxWrap border={true} className="FormBoxWrap">
             <FormBox>
               <tbody>
                 <tr>
