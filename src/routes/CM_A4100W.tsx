@@ -26,6 +26,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -64,6 +65,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -88,9 +90,8 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
+  isFilterHideState,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -223,24 +224,94 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 let temp = 0;
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+
 const CM_A4100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height2 = getHeight(".ButtonContainer");
-  var height3 = getHeight(".ButtonContainer2");
-  var height4 = getHeight(".ButtonContainer3");
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A4100W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      if (height6 == 0 && !isMobile) {
+        setTabSelected(0);
+        height6 = getHeight(".FormBoxWrap");
+      }
+      if (height7 == 0 && !isMobile) {
+        setTabSelected(1);
+        height7 = getHeight(".FormBoxWrap2");
+      }
+      height8 = getHeight(".k-tabstrip-items-wrapper");
+      height9 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height8 - height9);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height8 - height9);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height8 - height9);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height8 - height9);
+        setMobileHeight5(getDeviceHeight(true) - height5 - height8 - height9);
+        setWebHeight(
+          getDeviceHeight(true) - height - height6 - height8 - height9
+        );
+        setWebHeight2(getDeviceHeight(true) - height2 - height8 - height9);
+        setWebHeight3(
+          getDeviceHeight(true) -
+            height3 -
+            height4 -
+            height7 -
+            height8 -
+            height9
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
+
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -249,9 +320,7 @@ const CM_A4100W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
-
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
-
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
@@ -266,10 +335,6 @@ const CM_A4100W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A4100W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A4100W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -342,8 +407,6 @@ const CM_A4100W: React.FC = () => {
   const [selectedsubDataState, setSelectedsubDataState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -1254,6 +1317,9 @@ const CM_A4100W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
@@ -2085,6 +2151,36 @@ const CM_A4100W: React.FC = () => {
         scrollable={isMobile}
       >
         <TabStripTab title="교육기준정보">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>제목/내용</th>
+                  <td>
+                    <Input
+                      name="title"
+                      type="text"
+                      value={filters.title}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>담당자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="person"
+                        value={filters.person}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2097,39 +2193,23 @@ const CM_A4100W: React.FC = () => {
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
                       >
-                        <tbody>
-                          <tr>
-                            <th>제목/내용</th>
-                            <td>
-                              <Input
-                                name="title"
-                                type="text"
-                                value={filters.title}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>담당자</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="person"
-                                  value={filters.person}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                  textField="user_name"
-                                  valueField="user_id"
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-                    <GridTitle>요약정보</GridTitle>
+                        요약정보
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onAddClick2}
@@ -2165,7 +2245,7 @@ const CM_A4100W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height2,
+                        height: mobileheight,
                       }}
                       data={process(
                         mainDataResult.data.map((row) => ({
@@ -2241,24 +2321,23 @@ const CM_A4100W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </SwiperSlide>
-              <SwiperSlide key={1}>
-                <FormBoxWrap
-                  style={{ height: deviceHeight - height, overflow: "auto" }}
+              <SwiperSlide key={1} style={{ flexDirection: "column" }}>
+                <ButtonContainer
+                  className="ButtonContainer2"
+                  style={{ justifyContent: "left", width: "100%" }}
                 >
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                    >
-                      이전
-                    </Button>
-                  </ButtonContainer>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </ButtonContainer>
+                <FormBoxWrap style={{ height: mobileheight2 }}>
                   <FormBox>
                     <tbody>
                       <tr>
@@ -2375,38 +2454,8 @@ const CM_A4100W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>제목/내용</th>
-                      <td>
-                        <Input
-                          name="title"
-                          type="text"
-                          value={filters.title}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>담당자</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="person"
-                            value={filters.person}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="user_name"
-                            valueField="user_id"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainer width="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -2442,7 +2491,7 @@ const CM_A4100W: React.FC = () => {
                   fileName="교육관리"
                 >
                   <Grid
-                    style={{ height: "57vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2516,7 +2565,7 @@ const CM_A4100W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              <FormBoxWrap style={{ height: "15vh" }}>
+              <FormBoxWrap className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2634,6 +2683,53 @@ const CM_A4100W: React.FC = () => {
           )}
         </TabStripTab>
         <TabStripTab title="교육참여/진행관리">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>교육일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+                  <th>제목/내용</th>
+                  <td>
+                    <Input
+                      name="title"
+                      type="text"
+                      value={filters.title}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>교육자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="person"
+                        value={filters.person}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2645,59 +2741,24 @@ const CM_A4100W: React.FC = () => {
             >
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer2">
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  <GridTitleContainer className="ButtonContainer3">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
                       >
-                        <tbody>
-                          <tr>
-                            <th>교육일자</th>
-                            <td>
-                              <CommonDateRangePicker
-                                value={{
-                                  start: filters.frdt,
-                                  end: filters.todt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) =>
-                                  setFilters((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }))
-                                }
-                                className="required"
-                              />
-                            </td>
-                            <th>제목/내용</th>
-                            <td>
-                              <Input
-                                name="title"
-                                type="text"
-                                value={filters.title}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>교육자</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="person"
-                                  value={filters.person}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                  textField="user_name"
-                                  valueField="user_id"
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-                    <GridTitle>요약정보</GridTitle>
+                        요약정보
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult2.data}
@@ -2708,7 +2769,7 @@ const CM_A4100W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height3,
+                        height: mobileheight3,
                       }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
@@ -2781,53 +2842,65 @@ const CM_A4100W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer3">
-                    <GridTitle>기본정보</GridTitle>
-                    <ButtonContainer
-                      style={{ justifyContent: "space-between" }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(0);
-                          }
-                        }}
-                        icon="arrow-left"
-                        themeColor={"primary"}
-                        fillMode={"outline"}
+                  <GridTitleContainer className="ButtonContainer4">
+                    <GridTitle>
+                      <ButtonContainer
+                        style={{ justifyContent: "space-between" }}
                       >
-                        이전
-                      </Button>
-                      <ButtonContainer>
+                        <div>
+                          <Button
+                            onClick={() => {
+                              if (swiper && isMobile) {
+                                swiper.slideTo(0);
+                              }
+                            }}
+                            icon="chevron-left"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                          기본정보
+                        </div>
                         <Button
-                          onClick={onAddClick2}
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-right"
                           themeColor={"primary"}
-                          icon="file-add"
-                        >
-                          신규
-                        </Button>
-                        <Button
-                          onClick={onDeleteClick}
-                          icon="delete"
-                          fillMode="outline"
-                          themeColor={"primary"}
-                        >
-                          삭제
-                        </Button>
-                        <Button
-                          onClick={onSaveClick2}
-                          icon="save"
-                          fillMode="outline"
-                          themeColor={"primary"}
-                        >
-                          저장
-                        </Button>
+                          fillMode={"flat"}
+                        ></Button>
                       </ButtonContainer>
+                    </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick2}
+                        themeColor={"primary"}
+                        icon="file-add"
+                      >
+                        신규
+                      </Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        icon="delete"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        삭제
+                      </Button>
+                      <Button
+                        onClick={onSaveClick2}
+                        icon="save"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        저장
+                      </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
                   <FormBoxWrap
                     style={{
-                      height: deviceHeight - height - height4,
+                      height: mobileheight4,
                       overflow: "auto",
                     }}
                     border={true}
@@ -2962,38 +3035,35 @@ const CM_A4100W: React.FC = () => {
                   }}
                 >
                   <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                    <GridTitleContainer className="ButtonContainer3">
-                      <GridTitle>상세정보</GridTitle>
-                      <ButtonContainer
-                        style={{ justifyContent: "space-between" }}
-                      >
+                    <GridTitleContainer className="ButtonContainer5">
+                      <GridTitle>
                         <Button
                           onClick={() => {
                             if (swiper && isMobile) {
                               swiper.slideTo(1);
                             }
                           }}
-                          icon="arrow-left"
+                          icon="chevron-left"
                           themeColor={"primary"}
-                          fillMode={"outline"}
-                        >
-                          이전
-                        </Button>
-                        <ButtonContainer>
-                          <Button
-                            onClick={onAddClick}
-                            themeColor={"primary"}
-                            icon="plus"
-                            title="행 추가"
-                          ></Button>
-                          <Button
-                            onClick={onDeleteClick2}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="minus"
-                            title="행 삭제"
-                          ></Button>
-                        </ButtonContainer>
+                          fillMode={"flat"}
+                        ></Button>
+                        상세정보
+                      </GridTitle>
+
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick2}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
                     <ExcelExport
@@ -3004,7 +3074,7 @@ const CM_A4100W: React.FC = () => {
                       fileName="교육관리"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height4 }}
+                        style={{ height: mobileheight5 }}
                         data={process(
                           subDataResult.data.map((row) => ({
                             ...row,
@@ -3089,56 +3159,9 @@ const CM_A4100W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>교육일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: filters.frdt,
-                            end: filters.todt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              frdt: e.value.start,
-                              todt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                      <th>제목/내용</th>
-                      <td>
-                        <Input
-                          name="title"
-                          type="text"
-                          value={filters.title}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>교육자</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="person"
-                            value={filters.person}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="user_name"
-                            valueField="user_id"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainerWrap>
                 <GridContainer width="35%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>요약정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -3149,7 +3172,7 @@ const CM_A4100W: React.FC = () => {
                     fileName="교육관리"
                   >
                     <Grid
-                      style={{ height: "73vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -3219,7 +3242,7 @@ const CM_A4100W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(65% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>기본정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3247,7 +3270,7 @@ const CM_A4100W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap style={{ height: "20vh" }} border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3374,7 +3397,7 @@ const CM_A4100W: React.FC = () => {
                       // fetchGrid,
                     }}
                   >
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>상세정보</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -3400,7 +3423,7 @@ const CM_A4100W: React.FC = () => {
                       fileName="교육관리"
                     >
                       <Grid
-                        style={{ height: "48vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           subDataResult.data.map((row) => ({
                             ...row,
