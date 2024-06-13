@@ -7,7 +7,12 @@ import {
   GridEvent,
   GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import React, { CSSProperties, useEffect, useState } from "react";
+import React, {
+  CSSProperties,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -41,20 +46,14 @@ import {
   chkScrollHandler,
   convertDateToStr,
   getBizCom,
-  getHeight,
-  useGeoLocation,
+  getDeviceHeight,
+  getHeight
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
-import {
-  OSState,
-  heightstate,
-  isMobileState,
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
@@ -67,19 +66,24 @@ const boardStyle: CSSProperties = {
 };
 const containerStyle: CSSProperties = {
   width: "100%",
-  height: "73vh",
+  height: "100%",
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
 
 const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
-  const [visible, setVisible] = useState(false);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = loginResult ? loginResult.userId : "";
-  const geoLocation = useGeoLocation();
   const [osstate, setOSState] = useRecoilState(OSState);
 
   const pc = UseGetValueFromSessionItem("pc");
@@ -87,6 +91,62 @@ const Main: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HOME", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [tabSelected2, setTabSelected2] = React.useState(0);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      height6 = getHeight(".k-tabstrip-items-wrapper");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false) - height - height6);
+        setMobileHeight2(getDeviceHeight(false) - height - height6 - height2);
+        setMobileHeight3(getDeviceHeight(false) - height - height6);
+        setMobileHeight4((getDeviceHeight(false) - height3) / 2 - height4);
+        setMobileHeight5((getDeviceHeight(false) - height3) / 2 - height5);
+        setWebHeight(getDeviceHeight(false) - height - height6);
+        setWebHeight2(getDeviceHeight(false) - height - height6 - height2);
+        setWebHeight3(getDeviceHeight(false) - height - height6);
+        setWebHeight4((getDeviceHeight(false) - height) / 2 - height4);
+        setWebHeight5((getDeviceHeight(false) - height) / 2 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    tabSelected,
+    tabSelected2,
+  ]);
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -130,25 +190,9 @@ const Main: React.FC = () => {
     TSchedulerDataResult[]
   >([]);
 
-  const [selectedState, setSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
   const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [tabSelected, setTabSelected] = React.useState(0);
-  const [tabSelected2, setTabSelected2] = React.useState(0);
-  const [approvalValueState, setApprovalValueState] = useState({
-    app: 0,
-    ref: 0,
-    rtr: 0,
-  });
-
-  const [workTimeDataResult, setWorkTimeDataResult] = useState({
-    strtime: "",
-    endtime: "",
-  });
 
   const [noticePgNum, setNoticePgNum] = useState(1);
   const [workOrderPgNum, setWorkOrderPgNum] = useState(1);
@@ -237,22 +281,6 @@ const Main: React.FC = () => {
     },
   };
 
-  const approvalParameters: Iparameters = {
-    procedureName: "sys_sel_default_home_web",
-    pageNumber: 1,
-    pageSize: 10,
-    parameters: {
-      "@p_work_type": "Approval",
-      "@p_orgdiv": sessionOrgdiv,
-      "@p_location": sessionLocation,
-      "@p_user_id": userId,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ref_date": "",
-      "@p_ref_key": "N",
-    },
-  };
-
   const schedulerParameters: Iparameters = {
     procedureName: "sys_sel_default_home_web",
     pageNumber: 1,
@@ -267,117 +295,6 @@ const Main: React.FC = () => {
       "@p_ref_date": "",
       "@p_ref_key": "N",
     },
-  };
-
-  const workTimeParameters: Iparameters = {
-    procedureName: "P_HM_A1000W_Q",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "time_card",
-      "@p_service_id": "",
-      "@p_orgdiv": sessionOrgdiv,
-      "@p_location": sessionLocation,
-      "@p_user_id": userId,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_dutydt": convertDateToStr(new Date()),
-    },
-  };
-
-  const fetchWorkTime = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", workTimeParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const row = data.tables[0].Rows[0];
-      const rowCount = data.tables[0].RowCount;
-
-      if (rowCount > 0) {
-        setWorkTimeDataResult({
-          strtime: row.start_time,
-          endtime: row.end_time,
-        });
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-  };
-
-  const fetchWorkTimeSaved = async (workType: "start" | "end") => {
-    let data: any;
-    let lat = 0;
-    let lng = 0;
-
-    if (geoLocation.loaded && geoLocation?.coordinates) {
-      lat = geoLocation.coordinates?.lat;
-      lng = geoLocation.coordinates?.lng;
-    }
-
-    const workTimeParaSaved: Iparameters = {
-      procedureName: "P_HM_A1000W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": workType,
-        "@p_service_id": "",
-        "@p_orgdiv": sessionOrgdiv,
-        "@p_location": sessionLocation,
-        "@p_user_id": userId,
-        "@p_frdt": "",
-        "@p_todt": "",
-        "@p_dutydt": convertDateToStr(new Date()),
-        "@p_lat": lat,
-        "@p_lng": lng,
-        "@p_id": userId,
-        "@p_pc": pc,
-      },
-    };
-
-    try {
-      data = await processApi<any>("procedure", workTimeParaSaved);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      fetchWorkTime();
-    } else {
-      alert(data.resultMessage);
-    }
-  };
-
-  const fetchApproaval = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", approvalParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-
-      if (rowCount > 0) {
-        setApprovalValueState((prev) => ({
-          ...prev,
-          app: rows[0].cnt01,
-          ref: rows[0].cnt02,
-          rtr: rows[0].cnt03,
-        }));
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
   };
 
   const fetchNoticeGrid = async () => {
@@ -510,8 +427,6 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     if (sessionItem) {
-      fetchWorkTime();
-      fetchApproaval();
       fetchNoticeGrid();
       fetchWorkOrderGrid();
     }
@@ -729,13 +644,6 @@ const Main: React.FC = () => {
     return valid;
   }
   const [swiper, setSwiper] = useState<SwiperCore>();
-  let deviceHeight = document.documentElement.clientHeight - 100;
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".k-tabstrip-items-wrapper");
 
   return (
     <>
@@ -769,17 +677,12 @@ const Main: React.FC = () => {
                   scrollable={isMobile}
                 >
                   <TabStripTab title="업무 달력">
-                    <GridContainer
-                      style={{
-                        overflow: "auto",
-                        height: deviceHeight - height - height5,
-                      }}
-                    >
+                    <GridContainer>
                       {osstate == true ? (
                         <div
                           style={{
                             backgroundColor: "#ccc",
-                            height: "718px",
+                            height: mobileheight,
                             width: "100%",
                             display: "flex",
                             alignItems: "center",
@@ -790,7 +693,7 @@ const Main: React.FC = () => {
                         </div>
                       ) : (
                         <>
-                          <GridTitleContainer>
+                          <GridTitleContainer className="ButtonContainer2">
                             <GridTitle></GridTitle>
                             {customOptionData !== null && (
                               <div>
@@ -804,7 +707,7 @@ const Main: React.FC = () => {
                             )}
                           </GridTitleContainer>
                           <Scheduler
-                            height={"718px"}
+                            height={mobileheight2}
                             data={schedulerDataResult}
                             defaultDate={displayDate}
                             item={CustomItem}
@@ -824,7 +727,7 @@ const Main: React.FC = () => {
                     <TabStrip
                       style={{
                         width: "100%",
-                        height: deviceHeight - height - height5,
+                        height: mobileheight3,
                       }}
                       selected={tabSelected2}
                       onSelect={handleSelectTab2}
@@ -847,7 +750,7 @@ const Main: React.FC = () => {
                 justifyContent: "left",
                 width: "100%",
               }}
-              className="ButtonContainer2"
+              className="ButtonContainer3"
             >
               <Button
                 onClick={() => {
@@ -862,12 +765,12 @@ const Main: React.FC = () => {
             </div>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer3">
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>공지사항</GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height: (deviceHeight - height2 - height3 - height4) / 2,
+                    height: mobileheight4,
                   }}
                   data={process(
                     noticeDataResult.data.map((row) => ({
@@ -914,12 +817,12 @@ const Main: React.FC = () => {
                 </Grid>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer4">
+                <GridTitleContainer className="ButtonContainer5">
                   <GridTitle>업무지시요청</GridTitle>
                 </GridTitleContainer>
                 <Grid
                   style={{
-                    height: (deviceHeight - height2 - height3 - height4) / 2,
+                    height: mobileheight5,
                   }}
                   data={process(workOrderDataResult.data, workOrderDataState)}
                   {...workOrderDataState}
@@ -957,7 +860,7 @@ const Main: React.FC = () => {
         </Swiper>
       ) : (
         <>
-          <MainTopContainer>
+          <MainTopContainer className="ButtonContainer">
             <ButtonContainer>
               <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
                 HOMEPAGE
@@ -978,7 +881,7 @@ const Main: React.FC = () => {
                       <div
                         style={{
                           backgroundColor: "#ccc",
-                          height: "718px",
+                          height: webheight,
                           width: "100%",
                           display: "flex",
                           alignItems: "center",
@@ -989,7 +892,7 @@ const Main: React.FC = () => {
                       </div>
                     ) : (
                       <>
-                        <GridTitleContainer>
+                        <GridTitleContainer className="ButtonContainer2">
                           <GridTitle></GridTitle>
                           {customOptionData !== null && (
                             <div>
@@ -1003,7 +906,7 @@ const Main: React.FC = () => {
                           )}
                         </GridTitleContainer>
                         <Scheduler
-                          height={"718px"}
+                          height={webheight2}
                           data={schedulerDataResult}
                           defaultDate={displayDate}
                           item={CustomItem}
@@ -1021,7 +924,7 @@ const Main: React.FC = () => {
                   disabled={mainDataResult.total == 0 ? true : false}
                 >
                   <TabStrip
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", height: webheight3 }}
                     selected={tabSelected2}
                     onSelect={handleSelectTab2}
                     scrollable={isMobile}
@@ -1033,11 +936,11 @@ const Main: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>공지사항</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "380px" }}
+                  style={{ height: webheight4 }}
                   data={process(
                     noticeDataResult.data.map((row) => ({
                       ...row,
@@ -1083,11 +986,11 @@ const Main: React.FC = () => {
                 </Grid>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer5">
                   <GridTitle>업무지시요청</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "380px" }}
+                  style={{ height: webheight5 }}
                   data={process(workOrderDataResult.data, workOrderDataState)}
                   {...workOrderDataState}
                   onDataStateChange={onWorkOrderDataStateChange}

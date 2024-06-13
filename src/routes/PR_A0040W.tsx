@@ -21,8 +21,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -52,6 +52,7 @@ import {
   UseMessages,
   UsePermissions,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -70,7 +71,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -152,12 +153,14 @@ const initialFilter: CompositeFilterDescriptor = {
   logic: "and",
   filters: [{ field: "code_name", operator: "contains", value: "" }],
 };
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const PR_A0040W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -168,7 +171,7 @@ const PR_A0040W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -240,6 +243,43 @@ const PR_A0040W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A0040W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
+      height5 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height4 - height5);
+        setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
+        setWebHeight2((getDeviceHeight(true) - height) / 2 - height3);
+        setWebHeight3((getDeviceHeight(true) - height) / 2 - height4 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3]);
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -1850,7 +1890,9 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{
+                    height: mobileheight,
+                  }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1969,7 +2011,9 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{
+                    height: mobileheight2,
+                  }}
                   data={filterBy(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -2041,7 +2085,7 @@ const PR_A0040W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer3">
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
@@ -2089,7 +2133,7 @@ const PR_A0040W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true} className="ButtonContainer3">
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2147,7 +2191,9 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: deviceHeight - height - height3 }}
+                  style={{
+                    height: mobileheight3,
+                  }}
                   data={process(
                     subData2Result.data.map((row) => ({
                       ...row,
@@ -2231,7 +2277,7 @@ const PR_A0040W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -2268,7 +2314,7 @@ const PR_A0040W: React.FC = () => {
               fileName="표준공정도"
             >
               <Grid
-                style={{ height: "30vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2351,7 +2397,7 @@ const PR_A0040W: React.FC = () => {
           </GridContainer>
           <GridContainerWrap>
             <GridContainer width={`25%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>공정리스트</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2362,7 +2408,7 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: "42vh" }}
+                  style={{ height: webheight2 }}
                   data={filterBy(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -2432,7 +2478,7 @@ const PR_A0040W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(75% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle>표준공정도</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -2468,7 +2514,7 @@ const PR_A0040W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2526,7 +2572,7 @@ const PR_A0040W: React.FC = () => {
                 fileName="표준공정도"
               >
                 <Grid
-                  style={{ height: "34.3vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     subData2Result.data.map((row) => ({
                       ...row,

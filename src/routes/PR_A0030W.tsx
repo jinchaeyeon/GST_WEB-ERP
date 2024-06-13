@@ -14,7 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -42,10 +42,11 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -56,12 +57,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0030W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -132,12 +128,15 @@ type TdataArr = {
   outprocyn_s: string[];
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+
 const PR_A0030W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -200,7 +199,7 @@ const PR_A0030W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -215,6 +214,50 @@ const PR_A0030W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A0030W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
+      height5 = getHeight(".ButtonContainer4");
+      height6 = getHeight(".FormBoxWrap");
+      height7 = getHeight(".FormBoxWrap2");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height4 - height7);
+        setMobileHeight4(getDeviceHeight(true) - height - height5);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight2(
+          getDeviceHeight(true) - height - height3 - height6 - height4 - height7
+        );
+        setWebHeight3(
+          getDeviceHeight(true) - height - height3 - height6 - height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1568,7 +1611,7 @@ const PR_A0030W: React.FC = () => {
                 fileName="공정패턴관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1682,10 +1725,7 @@ const PR_A0030W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap
-                border={true}
-                style={{ height: deviceHeight - height2 }}
-              >
+              <FormBoxWrap border={true} style={{ height: mobileheight2 }}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1751,7 +1791,7 @@ const PR_A0030W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer3">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
@@ -1778,7 +1818,7 @@ const PR_A0030W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true} className="ButtonContainer3">
+              <FormBoxWrap border={true} className="FormBoxWrap2">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1810,7 +1850,7 @@ const PR_A0030W: React.FC = () => {
                 fileName="공정패턴관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height - height3 - 12 }}
+                  style={{ height: mobileheight3 }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -1873,7 +1913,7 @@ const PR_A0030W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={3}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer2">
+              <GridTitleContainer className="ButtonContainer4">
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
@@ -1929,7 +1969,7 @@ const PR_A0030W: React.FC = () => {
                 fileName="공정패턴관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight4 }}
                   data={process(
                     subData2Result.data.map((row) => ({
                       ...row,
@@ -2012,7 +2052,7 @@ const PR_A0030W: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width={`37%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2023,7 +2063,7 @@ const PR_A0030W: React.FC = () => {
                 fileName="공정패턴관리"
               >
                 <Grid
-                  style={{ height: "80.5vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -2083,7 +2123,7 @@ const PR_A0030W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(63% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -2111,7 +2151,7 @@ const PR_A0030W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -2175,10 +2215,10 @@ const PR_A0030W: React.FC = () => {
               </FormBoxWrap>
               <GridContainerWrap>
                 <GridContainer width={`46%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>공정리스트</GridTitle>
                   </GridTitleContainer>
-                  <FormBoxWrap border={true} style={{ marginTop: "7px" }}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2208,7 +2248,7 @@ const PR_A0030W: React.FC = () => {
                     fileName="공정패턴관리"
                   >
                     <Grid
-                      style={{ height: "56vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -2270,7 +2310,7 @@ const PR_A0030W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(54% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>공정패턴상세</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -2314,7 +2354,7 @@ const PR_A0030W: React.FC = () => {
                     fileName="공정패턴관리"
                   >
                     <Grid
-                      style={{ height: "63.3vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         subData2Result.data.map((row) => ({
                           ...row,

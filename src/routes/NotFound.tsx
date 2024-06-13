@@ -1,10 +1,4 @@
-// import { titles } from "../store/atoms";
-
 const NotFound: React.FC = () => {
-  // const [title, setTitle] = useRecoilState(titles);
-  // useEffect(() => {
-  //   setTitle("");
-  // },[])
   return (
     <>
       <div style={{ height: "100vh" }}>

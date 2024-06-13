@@ -99,7 +99,7 @@ const PaginatorTable = (props) => {
 
   return (
     <>
-      <div className="card">
+      <div>
         <DataTable
           value={props.value}
           showGridlines
