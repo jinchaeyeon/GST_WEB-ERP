@@ -80,7 +80,12 @@ import { FormWithCustomEditor } from "../components/Scheduler/custom-form";
 import { CustomEditItem } from "../components/Scheduler/custom-item";
 import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
-import { OSState, isLoading, loginResultState } from "../store/atoms";
+import {
+  OSState,
+  isFilterHideState,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -166,6 +171,8 @@ const CM_A1600: React.FC = () => {
   }
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
@@ -1955,6 +1962,9 @@ const CM_A1600: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (tabSelected == 0) {
       ok = true;
       onSaveClick();

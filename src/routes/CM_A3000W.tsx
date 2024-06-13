@@ -89,7 +89,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";

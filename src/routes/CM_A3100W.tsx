@@ -57,10 +57,8 @@ import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A31
 import { useApi } from "../hooks/api";
 import {
   OSState,
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 

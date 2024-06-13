@@ -82,9 +82,8 @@ import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
 import {
   OSState,
-  heightstate,
+  isFilterHideState,
   isLoading,
-  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_603_C";
@@ -188,6 +187,8 @@ const CM_A1600W_603: React.FC = () => {
     UseCustomOption("CM_A1600W_603", setCustomOptionData);
   }
   const [tabSelected, setTabSelected] = useState<number>(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -1982,6 +1983,9 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (tabSelected == 0) {
       ok = true;
       onSaveClick();
@@ -2613,47 +2617,47 @@ const CM_A1600W_603: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(35% - ${GAP}px)`}>
                   <div className="filterbox_CM_A1600W_603">
-                  <FilterContainer>
-                    <FilterBox
-                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                    >
-                      <tbody>
-                        <tr>
-                          <th>일자</th>
-                          <td>
-                            <CommonDateRangePicker
-                              value={{
-                                start: todoFilter.frdt,
-                                end: todoFilter.todt,
-                              }}
-                              onChange={(e: {
-                                value: { start: any; end: any };
-                              }) =>
-                                setTodoFilter((prev) => ({
-                                  ...prev,
-                                  frdt: e.value.start,
-                                  todt: e.value.end,
-                                }))
-                              }
-                              className="required"
-                            />
-                          </td>
-                          <th>완료</th>
-                          <td>
-                            {bizComponentData !== null && (
-                              <BizComponentRadioGroup
-                                name="rdofinyn"
-                                value={todoFilter.rdofinyn}
-                                bizComponentId="R_YN"
-                                bizComponentData={bizComponentData}
-                                changeData={filterRadioChange2}
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>일자</th>
+                            <td>
+                              <CommonDateRangePicker
+                                value={{
+                                  start: todoFilter.frdt,
+                                  end: todoFilter.todt,
+                                }}
+                                onChange={(e: {
+                                  value: { start: any; end: any };
+                                }) =>
+                                  setTodoFilter((prev) => ({
+                                    ...prev,
+                                    frdt: e.value.start,
+                                    todt: e.value.end,
+                                  }))
+                                }
+                                className="required"
                               />
-                            )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FilterBox>
-                  </FilterContainer>
+                            </td>
+                            <th>완료</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="rdofinyn"
+                                  value={todoFilter.rdofinyn}
+                                  bizComponentId="R_YN"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterRadioChange2}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
                   </div>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>To-do 리스트</GridTitle>
@@ -2897,7 +2901,7 @@ const CM_A1600W_603: React.FC = () => {
               </div>
             ) : (
               <Scheduler
-                height={isMobile ? mobileheight3 : webheight3 }
+                height={isMobile ? mobileheight3 : webheight3}
                 data={schedulerDataResult2}
                 defaultDate={displayDate}
                 group={{
