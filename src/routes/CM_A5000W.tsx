@@ -2674,9 +2674,7 @@ const CM_A5000W: React.FC = () => {
                           </tr>
                         </tbody>
                       </FormBox>
-                      <GridContainer
-                        style={{ width: "100%", height: webheight2 }}
-                      >
+                      <GridContainer>
                         <GridContainer>
                           <RichEditor
                             id="docEditor"
@@ -2856,9 +2854,7 @@ const CM_A5000W: React.FC = () => {
                         </tr>
                       </tbody>
                     </FormBox>
-                    <GridContainer
-                      style={{ width: "100%", height: webheight3 }}
-                    >
+                    <GridContainer>
                       <GridContainer>
                         <RichEditor
                           id="docEditor1"
