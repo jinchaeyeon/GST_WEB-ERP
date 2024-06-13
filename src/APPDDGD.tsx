@@ -177,7 +177,6 @@ const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
 const MA_A3400W_606 = lazy(() => import("./routes/MA_A3400W_606"));
 const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
 const MA_A3500W_615 = lazy(() => import("./routes/MA_A3500W_615"));
-const MA_A3600W = lazy(() => import("./routes/MA_A3600W"));
 const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
 const MA_A8000W = lazy(() => import("./routes/MA_A8000W"));
 const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));

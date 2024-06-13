@@ -731,7 +731,7 @@ const SA_B3101W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
 
-          <GridContainer style={{ height: "37vh" }}>
+          <GridContainer>
             <GridTitleContainer className="ButtonContainer">
               <GridTitle>차트</GridTitle>
             </GridTitleContainer>

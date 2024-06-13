@@ -25,8 +25,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -55,6 +55,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -70,7 +71,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B7200W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -110,12 +111,16 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+
 const MA_B7200W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -127,7 +132,7 @@ const MA_B7200W: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [group2, setGroup2] = React.useState(initialGroup2);
   const [swiper, setSwiper] = useState<SwiperCore>();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -144,6 +149,67 @@ const MA_B7200W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("MA_B7200W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+      height7 = getHeight(".ButtonContainer5");
+      height8 = getHeight(".ButtonContainer6");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height6);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height7);
+        setMobileHeight6(getDeviceHeight(true) - height - height2 - height8);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height5);
+        setWebHeight4(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight5((getDeviceHeight(true) - height - height2) / 2 - height7);
+        setWebHeight6((getDeviceHeight(true) - height - height2) / 2 - height8);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+    tabSelected,
+  ]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -277,8 +343,6 @@ const MA_B7200W: React.FC = () => {
   }>({});
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
   const [collapsedState2, setCollapsedState2] = React.useState<string[]>([]);
@@ -1863,9 +1927,7 @@ const MA_B7200W: React.FC = () => {
                       </GridTitleContainer>
                       <GridContainer>
                         <Grid
-                          style={{
-                            height: deviceHeight - height - height3,
-                          }}
+                          style={{ height: mobileheight }}
                           data={newData.map((item: { items: any[] }) => ({
                             ...item,
                             items: item.items.map((row: any) => ({
@@ -1962,10 +2024,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{
-                          height: deviceHeight - height2 - height3,
-                          width: "100%",
-                        }}
+                        style={{ height: mobileheight2 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -2045,7 +2104,7 @@ const MA_B7200W: React.FC = () => {
                 <SwiperSlide key={2}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridContainer>
-                      <GridTitleContainer className="ButtonContainer2">
+                      <GridTitleContainer className="ButtonContainer3">
                         <div
                           style={{
                             display: "flex",
@@ -2077,10 +2136,7 @@ const MA_B7200W: React.FC = () => {
                         fileName="기간재고조회"
                       >
                         <Grid
-                          style={{
-                            height: deviceHeight - height2 - height3,
-                            width: "100%",
-                          }}
+                          style={{ height: mobileheight3 }}
                           data={process(
                             detailDataResult2.data.map((row) => ({
                               ...row,
@@ -2179,14 +2235,11 @@ const MA_B7200W: React.FC = () => {
                 >
                   <SwiperSlide key={0}>
                     <GridContainer style={{ width: "100%" }}>
-                      <GridTitleContainer className="ButtonContainer">
+                      <GridTitleContainer className="ButtonContainer4">
                         <GridTitle>제공품재고</GridTitle>
                       </GridTitleContainer>
                       <Grid
-                        style={{
-                          height: deviceHeight - height - height3,
-                          width: "100%",
-                        }}
+                        style={{ height: mobileheight4 }}
                         data={newData2.map((item: { items: any[] }) => ({
                           ...item,
                           items: item.items.map((row: any) => ({
@@ -2265,7 +2318,7 @@ const MA_B7200W: React.FC = () => {
 
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
+                    <GridTitleContainer className="ButtonContainer5">
                       <div
                         style={{
                           display: "flex",
@@ -2293,10 +2346,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{
-                          height: deviceHeight - height2 - height3,
-                          width: "100%",
-                        }}
+                        style={{ height: mobileheight5 }}
                         data={process(
                           detailDataResult3.data.map((row) => ({
                             ...row,
@@ -2371,7 +2421,7 @@ const MA_B7200W: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={2}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
+                    <GridTitleContainer className="ButtonContainer6">
                       <div
                         style={{
                           display: "flex",
@@ -2403,10 +2453,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{
-                          height: deviceHeight - height - height3,
-                          width: "100%",
-                        }}
+                        style={{ height: mobileheight6 }}
                         data={process(
                           detailDataResult4.data.map((row) => ({
                             ...row,
@@ -2489,13 +2536,12 @@ const MA_B7200W: React.FC = () => {
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ width: "100%", height: "80vh" }}
             scrollable={isMobile}
           >
             <TabStripTab title="재고현황">
               <GridContainerWrap>
                 <GridContainer width={`65%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>품목별기간재고</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2507,7 +2553,7 @@ const MA_B7200W: React.FC = () => {
                     group={group}
                   >
                     <Grid
-                      style={{ height: "68.5vh" }}
+                      style={{ height: webheight }}
                       data={newData.map((item: { items: any[] }) => ({
                         ...item,
                         items: item.items.map((row: any) => ({
@@ -2572,7 +2618,7 @@ const MA_B7200W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(35% - ${GAP}px)`}>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>입고상세내역</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2583,7 +2629,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{ height: "32vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -2660,7 +2706,7 @@ const MA_B7200W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>출고상세내역</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2671,7 +2717,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{ height: "32vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           detailDataResult2.data.map((row) => ({
                             ...row,
@@ -2761,11 +2807,11 @@ const MA_B7200W: React.FC = () => {
                     fileName="기간재고조회"
                     group={group2}
                   >
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>제공품재고</GridTitle>
                     </GridTitleContainer>
                     <Grid
-                      style={{ height: "68.5vh" }}
+                      style={{ height: webheight4 }}
                       data={newData2.map((item: { items: any[] }) => ({
                         ...item,
                         items: item.items.map((row: any) => ({
@@ -2830,7 +2876,7 @@ const MA_B7200W: React.FC = () => {
                 </GridContainer>
                 <GridContainer width={`calc(35% - ${GAP}px)`}>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer5">
                       <GridTitle>입고상세내역</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2841,7 +2887,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{ height: "32vh" }}
+                        style={{ height: webheight5 }}
                         data={process(
                           detailDataResult3.data.map((row) => ({
                             ...row,
@@ -2914,7 +2960,7 @@ const MA_B7200W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer6">
                       <GridTitle>출고상세내역</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2925,7 +2971,7 @@ const MA_B7200W: React.FC = () => {
                       fileName="기간재고조회"
                     >
                       <Grid
-                        style={{ height: "32vh" }}
+                        style={{ height: webheight6 }}
                         data={process(
                           detailDataResult4.data.map((row) => ({
                             ...row,
