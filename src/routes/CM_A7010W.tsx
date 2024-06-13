@@ -3,27 +3,28 @@ import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
-    Grid,
-    GridCellProps,
-    GridColumn,
-    GridDataStateChangeEvent,
-    GridFooterCellProps,
-    GridItemChangeEvent,
-    GridPageChangeEvent,
-    GridRowDoubleClickEvent,
-    GridSelectionChangeEvent,
-    getSelectedState,
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -31,46 +32,47 @@ import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
-    ButtonContainer,
-    ButtonInGridInput,
-    ButtonInInput,
-    FilterBox,
-    FormBox,
-    FormBoxWrap,
-    GridContainer,
-    GridContainerWrap,
-    GridTitle,
-    GridTitleContainer,
-    Title,
-    TitleContainer,
+  ButtonContainer,
+  ButtonInGridInput,
+  ButtonInInput,
+  FilterBox,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-    GetPropertyValueByName,
-    UseBizComponent,
-    UseCustomOption,
-    UseGetValueFromSessionItem,
-    UseMessages,
-    UseParaPc,
-    UsePermissions,
-    convertDateToStr,
-    findMessage,
-    getGridItemChangedData,
-    getHeight,
-    getQueryFromBizComponent,
-    handleKeyPressSearch,
-    setDefaultDate,
-    toDate,
-    useSysMessage,
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getDeviceHeight,
+  getGridItemChangedData,
+  getHeight,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+  toDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
-    COM_CODE_DEFAULT_VALUE,
-    EDIT_FIELD,
-    GAP,
-    PAGE_SIZE,
-    SELECTED_FIELD,
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
@@ -83,22 +85,20 @@ import SignWindow from "../components/Windows/CommonWindows/SignWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
-    deletedAttadatnumsState,
-    deletedNameState,
-    heightstate,
-    isLoading,
-    isMobileState,
-    loginResultState,
-    unsavedAttadatnumsState,
-    unsavedNameState,
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  loginResultState,
+  unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A7010W_C";
 import {
-    Iparameters,
-    TColumn,
-    TEditorHandle,
-    TGrid,
-    TPermissions,
+  Iparameters,
+  TColumn,
+  TEditorHandle,
+  TGrid,
+  TPermissions,
 } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -189,13 +189,63 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const CM_A7010W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A7010W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".k-tabstrip-items-wrapper");
+      height6 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5 - height6);
+        setMobileHeight2(
+          getDeviceHeight(false) - height2 - height3 - height5 - height6
+        );
+        setMobileHeight3(
+          getDeviceHeight(false) - height2 - height4 - height5 - height6
+        );
+        setWebHeight(getDeviceHeight(false) - height - height5 - height6);
+        setWebHeight2(
+          getDeviceHeight(false) - height2 - height4 - height5 - height6
+        );
+        setWebHeight3(
+          getDeviceHeight(false) - height3 - height4 - height5 - height6
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   let gridRef: any = useRef(null);
@@ -230,8 +280,6 @@ const CM_A7010W: React.FC = () => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
     useState<boolean>(false);
@@ -418,10 +466,6 @@ const CM_A7010W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A7010W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A7010W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1127,12 +1171,12 @@ const CM_A7010W: React.FC = () => {
             style={{ width: "100%" }}
           >
             <TabStripTab title="요약정보">
-              {!isMobile && (
-                <GridTitleContainer>
-                  <GridTitle>조회조건</GridTitle>
-                </GridTitleContainer>
-              )}
               <FilterContainer>
+                {!isMobile && (
+                  <GridTitleContainer>
+                    <GridTitle>조회조건</GridTitle>
+                  </GridTitleContainer>
+                )}
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
                     <tr>
@@ -1208,7 +1252,7 @@ const CM_A7010W: React.FC = () => {
                   fileName="상담일지"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height1 }}
+                    style={{ height: isMobile ? mobileheight : webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1290,6 +1334,16 @@ const CM_A7010W: React.FC = () => {
                 mainDataResult.data.length == 0 && workType == "" ? true : false
               }
             >
+              <ButtonContainer className="ButtonContainer2">
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -1299,9 +1353,528 @@ const CM_A7010W: React.FC = () => {
                 }}
               >
                 <SwiperSlide key={0}>
-                  <GridContainer
-                    style={{ height: deviceHeight - height, overflow: "auto" }}
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer3">
+                      <GridTitle>
+                        <ButtonContainer
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          회의록
+                          <Button
+                            onClick={() => {
+                              if (swiper && isMobile) {
+                                swiper.slideTo(1);
+                              }
+                            }}
+                            icon="chevron-right"
+                            themeColor={"primary"}
+                            fillMode={"flat"}
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <FormBoxWrap
+                      style={{ height: mobileheight2, overflow: "auto" }}
+                    >
+                      <FormBoxWrap border={true}>
+                        <FormBox>
+                          <tbody>
+                            <tr>
+                              <th>회의록번호</th>
+                              <td>
+                                <Input
+                                  name="meetingnum"
+                                  type="text"
+                                  value={information.meetingnum}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>회의록목적</th>
+                              <td>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="usegb"
+                                    value={information.usegb}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>작성자</th>
+                              <td>
+                                <Input
+                                  name="person"
+                                  type="text"
+                                  value={
+                                    personListData.find(
+                                      (items: any) =>
+                                        items.user_id == information.person
+                                    )?.user_name
+                                  }
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>회의일자</th>
+                              <td>
+                                <DatePicker
+                                  name="recdt"
+                                  value={information.recdt}
+                                  format="yyyy-MM-dd"
+                                  onChange={InputChange}
+                                  placeholder=""
+                                  className="required"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>유형</th>
+                              <td>
+                                {customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="type"
+                                    value={information.type}
+                                    type="new"
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                  />
+                                )}
+                              </td>
+                              <th>참석자</th>
+                              <td>
+                                <Button
+                                  themeColor={"primary"}
+                                  style={{ width: "100%" }}
+                                  onClick={() => {
+                                    if (workType == "N") {
+                                      alert(
+                                        "회의록 저장 후 등록할 수 있습니다."
+                                      );
+                                    } else if (
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0] != undefined
+                                    ) {
+                                      onSignWndClick();
+                                    } else {
+                                      alert("선택된 데이터가 없습니다.");
+                                    }
+                                  }}
+                                >
+                                  등록
+                                </Button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>회의록제목</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="title"
+                                  type="text"
+                                  value={information.title}
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>첨부파일</th>
+                              <td colSpan={3}>
+                                <div className="filter-item-wrap">
+                                  <Input
+                                    name="files"
+                                    value={information.files}
+                                    className="readonly"
+                                  />
+                                  <ButtonInInput>
+                                    <Button
+                                      icon="more-horizontal"
+                                      fillMode={"flat"}
+                                      onClick={onAttachPbWndClick}
+                                    />
+                                  </ButtonInInput>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                      <FormBoxWrap border={true}>
+                        <FormBox>
+                          <tbody>
+                            <tr>
+                              <th>의뢰기관코드</th>
+                              <td>
+                                <Input
+                                  name="custcd"
+                                  type="text"
+                                  value={information.custcd}
+                                  className="readonly"
+                                />
+                                {information.ref_key == "" ? (
+                                  <ButtonInInput>
+                                    <Button
+                                      type="button"
+                                      icon="more-horizontal"
+                                      fillMode="flat"
+                                      onClick={onCustWndClick}
+                                    />
+                                  </ButtonInInput>
+                                ) : (
+                                  ""
+                                )}
+                              </td>
+                              <th>의뢰기관명</th>
+                              <td>
+                                <Input
+                                  name="custnm"
+                                  type="text"
+                                  value={information.custnm}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>의뢰자코드</th>
+                              <td>
+                                <Input
+                                  name="custprsncd"
+                                  type="text"
+                                  value={information.custprsncd}
+                                  className="readonly"
+                                />
+                                {information.custcd != "" ? (
+                                  <ButtonInInput>
+                                    <Button
+                                      type="button"
+                                      icon="more-horizontal"
+                                      fillMode="flat"
+                                      onClick={onCustPersonWndClick}
+                                    />
+                                  </ButtonInInput>
+                                ) : (
+                                  ""
+                                )}
+                              </td>
+                              <th>의뢰자명</th>
+                              <td>
+                                <Input
+                                  name="custprsnnm"
+                                  type="text"
+                                  value={information.custprsnnm}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>직위/직책</th>
+                              <td>
+                                <Input
+                                  name="postnm"
+                                  type="text"
+                                  value={information.postnm}
+                                  className="readonly"
+                                />
+                              </td>
+                              <th>부서</th>
+                              <td>
+                                <Input
+                                  name="dptnm"
+                                  type="text"
+                                  value={information.dptnm}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>주소</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="address"
+                                  type="text"
+                                  value={information.address}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>전화번호</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="telno"
+                                  type="text"
+                                  value={information.telno}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>휴대폰</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="phoneno"
+                                  type="text"
+                                  value={information.phoneno}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>메일</th>
+                              <td colSpan={3}>
+                                <Input
+                                  name="email"
+                                  type="text"
+                                  value={information.email}
+                                  className="readonly"
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </FormBox>
+                      </FormBoxWrap>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer style={{ width: "100%" }}>
+                    <GridTitleContainer className="ButtonContainer4">
+                      <GridTitle>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(0);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        참고자료
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <GridContainer style={{ height: mobileheight3 }}>
+                      <RichEditor id="refEditor" ref={refEditorRef} />
+                    </GridContainer>
+                  </GridContainer>
+                </SwiperSlide>
+              </Swiper>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      ) : (
+        <>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            style={{ width: "100%" }}
+          >
+            <TabStripTab title="요약정보">
+              <GridContainerWrap>
+                <GridContainer width="22%">
+                  <FilterContainer>
+                    <GridTitleContainer>
+                      <GridTitle>조회조건</GridTitle>
+                    </GridTitleContainer>
+                    <FilterBox
+                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                    >
+                      <tbody>
+                        <tr>
+                          <th>회의일</th>
+                          <td>
+                            <CommonDateRangePicker
+                              value={{
+                                start: filters.frdt,
+                                end: filters.todt,
+                              }}
+                              onChange={(e: {
+                                value: { start: any; end: any };
+                              }) =>
+                                setFilters((prev) => ({
+                                  ...prev,
+                                  frdt: e.value.start,
+                                  todt: e.value.end,
+                                }))
+                              }
+                              className="required"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>고객사</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>제목 및 내용</th>
+                          <td>
+                            <Input
+                              name="title"
+                              type="text"
+                              value={filters.title}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterContainer>
+                </GridContainer>
+                <FormContext.Provider
+                  value={{
+                    attdatnum,
+                    files,
+                    setAttdatnum,
+                    setFiles,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <GridContainer width={`calc(88% - ${GAP}px)`}>
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>요약정보</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="file-add"
+                        >
+                          신규
+                        </Button>
+                        <Button
+                          onClick={onDeleteClick}
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                          icon="delete"
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult.data}
+                      ref={(exporter) => {
+                        _export = exporter;
+                      }}
+                      fileName="상담일지"
+                    >
+                      <Grid
+                        style={{ height: webheight }}
+                        data={process(
+                          mainDataResult.data.map((row) => ({
+                            ...row,
+                            usegb: usegbListData.find(
+                              (items: any) => items.sub_code == row.usegb
+                            )?.code_name,
+                            person: personListData.find(
+                              (items: any) => items.user_id == row.person
+                            )?.user_name,
+                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                          })),
+                          mainDataState
+                        )}
+                        {...mainDataState}
+                        onDataStateChange={onMainDataStateChange}
+                        // 선택기능
+                        dataItemKey={DATA_ITEM_KEY}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange}
+                        onRowDoubleClick={onRowDoubleClick}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult.total}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable={true}
+                        onPageChange={pageChange}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange}
+                        cellRender={customCellRender}
+                        rowRender={customRowRender}
+                        editField={EDIT_FIELD}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdList"
+                          ].map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : attdatnumField.includes(item.fieldName)
+                                      ? ColumnCommandCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder === 0
+                                      ? mainTotalFooterCell
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </FormContext.Provider>
+              </GridContainerWrap>
+            </TabStripTab>
+
+            <TabStripTab
+              title="상세정보"
+              disabled={
+                mainDataResult.data.length == 0 && workType == "" ? true : false
+              }
+            >
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle> </GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
                   >
+                    저장
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <GridContainerWrap>
+                <GridContainer width="40%">
+                  <GridTitleContainer className="ButtonContainer3">
+                    <GridTitle>회의록</GridTitle>
+                  </GridTitleContainer>
+                  <FormBoxWrap style={{ height: webheight2, overflow: "auto" }}>
                     <FormBoxWrap border={true}>
                       <FormBox>
                         <tbody>
@@ -1559,504 +2132,13 @@ const CM_A7010W: React.FC = () => {
                         </tbody>
                       </FormBox>
                     </FormBoxWrap>
-                  </GridContainer>
-                </SwiperSlide>
-                <SwiperSlide key={1}>
-                  <GridContainer style={{ width: "100%" }}>
-                    <ButtonContainer className="ButtonContainer2">
-                      <Button
-                        onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                      >
-                        저장
-                      </Button>
-                    </ButtonContainer>
-                    <GridContainer
-                      style={{ height: deviceHeight - height - height2 }}
-                    >
-                      <RichEditor id="refEditor" ref={refEditorRef} />
-                    </GridContainer>
-                  </GridContainer>
-                </SwiperSlide>
-              </Swiper>
-            </TabStripTab>
-          </TabStrip>
-        </>
-      ) : (
-        <>
-          <TabStrip
-            selected={tabSelected}
-            onSelect={handleSelectTab}
-            style={{ width: "100%" }}
-          >
-            <TabStripTab title="요약정보">
-              <GridContainerWrap>
-                <GridContainer width="22%">
-                  <FilterContainer>
-                    <GridTitleContainer>
-                      <GridTitle>조회조건</GridTitle>
-                    </GridTitleContainer>
-                    <FilterBox
-                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                    >
-                      <tbody>
-                        <tr>
-                          <th>회의일</th>
-                          <td>
-                            <CommonDateRangePicker
-                              value={{
-                                start: filters.frdt,
-                                end: filters.todt,
-                              }}
-                              onChange={(e: {
-                                value: { start: any; end: any };
-                              }) =>
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  frdt: e.value.start,
-                                  todt: e.value.end,
-                                }))
-                              }
-                              className="required"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>고객사</th>
-                          <td>
-                            <Input
-                              name="custnm"
-                              type="text"
-                              value={filters.custnm}
-                              onChange={filterInputChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>제목 및 내용</th>
-                          <td>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={filters.title}
-                              onChange={filterInputChange}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FilterBox>
-                  </FilterContainer>
-                </GridContainer>
-                <FormContext.Provider
-                  value={{
-                    attdatnum,
-                    files,
-                    setAttdatnum,
-                    setFiles,
-                    mainDataState,
-                    setMainDataState,
-                    // fetchGrid,
-                  }}
-                >
-                  <GridContainer width={`calc(88% - ${GAP}px)`}>
-                    <GridTitleContainer>
-                      <GridTitle>요약정보</GridTitle>
-                      <ButtonContainer>
-                        <Button
-                          onClick={onAddClick}
-                          themeColor={"primary"}
-                          icon="file-add"
-                        >
-                          신규
-                        </Button>
-                        <Button
-                          onClick={onDeleteClick}
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                          icon="delete"
-                        >
-                          삭제
-                        </Button>
-                      </ButtonContainer>
-                    </GridTitleContainer>
-                    <ExcelExport
-                      data={mainDataResult.data}
-                      ref={(exporter) => {
-                        _export = exporter;
-                      }}
-                      fileName="상담일지"
-                    >
-                      <Grid
-                        style={{ height: "78vh" }}
-                        data={process(
-                          mainDataResult.data.map((row) => ({
-                            ...row,
-                            usegb: usegbListData.find(
-                              (items: any) => items.sub_code == row.usegb
-                            )?.code_name,
-                            person: personListData.find(
-                              (items: any) => items.user_id == row.person
-                            )?.user_name,
-                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                          })),
-                          mainDataState
-                        )}
-                        {...mainDataState}
-                        onDataStateChange={onMainDataStateChange}
-                        // 선택기능
-                        dataItemKey={DATA_ITEM_KEY}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
-                        }}
-                        onSelectionChange={onSelectionChange}
-                        onRowDoubleClick={onRowDoubleClick}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={mainDataResult.total}
-                        skip={page.skip}
-                        take={page.take}
-                        pageable={true}
-                        onPageChange={pageChange}
-                        //원하는 행 위치로 스크롤 기능
-                        ref={gridRef}
-                        rowHeight={30}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onMainSortChange}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        onItemChange={onMainItemChange}
-                        cellRender={customCellRender}
-                        rowRender={customRowRender}
-                        editField={EDIT_FIELD}
-                      >
-                        {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList"
-                          ].map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : attdatnumField.includes(item.fieldName)
-                                      ? ColumnCommandCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? mainTotalFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
-                      </Grid>
-                    </ExcelExport>
-                  </GridContainer>
-                </FormContext.Provider>
-              </GridContainerWrap>
-            </TabStripTab>
-
-            <TabStripTab
-              title="상세정보"
-              disabled={
-                mainDataResult.data.length == 0 && workType == "" ? true : false
-              }
-            >
-              <GridTitleContainer>
-                <GridTitle> </GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <GridContainerWrap>
-                <GridContainer width="40%">
-                  <GridTitleContainer>
-                    <GridTitle>회의록</GridTitle>
-                  </GridTitleContainer>
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>회의록번호</th>
-                          <td>
-                            <Input
-                              name="meetingnum"
-                              type="text"
-                              value={information.meetingnum}
-                              className="readonly"
-                            />
-                          </td>
-                          <th>회의록목적</th>
-                          <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="usegb"
-                                value={information.usegb}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>작성자</th>
-                          <td>
-                            <Input
-                              name="person"
-                              type="text"
-                              value={
-                                personListData.find(
-                                  (items: any) =>
-                                    items.user_id == information.person
-                                )?.user_name
-                              }
-                              className="readonly"
-                            />
-                          </td>
-                          <th>회의일자</th>
-                          <td>
-                            <DatePicker
-                              name="recdt"
-                              value={information.recdt}
-                              format="yyyy-MM-dd"
-                              onChange={InputChange}
-                              placeholder=""
-                              className="required"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>유형</th>
-                          <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="type"
-                                value={information.type}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
-                          <th>참석자</th>
-                          <td>
-                            <Button
-                              themeColor={"primary"}
-                              style={{ width: "100%" }}
-                              onClick={() => {
-                                if (workType == "N") {
-                                  alert("회의록 저장 후 등록할 수 있습니다.");
-                                } else if (
-                                  Object.getOwnPropertyNames(
-                                    selectedState
-                                  )[0] != undefined
-                                ) {
-                                  onSignWndClick();
-                                } else {
-                                  alert("선택된 데이터가 없습니다.");
-                                }
-                              }}
-                            >
-                              등록
-                            </Button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>회의록제목</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="title"
-                              type="text"
-                              value={information.title}
-                              onChange={InputChange}
-                              className="required"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>첨부파일</th>
-                          <td colSpan={3}>
-                            <div className="filter-item-wrap">
-                              <Input
-                                name="files"
-                                value={information.files}
-                                className="readonly"
-                              />
-                              <ButtonInInput>
-                                <Button
-                                  icon="more-horizontal"
-                                  fillMode={"flat"}
-                                  onClick={onAttachPbWndClick}
-                                />
-                              </ButtonInInput>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                  <FormBoxWrap border={true}>
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>의뢰기관코드</th>
-                          <td>
-                            <Input
-                              name="custcd"
-                              type="text"
-                              value={information.custcd}
-                              className="readonly"
-                            />
-                            {information.ref_key == "" ? (
-                              <ButtonInInput>
-                                <Button
-                                  type="button"
-                                  icon="more-horizontal"
-                                  fillMode="flat"
-                                  onClick={onCustWndClick}
-                                />
-                              </ButtonInInput>
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                          <th>의뢰기관명</th>
-                          <td>
-                            <Input
-                              name="custnm"
-                              type="text"
-                              value={information.custnm}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>의뢰자코드</th>
-                          <td>
-                            <Input
-                              name="custprsncd"
-                              type="text"
-                              value={information.custprsncd}
-                              className="readonly"
-                            />
-                            {information.custcd != "" ? (
-                              <ButtonInInput>
-                                <Button
-                                  type="button"
-                                  icon="more-horizontal"
-                                  fillMode="flat"
-                                  onClick={onCustPersonWndClick}
-                                />
-                              </ButtonInInput>
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                          <th>의뢰자명</th>
-                          <td>
-                            <Input
-                              name="custprsnnm"
-                              type="text"
-                              value={information.custprsnnm}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>직위/직책</th>
-                          <td>
-                            <Input
-                              name="postnm"
-                              type="text"
-                              value={information.postnm}
-                              className="readonly"
-                            />
-                          </td>
-                          <th>부서</th>
-                          <td>
-                            <Input
-                              name="dptnm"
-                              type="text"
-                              value={information.dptnm}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>주소</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="address"
-                              type="text"
-                              value={information.address}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>전화번호</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="telno"
-                              type="text"
-                              value={information.telno}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>휴대폰</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="phoneno"
-                              type="text"
-                              value={information.phoneno}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>메일</th>
-                          <td colSpan={3}>
-                            <Input
-                              name="email"
-                              type="text"
-                              value={information.email}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
                   </FormBoxWrap>
                 </GridContainer>
                 <GridContainer width={`calc(60% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>참고자료</GridTitle>
                   </GridTitleContainer>
-                  <GridContainer style={{ height: "75vh" }}>
+                  <GridContainer style={{ height: webheight3 }}>
                     <RichEditor id="refEditor" ref={refEditorRef} />
                   </GridContainer>
                 </GridContainer>

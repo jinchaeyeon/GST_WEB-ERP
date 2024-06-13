@@ -14,7 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -42,10 +42,11 @@ import {
   UseMessages,
   UsePermissions,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  numberWithCommas
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -58,10 +59,8 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -147,6 +146,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   }
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const CM_A8000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -163,12 +168,50 @@ const CM_A8000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
   UsePermissions(setPermissions);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A8000W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height5);
+        setWebHeight2(getDeviceHeight(true) - height2 - height5);
+        setWebHeight3(getDeviceHeight(true) - height3 - height5);
+        setWebHeight4(getDeviceHeight(true) - height4 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, webheight4]);
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -238,10 +281,6 @@ const CM_A8000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A8000W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A8000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1746,7 +1785,7 @@ const CM_A8000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: deviceHeight - height,
+                    height: mobileheight,
                   }}
                   data={process(
                     detailDataResult.data.map((row) => ({
@@ -1822,7 +1861,7 @@ const CM_A8000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: deviceHeight - height2,
+                    height: mobileheight2,
                   }}
                   data={process(
                     detailDataResult2.data.map((row) => ({
@@ -1871,7 +1910,7 @@ const CM_A8000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer2">
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle>소분류</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
@@ -1897,7 +1936,7 @@ const CM_A8000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: deviceHeight - height2,
+                    height: mobileheight3,
                   }}
                   data={process(
                     detailDataResult3.data.map((row) => ({
@@ -1946,7 +1985,7 @@ const CM_A8000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={3}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer2">
+              <GridTitleContainer className="ButtonContainer4">
                 <GridTitle>상세정보</GridTitle>
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <Button
@@ -2008,7 +2047,7 @@ const CM_A8000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: deviceHeight - height2,
+                    height: mobileheight4,
                   }}
                   data={process(
                     mainDataResult.data.map((row) => ({
@@ -2112,7 +2151,7 @@ const CM_A8000W: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width={`13%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>대분류</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2123,7 +2162,7 @@ const CM_A8000W: React.FC = () => {
                 fileName="ValueBox"
               >
                 <Grid
-                  style={{ height: "76.2vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
@@ -2170,7 +2209,7 @@ const CM_A8000W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`13%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>중분류</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2181,7 +2220,7 @@ const CM_A8000W: React.FC = () => {
                 fileName="ValueBox"
               >
                 <Grid
-                  style={{ height: "76.2vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     detailDataResult2.data.map((row) => ({
                       ...row,
@@ -2227,7 +2266,7 @@ const CM_A8000W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`13%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle>소분류</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2238,7 +2277,7 @@ const CM_A8000W: React.FC = () => {
                 fileName="ValueBox"
               >
                 <Grid
-                  style={{ height: "76.2vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     detailDataResult3.data.map((row) => ({
                       ...row,
@@ -2284,7 +2323,7 @@ const CM_A8000W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(61% - ${GAP * 3}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer4">
                 <GridTitle
                   style={{
                     display: "flex",
@@ -2341,7 +2380,7 @@ const CM_A8000W: React.FC = () => {
                 fileName="ValueBox"
               >
                 <Grid
-                  style={{ height: "74.8vh" }}
+                  style={{ height: webheight4 }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

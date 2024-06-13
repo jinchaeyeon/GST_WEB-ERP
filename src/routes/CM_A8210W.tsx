@@ -16,7 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { TabStrip } from "@progress/kendo-react-layout/dist/npm/tabstrip/TabStrip";
 import { TabStripTab } from "@progress/kendo-react-layout/dist/npm/tabstrip/TabStripTab";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -47,6 +47,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -65,12 +66,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isFilterHideState, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8210W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -129,6 +125,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+
 const CM_A8210W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -137,15 +142,75 @@ const CM_A8210W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A8210W", setCustomOptionData);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      if (height5 == 0 && !isMobile) {
+        setTabSelected(0);
+        height5 = getHeight(".FormBoxWrap");
+      }
+      if (height6 == 0 && !isMobile) {
+        setTabSelected(1);
+        height6 = getHeight(".FormBoxWrap2");
+      }
+      height7 = getHeight(".k-tabstrip-items-wrapper");
+      height8 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height7 - height8);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height7 - height8);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height7 - height8);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height7 - height8);
+        setWebHeight(getDeviceHeight(true) - height - height7 - height8);
+        setWebHeight2(
+          getDeviceHeight(true) - height2 - height5 - height7 - height8
+        );
+        setWebHeight3(getDeviceHeight(true) - height3 - height7 - height8);
+        setWebHeight4(
+          getDeviceHeight(true) - height4 - height6 - height7 - height8
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
+
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -235,10 +300,6 @@ const CM_A8210W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A8210W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A8210W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1367,8 +1428,10 @@ const CM_A8210W: React.FC = () => {
     });
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     setTabSelected(e.selected);
     temp = 0;
     resetAllGrid();
@@ -1415,6 +1478,31 @@ const CM_A8210W: React.FC = () => {
         scrollable={isMobile}
       >
         <TabStripTab title="작업자">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1427,35 +1515,6 @@ const CM_A8210W: React.FC = () => {
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>일자</th>
-                            <td>
-                              <CommonDateRangePicker
-                                value={{
-                                  start: filters.frdt,
-                                  end: filters.todt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) =>
-                                  setFilters((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }))
-                                }
-                                className="required"
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
                     <GridTitle>기본정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1467,7 +1526,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height1,
+                        height: mobileheight,
                       }}
                       data={process(
                         subDataResult.data.map((row) => ({
@@ -1595,7 +1654,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height2,
+                        height: mobileheight2,
                         overflow: "auto",
                       }}
                       data={process(
@@ -1683,36 +1742,9 @@ const CM_A8210W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: filters.frdt,
-                            end: filters.todt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              frdt: e.value.start,
-                              todt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                      <th></th>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainerWrap>
                 <GridContainer width={`15%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>기본정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1723,7 +1755,7 @@ const CM_A8210W: React.FC = () => {
                     fileName="임률관리"
                   >
                     <Grid
-                      style={{ height: "72.5vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -1777,7 +1809,7 @@ const CM_A8210W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>상세정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -1802,7 +1834,7 @@ const CM_A8210W: React.FC = () => {
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -1831,7 +1863,7 @@ const CM_A8210W: React.FC = () => {
                     fileName="임률관리"
                   >
                     <Grid
-                      style={{ height: `calc(72.5vh - 70px)` }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1919,6 +1951,54 @@ const CM_A8210W: React.FC = () => {
         </TabStripTab>
 
         <TabStripTab title="설비">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+                  <th>설비</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="fxcode"
+                        value={filters.fxcode}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="fxfull"
+                        valueField="fxcode"
+                      />
+                    )}
+                  </td>
+                  <th>사용여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="useyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1931,58 +2011,6 @@ const CM_A8210W: React.FC = () => {
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer3">
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>일자</th>
-                            <td>
-                              <CommonDateRangePicker
-                                value={{
-                                  start: filters.frdt,
-                                  end: filters.todt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) =>
-                                  setFilters((prev) => ({
-                                    ...prev,
-                                    frdt: e.value.start,
-                                    todt: e.value.end,
-                                  }))
-                                }
-                                className="required"
-                              />
-                            </td>
-                            <th>설비</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="fxcode"
-                                  value={filters.fxcode}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                  textField="fxfull"
-                                  valueField="fxcode"
-                                />
-                              )}
-                            </td>
-                            <th>사용여부</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionRadioGroup
-                                  name="useyn"
-                                  customOptionData={customOptionData}
-                                  changeData={filterRadioChange}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
                     <GridTitle>기본정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -1994,7 +2022,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - 70,
+                        height: mobileheight3,
                       }}
                       data={process(
                         subDataResult.data.map((row) => ({
@@ -2119,7 +2147,7 @@ const CM_A8210W: React.FC = () => {
                   >
                     <Grid
                       style={{
-                        height: deviceHeight - height - height4,
+                        height: mobileheight4,
                         overflow: "auto",
                       }}
                       data={process(
@@ -2209,57 +2237,9 @@ const CM_A8210W: React.FC = () => {
             </Swiper>
           ) : (
             <>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: filters.frdt,
-                            end: filters.todt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              frdt: e.value.start,
-                              todt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                      <th>설비</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="fxcode"
-                            value={filters.fxcode}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="fxfull"
-                            valueField="fxcode"
-                          />
-                        )}
-                      </td>
-                      <th>사용여부</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="useyn"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainerWrap>
                 <GridContainer width={`15%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>기본정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2270,7 +2250,7 @@ const CM_A8210W: React.FC = () => {
                     fileName="임률관리"
                   >
                     <Grid
-                      style={{ height: "72.5vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -2321,7 +2301,7 @@ const CM_A8210W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>상세정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -2346,7 +2326,7 @@ const CM_A8210W: React.FC = () => {
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2375,7 +2355,7 @@ const CM_A8210W: React.FC = () => {
                     fileName="임률관리"
                   >
                     <Grid
-                      style={{ height: `calc(72.5vh - 70px)` }}
+                      style={{ height: webheight4 }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,

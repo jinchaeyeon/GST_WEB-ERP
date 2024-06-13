@@ -12,8 +12,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -35,6 +35,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -43,7 +44,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_B8100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -83,10 +84,37 @@ const monthField = [
   "12",
 ];
 
+var height = 0;
+var height2 = 0;
+
 const CM_B8100W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_B8100W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -117,10 +145,6 @@ const CM_B8100W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_B8100W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -420,7 +444,7 @@ const CM_B8100W: React.FC = () => {
         >
           <Grid
             style={{
-              height: isMobile ? deviceHeight - height : "81.6vh",
+              height: isMobile ? mobileheight : webheight,
             }}
             data={process(
               mainDataResult.data.map((row) => ({

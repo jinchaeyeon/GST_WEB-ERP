@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,6 +45,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -96,6 +97,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const CM_A8250W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -104,11 +109,40 @@ const CM_A8250W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A8250W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height3);
+        setWebHeight2(getDeviceHeight(true) - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
   const [swiper, setSwiper] = useState<SwiperCore>();
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -160,9 +194,6 @@ const CM_A8250W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A8250W", setMessagesData);
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A8250W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1023,7 +1054,7 @@ const CM_A8250W: React.FC = () => {
                 fileName="제경비표준"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -1121,7 +1152,7 @@ const CM_A8250W: React.FC = () => {
                 fileName="제경비표준"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1233,7 +1264,7 @@ const CM_A8250W: React.FC = () => {
       ) : (
         <GridContainerWrap>
           <GridContainer width={`15%`}>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기준일자</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -1244,7 +1275,7 @@ const CM_A8250W: React.FC = () => {
               fileName="제경비표준"
             >
               <Grid
-                style={{ height: "81.5vh" }}
+                style={{ height: webheight }}
                 data={process(
                   subDataResult.data.map((row) => ({
                     ...row,
@@ -1290,7 +1321,7 @@ const CM_A8250W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer width={`calc(85% - ${GAP}px)`}>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1326,7 +1357,7 @@ const CM_A8250W: React.FC = () => {
               fileName="제경비표준"
             >
               <Grid
-                style={{ height: "81.3vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
