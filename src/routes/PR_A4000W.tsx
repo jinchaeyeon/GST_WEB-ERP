@@ -16,8 +16,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -51,6 +51,7 @@ import {
   convertDateToStrWithTime2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -71,7 +72,7 @@ import PlanWindow from "../components/Windows/PR_A4000W_Plan_Window";
 import DetailWindow from "../components/Windows/PR_A4000W_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -141,13 +142,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+
 const PR_A4000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -161,7 +164,7 @@ const PR_A4000W: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -176,6 +179,60 @@ const PR_A4000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A4000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+      height7 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(
+          getDeviceHeight(true) - height - height2 - height5 - height7
+        );
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setWebHeight3(
+          getDeviceHeight(true) - height - height2 - height5 - height7
+        );
+        setWebHeight4(getDeviceHeight(true) - height - height2 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    tabSelected,
+  ]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -227,8 +284,6 @@ const PR_A4000W: React.FC = () => {
       setProdempListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
     resetAllGrid();
@@ -2024,7 +2079,7 @@ const PR_A4000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "64vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -2170,7 +2225,7 @@ const PR_A4000W: React.FC = () => {
                     fileName="생산실적관리"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         goDataResult.data.map((row) => ({
                           ...row,
@@ -2239,7 +2294,7 @@ const PR_A4000W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <GridTitleContainer className="ButtonContainer2">
+                  <GridTitleContainer className="ButtonContainer3">
                     <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
@@ -2254,7 +2309,7 @@ const PR_A4000W: React.FC = () => {
                       <GridTitle>작업내용</GridTitle>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap border={true} className="ButtonContainer3">
+                  <FormBoxWrap border={true} className="FormBoxWrap">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2278,7 +2333,7 @@ const PR_A4000W: React.FC = () => {
                     >
                       <Grid
                         style={{
-                          height: deviceHeight - height - height2 - height3,
+                          height: mobileheight3,
                         }}
                         data={process(
                           detailDataResult.data.map((row) => ({
@@ -2357,7 +2412,7 @@ const PR_A4000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width="20%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>작업정보</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2368,7 +2423,7 @@ const PR_A4000W: React.FC = () => {
                     fileName="생산실적관리"
                   >
                     <Grid
-                      style={{ height: "72.2vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         goDataResult.data.map((row) => ({
                           ...row,
@@ -2435,7 +2490,7 @@ const PR_A4000W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(80% - ${GAP}px)`}>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -2460,7 +2515,7 @@ const PR_A4000W: React.FC = () => {
                     </FormBox>
                   </FormBoxWrap>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>작업내용</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2471,7 +2526,7 @@ const PR_A4000W: React.FC = () => {
                       fileName="생산실적관리"
                     >
                       <Grid
-                        style={{ height: "66.5vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           detailDataResult.data.map((row) => ({
                             ...row,
@@ -2573,7 +2628,7 @@ const PR_A4000W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer className="ButtonContainer2">
+            <GridTitleContainer className="ButtonContainer4">
               <GridTitle>작업정보</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -2585,7 +2640,7 @@ const PR_A4000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height2 : "72.2vh",
+                  height: isMobile ? mobileheight4 : webheight4,
                 }}
                 data={process(
                   dailyDataResult.data.map((row) => ({

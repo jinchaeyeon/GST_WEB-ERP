@@ -26,6 +26,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -63,6 +64,7 @@ import {
   findMessage,
   getBizCom,
   getCustDataQuery,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -85,12 +87,10 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -290,10 +290,13 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const PR_A0060: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height2 = getHeight(".ButtonContainer");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -341,7 +344,45 @@ const PR_A0060: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A0060W", setCustomOptionData);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  let deviceWidth = document.documentElement.clientWidth;
+
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      if (tabSelected == 0) {
+        height4 = getHeight(".FormBoxWrap");
+      }
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height5 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height5 - height3);
+        setWebHeight(
+          getDeviceHeight(true) - height - height4 - height5 - height3
+        );
+        setWebHeight2(height4 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2]);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -422,7 +463,6 @@ const PR_A0060: React.FC = () => {
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
 
   useEffect(() => {
@@ -2564,7 +2604,7 @@ const PR_A0060: React.FC = () => {
                 fileName="설비관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -2650,8 +2690,9 @@ const PR_A0060: React.FC = () => {
             >
               <TabStripTab title="설비정보">
                 <FormBoxWrap
+                  border={true}
                   style={{
-                    height: isMobile ? deviceHeight - height : "33vh",
+                    height: mobileheight2,
                     overflow: "auto",
                   }}
                 >
@@ -2978,7 +3019,7 @@ const PR_A0060: React.FC = () => {
                         overflow: "auto",
                       }}
                     >
-                      <GridTitleContainer className="ButtonContainer">
+                      <GridTitleContainer className="ButtonContainer2">
                         <GridTitle>설비이력관리</GridTitle>
                         <ButtonContainer>
                           <Button
@@ -3011,9 +3052,7 @@ const PR_A0060: React.FC = () => {
                         fileName="설비관리"
                       >
                         <Grid
-                          style={{
-                            height: deviceHeight - height - height2,
-                          }}
+                          style={{ height: mobileheight3 }}
                           data={process(
                             subDataResult.data.map((row) => ({
                               ...row,
@@ -3115,7 +3154,7 @@ const PR_A0060: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -3152,7 +3191,7 @@ const PR_A0060: React.FC = () => {
               fileName="설비관리"
             >
               <Grid
-                style={{ height: "30vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -3235,7 +3274,7 @@ const PR_A0060: React.FC = () => {
             scrollable={isMobile}
           >
             <TabStripTab title="설비정보">
-              <FormBoxWrap style={{ height: isMobile ? "100%" : "33vh" }}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -3554,7 +3593,7 @@ const PR_A0060: React.FC = () => {
                   }}
                 >
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>설비이력관리</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -3587,7 +3626,7 @@ const PR_A0060: React.FC = () => {
                       fileName="설비관리"
                     >
                       <Grid
-                        style={{ height: "30vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           subDataResult.data.map((row) => ({
                             ...row,

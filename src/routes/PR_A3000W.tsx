@@ -6,7 +6,7 @@ import {
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -30,6 +30,7 @@ import {
   convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -38,31 +39,55 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
 import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  sessionItemState,
-} from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
 const PR_A3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".TitleContainer");
+    height2 = getHeight(".ButtonContainer");
+    height3 = getHeight(".ButtonContainer2");
+    height4 = getHeight(".ButtonContainer3");
+
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false) - height - height2);
+      setMobileHeight2(getDeviceHeight(false) - height - height3 - height4);
+      setWebHeight(getDeviceHeight(false) - height - height4);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight]);
+
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -553,7 +578,7 @@ const PR_A3000W: React.FC = () => {
                   </GridTitle>
                 </GridTitleContainer>
                 <FormBoxWrap
-                  style={{ height: deviceHeight, overflow: "auto" }}
+                  style={{ height: mobileheight, overflow: "auto" }}
                   border={true}
                 >
                   <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
@@ -628,7 +653,7 @@ const PR_A3000W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>
                     <ButtonContainer
                       style={{ justifyContent: "space-between" }}
@@ -648,7 +673,10 @@ const PR_A3000W: React.FC = () => {
                     </ButtonContainer>
                   </GridTitle>
                 </GridTitleContainer>
-                <FormBoxWrap border={true}>
+                <FormBoxWrap
+                  border={true}
+                  style={{ height: mobileheight2, overflow: "auto" }}
+                >
                   <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                     <tbody>
                       <tr>
@@ -695,7 +723,10 @@ const PR_A3000W: React.FC = () => {
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
-                <ButtonContainer style={{ justifyContent: "center" }}>
+                <ButtonContainer
+                  style={{ justifyContent: "center" }}
+                  className="ButtonContainer3"
+                >
                   {permissions && (
                     <>
                       <Button
@@ -758,122 +789,125 @@ const PR_A3000W: React.FC = () => {
         </>
       ) : (
         <>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody className="PR_A3000W">
-                <tr>
-                  <th>작업지시번호</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="plankey"
-                      type="text"
-                      value={filters.plankey}
-                      onChange={filterInputChange}
-                      onBlur={search}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  {/* <th>작업일자</th>
-    <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
-                  <th>작업자</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="prodemp"
-                        value={filtersSaved.prodemp}
-                        bizComponentId="L_sysUserMaster_001"
-                        bizComponentData={bizComponentData}
-                        changeData={filterComboBoxChange}
-                        valueField="user_id"
-                        textField="user_name"
-                      />
-                    )}
-                  </td>
-                  <th>설비</th>
-                  <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="prodmac"
-                        value={filtersSaved.prodmac}
-                        bizComponentId="L_fxcode"
-                        bizComponentData={bizComponentData}
-                        changeData={filterComboBoxChange}
-                        valueField="fxcode"
-                        textField="fxfull"
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>공정</th>
-                  <td>
-                    {proccdListData
-                      ? proccdListData.find(
-                          (item: any) => item.sub_code == mainDataResult.proccd
-                        )?.code_name
-                      : ""}
-                  </td>
-                  <th>계획수량</th>
-                  <td>{mainDataResult.qty}</td>
-                </tr>
-                <tr>
-                  <th>품목</th>
-                  <td>{mainDataResult.itemnm}</td>
-                  <th>누적수량</th>
-                  <td>{mainDataResult.prodqty}</td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody className="PR_A3000W">
-                <tr>
-                  <th>생산시작시간</th>
-                  <td colSpan={3}>
-                    {startOrEnd == "end"
-                      ? convertDateToStrWithTime2(
-                          new Date(masterDataResult.strtime)
-                        ) +
-                        " (경과시간 : " +
-                        duration +
-                        ")"
-                      : "00:00:00"}
-                  </td>
-                </tr>
-                <tr>
-                  <th>수량</th>
-                  <td>
-                    <NumericTextBox
-                      name="qty"
-                      value={filtersSaved.qty}
-                      onChange={filterNumericTextBoxChange}
-                    />
-                  </td>
-                  <th>불량수량</th>
-                  <td>
-                    <NumericTextBox
-                      name="badqty"
-                      value={filtersSaved.badqty}
-                      onChange={filterNumericTextBoxChange}
-                    />
-                  </td>
-                </tr>
-                {stopStartOrEnd == "end" && stopStartTime ? (
+          <GridContainer style={{ height: webheight, overflow: "auto" }}>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody className="PR_A3000W">
                   <tr>
-                    <th>비가동시작시간</th>
+                    <th>작업지시번호</th>
                     <td colSpan={3}>
-                      {convertDateToStrWithTime2(new Date(stopStartTime))}
+                      <Input
+                        name="plankey"
+                        type="text"
+                        value={filters.plankey}
+                        onChange={filterInputChange}
+                        onBlur={search}
+                      />
                     </td>
                   </tr>
-                ) : (
-                  ""
-                )}
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <ButtonContainer>
+                  <tr>
+                    {/* <th>작업일자</th>
+    <td>{dateformat2(convertDateToStr(new Date()))}</td> */}
+                    <th>작업자</th>
+                    <td>
+                      {bizComponentData !== null && (
+                        <BizComponentComboBox
+                          name="prodemp"
+                          value={filtersSaved.prodemp}
+                          bizComponentId="L_sysUserMaster_001"
+                          bizComponentData={bizComponentData}
+                          changeData={filterComboBoxChange}
+                          valueField="user_id"
+                          textField="user_name"
+                        />
+                      )}
+                    </td>
+                    <th>설비</th>
+                    <td>
+                      {bizComponentData !== null && (
+                        <BizComponentComboBox
+                          name="prodmac"
+                          value={filtersSaved.prodmac}
+                          bizComponentId="L_fxcode"
+                          bizComponentData={bizComponentData}
+                          changeData={filterComboBoxChange}
+                          valueField="fxcode"
+                          textField="fxfull"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>공정</th>
+                    <td>
+                      {proccdListData
+                        ? proccdListData.find(
+                            (item: any) =>
+                              item.sub_code == mainDataResult.proccd
+                          )?.code_name
+                        : ""}
+                    </td>
+                    <th>계획수량</th>
+                    <td>{mainDataResult.qty}</td>
+                  </tr>
+                  <tr>
+                    <th>품목</th>
+                    <td>{mainDataResult.itemnm}</td>
+                    <th>누적수량</th>
+                    <td>{mainDataResult.prodqty}</td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody className="PR_A3000W">
+                  <tr>
+                    <th>생산시작시간</th>
+                    <td colSpan={3}>
+                      {startOrEnd == "end"
+                        ? convertDateToStrWithTime2(
+                            new Date(masterDataResult.strtime)
+                          ) +
+                          " (경과시간 : " +
+                          duration +
+                          ")"
+                        : "00:00:00"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>수량</th>
+                    <td>
+                      <NumericTextBox
+                        name="qty"
+                        value={filtersSaved.qty}
+                        onChange={filterNumericTextBoxChange}
+                      />
+                    </td>
+                    <th>불량수량</th>
+                    <td>
+                      <NumericTextBox
+                        name="badqty"
+                        value={filtersSaved.badqty}
+                        onChange={filterNumericTextBoxChange}
+                      />
+                    </td>
+                  </tr>
+                  {stopStartOrEnd == "end" && stopStartTime ? (
+                    <tr>
+                      <th>비가동시작시간</th>
+                      <td colSpan={3}>
+                        {convertDateToStrWithTime2(new Date(stopStartTime))}
+                      </td>
+                    </tr>
+                  ) : (
+                    ""
+                  )}
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
+          </GridContainer>
+          <ButtonContainer className="ButtonContainer3">
             {permissions && (
               <>
                 <Button

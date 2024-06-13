@@ -28,7 +28,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -61,6 +61,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -88,13 +89,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A7000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -201,12 +196,14 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const PR_A7000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -292,7 +289,7 @@ const PR_A7000W: React.FC = () => {
     });
   };
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -308,6 +305,55 @@ const PR_A7000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A7000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height4);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height5);
+        setWebHeight4(getDeviceHeight(true) - height - height2 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    tabSelected,
+  ]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1969,7 +2015,6 @@ const PR_A7000W: React.FC = () => {
     }));
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     resetAllGrid();
     setTabSelected(e.selected);
@@ -2615,7 +2660,7 @@ const PR_A7000W: React.FC = () => {
                     fileName="작업지시"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height1 }}
+                      style={{ height: mobileheight }}
                       data={process(
                         mainDataResult.data.map((row, num) => ({
                           ...row,
@@ -2737,7 +2782,7 @@ const PR_A7000W: React.FC = () => {
                     fileName="작업지시"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         detailDataResult.data.map((row, num) => ({
                           ...row,
@@ -2874,7 +2919,7 @@ const PR_A7000W: React.FC = () => {
                     group={group}
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight3 }}
                       data={newData.map((item: { items: any[] }) => ({
                         ...item,
                         items: item.items.map((row: any) => ({
@@ -2967,7 +3012,7 @@ const PR_A7000W: React.FC = () => {
             <>
               <GridContainerWrap>
                 <GridContainer width={`60%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>생산계획기본</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2978,7 +3023,7 @@ const PR_A7000W: React.FC = () => {
                     fileName="작업지시"
                   >
                     <Grid
-                      style={{ height: "35vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         mainDataResult.data.map((row, num) => ({
                           ...row,
@@ -3051,7 +3096,7 @@ const PR_A7000W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(40% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>생산계획상세</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3072,7 +3117,7 @@ const PR_A7000W: React.FC = () => {
                     fileName="작업지시"
                   >
                     <Grid
-                      style={{ height: "35vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         detailDataResult.data.map((row, num) => ({
                           ...row,
@@ -3168,7 +3213,7 @@ const PR_A7000W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>작업지시</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -3196,7 +3241,7 @@ const PR_A7000W: React.FC = () => {
                   group={group}
                 >
                   <Grid
-                    style={{ height: "28.5vh" }}
+                    style={{ height: webheight3 }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
                       items: item.items.map((row: any) => ({
@@ -3458,7 +3503,7 @@ const PR_A7000W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer className="ButtonContainer2">
+            <GridTitleContainer className="ButtonContainer4">
               <GridTitle>작업지시내역</GridTitle>
               <ButtonContainer>
                 <Button
@@ -3481,7 +3526,7 @@ const PR_A7000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height2 : "64vh",
+                  height: isMobile ? mobileheight4 : webheight4,
                 }}
                 data={newData2.map((item: { items: any[] }) => ({
                   ...item,

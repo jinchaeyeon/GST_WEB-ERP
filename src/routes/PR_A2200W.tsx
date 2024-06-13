@@ -2,9 +2,15 @@ import { Card, CardContent, Grid, Typography } from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input, Switch, TextArea } from "@progress/kendo-react-inputs";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import React, {
+  MutableRefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Carousel from "react-material-ui-carousel";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,15 +30,24 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
 let deletedMainRows: any[] = [];
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
 
 const PR_A2200W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -44,18 +59,71 @@ const PR_A2200W: React.FC = () => {
   UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  let deviceHeight = document.documentElement.clientHeight - 100;
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
-  var height6 = getHeight(".ButtonContainer6");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [step, setStep] = useState(0);
   const [pictureindex, SetPicureindex] = useState(0);
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [isCaptured, setIsCaptured] = useState(false);
+
+  useLayoutEffect(() => {
+    height = getHeight(".TitleContainer");
+    height2 = getHeight(".FormBoxWrap");
+    height3 = getHeight(".FormBoxWrap2");
+    if (isCaptured == false) {
+      height4 = getHeight(".FormBoxWrap3");
+    }
+    height5 = getHeight(".FormBoxWrap4");
+    height6 = getHeight(".ButtonContainer");
+    height7 = getHeight(".ButtonContainer2");
+
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false) - height - height2 - height6);
+      setMobileHeight2(getDeviceHeight(false) - height - height3 - height7);
+      setMobileHeight3(getDeviceHeight(false) - height - height4);
+      setMobileHeight4(getDeviceHeight(false) - height - height5);
+      setWebHeight(getDeviceHeight(false) - height - height2);
+      setWebHeight2(getDeviceHeight(false) - height - height3);
+      setWebHeight3(getDeviceHeight(false) - height - height4);
+      setWebHeight4(getDeviceHeight(false) - height);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [step, webheight, webheight2, webheight3, webheight4, isCaptured]);
+
   const search = () => {
     resetInformation();
     setFilters((prev) => ({
@@ -83,7 +151,6 @@ const PR_A2200W: React.FC = () => {
     }));
   };
 
-  const [isCaptured, setIsCaptured] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(
     null
   ) as MutableRefObject<HTMLVideoElement>;
@@ -350,24 +417,6 @@ const PR_A2200W: React.FC = () => {
     }
   }, [filters3]);
 
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-  const [mainDataState2, setMainDataState2] = useState<State>({
-    sort: [],
-  });
-  const [mainDataState3, setMainDataState3] = useState<State>({
-    sort: [],
-  });
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
-  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
-    process([], mainDataState2)
-  );
-  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
-    process([], mainDataState3)
-  );
   const [information, setInformation] = useState({
     devmngnum: "",
     attdatnum: "",
@@ -819,10 +868,7 @@ const PR_A2200W: React.FC = () => {
         >
           <SwiperSlide key={0}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <TitleContainer
-                style={{ marginBottom: "15px" }}
-                className="ButtonContainer"
-              >
+              <TitleContainer className="TitleContainer">
                 <Title>프로젝트 선택</Title>
                 <ButtonContainer>
                   <Button
@@ -835,7 +881,7 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
-              <FormBoxWrap border={true} className="ButtonContainer2">
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -854,9 +900,8 @@ const PR_A2200W: React.FC = () => {
               </FormBoxWrap>
               <GridContainer
                 style={{
-                  height: deviceHeight - height - height2 - height3,
-                  overflowY: "scroll",
-                  width: "100%",
+                  height: mobileheight,
+                  overflowY: "auto",
                 }}
               >
                 {mainDataResult.data.map((item, idx) => (
@@ -890,7 +935,7 @@ const PR_A2200W: React.FC = () => {
                   </Grid>
                 ))}
               </GridContainer>
-              <BottomContainer className="ButtonContainer3">
+              <BottomContainer className="ButtonContainer">
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
@@ -919,10 +964,7 @@ const PR_A2200W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <TitleContainer
-                style={{ marginBottom: "15px" }}
-                className="ButtonContainer"
-              >
+              <TitleContainer className="TitleContainer">
                 <Title>장비 선택</Title>
                 <ButtonContainer>
                   <Button
@@ -935,7 +977,7 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
-              <FormBoxWrap border={true} className="ButtonContainer4">
+              <FormBoxWrap border={true} className="FormBoxWrap2">
                 <FormBox>
                   <tbody>
                     <tr>
@@ -963,9 +1005,8 @@ const PR_A2200W: React.FC = () => {
               </FormBoxWrap>
               <GridContainer
                 style={{
-                  height: deviceHeight - height - height4,
-                  overflowY: "scroll",
-                  width: "100%",
+                  height: mobileheight2,
+                  overflowY: "auto",
                 }}
               >
                 {mainDataResult2.data.map((item, idx) => (
@@ -1012,10 +1053,7 @@ const PR_A2200W: React.FC = () => {
           ) : (
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <TitleContainer
-                  style={{ marginBottom: "15px" }}
-                  className="ButtonContainer5"
-                >
+                <TitleContainer className="TitleContainer">
                   <Title>사진 및 코멘트</Title>
                   <ButtonContainer>
                     <Switch
@@ -1032,12 +1070,7 @@ const PR_A2200W: React.FC = () => {
                     />
                   </ButtonContainer>
                 </TitleContainer>
-                <GridContainer
-                  style={{
-                    overflowY: "auto",
-                    width: "100%",
-                  }}
-                >
+                <GridContainer>
                   {isCaptured ? (
                     <>
                       <video
@@ -1046,11 +1079,11 @@ const PR_A2200W: React.FC = () => {
                         muted
                         autoPlay
                         style={{
-                          height: deviceHeight - height5 - height6,
+                          height: mobileheight4,
                           width: "100%",
                         }}
                       ></video>
-                      <FormBoxWrap className="ButtonContainer6">
+                      <FormBoxWrap className="FormBoxWrap4">
                         <FormBox>
                           <tbody>
                             <tr
@@ -1146,13 +1179,14 @@ const PR_A2200W: React.FC = () => {
                         autoPlay={false}
                         onChange={handleChange}
                         index={pictureindex}
+                        height={mobileheight3}
                       >
                         {mainDataResult3.data[0].image.map((content: any) => (
                           <>
                             <div
                               style={{
                                 width: "100%",
-                                height: deviceHeight - height5 - height6,
+                                height: "100%",
                               }}
                             >
                               <img
@@ -1167,7 +1201,7 @@ const PR_A2200W: React.FC = () => {
                           </>
                         ))}
                       </Carousel>
-                      <FormBoxWrap className="ButtonContainer6">
+                      <FormBoxWrap className="FormBoxWrap3">
                         <FormBox>
                           <tbody>
                             <tr
@@ -1258,10 +1292,10 @@ const PR_A2200W: React.FC = () => {
                       <div
                         style={{
                           width: "100%",
-                          height: deviceHeight - height5 - height6,
+                          height: mobileheight3,
                         }}
                       ></div>
-                      <FormBoxWrap className="ButtonContainer6">
+                      <FormBoxWrap className="FormBoxWrap3">
                         <FormBox>
                           <tbody>
                             <tr
@@ -1405,6 +1439,7 @@ const PR_A2200W: React.FC = () => {
               <FormBoxWrap
                 style={{ width: "20%", float: "right" }}
                 border={true}
+                className="FormBoxWrap"
               >
                 <FormBox>
                   <tbody>
@@ -1424,10 +1459,9 @@ const PR_A2200W: React.FC = () => {
               </FormBoxWrap>
               <GridContainer
                 style={{
-                  // height: "80vh",
-                  // overflowY: "auto",
                   width: "100%",
-                  marginBottom: "30px", //높이제한이 없을시 필요
+                  height: webheight,
+                  overflow: "auto",
                 }}
               >
                 <Grid container spacing={2}>
@@ -1514,6 +1548,7 @@ const PR_A2200W: React.FC = () => {
               <FormBoxWrap
                 style={{ width: "40%", float: "right" }}
                 border={true}
+                className="FormBoxWrap2"
               >
                 <FormBox>
                   <tbody>
@@ -1542,10 +1577,9 @@ const PR_A2200W: React.FC = () => {
               </FormBoxWrap>
               <GridContainer
                 style={{
-                  // height: "80vh",
-                  // overflowY: "auto",
+                  height: webheight2,
                   width: "100%",
-                  marginBottom: "30px", //높이제한이 없을시 필요
+                  overflow: "auto",
                 }}
               >
                 <Grid container spacing={2}>
@@ -1684,7 +1718,7 @@ const PR_A2200W: React.FC = () => {
                   playsInline
                   muted
                   autoPlay
-                  style={{ height: "85vh", width: "100%" }}
+                  style={{ height: webheight4, width: "100%" }}
                 ></video>
               ) : mainDataResult3.total > 0 ? (
                 <>
@@ -1694,10 +1728,11 @@ const PR_A2200W: React.FC = () => {
                     autoPlay={false}
                     onChange={handleChange}
                     index={pictureindex}
+                    height={webheight3}
                   >
                     {mainDataResult3.data[0].image.map((content: any) => (
                       <>
-                        <div style={{ width: "100%", height: "60vh" }}>
+                        <div style={{ width: "100%", height: "100%" }}>
                           <img
                             src={content.url}
                             style={{
@@ -1710,12 +1745,12 @@ const PR_A2200W: React.FC = () => {
                       </>
                     ))}
                   </Carousel>
-                  <FormBoxWrap>
+                  <FormBoxWrap className="FormBoxWrap3">
                     <GridTitleContainer>
                       <GridTitle>
                         <ButtonContainer>
                           코멘트
-                          <div style={{ marginLeft: "10px" }}>
+                          <div>
                             <Switch
                               onChange={(event: any) => {
                                 setInformation((prev) => ({
@@ -1755,8 +1790,8 @@ const PR_A2200W: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <div style={{ width: "100%", height: "60vh" }}></div>
-                  <FormBoxWrap>
+                  <div style={{ width: "100%", height: webheight3 }}></div>
+                  <FormBoxWrap className="FormBoxWrap3">
                     <GridTitleContainer>
                       <GridTitle>
                         <ButtonContainer>

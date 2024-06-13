@@ -28,8 +28,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -62,6 +62,7 @@ import {
   findMessage,
   getBizCom,
   getCodeFromValue,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -81,7 +82,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -182,18 +183,19 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   return newDataState;
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const PR_A1100W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -272,6 +274,43 @@ const PR_A1100W: React.FC = () => {
   UseCustomOption("PR_A1100W", setCustomOptionData);
 
   const [tabSelected, setTabSelected] = React.useState(0);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
+        setWebHeight3(getDeviceHeight(true) - height - height2 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, tabSelected]);
+
   const handleSelectTab = (e: any) => {
     deletedMaterialRows = [];
     deletedPlanRows = [];
@@ -2329,7 +2368,7 @@ const PR_A1100W: React.FC = () => {
           find_row_value: "",
           pgNum: 1,
         }));
-        if(tabSelected == 1) {
+        if (tabSelected == 1) {
           if (swiper && isMobile) {
             swiper.slideTo(0);
           }
@@ -2617,7 +2656,6 @@ const PR_A1100W: React.FC = () => {
       </FilterContainer>
 
       <TabStrip
-        style={{ width: "100%" }}
         selected={tabSelected}
         onSelect={handleSelectTab}
         scrollable={isMobile}
@@ -2637,7 +2675,7 @@ const PR_A1100W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "64vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={newData.map((item: { items: any[] }) => ({
                   ...item,
@@ -2812,7 +2850,7 @@ const PR_A1100W: React.FC = () => {
                       fileName="계획생산"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height2 }}
+                        style={{ height: mobileheight2 }}
                         data={newData2.map((item: { items: any[] }) => ({
                           ...item,
                           items: item.items.map((row: any) => ({
@@ -2930,7 +2968,7 @@ const PR_A1100W: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                  <GridTitleContainer className="ButtonContainer2">
+                  <GridTitleContainer className="ButtonContainer3">
                     <ButtonContainer style={{ justifyContent: "left" }}>
                       <Button
                         onClick={() => {
@@ -2975,7 +3013,7 @@ const PR_A1100W: React.FC = () => {
                     fileName="계획생산"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight3 }}
                       data={process(
                         materialDataResult.data.map((row) => ({
                           ...row,
@@ -3075,7 +3113,7 @@ const PR_A1100W: React.FC = () => {
                       _export = exporter;
                     }}
                   >
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>생산계획정보</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -3109,7 +3147,7 @@ const PR_A1100W: React.FC = () => {
                       fileName="계획생산"
                     >
                       <Grid
-                        style={{ height: "64vh" }}
+                        style={{ height: webheight2 }}
                         data={newData2.map((item: { items: any[] }) => ({
                           ...item,
                           items: item.items.map((row: any) => ({
@@ -3226,7 +3264,7 @@ const PR_A1100W: React.FC = () => {
                 </GridContainer>
 
                 <GridContainer width={`calc(35% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>소요자재리스트</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3259,7 +3297,7 @@ const PR_A1100W: React.FC = () => {
                     fileName="계획생산"
                   >
                     <Grid
-                      style={{ height: "64vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         materialDataResult.data.map((row) => ({
                           ...row,

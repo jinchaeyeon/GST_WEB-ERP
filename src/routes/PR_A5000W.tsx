@@ -14,7 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -61,10 +62,8 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import BarcodeWindow from "../components/Windows/PR_A5000W_Barcode_Window";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -93,12 +92,12 @@ type TdataArr = {
 };
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const PR_A5000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const setLoading = useSetRecoilState(isLoading);
@@ -113,7 +112,7 @@ const PR_A5000W: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -129,6 +128,36 @@ const PR_A5000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A5000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3 - height4);
+        setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
+        setWebHeight2((getDeviceHeight(true) - height) / 2 - height3 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1256,7 +1285,7 @@ const PR_A5000W: React.FC = () => {
                 fileName="완제품입고"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1382,7 +1411,7 @@ const PR_A5000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <GridTitleContainer className="ButtonContainer3">
+              <GridTitleContainer className="FormBoxWrap">
                 <FormBoxWrap>
                   <FormBox>
                     <tbody>
@@ -1419,7 +1448,7 @@ const PR_A5000W: React.FC = () => {
                 fileName="완제품입고"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 - height3 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
@@ -1505,7 +1534,7 @@ const PR_A5000W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>생산실적정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1525,7 +1554,7 @@ const PR_A5000W: React.FC = () => {
               fileName="완제품입고"
             >
               <Grid
-                style={{ height: "34vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1612,10 +1641,10 @@ const PR_A5000W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>완제품입고내역</GridTitle>
             </GridTitleContainer>
-            <GridTitleContainer>
+            <GridContainer className="FormBoxWrap">
               <FormBoxWrap style={{ width: "25%", marginLeft: "-4%" }}>
                 <FormBox>
                   <tbody>
@@ -1665,7 +1694,7 @@ const PR_A5000W: React.FC = () => {
                   title="조회"
                 ></Button>
               </div>
-            </GridTitleContainer>
+            </GridContainer>
             <ExcelExport
               data={detailDataResult.data}
               ref={(exporter) => {
@@ -1674,7 +1703,7 @@ const PR_A5000W: React.FC = () => {
               fileName="완제품입고"
             >
               <Grid
-                style={{ height: "34vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,
