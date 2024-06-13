@@ -21,7 +21,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -56,6 +56,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -142,12 +143,99 @@ const StatusCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+var height10 = 0;
+var height11 = 0;
+
 const CM_A5000W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A5000W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      if (height6 == 0 && !isMobile) {
+        // setTabSelected(1);
+        height6 = getHeight(".FormBoxWrap");
+      }
+      if (height7 == 0 && !isMobile) {
+        // setTabSelected(1);
+        height7 = getHeight(".FormBoxWrap2");
+      }
+      if (height8 == 0 && !isMobile) {
+        // setTabSelected(1);
+        height8 = getHeight(".FormBoxWrap3");
+      }
+      if (height9 == 0 && !isMobile) {
+        // setTabSelected(1);
+        height9 = getHeight(".FormBoxWrap4");
+      }
+      height10 = getHeight(".k-tabstrip-items-wrapper");
+      height11 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height10 - height11);
+        setMobileHeight2(
+          getDeviceHeight(false) - height2 - height10 - height11
+        );
+        setMobileHeight3(
+          getDeviceHeight(false) - height3 - height10 - height11
+        );
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height10 - height11
+        );
+        setWebHeight2(
+          getDeviceHeight(false) -
+            height3 -
+            height4 -
+            height6 -
+            height7 -
+            height10 -
+            height11
+        );
+        setWebHeight3(
+          getDeviceHeight(false) -
+            height5 -
+            height8 -
+            height9 -
+            height10 -
+            height11
+        );
+      };
+
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
+
   var index = 0;
   const [index2, setIndex2] = useState(0);
   const [index3, setIndex3] = useState(0);
@@ -164,7 +252,6 @@ const CM_A5000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   const docEditorRef = useRef<TEditorHandle>(null);
   const docEditorRef1 = useRef<TEditorHandle>(null);
 
@@ -175,9 +262,6 @@ const CM_A5000W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A5000W", setMessagesData);
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A5000W", setCustomOptionData);
   const history = useHistory();
   const location = useLocation();
   //customOptionData 조회 후 디폴트 값 세팅
@@ -477,10 +561,12 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
       setUnsavedAttadatnums([]);
@@ -1752,13 +1838,11 @@ const CM_A5000W: React.FC = () => {
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
-            {!isMobile && (
-              <GridTitleContainer>
-                <GridTitleContainer>
-                  <GridTitle>조회조건</GridTitle>
-                </GridTitleContainer>
-              </GridTitleContainer>
-            )}
+          {!isMobile && (
+            <GridTitleContainer className="ButtonContainer">
+                <GridTitle>조회조건</GridTitle>
+            </GridTitleContainer>
+          )}
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -1935,7 +2019,7 @@ const CM_A5000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height1 : "61.5vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -2083,7 +2167,7 @@ const CM_A5000W: React.FC = () => {
                     <FormBoxWrap
                       border={true}
                       style={{
-                        height: deviceHeight - height - height2,
+                        height: mobileheight2,
                         overflow: "auto",
                       }}
                     >
@@ -2307,7 +2391,7 @@ const CM_A5000W: React.FC = () => {
                             hideTools
                           />
                         </GridContainer>
-                        <FormBoxWrap border={true} className="ButtonContainer3">
+                        <FormBoxWrap border={true}>
                           <FormBox>
                             <tbody>
                               <tr>
@@ -2339,8 +2423,9 @@ const CM_A5000W: React.FC = () => {
                   ) : (
                     <FormBoxWrap
                       border={true}
+                      className="FormBoxWrap"
                       style={{
-                        height: deviceHeight - height - height2,
+                        height: mobileheight2,
                         overflow: "auto",
                       }}
                     >
@@ -2589,7 +2674,9 @@ const CM_A5000W: React.FC = () => {
                           </tr>
                         </tbody>
                       </FormBox>
-                      <GridContainer style={{ width: "100%" }}>
+                      <GridContainer
+                        style={{ width: "100%", height: webheight2 }}
+                      >
                         <GridContainer>
                           <RichEditor
                             id="docEditor"
@@ -2597,7 +2684,7 @@ const CM_A5000W: React.FC = () => {
                             hideTools
                           />
                         </GridContainer>
-                        <FormBoxWrap border={true} className="ButtonContainer3">
+                        <FormBoxWrap border={true} className="FormBoxWrap2">
                           <FormBox>
                             <tbody>
                               <tr>
@@ -2707,8 +2794,9 @@ const CM_A5000W: React.FC = () => {
                   </GridTitleContainer>
                   <FormBoxWrap
                     border={true}
+                    className="FormBoxWrap3"
                     style={{
-                      height: deviceHeight - height - height2,
+                      height: mobileheight3,
                       overflow: "auto",
                     }}
                   >
@@ -2768,7 +2856,9 @@ const CM_A5000W: React.FC = () => {
                         </tr>
                       </tbody>
                     </FormBox>
-                    <GridContainer style={{ width: "100%" }}>
+                    <GridContainer
+                      style={{ width: "100%", height: webheight3 }}
+                    >
                       <GridContainer>
                         <RichEditor
                           id="docEditor1"
@@ -2776,7 +2866,7 @@ const CM_A5000W: React.FC = () => {
                           hideTools
                         />
                       </GridContainer>
-                      <FormBoxWrap border={true}>
+                      <FormBoxWrap border={true} className="FormBoxWrap4">
                         <FormBox>
                           <tbody>
                             <tr>
@@ -2813,9 +2903,8 @@ const CM_A5000W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="50%">
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>상세정보</GridTitle>
-
                       <ButtonContainer>
                         <Button
                           onClick={onDeleteClick}
@@ -2836,7 +2925,7 @@ const CM_A5000W: React.FC = () => {
                       </ButtonContainer>
                     </GridTitleContainer>
                     {information.ref_document_id != "" ? (
-                      <FormBoxWrap border={true}>
+                      <FormBoxWrap border={true} className="FormBoxWrap">
                         <FormBox>
                           <tbody>
                             <tr>
@@ -3053,7 +3142,7 @@ const CM_A5000W: React.FC = () => {
                         </FormBox>
                       </FormBoxWrap>
                     ) : (
-                      <FormBoxWrap border={true}>
+                      <FormBoxWrap border={true} className="FormBoxWrap">
                         <FormBox>
                           <tbody>
                             <tr>
@@ -3305,14 +3394,14 @@ const CM_A5000W: React.FC = () => {
                     )}
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>문의</GridTitle>
                     </GridTitleContainer>
-                    <GridContainer height="32vh">
+                    <GridContainer style={{ height: webheight2 }}>
                       <RichEditor id="docEditor" ref={docEditorRef} hideTools />
                     </GridContainer>
                   </GridContainer>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap2">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3341,7 +3430,7 @@ const CM_A5000W: React.FC = () => {
                   </FormBoxWrap>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>
                       <div style={{ display: "flex" }}>
                         <p style={{ marginRight: "5px" }}>답변</p>
@@ -3401,7 +3490,7 @@ const CM_A5000W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap3">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3459,10 +3548,10 @@ const CM_A5000W: React.FC = () => {
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
-                  <GridContainer height={`calc(100% - 185px)`}>
+                  <GridContainer style={{ height: webheight3 }}>
                     <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
                   </GridContainer>
-                  <FormBoxWrap border={true}>
+                  <FormBoxWrap border={true} className="FormBoxWrap4">
                     <FormBox>
                       <tbody>
                         <tr>
