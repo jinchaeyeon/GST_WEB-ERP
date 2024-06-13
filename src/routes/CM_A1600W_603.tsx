@@ -11,7 +11,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -58,6 +58,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -81,9 +82,8 @@ import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
 import {
   OSState,
-  heightstate,
+  isFilterHideState,
   isLoading,
-  isMobileState,
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_603_C";
@@ -160,26 +160,99 @@ const requiredField2 = [
   "title",
 ];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const CM_A1600W_603: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var index = 0;
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  const [permissions, setPermissions] = useState<TPermissions | null>(
+    OLD_COMPANY.includes(companyCode)
+      ? {
+          view: true,
+          save: true,
+          delete: true,
+          print: true,
+        }
+      : null
+  );
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  if (!OLD_COMPANY.includes(companyCode)) {
+    UsePermissions(setPermissions);
+    UseCustomOption("CM_A1600W_603", setCustomOptionData);
+  }
+  const [tabSelected, setTabSelected] = useState<number>(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".k-tabstrip-items-wrapper");
-  var height1 = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".k-tabstrip-items-wrapper");
+      height6 = getHeight(".TitleContainer");
+      const handleWindowResize = () => {
+        // 창 크기가 변경될 때마다 높이를 다시 계산해야 함
+        height5 = getHeight(".filterbox_CM_A1600W_603");
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4 - height6);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height4 - height6);
+        setMobileHeight3(getDeviceHeight(true) - height4 - height6);
+        setMobileHeight4(getDeviceHeight(true) - height3 - height4 - height6);
+        setWebHeight(getDeviceHeight(true) - height - height4 - height6);
+        setWebHeight2(
+          getDeviceHeight(false) - height - height4 - height5 - height6
+        );
+        setWebHeight3(getDeviceHeight(true) - height4 - height6);
+        setWebHeight4(getDeviceHeight(true) - height3 - height4 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
+
+  var index = 0;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const processApi = useApi();
-  const [loginResult] = useRecoilState(loginResultState);
+
   const userId = loginResult ? loginResult.userId : "";
-  const companyCode = loginResult ? loginResult.companyCode : "";
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const pc = UseGetValueFromSessionItem("pc");
-  const [tabSelected, setTabSelected] = useState<number>(0);
+
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"
   >("vertical");
@@ -214,27 +287,12 @@ const CM_A1600W_603: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  const [permissions, setPermissions] = useState<TPermissions | null>(
-    OLD_COMPANY.includes(companyCode)
-      ? {
-          view: true,
-          save: true,
-          delete: true,
-          print: true,
-        }
-      : null
-  );
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1600W_603", setMessagesData);
   const [osstate, setOSState] = useRecoilState(OSState);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!OLD_COMPANY.includes(companyCode)) {
-    UsePermissions(setPermissions);
-    UseCustomOption("CM_A1600W_603", setCustomOptionData);
-  }
+
   const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -1914,7 +1972,7 @@ const CM_A1600W_603: React.FC = () => {
           isSearch: true,
         }));
       }
-      if(tabSelected == 0) {
+      if (tabSelected == 0) {
         if (swiper && isMobile) {
           swiper.slideTo(0);
         }
@@ -1925,6 +1983,9 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (tabSelected == 0) {
       ok = true;
       onSaveClick();
@@ -2271,7 +2332,7 @@ const CM_A1600W_603: React.FC = () => {
                     <div
                       style={{
                         backgroundColor: "#ccc",
-                        height: "73vh",
+                        height: mobileheight,
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -2282,7 +2343,7 @@ const CM_A1600W_603: React.FC = () => {
                     </div>
                   ) : (
                     <Scheduler
-                      height={deviceHeight - height - height1}
+                      height={mobileheight}
                       data={schedulerDataResult}
                       onDataChange={handleDataChange}
                       defaultDate={displayDate}
@@ -2394,7 +2455,7 @@ const CM_A1600W_603: React.FC = () => {
                     fileName="Scheduler"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height - height2 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         todoDataResult.data.map((row) => ({
                           ...row,
@@ -2522,14 +2583,14 @@ const CM_A1600W_603: React.FC = () => {
                       </tbody>
                     </FilterBox>
                   </FilterContainer>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>개인 스케줄(표)</GridTitle>
                   </GridTitleContainer>
                   {osstate == true ? (
                     <div
                       style={{
                         backgroundColor: "#ccc",
-                        height: "73vh",
+                        height: webheight,
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
@@ -2540,7 +2601,7 @@ const CM_A1600W_603: React.FC = () => {
                     </div>
                   ) : (
                     <Scheduler
-                      height={"73vh"}
+                      height={webheight}
                       data={schedulerDataResult}
                       onDataChange={handleDataChange}
                       defaultDate={displayDate}
@@ -2555,51 +2616,51 @@ const CM_A1600W_603: React.FC = () => {
                   )}
                 </GridContainer>
                 <GridContainer width={`calc(35% - ${GAP}px)`}>
-                  <FilterContainer>
-                    <FilterBox
-                      onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                    >
-                      <tbody>
-                        <tr>
-                          <th>일자</th>
-                          <td>
-                            <CommonDateRangePicker
-                              value={{
-                                start: todoFilter.frdt,
-                                end: todoFilter.todt,
-                              }}
-                              onChange={(e: {
-                                value: { start: any; end: any };
-                              }) =>
-                                setTodoFilter((prev) => ({
-                                  ...prev,
-                                  frdt: e.value.start,
-                                  todt: e.value.end,
-                                }))
-                              }
-                              className="required"
-                            />
-                          </td>
-                          <th>완료</th>
-                          <td>
-                            {bizComponentData !== null && (
-                              <BizComponentRadioGroup
-                                name="rdofinyn"
-                                value={todoFilter.rdofinyn}
-                                bizComponentId="R_YN"
-                                bizComponentData={bizComponentData}
-                                changeData={filterRadioChange2}
+                  <div className="filterbox_CM_A1600W_603">
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>일자</th>
+                            <td>
+                              <CommonDateRangePicker
+                                value={{
+                                  start: todoFilter.frdt,
+                                  end: todoFilter.todt,
+                                }}
+                                onChange={(e: {
+                                  value: { start: any; end: any };
+                                }) =>
+                                  setTodoFilter((prev) => ({
+                                    ...prev,
+                                    frdt: e.value.start,
+                                    todt: e.value.end,
+                                  }))
+                                }
+                                className="required"
                               />
-                            )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FilterBox>
-                  </FilterContainer>
-
-                  <GridTitleContainer>
+                            </td>
+                            <th>완료</th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
+                                  name="rdofinyn"
+                                  value={todoFilter.rdofinyn}
+                                  bizComponentId="R_YN"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterRadioChange2}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
+                  </div>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>To-do 리스트</GridTitle>
-
                     {permissions && (
                       <ButtonContainer>
                         <Button
@@ -2636,7 +2697,7 @@ const CM_A1600W_603: React.FC = () => {
                     fileName="Scheduler"
                   >
                     <Grid
-                      style={{ height: "73vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         todoDataResult.data.map((row) => ({
                           ...row,
@@ -2829,7 +2890,7 @@ const CM_A1600W_603: React.FC = () => {
               <div
                 style={{
                   backgroundColor: "#ccc",
-                  height: "77vh",
+                  height: webheight3,
                   width: "100%",
                   display: "flex",
                   alignItems: "center",
@@ -2840,7 +2901,7 @@ const CM_A1600W_603: React.FC = () => {
               </div>
             ) : (
               <Scheduler
-                height={isMobile ? `${deviceHeight - height}px` : "77vh"}
+                height={isMobile ? mobileheight3 : webheight3}
                 data={schedulerDataResult2}
                 defaultDate={displayDate}
                 group={{
@@ -2935,10 +2996,10 @@ const CM_A1600W_603: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer width="100%">
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer3">
               {isMobile ? "" : <GridTitle>개인 스케줄(표)</GridTitle>}
               {permissions && (
-                <ButtonContainer className="ButtonContainer3">
+                <ButtonContainer>
                   <Button
                     onClick={onAddClick2}
                     themeColor={"primary"}
@@ -2974,7 +3035,7 @@ const CM_A1600W_603: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height3 : "73.5vh",
+                  height: isMobile ? mobileheight4 : webheight4,
                 }}
                 data={process(
                   userDataResult.data.map((row) => ({

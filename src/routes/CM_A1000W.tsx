@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -68,12 +69,9 @@ import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
-  isDeviceWidthState,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -84,21 +82,60 @@ const centerField = ["usetime"];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const CM_A1000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
   var index = 0;
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
   let deviceHeightWindow = document.documentElement.clientHeight;
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
-  var height4 = getHeight(".ButtonContainer4");
-    const [permissions, setPermissions] = useState<TPermissions>({
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CM_A1000W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".TitleContainer");
+      height5 = getHeight(".Calendar");
+      height6 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height4);
+        setWebHeight(getDeviceHeight(false) - height - height4 - height5);
+        setWebHeight2(getDeviceHeight(true) - height2 - height4 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -134,9 +171,7 @@ const CM_A1000W: React.FC = () => {
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A1000W", setCustomOptionData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1508,7 +1543,7 @@ const CM_A1000W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer3">
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <ButtonContainer>
@@ -1555,7 +1590,7 @@ const CM_A1000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height3,
+                      height: mobileheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1632,7 +1667,7 @@ const CM_A1000W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer style={{ width: "100%" }}>
-                <GridTitleContainer className="ButtonContainer4">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>상세정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
@@ -1651,7 +1686,7 @@ const CM_A1000W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   style={{
-                    height: deviceHeight - height4,
+                    height: mobileheight2,
                     overflow: "auto",
                   }}
                   border={true}
@@ -1901,7 +1936,7 @@ const CM_A1000W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer2">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>메모(월 기준)</GridTitle>
                   <ButtonContainer
                     style={{
@@ -1935,7 +1970,7 @@ const CM_A1000W: React.FC = () => {
                   name="memo"
                   rows={27}
                   onChange={InputChange}
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight3 }}
                 />
               </GridContainer>
             </SwiperSlide>
@@ -1949,10 +1984,11 @@ const CM_A1000W: React.FC = () => {
                 focusedDate={filters.todt}
                 value={filters.todt}
                 onChange={filterInputChange}
+                className="Calendar"
               />
-              <GridTitleContainer style={{ marginTop: "7px" }}>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>메모(월 기준)</GridTitle>
-                <ButtonContainer style={{ marginBottom: "5px" }}>
+                <ButtonContainer>
                   <Button
                     onClick={onMemoSaveClick}
                     fillMode="outline"
@@ -1962,12 +1998,14 @@ const CM_A1000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <TextArea
-                value={infomation.memo}
-                name="memo"
-                rows={27}
-                onChange={InputChange}
-              />
+              <div style={{ height: webheight, overflow: "auto" }}>
+                <TextArea
+                  value={infomation.memo}
+                  name="memo"
+                  rows={27}
+                  onChange={InputChange}
+                />
+              </div>
             </GridContainer>
             <GridContainer width={`calc(100% - 370px)`}>
               <FilterContainer>
@@ -2042,7 +2080,7 @@ const CM_A1000W: React.FC = () => {
               </FilterContainer>
 
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -2086,7 +2124,7 @@ const CM_A1000W: React.FC = () => {
                   fileName="업무일지"
                 >
                   <Grid
-                    style={{ height: "32.7vh" }}
+                    style={{ height: webheight2 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2159,7 +2197,7 @@ const CM_A1000W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              <FormBoxWrap border={true}>
+              <FormBoxWrap border={true} className="FormBoxWrap">
                 <FormBox>
                   <tbody>
                     <tr>
