@@ -78,6 +78,7 @@ type TKendoWindow = {
   isCopy: boolean;
   modal?: boolean;
   pathname: string;
+  permissions?: any;
 };
 let targetRowIndex: null | number = null;
 let temp = 0;
@@ -97,6 +98,7 @@ const KendoWindow = ({
   isCopy,
   modal = false,
   pathname,
+  permissions = null,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
@@ -1769,9 +1771,11 @@ const KendoWindow = ({
               </Grid>
               <BottomContainer className="BottomContainer">
                 <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={handleSubmit}>
-                    확인
-                  </Button>
+                  {permissions?.save && (
+                    <Button themeColor={"primary"} onClick={handleSubmit}>
+                      확인
+                    </Button>
+                  )}
                   <Button
                     themeColor={"primary"}
                     fillMode={"outline"}
@@ -2225,9 +2229,11 @@ const KendoWindow = ({
           </GridContainer>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={handleSubmit}>
-                확인
-              </Button>
+              {permissions?.save && (
+                <Button themeColor={"primary"} onClick={handleSubmit}>
+                  확인
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}

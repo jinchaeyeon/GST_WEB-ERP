@@ -59,10 +59,7 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -390,7 +387,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -673,6 +670,7 @@ const Page: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -777,7 +775,11 @@ const Page: React.FC = () => {
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view !== null &&
+      bizComponentData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -786,7 +788,7 @@ const Page: React.FC = () => {
   }, [filters, permissions, bizComponentData]);
 
   useEffect(() => {
-    if (permissions !== null && detailFilters.isSearch) {
+    if (permissions.view !== null && detailFilters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -987,6 +989,8 @@ const Page: React.FC = () => {
   };
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
+
     if (!window.confirm("삭제하시겠습니까?")) {
       return false;
     }
@@ -1218,14 +1222,12 @@ const Page: React.FC = () => {
         <Title>공통코드정보</Title>
 
         <ButtonContainer>
-          {permissions !== null && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="SY_A0010W"
-            />
-          )}
+          <TopButtons
+            search={search}
+            exportExcel={exportExcel}
+            permissions={permissions}
+            pathname="SY_A0010W"
+          />
         </ButtonContainer>
       </TitleContainer>
 
@@ -1318,27 +1320,25 @@ const Page: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
-                  {permissions !== null && (
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="file-add"
-                        disabled={permissions.save ? false : true}
-                      >
-                        생성
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        icon="delete"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.delete ? false : true}
-                      >
-                        삭제
-                      </Button>
-                    </ButtonContainer>
-                  )}
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      icon="delete"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={newData}
@@ -1632,27 +1632,25 @@ const Page: React.FC = () => {
             <GridContainer width={`30%`}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
-                {permissions !== null && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                      disabled={permissions.save ? false : true}
-                    >
-                      생성
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      icon="delete"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.delete ? false : true}
-                    >
-                      삭제
-                    </Button>
-                  </ButtonContainer>
-                )}
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                    disabled={permissions.save ? false : true}
+                  >
+                    생성
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
                 data={newData}
@@ -1925,6 +1923,7 @@ const Page: React.FC = () => {
           reloadData={reloadData}
           modal={true}
           pathname="SY_A0010W"
+          permissions={permissions}
         />
       )}
 
