@@ -211,7 +211,8 @@ export const ButtonContainer = styled.div<TButtonContainer>`
   flex-direction: ${(props) =>
     props.flexDirection ? props.flexDirection : "row"};
   align-items: center;
-
+  padding : 5px 0px;
+  
   input,
   button {
     margin-left: 5px;
