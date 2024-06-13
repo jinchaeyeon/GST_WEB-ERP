@@ -787,8 +787,7 @@ const HU_B4001W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height3,
-                    overflow: "scroll",
+                    height: deviceHeight - height3
                   }}
                 >
                   <FormBox>

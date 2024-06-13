@@ -733,7 +733,7 @@ const SA_A5000W_615: React.FC = () => {
                   <GridContainer
                     style={{
                       height: mobileheight,
-                      overflowY: "scroll",
+                      overflowY: "auto",
                       width: "100%",
                     }}
                   >
@@ -936,7 +936,7 @@ const SA_A5000W_615: React.FC = () => {
                     <GridContainer
                       style={{
                         height: mobileheight2,
-                        overflowY: "scroll",
+                        overflowY: "auto",
                         width: "100%",
                       }}
                     >
@@ -1072,7 +1072,7 @@ const SA_A5000W_615: React.FC = () => {
                 <GridContainer
                   style={{
                     height: webheight,
-                    overflowY: "scroll",
+                    overflowY: "auto",
                     width: "100%",
                   }}
                 >
@@ -1218,7 +1218,7 @@ const SA_A5000W_615: React.FC = () => {
                 <GridContainer
                   style={{
                     height: webheight2,
-                    overflowY: "scroll",
+                    overflowY: "auto",
                     width: "100%",
                   }}
                 >

@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -49,6 +49,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -69,12 +70,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -127,6 +123,16 @@ let deletedMainRows: object[] = [];
 var index = 0;
 var index2 = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+
 const MA_A3500W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -136,8 +142,6 @@ const MA_A3500W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
 
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -148,10 +152,6 @@ const MA_A3500W: React.FC = () => {
   const [isVisibleDetail, setIsVisableDetail] = useState(false);
   const [isVisibleDetail2, setIsVisableDetail2] = useState(false);
   const [isVisibleDetail3, setIsVisableDetail3] = useState(false);
-
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -221,7 +221,7 @@ const MA_A3500W: React.FC = () => {
     });
   };
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -242,6 +242,65 @@ const MA_A3500W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("MA_A3500W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".ButtonContainer");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
+      height7 = getHeight(".FormBoxWrap");
+      height8 = getHeight(".FormBoxWrap2");
+      height9 = getHeight(".FormBoxWrap3");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height7);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height8);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height9);
+        setMobileHeight5(getDeviceHeight(true) - height - height8);
+        setWebHeight((getDeviceHeight(true) - height) / 2 - height3);
+        setWebHeight2(
+          (getDeviceHeight(true) - height) / 2 - height2 - height7 - height4
+        );
+        setWebHeight3((getDeviceHeight(true) - height) / 2 - height2 - height8);
+        setWebHeight4(
+          (getDeviceHeight(true) - height) / 2 - height2 - height9 - height5
+        );
+        setWebHeight5((getDeviceHeight(true) - height) / 2 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    tabSelected,
+  ]);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -2544,7 +2603,7 @@ const MA_A3500W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
@@ -2566,7 +2625,7 @@ const MA_A3500W: React.FC = () => {
                   fileName="자재불출"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2658,18 +2717,13 @@ const MA_A3500W: React.FC = () => {
             <SwiperSlide key={1}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TabStrip
-                  style={{
-                    width: "100%",
-                    height: deviceHeight - height3,
-                    overflow: "scroll",
-                  }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
                   scrollable={isMobile}
                 >
                   <TabStripTab title="품목참조">
                     <GridContainer>
-                      <GridTitleContainer>
+                      <GridTitleContainer className="FormBoxWrap">
                         <div
                           style={{
                             paddingBottom: "10px",
@@ -2776,7 +2830,7 @@ const MA_A3500W: React.FC = () => {
                         fileName="자재불출"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height3 }}
+                          style={{ height: mobileheight2 }}
                           data={process(
                             subDataResult.data.map((row) => ({
                               ...row,
@@ -2881,85 +2935,94 @@ const MA_A3500W: React.FC = () => {
                       }}
                     >
                       <SwiperSlide key={0}>
-                        <GridContainer
-                          style={{
-                            width: "100%",
-                            overflow: "auto",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "left",
-                              flexDirection: isVisibleDetail2
-                                ? "column"
-                                : "row",
-                            }}
-                          >
+                        <GridContainer>
+                          <GridTitleContainer className="FormBoxWrap2">
                             <div
                               style={{
                                 display: "flex",
                                 justifyContent: "left",
-                                width: "100%",
+                                flexDirection: isVisibleDetail2
+                                  ? "column"
+                                  : "row",
                               }}
                             >
-                              <Button
-                                onClick={() => {
-                                  setIsVisableDetail2((prev) => !prev);
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  width: "100%",
                                 }}
-                                icon={
-                                  isVisibleDetail2
-                                    ? "chevron-up"
-                                    : "chevron-down"
-                                }
-                                fillMode={"flat"}
-                                themeColor={"secondary"}
                               >
-                                조회조건
-                              </Button>
+                                <Button
+                                  onClick={() => {
+                                    setIsVisableDetail2((prev) => !prev);
+                                  }}
+                                  icon={
+                                    isVisibleDetail2
+                                      ? "chevron-up"
+                                      : "chevron-down"
+                                  }
+                                  fillMode={"flat"}
+                                  themeColor={"secondary"}
+                                >
+                                  조회조건
+                                </Button>
+                                <ButtonContainer>
+                                  <Button
+                                    onClick={() => {
+                                      if (swiper2 && isMobile) {
+                                        swiper2.slideTo(1);
+                                      }
+                                    }}
+                                    icon="chevron-right"
+                                    themeColor={"primary"}
+                                    fillMode={"flat"}
+                                  ></Button>
+                                </ButtonContainer>
+                              </div>
+                              {isVisibleDetail2 && (
+                                <FormBoxWrap border={true}>
+                                  <FormBox>
+                                    <tbody>
+                                      <tr>
+                                        <th style={{ minWidth: "70px" }}>
+                                          품목코드
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="itemcd"
+                                            type="text"
+                                            value={infomation2.itemcd}
+                                            onChange={InputChange2}
+                                          />
+                                        </td>
+                                        <th style={{ minWidth: "70px" }}>
+                                          품목명
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="itemnm"
+                                            type="text"
+                                            value={infomation2.itemnm}
+                                            onChange={InputChange2}
+                                          />
+                                        </td>
+                                        <td>
+                                          <Button
+                                            onClick={onSearch3}
+                                            themeColor={"primary"}
+                                            icon="search"
+                                          >
+                                            조회
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </FormBox>
+                                </FormBoxWrap>
+                              )}
                             </div>
-                            {isVisibleDetail2 && (
-                              <FormBoxWrap border={true}>
-                                <FormBox>
-                                  <tbody>
-                                    <tr>
-                                      <th style={{ minWidth: "70px" }}>
-                                        품목코드
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="itemcd"
-                                          type="text"
-                                          value={infomation2.itemcd}
-                                          onChange={InputChange2}
-                                        />
-                                      </td>
-                                      <th style={{ minWidth: "70px" }}>
-                                        품목명
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="itemnm"
-                                          type="text"
-                                          value={infomation2.itemnm}
-                                          onChange={InputChange2}
-                                        />
-                                      </td>
-                                      <td>
-                                        <Button
-                                          onClick={onSearch3}
-                                          themeColor={"primary"}
-                                          icon="search"
-                                        >
-                                          조회
-                                        </Button>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </FormBox>
-                              </FormBoxWrap>
-                            )}
-                          </div>
+                          </GridTitleContainer>
                           <ExcelExport
                             data={BOMDataResult.data}
                             ref={(exporter) => {
@@ -2969,7 +3032,7 @@ const MA_A3500W: React.FC = () => {
                           >
                             <Grid
                               style={{
-                                height: deviceHeight - height3,
+                                height: mobileheight3,
                               }}
                               data={process(
                                 BOMDataResult.data.map((row) => ({
@@ -3034,125 +3097,134 @@ const MA_A3500W: React.FC = () => {
                         </GridContainer>
                       </SwiperSlide>
                       <SwiperSlide key={1}>
-                        <GridContainer
-                          style={{
-                            width: "100%",
-                            overflow: "auto",
-                          }}
-                        >
-                          <div
-                            style={{
-                              paddingBottom: "10px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              flexDirection: isVisibleDetail3
-                                ? "column"
-                                : "row",
-                            }}
-                          >
+                        <GridContainer>
+                          <GridTitleContainer className="FormBoxWrap3">
                             <div
                               style={{
+                                paddingBottom: "10px",
                                 display: "flex",
-                                justifyContent: "left",
-                                width: "100%",
+                                justifyContent: "space-between",
+                                flexDirection: isVisibleDetail3
+                                  ? "column"
+                                  : "row",
                               }}
                             >
-                              <Button
-                                onClick={() => {
-                                  setIsVisableDetail3((prev) => !prev);
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "left",
+                                  width: "100%",
                                 }}
-                                icon={
-                                  isVisibleDetail3
-                                    ? "chevron-up"
-                                    : "chevron-down"
-                                }
-                                fillMode={"flat"}
-                                themeColor={"secondary"}
                               >
-                                조회조건
-                              </Button>
-                            </div>
-                            {isVisibleDetail3 && (
-                              <FormBoxWrap border={true}>
-                                <FormBox>
-                                  <tbody>
-                                    <tr>
-                                      <th style={{ minWidth: "70px" }}>
-                                        품목코드
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="itemcd"
-                                          type="text"
-                                          value={infomation3.itemcd}
-                                          className="readonly"
-                                        />
-                                      </td>
-                                      <th style={{ minWidth: "70px" }}>
-                                        품목명
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="itemnm"
-                                          type="text"
-                                          value={infomation3.itemnm}
-                                          className="readonly"
-                                        />
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <th style={{ minWidth: "70px" }}>
-                                        생산량
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="doqty"
-                                          type="number"
-                                          value={infomation3.doqty}
-                                          onChange={InputChange3}
-                                        />
-                                        <ButtonInInput>
-                                          <Button
-                                            onClick={InputChange4}
-                                            icon="check"
-                                            fillMode="flat"
+                                <ButtonContainer>
+                                  <Button
+                                    onClick={() => {
+                                      if (swiper2 && isMobile) {
+                                        swiper2.slideTo(0);
+                                      }
+                                    }}
+                                    icon="chevron-left"
+                                    themeColor={"primary"}
+                                    fillMode={"flat"}
+                                  ></Button>
+                                </ButtonContainer>
+                                <Button
+                                  onClick={() => {
+                                    setIsVisableDetail3((prev) => !prev);
+                                  }}
+                                  icon={
+                                    isVisibleDetail3
+                                      ? "chevron-up"
+                                      : "chevron-down"
+                                  }
+                                  fillMode={"flat"}
+                                  themeColor={"secondary"}
+                                >
+                                  조회조건
+                                </Button>
+                              </div>
+                              {isVisibleDetail3 && (
+                                <FormBoxWrap border={true}>
+                                  <FormBox>
+                                    <tbody>
+                                      <tr>
+                                        <th style={{ minWidth: "70px" }}>
+                                          품목코드
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="itemcd"
+                                            type="text"
+                                            value={infomation3.itemcd}
+                                            className="readonly"
                                           />
-                                        </ButtonInInput>
-                                      </td>
-                                      <th style={{ minWidth: "70px" }}>
-                                        LOT NO
-                                      </th>
-                                      <td>
-                                        <Input
-                                          name="lotnum"
-                                          type="text"
-                                          value={infomation3.lotnum}
-                                          onChange={InputChange3}
-                                        />
-                                      </td>
-                                      <td>
-                                        <Button
-                                          onClick={onSearch4}
-                                          themeColor={"primary"}
-                                          icon="search"
-                                        >
-                                          조회
-                                        </Button>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </FormBox>
-                              </FormBoxWrap>
-                            )}
-                            <ButtonContainer>
-                              <Button
-                                onClick={onAddClick2}
-                                themeColor={"primary"}
-                                icon="plus"
-                                title="행 추가"
-                              ></Button>
-                            </ButtonContainer>
-                          </div>
+                                        </td>
+                                        <th style={{ minWidth: "70px" }}>
+                                          품목명
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="itemnm"
+                                            type="text"
+                                            value={infomation3.itemnm}
+                                            className="readonly"
+                                          />
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th style={{ minWidth: "70px" }}>
+                                          생산량
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="doqty"
+                                            type="number"
+                                            value={infomation3.doqty}
+                                            onChange={InputChange3}
+                                          />
+                                          <ButtonInInput>
+                                            <Button
+                                              onClick={InputChange4}
+                                              icon="check"
+                                              fillMode="flat"
+                                            />
+                                          </ButtonInInput>
+                                        </td>
+                                        <th style={{ minWidth: "70px" }}>
+                                          LOT NO
+                                        </th>
+                                        <td>
+                                          <Input
+                                            name="lotnum"
+                                            type="text"
+                                            value={infomation3.lotnum}
+                                            onChange={InputChange3}
+                                          />
+                                        </td>
+                                        <td>
+                                          <Button
+                                            onClick={onSearch4}
+                                            themeColor={"primary"}
+                                            icon="search"
+                                          >
+                                            조회
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </FormBox>
+                                </FormBoxWrap>
+                              )}
+                              <ButtonContainer>
+                                <Button
+                                  onClick={onAddClick2}
+                                  themeColor={"primary"}
+                                  icon="plus"
+                                  title="행 추가"
+                                ></Button>
+                              </ButtonContainer>
+                            </div>
+                          </GridTitleContainer>
                           <ExcelExport
                             data={BOMDataResult2.data}
                             ref={(exporter) => {
@@ -3162,7 +3234,7 @@ const MA_A3500W: React.FC = () => {
                           >
                             <Grid
                               style={{
-                                height: deviceHeight - height3,
+                                height: mobileheight4,
                               }}
                               data={process(
                                 BOMDataResult2.data.map((row) => ({
@@ -3272,7 +3344,7 @@ const MA_A3500W: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={2}>
-              <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>처리정보</GridTitle>
                   <div
@@ -3322,7 +3394,7 @@ const MA_A3500W: React.FC = () => {
                   fileName="자재불출"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight5 }}
                     data={process(
                       subDataResult2.data.map((row) => ({
                         ...row,
@@ -3416,7 +3488,7 @@ const MA_A3500W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <Button
                 onClick={onDeleteClick2}
@@ -3435,7 +3507,7 @@ const MA_A3500W: React.FC = () => {
               fileName="자재불출"
             >
               <Grid
-                style={{ height: "27.2vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -3526,13 +3598,12 @@ const MA_A3500W: React.FC = () => {
           <GridContainerWrap>
             <GridContainer width="55%">
               <TabStrip
-                style={{ width: "100%", height: "48.5vh" }}
                 selected={tabSelected}
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
                 <TabStripTab title="품목참조">
-                  <FormBoxWrap>
+                  <FormBoxWrap className="FormBoxWrap">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3589,7 +3660,7 @@ const MA_A3500W: React.FC = () => {
                     </FormBox>
                   </FormBoxWrap>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick}
@@ -3606,7 +3677,7 @@ const MA_A3500W: React.FC = () => {
                       fileName="자재불출"
                     >
                       <Grid
-                        style={{ height: "29.8vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           subDataResult.data.map((row) => ({
                             ...row,
@@ -3699,7 +3770,7 @@ const MA_A3500W: React.FC = () => {
                 <TabStripTab title="BOM참조">
                   <GridContainerWrap>
                     <GridContainer width="50%">
-                      <FormBoxWrap>
+                      <FormBoxWrap className="FormBoxWrap2">
                         <FormBox>
                           <tbody>
                             <tr>
@@ -3742,7 +3813,7 @@ const MA_A3500W: React.FC = () => {
                         fileName="자재불출"
                       >
                         <Grid
-                          style={{ height: "27vh" }}
+                          style={{ height: webheight3 }}
                           data={process(
                             BOMDataResult.data.map((row) => ({
                               ...row,
@@ -3804,8 +3875,8 @@ const MA_A3500W: React.FC = () => {
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
-                    <GridContainer style={{ width: "100%", height: "100%" }}>
-                      <FormBoxWrap>
+                    <GridContainer>
+                      <FormBoxWrap className="FormBoxWrap3">
                         <FormBox>
                           <tbody>
                             <tr>
@@ -3858,7 +3929,7 @@ const MA_A3500W: React.FC = () => {
                           </tbody>
                         </FormBox>
                       </FormBoxWrap>
-                      <GridTitleContainer>
+                      <GridTitleContainer className="ButtonContainer3">
                         <Button
                           onClick={onAddClick2}
                           themeColor={"primary"}
@@ -3883,7 +3954,7 @@ const MA_A3500W: React.FC = () => {
                         fileName="자재불출"
                       >
                         <Grid
-                          style={{ height: "25.5vh" }}
+                          style={{ height: webheight4 }}
                           data={process(
                             BOMDataResult2.data.map((row) => ({
                               ...row,
@@ -3984,7 +4055,7 @@ const MA_A3500W: React.FC = () => {
               </TabStrip>
             </GridContainer>
             <GridContainer width={`calc(45% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer4">
                 <GridTitle>처리정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -4011,7 +4082,7 @@ const MA_A3500W: React.FC = () => {
                 fileName="자재불출"
               >
                 <Grid
-                  style={{ height: "45vh" }}
+                  style={{ height: webheight5 }}
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,

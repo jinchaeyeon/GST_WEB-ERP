@@ -15,7 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -46,6 +46,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -64,13 +65,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A3400W_606_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -83,8 +78,14 @@ let temp = 0;
 let targetRowIndex: null | number = null;
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const MA_A3400W_606: React.FC = () => {
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -98,17 +99,51 @@ const MA_A3400W_606: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("MA_A3400W_606", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [isVisibleDetail, setIsVisableDetail] = useState(false);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebheight3] = useState(0);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+      height2 = getHeight(".ButtonContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
+      height5 = getHeight(".FormBoxWrap");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height4);
+        setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
+        setWebHeight2(
+          (getDeviceHeight(true) - height) / 2 - height3 - height5 - height4
+        );
+        setWebheight3(getDeviceHeight(true) - height - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, isVisibleDetail]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -1212,7 +1247,7 @@ const MA_A3400W_606: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1295,8 +1330,7 @@ const MA_A3400W_606: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height2,
-                    overflow: "auto",
+                    height: mobileheight2,
                   }}
                 >
                   <FormBox>
@@ -1348,7 +1382,7 @@ const MA_A3400W_606: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer2">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
@@ -1379,7 +1413,7 @@ const MA_A3400W_606: React.FC = () => {
                   fileName="출고처리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height3 }}
+                    style={{ height: mobileheight3 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1475,7 +1509,7 @@ const MA_A3400W_606: React.FC = () => {
                   }}
                   fileName="출고처리"
                 >
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -1487,7 +1521,7 @@ const MA_A3400W_606: React.FC = () => {
                     </ButtonContainer>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "30vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1569,10 +1603,10 @@ const MA_A3400W_606: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>입력정보</GridTitle>
                 </GridTitleContainer>
-                <FormBoxWrap border={true}>
+                <FormBoxWrap border={true} className="FormBoxWrap">
                   <FormBox>
                     <tbody>
                       <tr>
@@ -1622,7 +1656,7 @@ const MA_A3400W_606: React.FC = () => {
             </>
           )}
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer3">
               <GridTitle>
                 <Button
                   themeColor={"primary"}
@@ -1650,7 +1684,7 @@ const MA_A3400W_606: React.FC = () => {
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: isVisibleDetail ? "30vh" : "72vh" }}
+              style={{ height: isVisibleDetail ? webheight2 : webheight3 }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,

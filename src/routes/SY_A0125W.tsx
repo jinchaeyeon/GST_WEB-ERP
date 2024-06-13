@@ -1494,8 +1494,7 @@ const SY_A0125W: React.FC = () => {
                   border={true}
                   style={{
                     height: mobileheight2,
-                    width: "100%",
-                    overflow: "scroll",
+                    width: "100%"
                   }}
                 >
                   <FormBox>

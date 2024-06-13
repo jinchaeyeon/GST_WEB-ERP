@@ -3383,8 +3383,7 @@ const BA_A0020: React.FC = () => {
                   <FormBoxWrap
                     style={{
                       height: mobileheight2,
-                      width: "100%",
-                      overflow: "scroll",
+                      width: "100%"
                     }}
                   >
                     <FormBox>

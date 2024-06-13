@@ -13,8 +13,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -43,6 +43,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -62,9 +63,7 @@ import DetailWindow from "../components/Windows/MA_A1000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -81,11 +80,11 @@ let targetRowIndex2: null | number = null;
 
 var index = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const MA_A1000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
@@ -96,7 +95,7 @@ const MA_A1000W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [swiper, setSwiper] = useState<SwiperCore>();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -150,6 +149,36 @@ const MA_A1000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("MA_A1000W", setCustomOptionData);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight((getDeviceHeight(true) - height3) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height3) / 2 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1160,7 +1189,7 @@ const MA_A1000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height,
+                      height: mobileheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1278,7 +1307,7 @@ const MA_A1000W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: deviceHeight - height2,
+                      height: mobileheight2,
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({
@@ -1366,7 +1395,7 @@ const MA_A1000W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1394,7 +1423,7 @@ const MA_A1000W: React.FC = () => {
               fileName="구매요청관리"
             >
               <Grid
-                style={{ height: "37.5vh" }}
+                style={{ height: webheight }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1472,7 +1501,7 @@ const MA_A1000W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -1483,7 +1512,7 @@ const MA_A1000W: React.FC = () => {
               fileName="구매요청관리"
             >
               <Grid
-                style={{ height: "35.5vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,

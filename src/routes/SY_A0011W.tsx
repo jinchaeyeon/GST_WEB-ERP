@@ -1591,7 +1591,7 @@ const Page: React.FC = () => {
                   <TreeList
                     style={{
                       height: mobileheight2,
-                      overflow: "auto",
+                      overflow: "scroll",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
@@ -1817,7 +1817,7 @@ const Page: React.FC = () => {
                 <TreeList
                   style={{
                     height: webheight2,
-                    overflow: "auto",
+                    overflow: "scroll",
                   }}
                   data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                     extendDataItem(item, SUB_ITEMS_FIELD, {
