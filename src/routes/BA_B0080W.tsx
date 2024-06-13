@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -31,6 +31,8 @@ import {
   UsePermissions,
   chkScrollHandler,
   getBizCom,
+  getDeviceHeight,
+  getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -52,10 +54,37 @@ import { Iparameters, TPermissions } from "../store/types";
 let list: any[] = [];
 const DATA_ITEM_KEY = "num";
 
-const BA_B0080W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
+var height = 0;
 
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+const BA_B0080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("BA_B0080W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height);
+        setWebHeight(getDeviceHeight(true) - height);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
+
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -70,10 +99,6 @@ const BA_B0080W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("BA_B0080W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -624,7 +649,7 @@ const BA_B0080W: React.FC = () => {
           {isMobile ? (
             <Grid
               style={{
-                height: isMobile ? deviceHeight : "82vh",
+                height: isMobile ? mobileheight : webheight,
               }}
               data={process(
                 mainDataResult.data.map((row) => ({
@@ -688,7 +713,7 @@ const BA_B0080W: React.FC = () => {
           ) : (
             <Grid
               style={{
-                height: isMobile ? deviceHeight : "84vh",
+                height: isMobile ? mobileheight : webheight,
               }}
               data={process(
                 mainDataResult.data.map((row) => ({

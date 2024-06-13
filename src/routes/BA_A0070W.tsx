@@ -13,8 +13,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -44,6 +44,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -62,7 +63,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -97,12 +98,46 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const BA_A0070W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("BA_A0070W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height3);
+        setWebHeight2(getDeviceHeight(true) - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -153,7 +188,7 @@ const BA_A0070W: React.FC = () => {
 
   const userId = UseGetValueFromSessionItem("user_id");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -165,10 +200,6 @@ const BA_A0070W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("BA_A0070W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("BA_A0070W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1281,7 +1312,7 @@ const BA_A0070W: React.FC = () => {
                 fileName="환율관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -1395,7 +1426,7 @@ const BA_A0070W: React.FC = () => {
                 fileName="환율관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1498,7 +1529,7 @@ const BA_A0070W: React.FC = () => {
       ) : (
         <GridContainerWrap>
           <GridContainer width={"15%"}>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기준일자</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1518,7 +1549,7 @@ const BA_A0070W: React.FC = () => {
               fileName="환율관리"
             >
               <Grid
-                style={{ height: "81.5vh" }}
+                style={{ height: webheight }}
                 data={process(
                   subDataResult.data.map((row) => ({
                     ...row,
@@ -1578,7 +1609,7 @@ const BA_A0070W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer width={`calc(85% - ${GAP}px)`}>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -1611,7 +1642,7 @@ const BA_A0070W: React.FC = () => {
               fileName="환율관리"
             >
               <Grid
-                style={{ height: "81.5vh" }}
+                style={{ height: webheight2 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

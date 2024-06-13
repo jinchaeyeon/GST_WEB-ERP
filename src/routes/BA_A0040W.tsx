@@ -20,7 +20,7 @@ import {
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -56,6 +56,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -80,9 +81,7 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -135,6 +134,12 @@ let temp = 0;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const BA_A0040: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -149,7 +154,7 @@ const BA_A0040: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -179,11 +184,68 @@ const BA_A0040: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0040W", setCustomOptionData);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      if(height3 == 0 && !isMobile) {
+        setTabSelected(0);
+        height3 = getHeight(".FormBoxWrap");
+      }
+      height4 = getHeight(".k-tabstrip-items-wrapper");
+      height5 = getHeight(".TitleContainer");
+      if (!isMobile && tabSelected == 2) {
+        setTabSelected(0);
+      }
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height5 - height);
+        setMobileHeight2(getDeviceHeight(true) - height4 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height4 - height5 - height2);
+        setMobileHeight4((getDeviceHeight(true) - height4 - height5) / 2);
+        setMobileHeight5((getDeviceHeight(true) - height4 - height5) / 2);
+        setWebHeight(
+          getDeviceHeight(true) - height5 - height3 - height4 - height
+        );
+        setWebHeight2(
+          (getDeviceHeight(true) - height5 - height3 - height4 - height) / 2
+        );
+        setWebHeight3(
+          (getDeviceHeight(true) - height5 - height3 - height4 - height) / 2
+        );
+        setWebHeight4(height3 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+  ]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -260,7 +322,6 @@ const BA_A0040: React.FC = () => {
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
 
   const [imgBase64, setImgBase64] = useState<string[]>([]);
@@ -2307,115 +2368,115 @@ const BA_A0040: React.FC = () => {
                 />
               )}
             </ButtonContainer>
-            <FilterContainer>
-              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                <tbody>
-                  <tr>
-                    <th>품목코드</th>
-                    <td>
-                      <Input
-                        name="itemcd"
-                        type="text"
-                        value={filters.itemcd}
-                        onChange={filterInputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onItemWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
-                    <th>품목명</th>
-                    <td>
-                      <Input
-                        name="itemnm"
-                        type="text"
-                        value={filters.itemnm}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                    <th>품목계정</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="itemacnt"
-                          value={filters.itemacnt}
-                          customOptionData={customOptionData}
-                          changeData={filterComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th>사용여부</th>
-                    <td colSpan={3}>
-                      {customOptionData !== null && (
-                        <CustomOptionRadioGroup
-                          name="raduseyn"
-                          customOptionData={customOptionData}
-                          changeData={filterRadioChange}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>규격</th>
-                    <td>
-                      <Input
-                        name="insiz"
-                        type="text"
-                        value={filters.insiz}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                    <th>사양</th>
-                    <td>
-                      <Input
-                        name="spec"
-                        type="text"
-                        value={filters.spec}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                    <th>비고</th>
-                    <td>
-                      <Input
-                        name="remark"
-                        type="text"
-                        value={filters.remark}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                    <th>업체코드</th>
-                    <td>
-                      <Input
-                        name="custcd"
-                        type="text"
-                        value={filters.custcd}
-                        onChange={filterInputChange}
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onCustWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
-                    <th>업체명</th>
-                    <td>
-                      <Input
-                        name="custnm"
-                        type="text"
-                        value={filters.custnm}
-                        onChange={filterInputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FilterBox>
-            </FilterContainer>
           </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>품목계정</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="itemacnt"
+                        value={filters.itemacnt}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>사용여부</th>
+                  <td colSpan={3}>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="raduseyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>규격</th>
+                  <td>
+                    <Input
+                      name="insiz"
+                      type="text"
+                      value={filters.insiz}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>사양</th>
+                  <td>
+                    <Input
+                      name="spec"
+                      type="text"
+                      value={filters.spec}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>비고</th>
+                  <td>
+                    <Input
+                      name="remark"
+                      type="text"
+                      value={filters.remark}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           <Swiper
             onSwiper={(swiper) => {
               setSwiper(swiper);
@@ -2461,7 +2522,7 @@ const BA_A0040: React.FC = () => {
                   fileName="품목관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2549,7 +2610,7 @@ const BA_A0040: React.FC = () => {
                   <GridContainer>
                     <FormBoxWrap
                       style={{
-                        height: deviceHeight - height3,
+                        height: mobileheight2,
                         width: "100%",
                         overflow: "scroll",
                       }}
@@ -2874,7 +2935,7 @@ const BA_A0040: React.FC = () => {
                       <Grid
                         style={{
                           width: "100%",
-                          height: deviceHeight - height2 - height3,
+                          height: mobileheight3,
                         }}
                         data={process(
                           subData2Result.data.map((row) => ({
@@ -2970,45 +3031,32 @@ const BA_A0040: React.FC = () => {
                 </TabStripTab>
                 <TabStripTab title="이미지">
                   <GridContainer>
-                    <FormBoxWrap
+                    <Grid
                       style={{
-                        height: deviceHeight - height3,
-                        width: "100%",
-                        overflow: "scroll",
+                        height: mobileheight4,
                       }}
+                      data={gridData}
                     >
-                      <GridContainer width={`calc(20% - ${GAP}px)`}>
-                        <GridContainer>
-                          <Grid
-                            style={{
-                              height: "fit-content",
-                            }}
-                            data={gridData}
-                          >
-                            <GridColumn
-                              field="image"
-                              title="이미지 1"
-                              cell={imgCell}
-                            />
-                          </Grid>
-                        </GridContainer>
-
-                        <GridContainer>
-                          <Grid
-                            style={{
-                              height: "fit-content",
-                            }}
-                            data={gridData2}
-                          >
-                            <GridColumn
-                              field="image"
-                              title="이미지 2"
-                              cell={imgCell2}
-                            />
-                          </Grid>
-                        </GridContainer>
-                      </GridContainer>
-                    </FormBoxWrap>
+                      <GridColumn
+                        field="image"
+                        title="이미지 1"
+                        cell={imgCell}
+                      />
+                    </Grid>
+                  </GridContainer>
+                  <GridContainer>
+                    <Grid
+                      style={{
+                        height: mobileheight5,
+                      }}
+                      data={gridData2}
+                    >
+                      <GridColumn
+                        field="image"
+                        title="이미지 2"
+                        cell={imgCell2}
+                      />
+                    </Grid>
                   </GridContainer>
                 </TabStripTab>
               </TabStrip>
@@ -3140,7 +3188,7 @@ const BA_A0040: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
                 <Button
@@ -3178,7 +3226,7 @@ const BA_A0040: React.FC = () => {
                   fileName="품목관리"
                 >
                   <Grid
-                    style={{ height: "42vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -3255,7 +3303,7 @@ const BA_A0040: React.FC = () => {
                 <GridContainer>
                   <Grid
                     style={{
-                      height: "20.7vh",
+                      height: webheight2,
                     }}
                     data={gridData}
                   >
@@ -3266,7 +3314,7 @@ const BA_A0040: React.FC = () => {
                 <GridContainer>
                   <Grid
                     style={{
-                      height: "20.7vh",
+                      height: webheight3,
                     }}
                     data={gridData2}
                   >
@@ -3289,8 +3337,8 @@ const BA_A0040: React.FC = () => {
               scrollable={isMobile}
             >
               <TabStripTab title="상세정보">
-                <GridContainer style={{ height: "28vh" }}>
-                  <FormBoxWrap>
+                <GridContainer>
+                  <FormBoxWrap className="FormBoxWrap">
                     <FormBox>
                       <tbody>
                         <tr>
@@ -3576,8 +3624,8 @@ const BA_A0040: React.FC = () => {
                 </GridContainer>
               </TabStripTab>
               <TabStripTab title="단가">
-                <GridContainer style={{ height: "28vh" }}>
-                  <GridTitleContainer>
+                <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>단가정보</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3610,7 +3658,7 @@ const BA_A0040: React.FC = () => {
                     fileName="품목관리"
                   >
                     <Grid
-                      style={{ height: "24vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         subData2Result.data.map((row) => ({
                           ...row,
