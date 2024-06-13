@@ -9,7 +9,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -32,9 +32,12 @@ import {
   convertDateToStr,
   dateformat2,
   getBizCom,
+  getDeviceHeight,
+  getHeight,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
+  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -42,17 +45,23 @@ import CurrentTime from "../components/DDGDcomponents/CurrentTime";
 import DetailWindow2 from "../components/Windows/CM_A0000W_301_Window";
 import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+var height9 = 0;
+var height10 = 0;
+var height11 = 0;
 
 const Main: React.FC = () => {
   const processApi = useApi();
@@ -62,11 +71,67 @@ const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userName = loginResult ? loginResult.userName : "";
-  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = loginResult ? loginResult.userId : "";
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
+
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  useLayoutEffect(() => {
+    height = getHeight(".TitleContainer");
+    height2 = getHeight(".Cards");
+    height3 = getHeight(".Cards2");
+    height4 = getHeight(".Cards3");
+    height5 = getHeight(".FormBoxWrap");
+    height6 = getHeight(".ButtonContainer");
+    height7 = getHeight(".ButtonContainer2");
+    height8 = getHeight(".ButtonContainer3");
+    height9 = getHeight(".ButtonContainer4");
+    height10 = getHeight(".ButtonContainer5");
+    height11 = getHeight(".ButtonContainer6");
+
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+      setMobileHeight(getDeviceHeight(false) - height);
+      setMobileHeight2(getDeviceHeight(false) - height - height8);
+      setMobileHeight3(getDeviceHeight(false) - height - height9);
+      setMobileHeight4((getDeviceHeight(false) - height) / 2 - height10);
+      setMobileHeight5((getDeviceHeight(false) - height) / 2 - height11);
+      setWebHeight(
+        getDeviceHeight(false) -
+          height -
+          height2 -
+          height3 -
+          height4 -
+          height5 -
+          height6 -
+          height7
+      );
+      setWebHeight2(getDeviceHeight(false) - height - height8);
+      setWebHeight3(getDeviceHeight(false) - height - height9);
+      setWebHeight4((getDeviceHeight(false) - height) / 2 - height10);
+      setWebHeight5((getDeviceHeight(false) - height) / 2 - height11);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [webheight, webheight2, webheight3, webheight4, webheight5]);
+
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA310, L_SYS007",
@@ -85,8 +150,6 @@ const Main: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   const [cardOptionState, setCardOptionState] = useState<State>({
     sort: [],
   });
@@ -415,20 +478,19 @@ const Main: React.FC = () => {
         </TitleContainer>
         {!isMobile ? (
           <>
-            <GridContainerWrap height={"90%"}>
+            <GridContainerWrap>
               <GridContainer width="20%" height="100%">
                 <Card
                   style={{
                     width: "100%",
-                    marginRight: "15px",
                     borderRadius: "10px",
                     backgroundColor: "#f5b901",
-                    height: "15vh",
+                    height: "150px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginBottom: "20px",
                   }}
+                  className="Cards"
                 >
                   <CardContent
                     style={{
@@ -445,19 +507,17 @@ const Main: React.FC = () => {
                     <CurrentTime />
                   </CardContent>
                 </Card>
-                <FormBoxWrap>
+                <FormBoxWrap className="FormBoxWrap">
                   <FormBox>
                     <tbody>
                       <tr>
-                        <th className="home">
-                          <GridTitle style={{ marginBottom: "0px" }}>
-                            등원예정 :
-                          </GridTitle>
-                        </th>
                         <td>
                           <div
                             style={{ display: "flex", alignItems: "center" }}
                           >
+                            <GridTitle style={{ width: "150px" }}>
+                              등원예정 :
+                            </GridTitle>
                             <Button
                               type={"button"}
                               onClick={() => {
@@ -500,17 +560,37 @@ const Main: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
                 <GridContainer
-                  height="34vh"
                   style={{
-                    overflowY: "scroll",
-                    marginBottom: "20px",
+                    height: webheight,
+                    overflowY: "auto",
                     border: "3px solid #f5b901",
                     borderRadius: "10px",
                   }}
                 >
-                  <GridContainer style={{ margin: "10px" }}>
-                    <Grid container spacing={2}>
-                      {cardOptionData.total == 0 ? (
+                  <Grid container spacing={2}>
+                    {cardOptionData.total == 0 ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Card
+                          style={{
+                            width: "100%",
+                            marginRight: "15px",
+                            borderRadius: "10px",
+                            backgroundColor: "#f5b901",
+                          }}
+                        >
+                          <CardContent
+                            style={{
+                              fontSize: "1.2rem",
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            X
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ) : (
+                      cardOptionData.data.map((item: any) => (
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                           <Card
                             style={{
@@ -524,63 +604,38 @@ const Main: React.FC = () => {
                               style={{
                                 fontSize: "1.2rem",
                                 display: "flex",
-                                justifyContent: "center",
+                                justifyContent: "space-between",
                               }}
                             >
-                              X
+                              <div style={{ float: "left" }}>
+                                {
+                                  classListData.find(
+                                    (items: any) => items.sub_code == item.class
+                                  )?.code_name
+                                }
+                              </div>
+                              <div style={{ float: "right" }}>
+                                {item.cnt}마리
+                              </div>
                             </CardContent>
                           </Card>
                         </Grid>
-                      ) : (
-                        cardOptionData.data.map((item: any) => (
-                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Card
-                              style={{
-                                width: "100%",
-                                marginRight: "15px",
-                                borderRadius: "10px",
-                                backgroundColor: "#f5b901",
-                              }}
-                            >
-                              <CardContent
-                                style={{
-                                  fontSize: "1.2rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <div style={{ float: "left" }}>
-                                  {
-                                    classListData.find(
-                                      (items: any) =>
-                                        items.sub_code == item.class
-                                    )?.code_name
-                                  }
-                                </div>
-                                <div style={{ float: "right" }}>
-                                  {item.cnt}마리
-                                </div>
-                              </CardContent>
-                            </Card>
-                          </Grid>
-                        ))
-                      )}
-                    </Grid>
-                  </GridContainer>
+                      ))
+                    )}
+                  </Grid>
                 </GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>변경권 신청 확인</GridTitle>
                 </GridTitleContainer>
                 <Card
                   style={{
                     width: "100%",
-                    marginRight: "15px",
                     borderRadius: "10px",
                     backgroundColor: "#f5b901",
-                    marginBottom: "30px",
-                    height: "10vh",
+                    height: "100px",
                     cursor: "pointer",
                   }}
+                  className="Cards2"
                   onClick={(e) => onAdjustWndClick()}
                 >
                   <CardContent
@@ -596,17 +651,17 @@ const Main: React.FC = () => {
                     <div style={{ float: "right" }}>{adjcnt}건</div>
                   </CardContent>
                 </Card>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>부가서비스 신청 확인</GridTitle>
                 </GridTitleContainer>
                 <Card
                   style={{
                     width: "100%",
-                    marginRight: "15px",
                     borderRadius: "10px",
                     backgroundColor: "#f5b901",
-                    height: "10vh",
+                    height: "100px",
                   }}
+                  className="Cards3"
                 >
                   <CardContent
                     style={{
@@ -622,11 +677,11 @@ const Main: React.FC = () => {
                   </CardContent>
                 </Card>
               </GridContainer>
-              <GridContainer width="30%" height="87vh">
-                <GridTitleContainer>
+              <GridContainer width={`calc(30% - ${GAP}px)`}>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>회원권 연장 확인</GridTitle>
                 </GridTitleContainer>
-                <ScrollableContainer>
+                <ScrollableContainer style={{ height: webheight2 }}>
                   <div className="scroll-wrapper">
                     {questionDataResult.data.map((item, idx) => (
                       <AdminQuestionBox key={idx}>
@@ -678,16 +733,19 @@ const Main: React.FC = () => {
                   </div>
                 </ScrollableContainer>
               </GridContainer>
-              <GridContainer width="25%" height="100%">
-                잔여 포인트
+              <GridContainer width={`calc(25% - ${GAP}px)`}>
+                <GridTitleContainer className="ButtonContainer4">
+                  <GridTitle>잔여포인트</GridTitle>
+                </GridTitleContainer>
+                <div style={{ height: webheight3 }}></div>
               </GridContainer>
-              <GridContainer width="25%" height="100%">
-                <GridContainer height="55vh">
-                  <GridTitleContainer>
+              <GridContainer width={`calc(25% - ${GAP}px)`}>
+                <GridContainer>
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ height: "90%" }}
+                    style={{ height: webheight4 }}
                     data={process(
                       mainnoticeDataResult.data.map((row) => ({
                         ...row,
@@ -722,12 +780,12 @@ const Main: React.FC = () => {
                     <GridColumn field="contents2" title="내용" />
                   </GridKendo>
                 </GridContainer>
-                <GridContainer height="35vh">
-                  <GridTitleContainer>
+                <GridContainer>
+                  <GridTitleContainer className="ButtonContainer6">
                     <GridTitle>시스템 업데이트 공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ height: "90%" }}
+                    style={{ height: webheight5 }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,
@@ -770,25 +828,18 @@ const Main: React.FC = () => {
             }}
           >
             <SwiperSlide key={0}>
-              <GridContainer
-                style={{
-                  width: "100%",
-                  overflow: "auto",
-                  height: deviceHeight,
-                }}
-              >
+              <GridContainer style={{ height: mobileheight, overflow: "auto" }}>
                 <Card
                   style={{
                     width: "100%",
-                    marginRight: "15px",
                     borderRadius: "10px",
                     backgroundColor: "#f5b901",
-                    height: "15vh",
+                    height: "150px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginBottom: "20px",
                   }}
+                  className="Cards"
                 >
                   <CardContent
                     style={{
@@ -805,7 +856,7 @@ const Main: React.FC = () => {
                     <CurrentTime />
                   </CardContent>
                 </Card>
-                <GridTitleContainer>
+                <GridTitleContainer className="FormBoxWrap">
                   <GridTitle>등원예정</GridTitle>
                   <div
                     style={{
@@ -851,145 +902,132 @@ const Main: React.FC = () => {
                       fillMode="flat"
                     />
                   </div>
-                  <GridContainer
-                    height="34vh"
-                    style={{
-                      overflowY: "scroll",
-                      marginBottom: "20px",
-                      border: "3px solid #f5b901",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <GridContainer style={{ margin: "10px" }}>
-                      <Grid container spacing={2}>
-                        {cardOptionData.total == 0 ? (
-                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Card
+                </GridTitleContainer>
+                <GridContainer
+                  style={{
+                    height: "500px",
+                    overflowY: "auto",
+                    border: "3px solid #f5b901",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Grid container spacing={2}>
+                    {cardOptionData.total == 0 ? (
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Card
+                          style={{
+                            width: "100%",
+                            marginRight: "15px",
+                            borderRadius: "10px",
+                            backgroundColor: "#f5b901",
+                          }}
+                        >
+                          <CardContent
+                            style={{
+                              fontSize: "1.2rem",
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            X
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ) : (
+                      cardOptionData.data.map((item: any) => (
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                          <Card
+                            style={{
+                              width: "100%",
+                              marginRight: "15px",
+                              borderRadius: "10px",
+                              backgroundColor: "#f5b901",
+                            }}
+                          >
+                            <CardContent
                               style={{
-                                width: "100%",
-                                marginRight: "15px",
-                                borderRadius: "10px",
-                                backgroundColor: "#f5b901",
+                                fontSize: "1.2rem",
+                                display: "flex",
+                                justifyContent: "space-between",
                               }}
                             >
-                              <CardContent
-                                style={{
-                                  fontSize: "1.2rem",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                X
-                              </CardContent>
-                            </Card>
-                          </Grid>
-                        ) : (
-                          cardOptionData.data.map((item: any) => (
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                              <Card
-                                style={{
-                                  width: "100%",
-                                  marginRight: "15px",
-                                  borderRadius: "10px",
-                                  backgroundColor: "#f5b901",
-                                }}
-                              >
-                                <CardContent
-                                  style={{
-                                    fontSize: "1.2rem",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <div style={{ float: "left" }}>
-                                    {
-                                      classListData.find(
-                                        (items: any) =>
-                                          items.sub_code == item.class
-                                      )?.code_name
-                                    }
-                                  </div>
-                                  <div style={{ float: "right" }}>
-                                    {item.cnt}마리
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Grid>
-                          ))
-                        )}
-                      </Grid>
-                    </GridContainer>
-                  </GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>변경권 신청 확인</GridTitle>
-                  </GridTitleContainer>
-                  <Card
-                    style={{
-                      width: "100%",
-                      marginRight: "15px",
-                      borderRadius: "10px",
-                      backgroundColor: "#f5b901",
-                      marginBottom: "30px",
-                      height: "10vh",
-                    }}
-                    onClick={(e) => onAdjustWndClick()}
-                  >
-                    <CardContent
-                      style={{
-                        fontSize: "1.2rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        height: "75%",
-                      }}
-                    >
-                      <div style={{ float: "left" }}>승인대기</div>
-                      <div style={{ float: "right" }}>{adjcnt}건</div>
-                    </CardContent>
-                  </Card>
-                  <GridTitleContainer>
-                    <GridTitle>부가서비스 신청 확인</GridTitle>
-                  </GridTitleContainer>
-                  <Card
-                    style={{
-                      width: "100%",
-                      marginRight: "15px",
-                      borderRadius: "10px",
-                      backgroundColor: "#f5b901",
-                      marginBottom: "20px",
-                      height: "10vh",
-                    }}
-                  >
-                    <CardContent
-                      style={{
-                        fontSize: "1.2rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        height: "75%",
-                      }}
-                    >
-                      <div style={{ float: "left" }}>승인대기</div>
-                      <div style={{ float: "right" }}>{addcnt}건</div>
-                    </CardContent>
-                  </Card>
+                              <div style={{ float: "left" }}>
+                                {
+                                  classListData.find(
+                                    (items: any) => items.sub_code == item.class
+                                  )?.code_name
+                                }
+                              </div>
+                              <div style={{ float: "right" }}>
+                                {item.cnt}마리
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))
+                    )}
+                  </Grid>
+                </GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>변경권 신청 확인</GridTitle>
                 </GridTitleContainer>
+                <Card
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                    backgroundColor: "#f5b901",
+                    height: "100px",
+                  }}
+                  className="Cards2"
+                  onClick={(e) => onAdjustWndClick()}
+                >
+                  <CardContent
+                    style={{
+                      fontSize: "1.2rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      height: "75%",
+                    }}
+                  >
+                    <div style={{ float: "left" }}>승인대기</div>
+                    <div style={{ float: "right" }}>{adjcnt}건</div>
+                  </CardContent>
+                </Card>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>부가서비스 신청 확인</GridTitle>
+                </GridTitleContainer>
+                <Card
+                  style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                    backgroundColor: "#f5b901",
+                    height: "100px",
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      fontSize: "1.2rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      height: "75%",
+                    }}
+                  >
+                    <div style={{ float: "left" }}>승인대기</div>
+                    <div style={{ float: "right" }}>{addcnt}건</div>
+                  </CardContent>
+                </Card>
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={1}>
-              <GridContainer
-                style={{
-                  width: "100%",
-                  overflow: "auto",
-                  height: deviceHeight,
-                }}
-              >
-                <GridTitleContainer>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>회원권 연장 확인</GridTitle>
                 </GridTitleContainer>
-                <ScrollableContainer>
+                <ScrollableContainer style={{ height: mobileheight2 }}>
                   <div className="scroll-wrapper">
                     {questionDataResult.data.map((item, idx) => (
                       <AdminQuestionBox key={idx}>
@@ -1057,16 +1095,21 @@ const Main: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={2}>
-              <GridContainer width="100%">잔여 포인트</GridContainer>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer4">
+                  <GridTitle>잔여포인트</GridTitle>
+                </GridTitleContainer>
+                <div style={{ height: mobileheight3 }}></div>
+              </GridContainer>
             </SwiperSlide>
             <SwiperSlide key={3}>
               <GridContainer width="100%">
                 <GridContainer>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer5">
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ minHeight: "30vh" }}
+                    style={{ height: mobileheight4 }}
                     data={process(
                       mainnoticeDataResult.data.map((row) => ({
                         ...row,
@@ -1102,11 +1145,11 @@ const Main: React.FC = () => {
                   </GridKendo>
                 </GridContainer>
                 <GridContainer>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer6">
                     <GridTitle>시스템 업데이트 공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ minHeight: "30vh" }}
+                    style={{ height: mobileheight5 }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,

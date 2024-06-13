@@ -351,12 +351,6 @@ export const FormBox = styled.table`
   /* border: solid 1px #d7d7d7;
   background-color: #fff; */
   width: 100%;
-  
-  .home {
-    width: 25% !important;
-    min-width: auto !important;
-    padding-right: 0px !important;
-  }
 
   tr th + td {
     min-height: 40px;
@@ -1195,7 +1189,6 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
   }
   @media (max-width: 1200px) {
     border: 2px solid #f5b901;
-    height: 80vh;
   }
 `;
 
