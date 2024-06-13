@@ -204,7 +204,7 @@ const BA_A0040: React.FC = () => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
-      if(height3 == 0 && !isMobile) {
+      if (height3 == 0 && !isMobile) {
         setTabSelected(0);
         height3 = getHeight(".FormBoxWrap");
       }
@@ -219,8 +219,8 @@ const BA_A0040: React.FC = () => {
         setMobileHeight(getDeviceHeight(true) - height5 - height);
         setMobileHeight2(getDeviceHeight(true) - height4 - height5);
         setMobileHeight3(getDeviceHeight(true) - height4 - height5 - height2);
-        setMobileHeight4((getDeviceHeight(true) - height4 - height5) / 2);
-        setMobileHeight5((getDeviceHeight(true) - height4 - height5) / 2);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height5);
+        setMobileHeight5(getDeviceHeight(true) - height4 - height5);
         setWebHeight(
           getDeviceHeight(true) - height5 - height3 - height4 - height
         );
@@ -1158,7 +1158,7 @@ const BA_A0040: React.FC = () => {
         <img
           src={imageDataUrl}
           width="100%"
-          height="400%"
+          height="100%"
           className="contact-img"
         />
         {hasImage && (
@@ -2612,7 +2612,7 @@ const BA_A0040: React.FC = () => {
                       style={{
                         height: mobileheight2,
                         width: "100%",
-                        overflow: "scroll",
+                        overflow: "auto",
                       }}
                     >
                       <FormBox>

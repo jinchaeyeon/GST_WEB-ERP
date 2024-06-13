@@ -73,10 +73,7 @@ import CopyWindow from "../components/Windows/BA_A0050W_Copy_Window";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import CopyWindow2 from "../components/Windows/CommonWindows/PatternWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0050W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -424,6 +421,7 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
+var height5 = 0;
 
 const BA_A0050: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
@@ -445,18 +443,21 @@ const BA_A0050: React.FC = () => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
-      height3 = getHeight(".FormBoxWrap");
-      height4 = getHeight(".TitleContainer");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".TitleContainer");
 
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
-        setMobileHeight(getDeviceHeight(true) - height4);
-        setMobileHeight2(getDeviceHeight(true) - height - height4);
-        setMobileHeight3(getDeviceHeight(true) - height2 - height4);
-        setWebHeight((getDeviceHeight(true) - height4) / 2 - height);
-        setWebHeight2((getDeviceHeight(true) - height4) / 2 - height - height3);
-        setWebHeight3(getDeviceHeight(true) - height4 - height2);
+        setMobileHeight(getDeviceHeight(true) - height5);
+        setMobileHeight2(getDeviceHeight(true) - height - height5);
+        setMobileHeight3(getDeviceHeight(true) - height2 - height5);
+        setWebHeight((getDeviceHeight(true) - height5) / 2 - height);
+        setWebHeight2(
+          (getDeviceHeight(true) - height5) / 2 - height2 - height4
+        );
+        setWebHeight3(getDeviceHeight(true) - height5 - height3);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -2672,7 +2673,7 @@ const BA_A0050: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>공정리스트</GridTitle>
                 </GridTitleContainer>
                 <FormBoxWrap border={true} className="FormBoxWrap">
@@ -2771,7 +2772,7 @@ const BA_A0050: React.FC = () => {
               }}
             >
               <GridContainer width={`calc(57% - ${GAP}px)`}>
-                <GridTitleContainer className="ButtonContainer2">
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>BOM 상세</GridTitle>
                   <ButtonContainer>
                     <Button
