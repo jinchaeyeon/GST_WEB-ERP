@@ -359,7 +359,8 @@ const PR_A0060: React.FC = () => {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".k-tabstrip-items-wrapper");
-      if (tabSelected == 0) {
+      if(height4 == 0 && !isMobile) {
+        setTabSelected(0);
         height4 = getHeight(".FormBoxWrap");
       }
       height5 = getHeight(".TitleContainer");
