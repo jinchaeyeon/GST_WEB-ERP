@@ -4066,7 +4066,7 @@ const CopyWindow = ({
                     title="투여용량"
                     width="120px"
                   />
-                  <GridColumn field="remark" title="총수량" width="200px" />
+                  <GridColumn field="remark" title="비고" width="200px" />
                 </Grid>
               </GridContainer>
             </SwiperSlide>
@@ -5022,7 +5022,7 @@ const CopyWindow = ({
                     title="투여용량"
                     width="120px"
                   />
-                  <GridColumn field="remark" title="총수량" width="200px" />
+                  <GridColumn field="remark" title="비고" width="200px" />
                 </Grid>
               </GridContainer>
               <GridContainer>
