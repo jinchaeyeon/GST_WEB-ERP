@@ -43,7 +43,7 @@ import {
   isLoading,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ExcelUploadButton from "../Buttons/ExcelUploadButton";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
@@ -52,6 +52,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   findMessage,
   getBizCom,
   getGridItemChangedData,
@@ -97,6 +98,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
 
@@ -423,10 +431,10 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (workType == "U" || isCopy == true) {
+    if (permissions.view && (workType == "U" || isCopy == true)) {
       fetchMain();
     }
-  }, []);
+  }, [permissions]);
 
   const [initialVal, setInitialVal] = useState({
     group_code: "",
@@ -472,6 +480,7 @@ const KendoWindow = ({
 
   //요약정보 조회
   const fetchMain = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -532,6 +541,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -738,7 +748,7 @@ const KendoWindow = ({
   });
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (permissions.view && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       if (filters.group_code != "") {
@@ -751,7 +761,7 @@ const KendoWindow = ({
         fetchGrid(deepCopiedFilters);
       }
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //프로시저 파라미터
   const paraSaved: Iparameters = {
@@ -792,6 +802,7 @@ const KendoWindow = ({
   }, [detailDataResult]);
 
   const fetchMainSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -822,6 +833,7 @@ const KendoWindow = ({
   };
 
   const fetchGridSaved = async (paraSaved: any) => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -860,6 +872,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     //검증
@@ -1062,9 +1075,8 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchMainSaved();
-  }, [paraData]);
-
+    if (permissions.save && paraData.work_type !== "") fetchMainSaved();
+  }, [paraData, permissions]);
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
@@ -1503,6 +1515,7 @@ const KendoWindow = ({
                       onClick={onAddClick}
                       icon="add"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     />
                     <Button
                       themeColor={"primary"}
@@ -1510,6 +1523,7 @@ const KendoWindow = ({
                       onClick={onDeleteClick}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     />
                     <Button
                       themeColor={"primary"}
@@ -1517,6 +1531,7 @@ const KendoWindow = ({
                       onClick={onCopyClick}
                       icon="copy"
                       title="행 복사"
+                      disabled={permissions.save ? false : true}
                     />
                   </div>
                 </ButtonContainer>
@@ -1946,6 +1961,7 @@ const KendoWindow = ({
                 onClick={onAddClick}
                 icon="add"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               />
               <Button
                 themeColor={"primary"}
@@ -1953,6 +1969,7 @@ const KendoWindow = ({
                 onClick={onDeleteClick}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               />
               <Button
                 themeColor={"primary"}
@@ -1960,6 +1977,7 @@ const KendoWindow = ({
                 onClick={onCopyClick}
                 icon="copy"
                 title="행 복사"
+                disabled={permissions.save ? false : true}
               />
             </ButtonContainer>
             <Grid
@@ -2210,9 +2228,11 @@ const KendoWindow = ({
           </GridContainer>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={handleSubmit}>
-                확인
-              </Button>
+              {permissions.save && (
+                <Button themeColor={"primary"} onClick={handleSubmit}>
+                  저장
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}
@@ -2229,12 +2249,22 @@ const KendoWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={initialVal.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {excelAttachmentsWindowVisible && (
         <PopUpAttachmentsWindow
           setVisible={setExcelAttachmentsWindowVisible}
           para={"SY_A0010W_301_" + initialVal.group_code} // 그룹코드에 따라 양식 분리
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </Window>

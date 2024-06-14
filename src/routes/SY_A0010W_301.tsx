@@ -32,22 +32,18 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
-  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   getDeviceHeight,
   getHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010W_301_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -72,7 +68,7 @@ var height2 = 0;
 var height3 = 0;
 
 const Page: React.FC = () => {
-  const [permissions, setPermissions] = useState<TPermissions | null>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     view: true,
     save: true,
     delete: true,
@@ -146,19 +142,6 @@ const Page: React.FC = () => {
       };
     }
   }, [customOptionData, webheight, webheight2]);
-
-  //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(
-        customOptionData.menuCustomDefaultOptions,
-        "query"
-      );
-      setFilters((prev) => ({
-        ...prev,
-      }));
-    }
-  }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA000, L_sysUserMaster_001", setBizComponentData);
@@ -247,16 +230,6 @@ const Page: React.FC = () => {
       }));
   };
 
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
     // true면 조회조건(filters) 변경 되었을때 조회
@@ -281,42 +254,6 @@ const Page: React.FC = () => {
     find_row_value: "",
   });
 
-  //삭제 프로시저 초기값
-  const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "",
-    group_code: "",
-    attdatnum: "",
-  });
-
-  //삭제 프로시저 파라미터
-  const paraDeleted: Iparameters = {
-    procedureName: "P_SY_A0010W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": paraDataDeleted.work_type,
-      "@p_group_code": paraDataDeleted.group_code,
-      "@p_group_name": "",
-      "@p_code_length": 0,
-      "@p_group_category": "",
-      "@p_field_caption1": "",
-      "@p_field_caption2": "",
-      "@p_field_caption3": "",
-      "@p_field_caption4": "",
-      "@p_field_caption5": "",
-      "@p_field_caption6": "",
-      "@p_field_caption7": "",
-      "@p_field_caption8": "",
-      "@p_field_caption9": "",
-      "@p_field_caption10": "",
-      "@p_attdatnum": "",
-      "@p_memo": "",
-      "@p_use_yn": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "",
-    },
-  };
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
 
@@ -359,7 +296,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -634,6 +571,7 @@ const Page: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -739,29 +677,29 @@ const Page: React.FC = () => {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
       targetRowIndex = null;
     }
-    // setMainDataResult((prev) =>
-    //   process(
-    //     rowsWithSelectedDataResult(prev, selectedState, DATA_ITEM_KEY),
-    //     mainDataState
-    //   )
-    // );
   }, [selectedState]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
-
-  useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailFilters.isSearch) {
+    if (
+      permissions.view &&
+      detailFilters.isSearch &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -772,7 +710,7 @@ const Page: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -958,183 +896,6 @@ const Page: React.FC = () => {
         건
       </td>
     );
-  };
-
-  const onAddClick = () => {
-    setIsCopy(false);
-    setWorkType("N");
-    setDetailWindowVisible(true);
-  };
-
-  const onDeleteClick = (e: any) => {
-    if (!window.confirm("삭제하시겠습니까?")) {
-      return false;
-    }
-
-    const data = mainDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-
-    if (data != undefined) {
-      setParaDataDeleted((prev) => ({
-        ...prev,
-        work_type: "D",
-        group_code: data.group_code,
-        attdatnum: data.attdatnum,
-      }));
-    } else {
-      alert("선택된 행이 없습니다.");
-    }
-  };
-  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const fetchToDelete = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraDeleted);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      //코멘트 삭제
-      let data2: any;
-
-      const parameters: Iparameters = {
-        procedureName: "sys_sel_comments_web",
-        pageNumber: 1,
-        pageSize: 100000,
-        parameters: {
-          "@p_work_type": "Q",
-          "@p_form_id": "SY_A0010W_301",
-          "@p_table_id": "comCodeMaster",
-          "@p_orgdiv": sessionOrgdiv,
-          "@p_ref_key": mainDataResult.data.filter(
-            (row: any) =>
-              row.num == Object.getOwnPropertyNames(selectedState)[0]
-          )[0].group_code,
-          "@p_find_row_value": "",
-        },
-      };
-
-      try {
-        data2 = await processApi<any>("procedure", parameters);
-      } catch (error) {
-        data2 = null;
-      }
-      if (data2.isSuccess == true) {
-        const rows = data2.tables[0].Rows;
-        type TData = {
-          row_status: string[];
-          id: string[];
-          seq: string[];
-          recdt: string[];
-          comment: string[];
-          user_id: string[];
-        };
-
-        let dataArr: TData = {
-          row_status: [],
-          id: [],
-          comment: [],
-          seq: [],
-          recdt: [],
-          user_id: [],
-        };
-
-        rows.forEach((item: any, idx: number) => {
-          const { comment, id = "", seq, recdt, user_id } = item;
-
-          dataArr.row_status.push("D");
-          dataArr.comment.push(comment);
-          dataArr.id.push(id);
-          dataArr.seq.push(seq);
-          dataArr.recdt.push(recdt);
-          dataArr.user_id.push(user_id);
-        });
-
-        let data3: any;
-        const paraSaved: Iparameters = {
-          procedureName: "sys_sav_comments_web",
-          pageNumber: 0,
-          pageSize: 0,
-          parameters: {
-            "@p_work_type": "save",
-            "@p_row_status": dataArr.row_status.join("|"),
-            "@p_id": dataArr.id.join("|"),
-            "@p_seq": dataArr.seq.join("|"),
-            "@p_recdt": dataArr.recdt.join("|"),
-            "@p_comment": dataArr.comment.join("|"),
-            "@p_user_id": dataArr.user_id.join("|"),
-            "@p_form_id": "SY_A0010W_301",
-            "@p_table_id": "comCodeMaster",
-            "@p_orgdiv": sessionOrgdiv,
-            "@p_ref_key": mainDataResult.data.filter(
-              (row: any) =>
-                row.num == Object.getOwnPropertyNames(selectedState)[0]
-            )[0].group_code,
-            "@p_exec_pc": pc,
-          },
-        };
-        try {
-          data3 = await processApi<any>("procedure", paraSaved);
-        } catch (error) {
-          data3 = null;
-        }
-        const isLastDataDeleted =
-          mainDataResult.data.length == 1 && filters.pgNum > 0;
-        const findRowIndex = mainDataResult.data.findIndex(
-          (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
-        );
-        if (paraDataDeleted.attdatnum)
-          setDeletedAttadatnums([paraDataDeleted.attdatnum]);
-        if (isLastDataDeleted) {
-          setPage({
-            skip:
-              filters.pgNum == 1 || filters.pgNum == 0
-                ? 0
-                : PAGE_SIZE * (filters.pgNum - 2),
-            take: PAGE_SIZE,
-          });
-
-          setFilters((prev) => ({
-            ...prev,
-            find_row_value: "",
-            pgNum: isLastDataDeleted
-              ? prev.pgNum != 1
-                ? prev.pgNum - 1
-                : prev.pgNum
-              : prev.pgNum,
-            isSearch: true,
-          }));
-        } else {
-          resetAllGrid();
-          setFilters((prev) => ({
-            ...prev,
-            find_row_value:
-              mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
-                .group_code,
-            pgNum: isLastDataDeleted
-              ? prev.pgNum != 1
-                ? prev.pgNum - 1
-                : prev.pgNum
-              : prev.pgNum,
-            isSearch: true,
-          }));
-        }
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert(data.resultMessage);
-    }
-
-    //초기화
-    setParaDataDeleted((prev) => ({
-      work_type: "",
-      group_code: "",
-      attdatnum: "",
-    }));
   };
 
   const setGroupCode = (groupCode: string | undefined) => {
