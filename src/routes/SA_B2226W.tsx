@@ -21,6 +21,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getDeviceHeight,
@@ -36,6 +37,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 interface TList {
   badcnt?: number;
@@ -48,6 +50,13 @@ interface TList {
 }
 
 const SA_B2226W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -107,6 +116,7 @@ const SA_B2226W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -116,7 +126,7 @@ const SA_B2226W: React.FC = () => {
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     frdt: new Date(),
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 파라미터
@@ -165,6 +175,7 @@ const SA_B2226W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -268,7 +279,7 @@ const SA_B2226W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       if (filters.frdt != null) {
         setFilters((prev) => ({
           ...prev,
@@ -279,7 +290,7 @@ const SA_B2226W: React.FC = () => {
       }
       fetchMainGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   const [ItemList, setItemList] = useState<any>([]);
 
@@ -390,6 +401,7 @@ const SA_B2226W: React.FC = () => {
               }))
             }
             className="mr-2"
+            disabled={permissions.view ? false : true}
           />
         </ButtonContainer>
       )}
@@ -418,6 +430,7 @@ const SA_B2226W: React.FC = () => {
                       isSearch: true,
                     }))
                   }
+                  disabled={permissions.view ? false : true}
                   className="mr-2"
                 />
               </ButtonContainer>
@@ -511,7 +524,11 @@ const SA_B2226W: React.FC = () => {
                         md={12}
                         lg={12}
                         xl={12}
-                        style={{ display: "flex", justifyContent: "center" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: "5px",
+                        }}
                       >
                         <Knob
                           value={

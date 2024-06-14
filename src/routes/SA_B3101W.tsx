@@ -59,9 +59,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -152,6 +150,7 @@ const SA_B3101W: React.FC = () => {
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         radAmtdiv: defaultOption.find((item: any) => item.id == "radAmtdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -226,12 +225,12 @@ const SA_B3101W: React.FC = () => {
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
   });
   //그리드 데이터 조회
   const fetchGrid = async (workType: string, itemcd?: string) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -317,12 +316,12 @@ const SA_B3101W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchGrid("CHART");
       fetchGrid("LIST");
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //그리드 리셋
   const resetGrid = () => {
@@ -407,21 +406,6 @@ const SA_B3101W: React.FC = () => {
 
   const onGridSortChange = (e: any) => {
     setGridDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  //업체마스터 팝업
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
-
-  //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
   };
 
   const search = () => {
@@ -869,14 +853,6 @@ const SA_B3101W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </>
-      )}
-
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
-        />
       )}
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>

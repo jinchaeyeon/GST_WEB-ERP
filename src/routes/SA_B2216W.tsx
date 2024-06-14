@@ -13,6 +13,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getDeviceHeight,
@@ -26,8 +27,16 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 const SA_B2216W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -68,6 +77,7 @@ const SA_B2216W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         mm: setDefaultDate(customOptionData, "mm"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -97,7 +107,7 @@ const SA_B2216W: React.FC = () => {
     orgdiv: sessionOrgdiv,
     frdt: new Date(),
     mm: new Date(),
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 파라미터
@@ -140,6 +150,7 @@ const SA_B2216W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -240,7 +251,7 @@ const SA_B2216W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       if (filters.frdt != null) {
         setFilters((prev) => ({
           ...prev,
@@ -260,7 +271,7 @@ const SA_B2216W: React.FC = () => {
         alert(findMessage(messagesData, "SA_B2216W_002"));
       }
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   const [UserList, setUserList] = useState<any[]>([]);
 
@@ -331,6 +342,7 @@ const SA_B2216W: React.FC = () => {
                 isSearch: true,
               }))
             }
+            disabled={permissions.view ? false : true}
             className="mr-2"
           />
         </ButtonContainer>
@@ -359,6 +371,7 @@ const SA_B2216W: React.FC = () => {
                       isSearch: true,
                     }))
                   }
+                  disabled={permissions.view ? false : true}
                   className="mr-2"
                 />
               </ButtonContainer>

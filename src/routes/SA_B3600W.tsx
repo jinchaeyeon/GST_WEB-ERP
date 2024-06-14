@@ -12,6 +12,7 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getDeviceHeight,
   setDefaultDate,
@@ -28,11 +29,8 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Table from "../components/KPIcomponents/Table/Table";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  isLoading
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 interface TList {
   badcnt?: number;
@@ -45,6 +43,13 @@ interface TList {
 }
 
 const SA_B3600W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
@@ -86,6 +91,7 @@ const SA_B3600W: React.FC = () => {
           ?.valueCode,
         dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
         dtdiv: defaultOption.find((item: any) => item.id == "dtdiv")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -100,7 +106,7 @@ const SA_B3600W: React.FC = () => {
     todt: new Date(),
     dtdiv: "W",
     dtgb: "B",
-    isSearch: true,
+    isSearch: false,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState([]);
@@ -201,6 +207,7 @@ const SA_B3600W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -290,6 +297,7 @@ const SA_B3600W: React.FC = () => {
   };
 
   const fetchChartGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", chartparameters);
@@ -344,7 +352,7 @@ const SA_B3600W: React.FC = () => {
   }, [customOptionData, webheight]);
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
@@ -352,7 +360,7 @@ const SA_B3600W: React.FC = () => {
       fetchMainGrid();
       fetchChartGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
     fetchChartGrid();
@@ -494,6 +502,7 @@ const SA_B3600W: React.FC = () => {
                     isSearch: true,
                   }))
                 }
+                disabled={permissions.view ? false : true}
                 className="mr-2"
               />
             </ButtonContainer>

@@ -781,13 +781,22 @@ const App: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="데이터 등록 현황">
+            <TabStripTab
+              title="데이터 등록 현황"
+              disabled={permissions.view ? false : true}
+            >
               <CusomizedGrid></CusomizedGrid>
             </TabStripTab>
-            <TabStripTab title="프로그램 접속 현황">
+            <TabStripTab
+              title="프로그램 접속 현황"
+              disabled={permissions.view ? false : true}
+            >
               <CusomizedGrid></CusomizedGrid>
             </TabStripTab>
-            <TabStripTab title="사용자별 프로그램 접속 현황">
+            <TabStripTab
+              title="사용자별 프로그램 접속 현황"
+              disabled={permissions.view ? false : true}
+            >
               <CusomizedGrid></CusomizedGrid>
             </TabStripTab>
           </TabStrip>

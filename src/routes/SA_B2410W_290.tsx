@@ -248,6 +248,7 @@ const SA_B2410: React.FC = () => {
         ...prev,
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -347,7 +348,7 @@ const SA_B2410: React.FC = () => {
     workType: "Q1",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
@@ -358,7 +359,7 @@ const SA_B2410: React.FC = () => {
     ymdFrdt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -368,12 +369,12 @@ const SA_B2410: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -574,6 +575,7 @@ const SA_B2410: React.FC = () => {
   };
 
   const fetchDetailGrid1 = async (detailFilters1: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -664,6 +666,7 @@ const SA_B2410: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailFilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detail2Parameters: Iparameters = {
@@ -775,7 +778,12 @@ const SA_B2410: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -785,11 +793,16 @@ const SA_B2410: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters1.isSearch && permissions !== null) {
+    if (
+      detailFilters1.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters1);
       setDetailFilters1((prev) => ({
@@ -799,11 +812,16 @@ const SA_B2410: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid1(deepCopiedFilters);
     }
-  }, [detailFilters1]);
+  }, [detailFilters1, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters2.isSearch && permissions !== null) {
+    if (
+      detailFilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
@@ -813,7 +831,7 @@ const SA_B2410: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2]);
+  }, [detailFilters2, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1402,7 +1420,10 @@ const SA_B2410: React.FC = () => {
               style={{ width: "100%" }}
               scrollable={isMobile}
             >
-              <TabStripTab title="업체별">
+              <TabStripTab
+                title="업체별"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer>
                   <ExcelExport
                     data={mainDataResult.data}
@@ -1478,7 +1499,10 @@ const SA_B2410: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab title="품목별">
+              <TabStripTab
+                title="품목별"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer>
                   <ExcelExport
                     data={mainDataResult.data}
@@ -1557,7 +1581,10 @@ const SA_B2410: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab title="일자별">
+              <TabStripTab
+                title="일자별"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer>
                   <ExcelExport
                     data={mainDataResult.data}
@@ -1836,7 +1863,10 @@ const SA_B2410: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="업체별">
+            <TabStripTab
+              title="업체별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainer width="100%">
                 <ExcelExport
                   data={mainDataResult.data}
@@ -1912,7 +1942,10 @@ const SA_B2410: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </TabStripTab>
-            <TabStripTab title="품목별">
+            <TabStripTab
+              title="품목별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainer width="100%">
                 <ExcelExport
                   data={mainDataResult.data}
@@ -1991,7 +2024,10 @@ const SA_B2410: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </TabStripTab>
-            <TabStripTab title="일자별">
+            <TabStripTab
+              title="일자별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width={`70%`}>
                   <ExcelExport

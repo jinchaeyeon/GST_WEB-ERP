@@ -329,7 +329,10 @@ const SY_A0060W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="레이아웃 리스트">
+            <TabStripTab
+              title="레이아웃 리스트"
+              disabled={permissions.view ? false : true}
+            >
               <Grid
                 style={{ height: mobileheight, overflow: "auto" }}
                 container
@@ -383,7 +386,10 @@ const SY_A0060W: React.FC = () => {
                 ))}
               </Grid>
             </TabStripTab>
-            <TabStripTab title="레이아웃 설정" disabled={clicks}>
+            <TabStripTab
+              title="레이아웃 설정"
+              disabled={clicks ? true : permissions.view ? false : true}
+            >
               <FlowChart
                 data={mainDataResult2.data}
                 filters={filters2}
@@ -429,7 +435,10 @@ const SY_A0060W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="레이아웃 리스트">
+            <TabStripTab
+              title="레이아웃 리스트"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -520,7 +529,10 @@ const SY_A0060W: React.FC = () => {
                 </Grid>
               </Box>
             </TabStripTab>
-            <TabStripTab title="레이아웃 설정" disabled={clicks}>
+            <TabStripTab
+              title="레이아웃 설정"
+              disabled={clicks ? true : permissions.view ? false : true}
+            >
               <FlowChart
                 data={mainDataResult2.data}
                 filters={filters2}

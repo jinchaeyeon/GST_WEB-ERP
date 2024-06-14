@@ -30,11 +30,7 @@ import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutC
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import ScrollTable from "../components/KPIcomponents/Table/ScrollTable";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  isLoading
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 const SA_B2211W_603: React.FC = () => {
@@ -85,6 +81,7 @@ const SA_B2211W_603: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -107,7 +104,7 @@ const SA_B2211W_603: React.FC = () => {
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     frdt: new Date(),
-    isSearch: true,
+    isSearch: false,
   });
 
   const startContent = (
@@ -148,6 +145,7 @@ const SA_B2211W_603: React.FC = () => {
                 isSearch: true,
               }))
             }
+            disabled={permissions.view ? false : true}
             className="mr-2"
           />
         </ButtonContainer>
@@ -183,7 +181,7 @@ const SA_B2211W_603: React.FC = () => {
   const [GridList3, setGridList3] = useState([]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       if (filters.frdt != null) {
         setFilters((prev) => ({
           ...prev,
@@ -194,7 +192,7 @@ const SA_B2211W_603: React.FC = () => {
         alert(findMessage(messagesData, "SA_B2211W_603_001"));
       }
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 파라미터
   const parameters = {
@@ -265,6 +263,7 @@ const SA_B2211W_603: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -568,6 +567,7 @@ const SA_B2211W_603: React.FC = () => {
                       isSearch: true,
                     }))
                   }
+                  disabled={permissions.view ? false : true}
                   className="mr-2"
                 />
               </ButtonContainer>

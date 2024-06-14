@@ -7,7 +7,7 @@ const CardBox = (props) => {
         style={{
           height: props.height == undefined ? "150px" : props.height,
           width: "100%",
-          marginRight: "15px",
+          margin: "5px",
           backgroundColor: props.backgroundColor,
           color: props.color == undefined ? "white" : props.color,
           cursor: props.form == "QC_B0100W" ? "pointer" : "",

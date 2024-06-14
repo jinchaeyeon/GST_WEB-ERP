@@ -12,6 +12,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
@@ -21,8 +22,16 @@ import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 const SA_B2227W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -111,6 +120,7 @@ const SA_B2227W: React.FC = () => {
   const [Map, setMap] = useState([]);
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -153,6 +163,7 @@ const SA_B2227W: React.FC = () => {
   }
 
   const fetchMainGrid2 = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -180,6 +191,7 @@ const SA_B2227W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async () => {
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     try {
@@ -201,7 +213,7 @@ const SA_B2227W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
@@ -210,7 +222,7 @@ const SA_B2227W: React.FC = () => {
       fetchMainGrid2();
       fetchMainGrid3();
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   function getWidth(arr: any) {
     let array = [];

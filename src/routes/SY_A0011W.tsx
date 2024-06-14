@@ -1572,29 +1572,25 @@ const Page: React.FC = () => {
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
-                  {permissions !== null && (
-                    <ButtonContainer
-                      style={{ justifyContent: "space-between" }}
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
                     >
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(0);
-                          }
-                        }}
-                        icon="arrow-left"
-                      >
-                        이전
-                      </Button>
-                      <Button
-                        onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  )}
+                      이전
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
@@ -1810,17 +1806,15 @@ const Page: React.FC = () => {
             <GridContainer width={`calc(45% - ${GAP}px)`}>
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
-                {permissions !== null && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                  </ButtonContainer>
-                )}
+                <ButtonContainer>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}

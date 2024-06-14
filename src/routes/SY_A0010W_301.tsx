@@ -37,7 +37,7 @@ import {
   UseGetValueFromSessionItem,
   getDeviceHeight,
   getHeight,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -942,14 +942,12 @@ const Page: React.FC = () => {
         <Title>공통코드정보</Title>
 
         <ButtonContainer>
-          {permissions !== null && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="SY_A0010W_301"
-            />
-          )}
+          <TopButtons
+            search={search}
+            exportExcel={exportExcel}
+            permissions={permissions}
+            pathname="SY_A0010W_301"
+          />
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
