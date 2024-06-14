@@ -2860,7 +2860,7 @@ const QC_A2500W_603: React.FC = () => {
                           <th>의뢰자</th>
                           <td>
                             <Input
-                              name="smperson"
+                              name="custprsnnm"
                               type="text"
                               value={Information.custprsnnm}
                               className="readonly"
