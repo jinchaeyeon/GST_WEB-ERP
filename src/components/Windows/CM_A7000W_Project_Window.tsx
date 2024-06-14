@@ -23,13 +23,9 @@ import {
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import {
-  ICustData,
-  IWindowPosition,
-  TPermissions,
-} from "../../hooks/interfaces";
+import { ICustData, IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
