@@ -827,6 +827,10 @@ body {
   height: 2cm !important;
 }
 
+#ItemCostSheet table.main_tb {
+  width: 100% !important;
+}
+
 #ItemCostSheet table.main_tb .center {
   text-align: center !important;
 }
