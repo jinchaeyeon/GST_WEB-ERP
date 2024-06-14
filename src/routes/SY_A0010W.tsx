@@ -775,20 +775,16 @@ const Page: React.FC = () => {
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (
-      filters.isSearch &&
-      permissions.view !== null &&
-      bizComponentData !== null
-    ) {
+    if (filters.isSearch && permissions.view && bizComponentData !== null && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions.view !== null && detailFilters.isSearch) {
+    if (permissions.view && detailFilters.isSearch && bizComponentData !== null && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -799,7 +795,7 @@ const Page: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1923,7 +1919,6 @@ const Page: React.FC = () => {
           reloadData={reloadData}
           modal={true}
           pathname="SY_A0010W"
-          permissions={permissions}
         />
       )}
 

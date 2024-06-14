@@ -74,11 +74,11 @@ const CommentsGrid = (props: {
   useLayoutEffect(() => {
     height2 = getHeight(".CommentsButtonContainer");
 
-    if(typeof height == "number") {
+    if (typeof height == "number") {
       setWebHeight(height - height2);
-    } else if(height.includes("vh")){
-      let newStr = parseFloat(height.replace("vh", ""))  * 0.01;
-      setWebHeight((document.documentElement.clientHeight * newStr) - height2);
+    } else if (height.includes("vh")) {
+      let newStr = parseFloat(height.replace("vh", "")) * 0.01;
+      setWebHeight(document.documentElement.clientHeight * newStr - height2);
     }
   }, [height]);
 
@@ -243,7 +243,7 @@ const CommentsGrid = (props: {
   };
 
   const fetchGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -330,7 +330,7 @@ const CommentsGrid = (props: {
   }, [dataResult]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -339,7 +339,7 @@ const CommentsGrid = (props: {
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (permissions !== null) {
+    if (permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -582,37 +582,34 @@ const CommentsGrid = (props: {
     if (paraDataSaved.work_type !== "") fetchGridSaved();
   }, [paraDataSaved]);
 
-  const isSaveDisabled = !(permissions?.save && ref_key !== "");
+  const isSaveDisabled = !(permissions.save && ref_key !== "");
 
   return (
     <>
       <GridTitleContainer className="CommentsButtonContainer">
         <GridTitle data-control-name="grtlCmtList">코멘트</GridTitle>
-
-        {permissions && (
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="plus"
-              disabled={isSaveDisabled}
-            ></Button>
-            <Button
-              onClick={onRemoveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              disabled={isSaveDisabled}
-            ></Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-              disabled={isSaveDisabled}
-            ></Button>
-          </ButtonContainer>
-        )}
+        <ButtonContainer>
+          <Button
+            onClick={onAddClick}
+            themeColor={"primary"}
+            icon="plus"
+            disabled={isSaveDisabled}
+          ></Button>
+          <Button
+            onClick={onRemoveClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="minus"
+            disabled={isSaveDisabled}
+          ></Button>
+          <Button
+            onClick={onSaveClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="save"
+            disabled={isSaveDisabled}
+          ></Button>
+        </ButtonContainer>
       </GridTitleContainer>
       <Grid
         style={{ height: webheight }}

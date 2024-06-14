@@ -30,6 +30,7 @@ import CenterCell from "../components/Cells/CenterCell";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   getDeviceHeight,
@@ -40,7 +41,7 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
 var height = 0;
@@ -51,6 +52,13 @@ var height5 = 0;
 const DATA_ITEM_KEY = "datnum";
 
 const SY_B0060W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
@@ -268,6 +276,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchLayout = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     const parameters: Iparameters = {
@@ -297,6 +306,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const DetailView = async (item: any) => {
+    if (!permissions.view) return;
     let response: any;
     let data: any;
     const parameters = {
@@ -340,6 +350,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchWorkTime = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -365,6 +376,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchUpContent = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -383,6 +395,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchWorkTimeSaved = async (workType: "start" | "end") => {
+    if (!permissions.save) return;
     let data: any;
     let lat = 0;
     let lng = 0;
@@ -426,6 +439,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchApproaval = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -453,6 +467,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchNoticeGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -476,6 +491,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   const fetchWorkOrderGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -499,7 +515,7 @@ const SY_B0060W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (sessionItem) {
+    if (sessionItem && permissions.view && customOptionData !== null) {
       fetchWorkTime();
       fetchApproaval();
       fetchNoticeGrid();
@@ -507,7 +523,7 @@ const SY_B0060W: React.FC = () => {
       fetchUpContent();
       fetchLayout();
     }
-  }, []);
+  }, [permissions, customOptionData]);
 
   //스크롤 핸들러
   const onNoticeScrollHandler = (event: GridEvent) => {
@@ -596,6 +612,7 @@ const SY_B0060W: React.FC = () => {
                         onClick={() => {
                           fetchWorkTimeSaved("start");
                         }}
+                        disabled={permissions.save ? false : true}
                       >
                         출근
                       </Button>
@@ -604,6 +621,7 @@ const SY_B0060W: React.FC = () => {
                         onClick={() => {
                           fetchWorkTimeSaved("end");
                         }}
+                        disabled={permissions.save ? false : true}
                       >
                         퇴근
                       </Button>
@@ -795,6 +813,7 @@ const SY_B0060W: React.FC = () => {
                     onClick={() => {
                       fetchWorkTimeSaved("start");
                     }}
+                    disabled={permissions.save ? false : true}
                   >
                     출근
                   </Button>
@@ -803,6 +822,7 @@ const SY_B0060W: React.FC = () => {
                     onClick={() => {
                       fetchWorkTimeSaved("end");
                     }}
+                    disabled={permissions.save ? false : true}
                   >
                     퇴근
                   </Button>

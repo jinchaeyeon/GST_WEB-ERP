@@ -128,7 +128,7 @@ const SY_A0500W: React.FC = () => {
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".TitleContainer");
       height4 = getHeight(".FormBoxWrap");
-    
+
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
@@ -287,6 +287,8 @@ const SY_A0500W: React.FC = () => {
     y: number,
     info: any
   ) => {
+    if (!permissions.save) return;
+
     e.preventDefault();
     setXY([x, y]);
     if (info == undefined) {
@@ -453,6 +455,7 @@ const SY_A0500W: React.FC = () => {
   let gridRef: any = useRef(null);
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -584,6 +587,7 @@ const SY_A0500W: React.FC = () => {
   };
 
   const fetchSubGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -637,22 +641,32 @@ const SY_A0500W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailFilters.isSearch) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1022,6 +1036,8 @@ const SY_A0500W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
+
     try {
       if (
         information.location == null ||
@@ -1511,6 +1527,7 @@ const SY_A0500W: React.FC = () => {
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="plus"
+                    disabled={permissions.save ? false : true}
                   >
                     행 추가
                   </Button>
@@ -1518,6 +1535,7 @@ const SY_A0500W: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="plus"
+                    disabled={permissions.save ? false : true}
                   >
                     열 추가
                   </Button>
@@ -1527,6 +1545,7 @@ const SY_A0500W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   >
                     행 삭제
                   </Button>
@@ -1535,6 +1554,7 @@ const SY_A0500W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus"
+                    disabled={permissions.save ? false : true}
                   >
                     열 삭제
                   </Button>
@@ -1542,6 +1562,7 @@ const SY_A0500W: React.FC = () => {
                     onClick={onAddClick3}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     신규
                   </Button>
@@ -1550,6 +1571,7 @@ const SY_A0500W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -1558,6 +1580,7 @@ const SY_A0500W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
