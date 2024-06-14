@@ -701,7 +701,8 @@ const CopyWindow = ({
             <GridColumn field="ordnum" title="수주번호" width="150px" />
             <GridColumn field="quotestnum" title="예약번호" width="150px" />
             <GridColumn field="testnum" title="시험번호" width="150px" />
-            <GridColumn field="person" title="영업담당자" width="120px" />
+            <GridColumn field="cpmperson" title="영업담당자" width="120px" />
+            <GridColumn field="person" title="PM담당자" width="120px" />
             <GridColumn field="chkperson" title="시험책임자" width="120px" />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
             <GridColumn field="itemnm" title="품목명" width="180px" />
