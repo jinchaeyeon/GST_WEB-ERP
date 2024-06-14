@@ -254,6 +254,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_cotracdt_list",
+        field: "cotracdt",
+        caption: "계약일자",
+        width: 120,
+      },
+      {
         id: "col_strdt_list",
         field: "strdt",
         caption: "계약시작일",

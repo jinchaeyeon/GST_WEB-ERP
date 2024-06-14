@@ -3481,8 +3481,8 @@ const SA_A1000W_603: React.FC = () => {
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         ?.valueCode,
       rev_reason: "",
-      testenddt: setDefaultDate2(customOptionData, "testenddt"),
-      teststdt: setDefaultDate2(customOptionData, "teststdt"),
+      testenddt: "",
+      teststdt: "",
       testtype: defaultOption.find((item: any) => item.id == "testtype")
         ?.valueCode,
       translate1: "",

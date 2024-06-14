@@ -616,7 +616,7 @@ const SA_B1002W_603: React.FC = () => {
                   />
                 )}
               </td>
-              <th>의뢰분야</th>
+              <th>의뢰유형</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox

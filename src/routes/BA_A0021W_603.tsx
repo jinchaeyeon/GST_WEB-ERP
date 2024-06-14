@@ -95,7 +95,7 @@ const numberField = [
   "marginamt",
   "discountamt",
 ];
-const dateField = ["recdt", "strdt", "enddt"];
+const dateField = ["recdt", "strdt", "enddt", "cotracdt"];
 
 var height = 0;
 var height2 = 0;
