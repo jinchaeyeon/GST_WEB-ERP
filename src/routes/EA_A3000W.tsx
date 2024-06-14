@@ -1,6 +1,7 @@
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ChatIcon from "@mui/icons-material/Chat";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import LockIcon from "@mui/icons-material/Lock";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
@@ -21,7 +22,9 @@ import {
 } from "@mui/material";
 import { PanelBar, PanelBarItem } from "@progress/kendo-react-layout";
 import React, { useLayoutEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   GridContainer,
@@ -31,16 +34,12 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { GAP } from "../components/CommonString";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   UseCustomOption,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { GAP } from "../components/CommonString";
 
 var height = 0;
 var height2 = 0;
