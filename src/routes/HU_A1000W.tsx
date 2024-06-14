@@ -13,7 +13,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import CryptoJS from "crypto-js";
-import React, { useEffect, useRef, useState } from "react";
+import { OrganizationChart } from "primereact/organizationchart";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import "swiper/css";
 import {
@@ -37,6 +38,7 @@ import {
   UseMessages,
   UsePermissions,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   useSysMessage,
@@ -53,15 +55,11 @@ import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { OrganizationChart } from "primereact/organizationchart";
-import { createDataTree } from "@progress/kendo-react-treelist";
 
 var index = 0;
 
@@ -116,10 +114,38 @@ interface DataItem3 {
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
+
+var height = 0;
+var height2 = 0;
+
 const HU_A1000W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A1000W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -128,9 +154,7 @@ const HU_A1000W: React.FC = () => {
     delete: false,
   });
   UsePermissions(setPermissions);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A1000W", setCustomOptionData);
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1011,7 +1035,12 @@ const HU_A1000W: React.FC = () => {
   };
   const OrgData = () => {
     return (
-      <div style={{ overflow: "auto", height: "79vh" }}>
+      <div
+        style={{
+          overflow: "auto",
+          height: isMobile ? mobileheight : webheight,
+        }}
+      >
         <OrganizationChart
           value={transformedData}
           selectionMode="multiple"
@@ -1141,7 +1170,7 @@ const HU_A1000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height : "72vh",
+                  height: mobileheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1234,9 +1263,8 @@ const HU_A1000W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>{!showOrg ? "기본정보" : "조직도"}</GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={() => setShowOrg(!showOrg)}
@@ -1273,7 +1301,7 @@ const HU_A1000W: React.FC = () => {
                 fileName="인사관리"
               >
                 <Grid
-                  style={{ height: "82vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

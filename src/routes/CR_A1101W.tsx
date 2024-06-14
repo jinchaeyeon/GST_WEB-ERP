@@ -13,8 +13,8 @@ import {
 } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   FilterBox,
   GridContainer,
@@ -24,14 +24,16 @@ import {
   NumberKeypadRow,
 } from "../CommonStyled";
 import {
+  UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
   findMessage,
-  handleKeyPressSearch
+  getDeviceHeight,
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const CR_A1101W: React.FC = () => {
@@ -41,10 +43,31 @@ const CR_A1101W: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
   const userid = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CR_A1101W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false));
+        setWebHeight(getDeviceHeight(false));
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CR_A1101W", setMessagesData);
@@ -385,8 +408,8 @@ const CR_A1101W: React.FC = () => {
             <GridContainer
               style={{
                 width: "100%",
-                height: deviceHeight,
-                overflowY: "scroll",
+                height: mobileheight,
+                overflow: "auto",
               }}
             >
               <GridContainer
@@ -801,7 +824,7 @@ const CR_A1101W: React.FC = () => {
             <GridContainer
               style={{
                 width: "45%",
-                height: "86vh",
+                height: webheight,
               }}
             >
               <GridContainer

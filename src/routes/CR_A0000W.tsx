@@ -9,7 +9,12 @@ import {
   Calendar,
   CalendarChangeEvent,
 } from "@progress/kendo-react-dateinputs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -24,10 +29,13 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import {
+  UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
   dateformat4,
-  getDayOfWeeks
+  getDayOfWeeks,
+  getDeviceHeight,
+  getHeight,
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 import Calender from "../components/DDGDcomponents/Calender";
@@ -35,11 +43,9 @@ import CardBox from "../components/DDGDcomponents/CardBox";
 import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
 import { useApi } from "../hooks/api";
 import {
-  isDeviceWidthState,
   isLoading,
-  isMobileState,
   loginResultState,
-  sessionItemState,
+  sessionItemState
 } from "../store/atoms";
 import { Iparameters } from "../store/types";
 interface Tsize {
@@ -47,6 +53,12 @@ interface Tsize {
   height: number;
 }
 const DATA_ITEM_KEY = "custcd";
+
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+
 const CR_A0000W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
@@ -77,9 +89,39 @@ const CR_A0000W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [changeDate, setChangeDate] = useState<string>("");
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  const [deviceWidth, setDeviceWidth] = useRecoilState(isDeviceWidthState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CR_A0000W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".TitleContainer");
 
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height4);
+        setWebHeight(getDeviceHeight(true) - height - height4);
+        setWebHeight2(getDeviceHeight(true) - height2 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const [adjnumber, setAdjnumber] = useState<number>(0);
 
   useEffect(() => {
@@ -440,7 +482,7 @@ const CR_A0000W: React.FC = () => {
   return (
     <>
       <div style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}>
-        <TitleContainer style={{ display: "block" }}>
+        <TitleContainer className="TitleContainer" style={{ display: "block" }}>
           <Title>{userName}님 안녕하세요!</Title>
         </TitleContainer>
         {!isMobile ? (
@@ -450,11 +492,10 @@ const CR_A0000W: React.FC = () => {
                 width="25%"
                 height="100%"
                 style={{
-                  overflowY: "scroll",
                   maxHeight: -100,
                 }}
               >
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>
                     우리집 강아지
                     <img
@@ -466,7 +507,11 @@ const CR_A0000W: React.FC = () => {
                     />
                   </GridTitle>
                 </GridTitleContainer>
-                <Grid container spacing={2}>
+                <Grid
+                  container
+                  spacing={2}
+                  style={{ height: webheight, overflow: "auto" }}
+                >
                   {cardOptionData.data.map((item) => (
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                       <CardBox
@@ -489,7 +534,7 @@ const CR_A0000W: React.FC = () => {
                 </Grid>
               </GridContainer>
               <GridContainer width={`calc(75% - ${GAP}px)`} height="100%">
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>
                     등원 스케줄 관리
                     <img
@@ -501,17 +546,19 @@ const CR_A0000W: React.FC = () => {
                     />
                   </GridTitle>
                 </GridTitleContainer>
-                <Calender
-                  data={
-                    cardOptionData.data.filter(
-                      (item) => item[DATA_ITEM_KEY] == selectedState
-                    )[0]
-                  }
-                  propFunction={(date: string) => {
-                    setChangeDate(date);
-                    setChangeDateVisible(true);
-                  }}
-                />
+                <div style={{ height: webheight2 }}>
+                  <Calender
+                    data={
+                      cardOptionData.data.filter(
+                        (item) => item[DATA_ITEM_KEY] == selectedState
+                      )[0]
+                    }
+                    propFunction={(date: string) => {
+                      setChangeDate(date);
+                      setChangeDateVisible(true);
+                    }}
+                  />
+                </div>
               </GridContainer>
             </GridContainerWrap>
           </>
@@ -523,8 +570,8 @@ const CR_A0000W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <TitleContainer className="TitleContainer">
-                  <Title>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>
                     우리집 강아지
                     <img
                       src={`/PuppyFoot.png`}
@@ -533,9 +580,9 @@ const CR_A0000W: React.FC = () => {
                       height={"30px"}
                       style={{ marginLeft: "5px", marginBottom: "-3px" }}
                     />
-                  </Title>
-                </TitleContainer>
-                <Grid container spacing={2}>
+                  </GridTitle>
+                </GridTitleContainer>
+                <Grid container spacing={2} style={{ height: mobileheight }}>
                   {cardOptionData.data.map((item) => (
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                       <CardBox
@@ -566,8 +613,8 @@ const CR_A0000W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer width="100%" height="100%">
-                <TitleContainer className="TitleContainer">
-                  <Title>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>
                     <span
                       style={{
                         color:
@@ -601,30 +648,28 @@ const CR_A0000W: React.FC = () => {
                       height={"30px"}
                       style={{ marginLeft: "5px", marginBottom: "-3px" }}
                     />
-                  </Title>
-                </TitleContainer>
-                <Calender
-                  data={
-                    cardOptionData.data.filter(
-                      (item) => item[DATA_ITEM_KEY] == selectedState
-                    )[0]
-                  }
-                  propFunction={(date: string) => {
-                    setChangeDate(date);
-                    setSlice(true);
-                  }}
-                />
+                  </GridTitle>
+                </GridTitleContainer>
+                <div style={{ height: mobileheight2 }}>
+                  <Calender
+                    data={
+                      cardOptionData.data.filter(
+                        (item) => item[DATA_ITEM_KEY] == selectedState
+                      )[0]
+                    }
+                    propFunction={(date: string) => {
+                      setChangeDate(date);
+                      setSlice(true);
+                    }}
+                  />
+                </div>
               </GridContainer>
             </SwiperSlide>
             {changeDate != "" || slice == true ? (
               <SwiperSlide key={2}>
-                <GridContainer
-                  height="100vh"
-                  width="100%"
-                  style={{ overflowY: "scroll" }}
-                >
-                  <TitleContainer className="TitleContainer">
-                    <Title>
+                <GridContainer width="100%">
+                  <GridTitleContainer className="ButtonContainer3">
+                    <GridTitle>
                       <span
                         style={{
                           color:
@@ -658,9 +703,13 @@ const CR_A0000W: React.FC = () => {
                         height={"30px"}
                         style={{ marginLeft: "5px", marginBottom: "-3px" }}
                       />
-                    </Title>
-                  </TitleContainer>
-                  <Grid container spacing={2}>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    container
+                    spacing={2}
+                    style={{ height: mobileheight3, overflow: "auto" }}
+                  >
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                       <Card
                         style={{

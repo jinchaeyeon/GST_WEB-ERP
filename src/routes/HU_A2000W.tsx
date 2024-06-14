@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -41,6 +41,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -172,10 +173,37 @@ const CustomColorCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+
 const HU_A2000W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
+  UseCustomOption("HU_A2000W", setCustomOptionData);
+  
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
     const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -188,9 +216,7 @@ const HU_A2000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("HU_A2000W", setCustomOptionData);
+
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages("HU_A2000W", setMessagesData);
@@ -1026,7 +1052,7 @@ const HU_A2000W: React.FC = () => {
           fileName="워크캘린더"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight - height : "80vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
