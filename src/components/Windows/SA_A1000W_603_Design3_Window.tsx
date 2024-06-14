@@ -1428,7 +1428,7 @@ const CopyWindow = ({
     dataArr.chlditemcd_s.push("");
     dataArr.column_itemcd_s.push("");
     dataArr.column_itemnm_s.push("");
-    dataArr.gubun_s.push("V");
+    dataArr.gubun_s.push("W");
     dataArr.remark_s.push(Information.remark_ex.toString());
     dataArr.qty_s.push("0");
     dataArr.optioncd_s.push("");
