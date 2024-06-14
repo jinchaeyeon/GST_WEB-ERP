@@ -13,9 +13,9 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -45,6 +45,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -66,7 +67,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import WordText from "../components/WordText";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -75,13 +76,71 @@ const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 const dateField = ["recdt", "time"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const EA_A2000W: React.FC = () => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = useState<any>(null);
+  UseCustomOption("EA_A2000W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      height6 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height6);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height6);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height6);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height6);
+        setMobileHeight5(getDeviceHeight(true) - height5 - height6);
+        setWebHeight((getDeviceHeight(true) - height6) / 3 - height);
+        setWebHeight2((getDeviceHeight(true) - height6) / 3 - height2);
+        setWebHeight3((getDeviceHeight(true) - height6) / 3 - height3);
+        setWebHeight4(((getDeviceHeight(true) - height6) * 2) / 3 - height4);
+        setWebHeight5(getDeviceHeight(true) - height6 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+  ]);
+
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
@@ -96,11 +155,7 @@ const EA_A2000W: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-
   const pc = UseGetValueFromSessionItem("pc");
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("EA_A2000W", setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
   UseDesignInfo("EA_A2000W", setWordInfoData);
@@ -1325,7 +1380,7 @@ const EA_A2000W: React.FC = () => {
                 fileName="결재관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1455,7 +1510,7 @@ const EA_A2000W: React.FC = () => {
                 fileName="결재관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1534,7 +1589,7 @@ const EA_A2000W: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer2">
+              <GridTitleContainer className="ButtonContainer3">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
@@ -1571,7 +1626,7 @@ const EA_A2000W: React.FC = () => {
                 fileName="결재관리"
               >
                 <Grid
-                  style={{ height: deviceHeight - height2 }}
+                  style={{ height: mobileheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -1651,13 +1706,13 @@ const EA_A2000W: React.FC = () => {
                 ref_key={filters2.appnum}
                 form_id={"EA_A2000W"}
                 table_id={"EA100T"}
-                style={{ height: deviceHeight - height }}
+                style={{ height: mobileheight4 }}
               ></CommentsGrid>
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={4}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer5">
                 <GridTitle>
                   <WordText
                     wordInfoData={wordInfoData}
@@ -1668,7 +1723,7 @@ const EA_A2000W: React.FC = () => {
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  height: deviceHeight - height2,
+                  height: mobileheight5,
                   overflow: "auto",
                   border: "solid 1px #e6e6e6",
                   margin: "5px 0",
@@ -1722,7 +1777,7 @@ const EA_A2000W: React.FC = () => {
             <GridContainer width="65%">
               <GridContainer>
                 {filters.appgb == "B" ? (
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>미결함</GridTitle>
                     {permissions && (
                       <ButtonContainer>
@@ -1751,7 +1806,7 @@ const EA_A2000W: React.FC = () => {
                     )}
                   </GridTitleContainer>
                 ) : filters.appgb == "C" ? (
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>기결함</GridTitle>
                     {permissions && (
                       <ButtonContainer>
@@ -1770,7 +1825,7 @@ const EA_A2000W: React.FC = () => {
                     )}
                   </GridTitleContainer>
                 ) : filters.appgb == "A" ? (
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>개인결재현황</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -1784,11 +1839,11 @@ const EA_A2000W: React.FC = () => {
                     </ButtonContainer>
                   </GridTitleContainer>
                 ) : filters.appgb == "F" ? (
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>참조자확인</GridTitle>
                   </GridTitleContainer>
                 ) : (
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>미결함</GridTitle>
                     {permissions && (
                       <ButtonContainer>
@@ -1825,7 +1880,7 @@ const EA_A2000W: React.FC = () => {
                   fileName="결재관리"
                 >
                   <Grid
-                    style={{ height: "25.5vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1922,7 +1977,7 @@ const EA_A2000W: React.FC = () => {
               <GridContainerWrap>
                 <GridContainer width="60%">
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>결재자</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -1933,7 +1988,7 @@ const EA_A2000W: React.FC = () => {
                       fileName="결재관리"
                     >
                       <Grid
-                        style={{ height: "22vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -2012,7 +2067,7 @@ const EA_A2000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>참조자</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2023,7 +2078,7 @@ const EA_A2000W: React.FC = () => {
                       fileName="결재관리"
                     >
                       <Grid
-                        style={{ height: "22vh" }}
+                        style={{ height: webheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -2104,7 +2159,7 @@ const EA_A2000W: React.FC = () => {
                     ref_key={filters2.appnum}
                     form_id={"EA_A2000W"}
                     table_id={"EA100T"}
-                    style={{ height: "50vh" }}
+                    style={{ height: webheight4 }}
                   ></CommentsGrid>
                 </GridContainer>
               </GridContainerWrap>
@@ -2113,7 +2168,7 @@ const EA_A2000W: React.FC = () => {
               className="preview-grid-container"
               width={`calc(35% - ${GAP}px)`}
             >
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer5">
                 <GridTitle>
                   <WordText
                     wordInfoData={wordInfoData}
@@ -2124,7 +2179,7 @@ const EA_A2000W: React.FC = () => {
               </GridTitleContainer>
               <GridContainer
                 style={{
-                  height: "77.5vh",
+                  height: webheight5,
                   overflow: "auto",
                   border: "solid 1px #e6e6e6",
                   margin: "5px 0",

@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -42,6 +42,7 @@ import {
   UsePermissions,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -116,6 +117,12 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const EA_A1000: React.FC = () => {
   const user_id = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -126,11 +133,52 @@ const EA_A1000: React.FC = () => {
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  var height = getHeight(".ButtonContainer");
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("EA_A1000W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height5);
+        setWebHeight(getDeviceHeight(true) - height5 - height);
+        setWebHeight2((getDeviceHeight(true) - height5) / 2 - height2);
+        setWebHeight3((getDeviceHeight(true) - height5) / 2 - height3);
+        setWebHeight4((getDeviceHeight(true) - height5) / 2 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, webheight4]);
+
     const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -202,10 +250,6 @@ const EA_A1000: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("EA_A1000W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("EA_A1000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2131,7 +2175,7 @@ const EA_A1000: React.FC = () => {
                     enabled: true,
                     mode: "single",
                   }}
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
@@ -2195,7 +2239,7 @@ const EA_A1000: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={1}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer2">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
@@ -2298,7 +2342,7 @@ const EA_A1000: React.FC = () => {
                     mainDataState2
                   )}
                   {...mainDataState2}
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight2 }}
                   onDataStateChange={onMainDataStateChange2}
                   //선택 기능
                   dataItemKey={DATA_ITEM_KEY2}
@@ -2381,7 +2425,7 @@ const EA_A1000: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer3">
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
                   <ButtonContainer>
                     <Button
@@ -2451,7 +2495,7 @@ const EA_A1000: React.FC = () => {
                     mainDataState3
                   )}
                   {...mainDataState3}
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight3 }}
                   onDataStateChange={onMainDataStateChange3}
                   //선택 기능
                   dataItemKey={DATA_ITEM_KEY3}
@@ -2509,7 +2553,7 @@ const EA_A1000: React.FC = () => {
           </SwiperSlide>
           <SwiperSlide key={3}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="ButtonContainer4">
                 <ButtonContainer style={{ justifyContent: "left" }}>
                   <Button
                     onClick={() => {
@@ -2567,7 +2611,7 @@ const EA_A1000: React.FC = () => {
                     mainDataState4
                   )}
                   {...mainDataState4}
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight4 }}
                   onDataStateChange={onMainDataStateChange4}
                   //선택 기능
                   dataItemKey={DATA_ITEM_KEY4}
@@ -2628,7 +2672,7 @@ const EA_A1000: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width="35%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>참조</GridTitle>
                 <ButtonContainer>
                   <Button onClick={onAddClick} themeColor={"primary"}>
@@ -2675,7 +2719,7 @@ const EA_A1000: React.FC = () => {
                     enabled: true,
                     mode: "single",
                   }}
-                  style={{ height: "81vh" }}
+                  style={{ height: webheight }}
                   onSelectionChange={onSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
@@ -2738,7 +2782,7 @@ const EA_A1000: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(65% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>결재라인</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -2817,7 +2861,7 @@ const EA_A1000: React.FC = () => {
                       mainDataState2
                     )}
                     {...mainDataState2}
-                    style={{ height: "46vh" }}
+                    style={{ height: webheight2 }}
                     onDataStateChange={onMainDataStateChange2}
                     //선택 기능
                     dataItemKey={DATA_ITEM_KEY2}
@@ -2899,7 +2943,7 @@ const EA_A1000: React.FC = () => {
               </GridContainer>
               <GridContainerWrap>
                 <GridContainer width={`50%`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer3">
                     <GridTitle>참조자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -2945,7 +2989,7 @@ const EA_A1000: React.FC = () => {
                         mainDataState3
                       )}
                       {...mainDataState3}
-                      style={{ height: "31vh" }}
+                      style={{ height: webheight3 }}
                       onDataStateChange={onMainDataStateChange3}
                       //선택 기능
                       dataItemKey={DATA_ITEM_KEY3}
@@ -3001,7 +3045,7 @@ const EA_A1000: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(50% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer4">
                     <GridTitle>시행자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -3047,7 +3091,7 @@ const EA_A1000: React.FC = () => {
                         mainDataState4
                       )}
                       {...mainDataState4}
-                      style={{ height: "31vh" }}
+                      style={{ height: webheight4 }}
                       onDataStateChange={onMainDataStateChange4}
                       //선택 기능
                       dataItemKey={DATA_ITEM_KEY4}

@@ -11,9 +11,9 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -27,11 +27,14 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
+  UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   dateformat2,
+  getDeviceHeight,
+  getHeight,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../components/CommonFunction";
@@ -40,15 +43,41 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
 
+var height = 0;
+
 const CT_A0111W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("CT_A0111W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height);
+        setWebHeight(getDeviceHeight(true) - height);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -235,8 +264,7 @@ const CT_A0111W: React.FC = () => {
   };
 
   const componentRef = useRef(null);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -399,7 +427,7 @@ const CT_A0111W: React.FC = () => {
       <LandscapePrint>
         <GridContainer
           style={{
-            height: isMobile ? deviceHeight : "80vh",
+            height: isMobile ? mobileheight : webheight,
             overflow: "auto",
             border: "solid 1px #e6e6e6",
             display: isMobile ? "" : "flex",
