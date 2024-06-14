@@ -14,8 +14,8 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -37,6 +37,7 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
 } from "../components/CommonFunction";
@@ -48,7 +49,7 @@ import {
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
@@ -128,12 +129,48 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
-const HU_A3020W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".k-tabstrip-items-wrapper");
+const HU_A3020W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A3020W", setCustomOptionData);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(false) - height - height3 - height4);
+        setMobileHeight2(getDeviceHeight(false) - height2 - height3 - height4);
+        setWebHeight(getDeviceHeight(false) - height - height3 - height4);
+        setWebHeight2(getDeviceHeight(false) - height2 - height3 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -142,7 +179,7 @@ const HU_A3020W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -184,10 +221,6 @@ const HU_A3020W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3020W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -232,8 +265,6 @@ const HU_A3020W: React.FC = () => {
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -1438,8 +1469,8 @@ const HU_A3020W: React.FC = () => {
       >
         <TabStripTab title="지급항목">
           <GridContainer width="100%">
-            <GridTitle></GridTitle>
             <GridTitleContainer className="ButtonContainer">
+              <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
                   onClick={onAddClick}
@@ -1472,7 +1503,7 @@ const HU_A3020W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height2 : "78vh",
+                  height: isMobile ? mobileheight : webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1557,7 +1588,7 @@ const HU_A3020W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="공제항목">
           <GridContainer width="100%">
-            <GridTitleContainer className="ButtonContainer">
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle></GridTitle>
               <ButtonContainer>
                 <Button
@@ -1591,7 +1622,7 @@ const HU_A3020W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: isMobile ? deviceHeight - height - height2 : "79vh",
+                  height: isMobile ? mobileheight2 : webheight2,
                 }}
                 data={process(
                   mainDataResult2.data.map((row) => ({

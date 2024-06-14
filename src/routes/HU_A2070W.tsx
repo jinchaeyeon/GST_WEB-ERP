@@ -160,6 +160,7 @@ const HU_A2070W: React.FC = () => {
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".TitleContainer");
 
       const handleWindowResize = () => {
@@ -1538,7 +1539,7 @@ const HU_A2070W: React.FC = () => {
         <>
           <GridContainerWrap>
             <GridContainer width="15%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>사용자 리스트</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1549,7 +1550,7 @@ const HU_A2070W: React.FC = () => {
                 fileName="출퇴근관리"
               >
                 <Grid
-                  style={{ height: "77vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1598,7 +1599,7 @@ const HU_A2070W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(85% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 {companyCode == "2309DA41" ? (
                   <GridTitle>출퇴근 조회</GridTitle>
                 ) : (
@@ -1641,7 +1642,7 @@ const HU_A2070W: React.FC = () => {
                 fileName="출퇴근관리"
               >
                 <Grid
-                  style={{ height: "77vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,

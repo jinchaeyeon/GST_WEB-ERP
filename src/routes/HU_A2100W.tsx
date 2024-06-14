@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -34,6 +34,7 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch
@@ -110,11 +111,37 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 let temp = 0;
+
+var height = 0;
+var height2 = 0;
+
 const HU_A2100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A2100W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -148,8 +175,7 @@ const HU_A2100W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A2100W", setMessagesData);
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A2100W", setCustomOptionData);
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   useEffect(() => {
@@ -974,7 +1000,7 @@ const HU_A2100W: React.FC = () => {
             fileName="근무시간관리"
           >
             <Grid
-              style={{ height: deviceHeight - height }}
+              style={{ height: mobileheight }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1049,7 +1075,7 @@ const HU_A2100W: React.FC = () => {
         </GridContainer>
       ) : (
         <GridContainer>
-          <GridTitleContainer>
+          <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
@@ -1082,7 +1108,7 @@ const HU_A2100W: React.FC = () => {
             fileName="근무시간관리"
           >
             <Grid
-              style={{ height: "81.5vh" }}
+              style={{ height: webheight }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
