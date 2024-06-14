@@ -33,7 +33,7 @@ import ReactFlow, {
   useViewport,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FormBox,
@@ -46,8 +46,7 @@ import {
 import { useApi } from "../../hooks/api";
 import {
   deletedAttadatnumsState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../../store/atoms";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -55,7 +54,8 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  useSysMessage,
+  UsePermissions,
+  useSysMessage
 } from "../CommonFunction";
 import { GAP } from "../CommonString";
 import CustomNode from "./CustomNode";
@@ -72,7 +72,13 @@ let id = 0;
 const getId = () => `${++id}`;
 
 const FlowChart = (props) => {
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  const [permissions, setPermissions] = useState({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   const [bizComponentData, setBizComponentData] = useState(null);
   UseBizComponent(
@@ -114,7 +120,7 @@ const FlowChart = (props) => {
   });
 
   useEffect(() => {
-    if (workType == "U") {
+    if (workType == "U" && permissions.view) {
       const data = props.data;
       const idList = data.map((item) => parseInt(item.id));
       id = Math.max.apply(null, idList);
@@ -164,7 +170,7 @@ const FlowChart = (props) => {
         },
       });
     }
-  }, [props.data, setViewport]);
+  }, [props.data, setViewport, permissions]);
 
   const onConnect = useCallback(
     (params) =>
@@ -526,6 +532,7 @@ const FlowChart = (props) => {
   }, []);
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     if (Information.location == "" || Information.layout_id == "") {
       alert("필수값을 채워주세요");
       return false;
@@ -629,6 +636,7 @@ const FlowChart = (props) => {
   };
 
   const uploadFile = async (files, newAttachmentNumber) => {
+    if (!permissions.save) return;
     let data;
 
     const filePara = {
@@ -682,12 +690,13 @@ const FlowChart = (props) => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data;
     setLoading(true);
     try {
@@ -722,6 +731,7 @@ const FlowChart = (props) => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -946,6 +956,7 @@ const FlowChart = (props) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="delete"
+                disabled={permissions.delete ? false : true}
               >
                 삭제
               </ButtonKendo>
@@ -954,6 +965,7 @@ const FlowChart = (props) => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                disabled={permissions.save ? false : true}
               >
                 저장
               </ButtonKendo>

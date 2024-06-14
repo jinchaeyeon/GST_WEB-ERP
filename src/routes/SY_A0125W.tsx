@@ -202,6 +202,7 @@ const SY_A0125W: React.FC = () => {
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -379,7 +380,7 @@ const SY_A0125W: React.FC = () => {
     user_name: "",
     serviceid: companyCode,
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setsubFilters] = useState({
@@ -393,12 +394,12 @@ const SY_A0125W: React.FC = () => {
     location: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -579,7 +580,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -670,7 +671,12 @@ const SY_A0125W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -680,7 +686,7 @@ const SY_A0125W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -691,7 +697,13 @@ const SY_A0125W: React.FC = () => {
   }, [subDataResult]);
 
   useEffect(() => {
-    if (subfilters.isSearch && subfilters.dptcd) {
+    if (
+      subfilters.isSearch &&
+      subfilters.dptcd &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setsubFilters((prev) => ({
@@ -701,7 +713,7 @@ const SY_A0125W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   const onSelectionChange = useCallback(
     (event: any) => {
@@ -1009,6 +1021,8 @@ const SY_A0125W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
+
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1121,12 +1135,14 @@ const SY_A0125W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") {
+    if (paraDataDeleted.work_type == "D" && permissions.delete) {
       fetchToDelete();
     }
-  }, [paraDataDeleted]);
+  }, [paraDataDeleted, permissions]);
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
+
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1175,6 +1191,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1200,6 +1217,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     let valid = true;
@@ -1257,6 +1275,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1280,10 +1299,10 @@ const SY_A0125W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.dptcd != "") {
+    if (paraData.dptcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const onDepartmentWndClick = () => {
     setDepartmentWindowVisible(true);
@@ -1469,6 +1488,7 @@ const SY_A0125W: React.FC = () => {
                       onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -1477,6 +1497,7 @@ const SY_A0125W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1485,6 +1506,7 @@ const SY_A0125W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -1494,7 +1516,7 @@ const SY_A0125W: React.FC = () => {
                   border={true}
                   style={{
                     height: mobileheight2,
-                    width: "100%"
+                    width: "100%",
                   }}
                 >
                   <FormBox>
@@ -1613,6 +1635,7 @@ const SY_A0125W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1752,6 +1775,7 @@ const SY_A0125W: React.FC = () => {
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     신규
                   </Button>
@@ -1760,6 +1784,7 @@ const SY_A0125W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -1768,6 +1793,7 @@ const SY_A0125W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -1869,6 +1895,7 @@ const SY_A0125W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

@@ -1787,7 +1787,7 @@ const KendoWindow = ({
                 <ButtonContainer>
                   {permissions.save && (
                     <Button themeColor={"primary"} onClick={handleSubmit}>
-                      확인
+                      저장
                     </Button>
                   )}
                   <Button

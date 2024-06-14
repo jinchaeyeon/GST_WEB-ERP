@@ -182,6 +182,7 @@ const Page: React.FC = () => {
         group_category: defaultOption.find(
           (item: any) => item.id == "group_category"
         )?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -298,7 +299,7 @@ const Page: React.FC = () => {
     field_caption: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -771,11 +772,18 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) {
+      fetchToDelete();
+    }
+  }, [paraDataDeleted, permissions]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions.view && bizComponentData !== null && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -784,7 +792,12 @@ const Page: React.FC = () => {
   }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions.view && detailFilters.isSearch && bizComponentData !== null && customOptionData !== null) {
+    if (
+      permissions.view &&
+      detailFilters.isSearch &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -1008,6 +1021,7 @@ const Page: React.FC = () => {
   };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {

@@ -116,7 +116,7 @@ const SY_A0110: React.FC = () => {
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -136,7 +136,7 @@ const SY_A0110: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -230,13 +230,13 @@ const SY_A0110: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && customOptionData !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -297,6 +297,7 @@ const SY_A0110: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "ymdFrdt"),
         todt: setDefaultDate(customOptionData, "ymdTodt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);

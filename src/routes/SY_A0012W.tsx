@@ -72,10 +72,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0012W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 //그리드 별 키 필드값
@@ -132,7 +129,7 @@ const defaultItemInfo = {
   user_id: "",
 };
 let temp = 0;
-const COLUMN_MIN = 4;
+
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
   setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
@@ -149,6 +146,68 @@ export const FormContext3 = createContext<{
   mainDataState: State;
   setMainDataState: (d: any) => void;
 }>({} as any);
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  UseBizComponent(
+    "L_SYS005,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
+    setBizComponentData
+  );
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field == "user_category"
+      ? "L_SYS005"
+      : field == "location"
+      ? "L_BA002"
+      : field == "position"
+      ? "L_BA028"
+      : field == "dptcd"
+      ? "L_dptcd_001"
+      : field == "postcd"
+      ? "L_HU005"
+      : field == "opengb"
+      ? "L_BA410"
+      : "";
+
+  const textField = field == "dptcd" ? "dptnm" : undefined;
+  const valueField = field == "dptcd" ? "dptcd" : undefined;
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={textField}
+      valueField={valueField}
+      {...props}
+    />
+  ) : (
+    <td></td>
+  );
+};
+
+const CustomRadioCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
+  UseBizComponent("R_BIRCD", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
+  ) : (
+    <td></td>
+  );
+};
 
 const ColumnPopUpCell = (props: GridCellProps) => {
   const {
@@ -342,169 +401,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-const EncryptedCell2 = (props: GridCellProps) => {
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    field = "",
-    render,
-    onChange,
-    className = "",
-  } = props;
-  const processApi = useApi();
-  let isInEdit = field == dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : "";
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
-  const pc = UseGetValueFromSessionItem("pc");
-
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
-
-  const onDelete = async () => {
-    if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
-      return false;
-    }
-
-    let data: any;
-
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "sys_upd_user_password",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": "init",
-        "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
-        "@p_old_password": "",
-        "@p_new_password":
-          dataItem.user_id == undefined ? "" : dataItem.user_id,
-        "@p_check_new_password":
-          dataItem.user_id == undefined ? "" : dataItem.user_id,
-        "@p_id": userId,
-        "@p_pc": pc,
-      },
-    };
-
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      alert("정상적으로 처리되었습니다.");
-    } else {
-      console.log("[에러발생]");
-      console.log(data);
-      alert(data.resultMessage);
-    }
-  };
-
-  const defaultRendering = (
-    <td
-      className={className}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{ position: "relative" }}
-    >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type={"password"}></Input>
-      ) : (
-        "*********"
-      )}
-      <ButtonInGridInput>
-        <Button
-          onClick={onDelete}
-          icon="close"
-          title="초기화"
-          fillMode="flat"
-        />
-      </ButtonInGridInput>
-    </td>
-  );
-
-  return (
-    <>
-      {render == undefined
-        ? null
-        : render?.call(undefined, defaultRendering, props)}
-    </>
-  );
-};
-
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent(
-    "L_SYS005,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
-    setBizComponentData
-  );
-
-  const field = props.field ?? "";
-  const bizComponentIdVal =
-    field == "user_category"
-      ? "L_SYS005"
-      : field == "location"
-      ? "L_BA002"
-      : field == "position"
-      ? "L_BA028"
-      : field == "dptcd"
-      ? "L_dptcd_001"
-      : field == "postcd"
-      ? "L_HU005"
-      : field == "opengb"
-      ? "L_BA410"
-      : "";
-
-  const textField = field == "dptcd" ? "dptnm" : undefined;
-  const valueField = field == "dptcd" ? "dptcd" : undefined;
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId == bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <ComboBoxCell
-      bizComponent={bizComponent}
-      textField={textField}
-      valueField={valueField}
-      {...props}
-    />
-  ) : (
-    <td></td>
-  );
-};
-
-const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent("R_BIRCD", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId == bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <RadioGroupCell bizComponentData={bizComponent} {...props} />
-  ) : (
-    <td></td>
-  );
-};
-
 var height = 0;
 var height2 = 0;
 
@@ -664,7 +560,7 @@ const SY_A0120: React.FC = () => {
         user_category: defaultOption.find(
           (item: any) => item.id == "user_category"
         )?.valueCode,
-        isSearch: true,
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -753,7 +649,7 @@ const SY_A0120: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -920,13 +816,18 @@ const SY_A0120: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
@@ -1117,6 +1018,7 @@ const SY_A0120: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1368,6 +1270,114 @@ const SY_A0120: React.FC = () => {
       optionsGridOne.sheets[0].title = "사용자 정보";
       _export.save(optionsGridOne);
     }
+  };
+
+  const EncryptedCell2 = (props: GridCellProps) => {
+    const {
+      ariaColumnIndex,
+      columnIndex,
+      dataItem,
+      field = "",
+      render,
+      onChange,
+      className = "",
+    } = props;
+    const processApi = useApi();
+    let isInEdit = field == dataItem.inEdit;
+    const value = field && dataItem[field] ? dataItem[field] : "";
+    const [loginResult] = useRecoilState(loginResultState);
+    const userId = loginResult ? loginResult.userId : "";
+    const pc = UseGetValueFromSessionItem("pc");
+
+    const handleChange = (e: InputChangeEvent) => {
+      if (onChange) {
+        onChange({
+          dataIndex: 0,
+          dataItem: dataItem,
+          field: field,
+          syntheticEvent: e.syntheticEvent,
+          value: e.target.value ?? "",
+        });
+      }
+    };
+
+    const onDelete = async () => {
+      if (!permissions.save) return;
+      
+      if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
+        return false;
+      }
+
+      let data: any;
+
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "sys_upd_user_password",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_work_type": "init",
+          "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
+          "@p_old_password": "",
+          "@p_new_password":
+            dataItem.user_id == undefined ? "" : dataItem.user_id,
+          "@p_check_new_password":
+            dataItem.user_id == undefined ? "" : dataItem.user_id,
+          "@p_id": userId,
+          "@p_pc": pc,
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess == true) {
+        alert("정상적으로 처리되었습니다.");
+      } else {
+        console.log("[에러발생]");
+        console.log(data);
+        alert(data.resultMessage);
+      }
+    };
+
+    const defaultRendering = (
+      <td
+        className={className}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{ position: "relative" }}
+      >
+        {isInEdit ? (
+          <Input
+            value={value}
+            onChange={handleChange}
+            type={"password"}
+          ></Input>
+        ) : (
+          "*********"
+        )}
+        <ButtonInGridInput>
+          <Button
+            onClick={onDelete}
+            icon="close"
+            title="초기화"
+            fillMode="flat"
+            disabled={permissions.save ? false : true}
+          />
+        </ButtonInGridInput>
+      </td>
+    );
+
+    return (
+      <>
+        {render == undefined
+          ? null
+          : render?.call(undefined, defaultRendering, props)}
+      </>
+    );
   };
 
   return (

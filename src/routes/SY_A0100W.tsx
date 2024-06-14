@@ -147,16 +147,14 @@ const App: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      setDataFilters((prev) => ({
-        ...prev,
-        cboViewType: defaultOption.find((item: any) => item.id == "cboViewType")
-          ?.valueCode,
-      }));
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
         cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
           ?.valueCode,
+        cboViewType: defaultOption.find((item: any) => item.id == "cboViewType")
+          ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -237,17 +235,10 @@ const App: React.FC = () => {
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    if (name == "cboViewType") {
-      setDataFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   //조회조건 CheckBox Change 함수 => 체크박스 값을 조회 파라미터로 세팅
   const programFilterChecBoxChange = (e: any) => {
@@ -266,26 +257,20 @@ const App: React.FC = () => {
     orgdiv: sessionOrgdiv,
     cboLocation: sessionLocation,
     yyyymm: new Date(),
+    cboViewType: "A",
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
-  const [dataFilters, setDataFilters] = useState({
-    cboViewType: "A",
-  });
   const [programFilters, setProgramFilters] = useState({
     is_all_menu: "False",
     user_groupping: "False",
   });
 
   //그리드 데이터 조회
-  const fetchDataGrid = async (
-    filters: any,
-    dataFilters: any,
-    programFilters: any
-  ) => {
-    //if (!permissions?.view) return;
+  const fetchDataGrid = async (filters: any, programFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -302,7 +287,7 @@ const App: React.FC = () => {
         "@p_menu_group": "",
         "@p_menu_id": "",
         "@p_user_id": userId,
-        "@p_viewType": dataFilters.cboViewType,
+        "@p_viewType": filters.cboViewType,
       },
     };
 
@@ -508,20 +493,17 @@ const App: React.FC = () => {
   }, [resultState]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && customOptionData != null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
       const _2 = require("lodash");
-      const deepCopiedFilters2 = _2.cloneDeep(dataFilters);
-
-      const _3 = require("lodash");
-      const deepCopiedFilters3 = _3.cloneDeep(programFilters);
+      const deepCopiedFilters2 = _2.cloneDeep(programFilters);
 
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchDataGrid(deepCopiedFilters, deepCopiedFilters2, deepCopiedFilters3);
+      fetchDataGrid(deepCopiedFilters, deepCopiedFilters2);
     }
-  }, [filters, permissions, dataFilters, programFilters]);
+  }, [filters, permissions, customOptionData, programFilters]);
 
   const newData = setExpandedState({
     data: resultState,
@@ -681,9 +663,9 @@ const App: React.FC = () => {
         throw findMessage(messagesData, "SY_A0100W_002");
       } else if (
         tabSelected == 0 &&
-        (dataFilters.cboViewType == "" ||
-          dataFilters.cboViewType == null ||
-          dataFilters.cboViewType == undefined)
+        (filters.cboViewType == "" ||
+          filters.cboViewType == null ||
+          filters.cboViewType == undefined)
       ) {
         throw findMessage(messagesData, "SY_A0100W_003");
       } else {
@@ -746,7 +728,7 @@ const App: React.FC = () => {
                     {customOptionData !== null && (
                       <CustomOptionComboBox
                         name="cboViewType"
-                        value={dataFilters.cboViewType}
+                        value={filters.cboViewType}
                         customOptionData={customOptionData}
                         changeData={filterComboBoxChange}
                         textField="name"

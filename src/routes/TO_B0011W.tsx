@@ -139,6 +139,7 @@ const TO_B0011W: React.FC = () => {
           ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -230,7 +231,7 @@ const TO_B0011W: React.FC = () => {
     itemlvl3: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회

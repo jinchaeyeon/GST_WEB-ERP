@@ -78,6 +78,48 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 var index = 0;
 
+const allMenuColumns: TreeListColumnProps[] = [
+  { field: "menu_name", title: "메뉴명", expandable: true },
+];
+
+const userMenuColumns: TreeListColumnProps[] = [
+  {
+    field: "rowstatus",
+    title: " ",
+    width: "40px",
+  },
+  {
+    field: "menu_name",
+    title: "메뉴명",
+    expandable: true,
+    width: "250px",
+  },
+  {
+    field: "form_view_yn",
+    title: "조회 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_print_yn",
+    title: "출력 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_save_yn",
+    title: "저장 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+  {
+    field: "form_delete_yn",
+    title: "삭제 권한",
+    width: "100px",
+    cell: CheckBoxTreeListCell,
+  },
+];
+
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 const USER_MENU_DATA_ITEM_KEY = "KeyID";
@@ -201,48 +243,6 @@ const Page: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_COM013,L_HU005", setBizComponentData);
 
-  const allMenuColumns: TreeListColumnProps[] = [
-    { field: "menu_name", title: "메뉴명", expandable: true },
-  ];
-
-  const userMenuColumns: TreeListColumnProps[] = [
-    {
-      field: "rowstatus",
-      title: " ",
-      width: "40px",
-    },
-    {
-      field: "menu_name",
-      title: "메뉴명",
-      expandable: true,
-      width: "250px",
-    },
-    {
-      field: "form_view_yn",
-      title: "조회 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_print_yn",
-      title: "출력 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_save_yn",
-      title: "저장 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-    {
-      field: "form_delete_yn",
-      title: "삭제 권한",
-      width: "100px",
-      cell: CheckBoxTreeListCell,
-    },
-  ];
-
   const [workType, setWorkType] = useState("");
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -315,14 +315,14 @@ const Page: React.FC = () => {
     find_row_value: "",
     find_row_value2: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [userMenuFilters, setUserMenuFilters] = useState({
     pgSize: PAGE_SIZE,
     user_group_id: "",
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -342,7 +342,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filter: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -441,6 +441,7 @@ const Page: React.FC = () => {
   };
 
   const fetchUserMenuGrid = async (userMenuFilter: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -547,6 +548,7 @@ const Page: React.FC = () => {
   };
 
   const fetchAllMenuGrid = async (filter: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -644,29 +646,27 @@ const Page: React.FC = () => {
     setLoading(false);
   };
 
-  //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (targetRowIndex !== null && gridRef.current) {
-      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
-      targetRowIndex = null;
-    }
-  }, [mainDataResult]);
-
-  useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
       fetchAllMenuGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
       userMenuFilters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(userMenuFilters);
@@ -677,7 +677,15 @@ const Page: React.FC = () => {
       })); // 한번만 조회되도록
       fetchUserMenuGrid(deepCopiedFilters);
     }
-  }, [userMenuFilters, permissions, bizComponentData]);
+  }, [userMenuFilters, permissions, bizComponentData, customOptionData]);
+
+  //메인 그리드 데이터 변경 되었을 때
+  useEffect(() => {
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -799,6 +807,8 @@ const Page: React.FC = () => {
   };
 
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
+
     if (!window.confirm("삭제하시겠습니까?")) {
       return false;
     }
@@ -818,10 +828,11 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -876,6 +887,7 @@ const Page: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const flatData: any = treeToFlat(
       userMenuDataResult.data,
       "menu_name",
@@ -979,6 +991,7 @@ const Page: React.FC = () => {
   };
 
   const fetchGridSaved = async (para: any) => {
+    if (!permissions.save) return;
     let data: any;
 
     try {

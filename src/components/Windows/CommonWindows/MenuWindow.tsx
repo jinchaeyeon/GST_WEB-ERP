@@ -30,7 +30,9 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import { TPermissions } from "../../../store/types";
 import {
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
@@ -62,6 +64,13 @@ const KendoWindow = ({
   reloadData,
   modal = false,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -154,6 +163,7 @@ const KendoWindow = ({
   });
 
   const fetchAllMenuGrid = async (filter: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const menuQueryStr = `SELECT menu_id AS KeyID,
@@ -233,13 +243,13 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchAllMenuGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const editItemId2 = allMenuDataResult.editItem
     ? allMenuDataResult.editItem[ALL_MENU_DATA_ITEM_KEY]
@@ -316,6 +326,7 @@ const KendoWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>

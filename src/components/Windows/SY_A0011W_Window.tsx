@@ -9,13 +9,14 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   findMessage,
   getHeight,
-  getWindowDeviceHeight
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -50,7 +51,13 @@ const KendoWindow = ({
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 320) / 2,
@@ -100,10 +107,10 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType == "U" || isCopy == true) {
+    if (permissions.view && (workType == "U" || isCopy == true)) {
       fetchMain();
     }
-  }, []);
+  }, [permissions]);
 
   const [initialVal, setInitialVal] = useState({
     user_group_id: "",
@@ -129,6 +136,7 @@ const KendoWindow = ({
 
   //요약정보 조회
   const fetchMain = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", parameters);
@@ -185,6 +193,7 @@ const KendoWindow = ({
   };
 
   const fetchMainSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -213,6 +222,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       if (!initialVal.user_group_id) {
@@ -238,8 +248,8 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchMainSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchMainSaved();
+  }, [paraData, permissions]);
 
   return (
     <Window
@@ -311,9 +321,11 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            저장
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={handleSubmit}>
+              저장
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

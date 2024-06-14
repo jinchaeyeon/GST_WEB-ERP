@@ -99,6 +99,7 @@ const SY_A0060W: React.FC = () => {
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -127,7 +128,7 @@ const SY_A0060W: React.FC = () => {
     orgdiv: sessionOrgdiv,
     location: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -141,7 +142,7 @@ const SY_A0060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -190,13 +191,13 @@ const SY_A0060W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && customOptionData !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -224,6 +225,8 @@ const SY_A0060W: React.FC = () => {
   const [workType, setWorkType] = useState("U");
 
   const DetailView = async (item: any) => {
+    if (!permissions.view) return;
+
     let response: any;
     let data: any;
     const parameters = {
@@ -457,6 +460,7 @@ const SY_A0060W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
