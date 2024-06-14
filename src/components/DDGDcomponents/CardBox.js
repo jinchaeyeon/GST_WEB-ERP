@@ -52,7 +52,7 @@ const CardBox = (props) => {
           }
           subheaderTypographyProps={{
             color: "#8f918d",
-            fontSize: isMobile ? "14px" : "0.2vw",
+            fontSize: props.fontSize,
             fontWeight: 500,
             fontFamily: "TheJamsil5Bold",
           }}
