@@ -1236,13 +1236,13 @@ const CopyWindow = ({
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        totqty_tk: Number(value) + Number(prev.spareqty_tk),
+        tkqty_tk: Number(value) + Number(prev.spareqty_tk),
       }));
     } else if (name == "spareqty_tk") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        totqty_tk: Number(value) + Number(prev.experimentqty_tk),
+        tkqty_tk: Number(value) + Number(prev.experimentqty_tk),
       }));
     } else if (name == "geomcheqty_base") {
       setInformation((prev) => ({
@@ -4516,22 +4516,22 @@ const CopyWindow = ({
                       <td>
                         {save == true && Information.yn_tk == true ? (
                           <Input
-                            name="totqty_tk"
+                            name="tkqty_tk"
                             type="number"
                             style={{
                               textAlign: "right",
                             }}
-                            value={numberWithCommas3(Information.totqty_tk)}
+                            value={numberWithCommas3(Information.tkqty_tk)}
                             onChange={InputChange}
                           />
                         ) : (
                           <Input
-                            name="totqty_tk"
+                            name="tkqty_tk"
                             type="number"
                             style={{
                               textAlign: "right",
                             }}
-                            value={numberWithCommas3(Information.totqty_tk)}
+                            value={numberWithCommas3(Information.tkqty_tk)}
                             className="readonly"
                           />
                         )}
@@ -6099,22 +6099,22 @@ const CopyWindow = ({
                       <td>
                         {save == true && Information.yn_tk == true ? (
                           <Input
-                            name="totqty_tk"
+                            name="tkqty_tk"
                             type="number"
                             style={{
                               textAlign: "right",
                             }}
-                            value={numberWithCommas3(Information.totqty_tk)}
+                            value={numberWithCommas3(Information.tkqty_tk)}
                             onChange={InputChange}
                           />
                         ) : (
                           <Input
-                            name="totqty_tk"
+                            name="tkqty_tk"
                             type="number"
                             style={{
                               textAlign: "right",
                             }}
-                            value={numberWithCommas3(Information.totqty_tk)}
+                            value={numberWithCommas3(Information.tkqty_tk)}
                             className="readonly"
                           />
                         )}
