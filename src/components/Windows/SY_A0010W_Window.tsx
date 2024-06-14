@@ -432,10 +432,15 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (permissions.view && (workType == "U" || isCopy == true)) {
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null &&
+      (workType == "U" || isCopy == true)
+    ) {
       fetchMain();
     }
-  }, [permissions]);
+  }, [permissions, bizComponentData, customOptionData]);
 
   const [initialVal, setInitialVal] = useState({
     group_code: "",
