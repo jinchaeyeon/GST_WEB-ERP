@@ -73,10 +73,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -251,7 +248,6 @@ const SA_A6000W: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
-  const position = loginResult ? loginResult.position : "";
   const pc = UseGetValueFromSessionItem("pc");
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -412,12 +408,15 @@ const SA_A6000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
+        isSearch: true,
       }));
       setFilters3((prev) => ({
         ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -557,34 +556,34 @@ const SA_A6000W: React.FC = () => {
     user_id: "",
     user_name: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     pgNum: 1,
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     person: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [information, setInformation] = useState({
     amt: 0,
   });
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -640,7 +639,7 @@ const SA_A6000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -700,7 +699,7 @@ const SA_A6000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -811,7 +810,7 @@ const SA_A6000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -868,7 +867,12 @@ const SA_A6000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -878,11 +882,16 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -892,11 +901,16 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -906,11 +920,16 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -920,7 +939,7 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
   let gridRef: any = useRef(null);
 
   //그리드 리셋
@@ -1793,6 +1812,7 @@ const SA_A6000W: React.FC = () => {
   };
 
   const onSave = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = mainDataResult2.data.filter(
       (item: any) => {
         return (
@@ -1847,6 +1867,7 @@ const SA_A6000W: React.FC = () => {
   };
 
   const onSave2 = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = mainDataResult4.data.filter(
       (item: any) => {
         return (
@@ -1953,6 +1974,7 @@ const SA_A6000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     setLoading(true);
@@ -2300,7 +2322,10 @@ const SA_A6000W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="전사관리">
+        <TabStripTab
+          title="전사관리"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2419,10 +2444,10 @@ const SA_A6000W: React.FC = () => {
                       <Button
                         onClick={() => {
                           if (swiper && isMobile) {
-                            swiper.slideTo(1);
+                            swiper.slideTo(0);
                           }
                         }}
-                        icon="chevron-right"
+                        icon="chevron-left"
                         themeColor={"primary"}
                         fillMode={"flat"}
                       ></Button>
@@ -2447,6 +2472,7 @@ const SA_A6000W: React.FC = () => {
                             fillMode="outline"
                             themeColor={"primary"}
                             icon="save"
+                            disabled={permissions.save ? false : true}
                           >
                             저장
                           </Button>
@@ -2462,7 +2488,7 @@ const SA_A6000W: React.FC = () => {
                     fileName="판매계획관리"
                   >
                     <Grid
-                      style={{ height: webheight2 }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -2639,6 +2665,7 @@ const SA_A6000W: React.FC = () => {
                               fillMode="outline"
                               themeColor={"primary"}
                               icon="save"
+                              disabled={permissions.save ? false : true}
                             >
                               저장
                             </Button>
@@ -2728,7 +2755,10 @@ const SA_A6000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="개인관리">
+        <TabStripTab
+          title="개인관리"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2780,6 +2810,7 @@ const SA_A6000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -2901,6 +2932,7 @@ const SA_A6000W: React.FC = () => {
                           onClick={onAddClick}
                           themeColor={"primary"}
                           icon="file-add"
+                          disabled={permissions.save ? false : true}
                         >
                           신규
                         </Button>
@@ -2909,6 +2941,7 @@ const SA_A6000W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
+                          disabled={permissions.save ? false : true}
                         >
                           저장
                         </Button>
@@ -3022,6 +3055,7 @@ const SA_A6000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3126,6 +3160,7 @@ const SA_A6000W: React.FC = () => {
                         onClick={onAddClick}
                         themeColor={"primary"}
                         icon="file-add"
+                        disabled={permissions.save ? false : true}
                       >
                         신규
                       </Button>
@@ -3134,6 +3169,7 @@ const SA_A6000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
