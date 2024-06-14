@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -44,6 +44,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -141,14 +142,41 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const HU_A2070W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A2070W", setCustomOptionData);
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height3 = getHeight(".TitleContainer");
 
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height3);
+        setWebHeight2(getDeviceHeight(true) - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -210,8 +238,6 @@ const HU_A2070W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A2070W", setMessagesData);
 
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A2070W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1311,7 +1337,7 @@ const HU_A2070W: React.FC = () => {
                   fileName="출퇴근관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1423,7 +1449,7 @@ const HU_A2070W: React.FC = () => {
                   fileName="출퇴근관리"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight2 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
