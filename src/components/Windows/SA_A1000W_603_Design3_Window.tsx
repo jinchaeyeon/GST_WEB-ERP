@@ -4155,7 +4155,7 @@ const CopyWindow = ({
                     cell={NumberCell}
                     footerCell={editNumberFooterCell3}
                   />
-                  <GridColumn field="remark" title="총수량" width="200px" />
+                  <GridColumn field="remark" title="비고" width="200px" />
                 </Grid>
               </GridContainer>
             </SwiperSlide>
@@ -5095,7 +5095,7 @@ const CopyWindow = ({
                     cell={NumberCell}
                     footerCell={editNumberFooterCell3}
                   />
-                  <GridColumn field="remark" title="총수량" width="200px" />
+                  <GridColumn field="remark" title="비고" width="200px" />
                 </Grid>
               </GridContainer>
             </FormBoxWrap>
