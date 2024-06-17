@@ -20,6 +20,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -52,6 +53,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -71,10 +73,8 @@ import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import HU_A3080W_Window from "../components/Windows/HU_A3080W_Window";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -627,22 +627,74 @@ type TdataArr = {
   bonusrat_s: string[];
 };
 
-const HU_A3080W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".k-tabstrip-items-wrapper");
+var height = 0;
+var height2 = 0;
+var height3 = 0;
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+const HU_A3080W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A3080W", setCustomOptionData);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".k-tabstrip-items-wrapper");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight3(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight4(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight5(getDeviceHeight(true) - height - height2 - height3);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+  ]);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
     delete: false,
   });
   UsePermissions(setPermissions);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3080W", setCustomOptionData);
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A3080W", setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
@@ -1954,8 +2006,6 @@ const HU_A3080W: React.FC = () => {
       prsnnm: data.prsnnm,
     }));
   };
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -4619,7 +4669,7 @@ const HU_A3080W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                    height: isMobile ? mobileheight : webheight,
                   }}
                   data={process(
                     mainDataResult.data.map((row) => ({
@@ -4776,7 +4826,7 @@ const HU_A3080W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                    height: isMobile ? mobileheight2 : webheight2,
                   }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
@@ -4938,7 +4988,7 @@ const HU_A3080W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                    height: isMobile ? mobileheight3 : webheight3,
                   }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
@@ -5093,7 +5143,7 @@ const HU_A3080W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                    height: isMobile ? mobileheight4 : webheight4,
                   }}
                   data={process(
                     mainDataResult4.data.map((row) => ({
@@ -5248,7 +5298,7 @@ const HU_A3080W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "70vh",
+                    height: isMobile ? mobileheight5 : webheight5,
                   }}
                   data={process(
                     mainDataResult5.data.map((row) => ({

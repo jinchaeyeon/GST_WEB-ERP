@@ -177,7 +177,7 @@ const HU_A2070W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, webheight]);
+  }, [customOptionData, webheight, webheight2]);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);

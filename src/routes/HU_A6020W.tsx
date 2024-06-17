@@ -20,6 +20,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -56,6 +57,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -76,7 +78,10 @@ import FileViewers from "../components/Viewer/FileViewers";
 import LaborerMultiWindow from "../components/Windows/CommonWindows/LaborerMultiWindow";
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import {
+  isFilterHideState,
+  isLoading
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -364,20 +369,63 @@ const defaultPrsnInfo = {
   rtrdtFormat: "",
   rtryn: "재직",
 };
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
 const HU_A6020W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".k-tabstrip-items-wrapper");
-  var height3 = getHeight(".ButtonContainer3");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A6020W", setCustomOptionData);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+  const [tabSelected, setTabSelected] = useState(0);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height3 - height4);
+        setMobileHeight2(getDeviceHeight(true) - height3 - height4);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height4);
+        setMobileHeight4(getDeviceHeight(true) - height2 - height3 - height4);
+        setWebHeight(getDeviceHeight(true) - height - height3 - height4);
+        setWebHeight2(getDeviceHeight(true) - height3 - height4);
+        setWebHeight3(getDeviceHeight(true) - height3 - height4);
+        setWebHeight4(getDeviceHeight(true) - height3 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, tabSelected, webheight]);
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter3 = getter(DATA_ITEM_KEY3);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -386,12 +434,15 @@ const HU_A6020W: React.FC = () => {
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [tabSelected, setTabSelected] = useState(0);
+
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -413,10 +464,6 @@ const HU_A6020W: React.FC = () => {
   };
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A6020W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A6020W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -2844,7 +2891,7 @@ FROM HU072T WHERE paycd = '4'`;
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height - height2 : "68vh",
+                    height: isMobile ? mobileheight : webheight,
                   }}
                   data={process(
                     mainDataResult.data.map((row) => ({
@@ -2984,10 +3031,10 @@ FROM HU072T WHERE paycd = '4'`;
           </FilterContainer>
           <div
             style={{
-              height: isMobile ? deviceHeight - height2 : "75vh",
+              height: isMobile ? mobileheight2 : webheight2,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="일용직 개인명세서">
@@ -3061,7 +3108,7 @@ FROM HU072T WHERE paycd = '4'`;
                   <GridContainer style={{ width: "100%" }}>
                     <Grid
                       style={{
-                        height: deviceHeight - height2,
+                        height: mobileheight3,
                       }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
@@ -3119,7 +3166,7 @@ FROM HU072T WHERE paycd = '4'`;
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer3">
+                    <GridTitleContainer className="ButtonContainer2">
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
@@ -3129,19 +3176,22 @@ FROM HU072T WHERE paycd = '4'`;
                               swiper.slideTo(0);
                             }
                           }}
-                          icon="arrow-left"
-                          style={{ marginRight: "5px" }}
-                        >
-                          이전
-                        </Button>
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
                     <div
                       style={{
-                        height: deviceHeight - height2 - height3,
+                        height: mobileheight4,
                       }}
                     >
-                      {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
+                      {url2 != "" ? (
+                        <FileViewers fileUrl={url2} isMobile={isMobile} />
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </GridContainer>
                 </SwiperSlide>
@@ -3153,7 +3203,7 @@ FROM HU072T WHERE paycd = '4'`;
                 <GridContainer width="20%">
                   <Grid
                     style={{
-                      height: "75vh",
+                      height: webheight3,
                     }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
@@ -3211,10 +3261,14 @@ FROM HU072T WHERE paycd = '4'`;
                 <GridContainer width={`calc(80% - ${GAP}px)`}>
                   <div
                     style={{
-                      height: "75vh",
+                      height: webheight4,
                     }}
                   >
-                    {url2 != "" ? <FileViewers fileUrl={url2} isMobile={isMobile}/> : ""}
+                    {url2 != "" ? (
+                      <FileViewers fileUrl={url2} isMobile={isMobile} />
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </GridContainer>
               </GridContainerWrap>
