@@ -74,10 +74,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -117,7 +114,6 @@ const HU_B4010W: React.FC = () => {
   const [mobileheight6, setMobileHeight6] = useState(0);
   const [mobileheight7, setMobileHeight7] = useState(0);
   const [mobileheight8, setMobileHeight8] = useState(0);
-  const [mobileheight9, setMobileHeight9] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight3, setWebHeight3] = useState(0);
@@ -144,6 +140,7 @@ const HU_B4010W: React.FC = () => {
       height6 = getHeight(".ButtonContainer6");
       height7 = getHeight(".k-tabstrip-items-wrapper");
       height8 = getHeight(".TitleContainer");
+
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
@@ -151,11 +148,18 @@ const HU_B4010W: React.FC = () => {
         setMobileHeight2(getDeviceHeight(true) - height2 - height8);
         setMobileHeight3(getDeviceHeight(true) - height3 - height8);
         setMobileHeight4(getDeviceHeight(true) - height4 - height8);
-        setMobileHeight5(getDeviceHeight(true) - height5 - height7 - height8);
-        setMobileHeight6(getDeviceHeight(true) - height5 - height7 - height8);
-        setMobileHeight7(getDeviceHeight(true) - height5 - height7 - height8);
-        setMobileHeight8(getDeviceHeight(true) - height5 - height7 - height8);
-        setMobileHeight9(getDeviceHeight(true) - height6 - height8);
+        setMobileHeight5(
+          getDeviceHeight(true) - height5 - height7 - height8 - height6
+        );
+        setMobileHeight6(
+          getDeviceHeight(true) - height5 - height7 - height8 - height6
+        );
+        setMobileHeight7(
+          getDeviceHeight(true) - height5 - height7 - height8 - height6
+        );
+        setMobileHeight8(
+          getDeviceHeight(true) - height5 - height7 - height8 - height6
+        );
 
         setWebHeight(getDeviceHeight(true) - height - height8);
         setWebHeight2((getDeviceHeight(true) - height8) / 3 - height2);
@@ -1850,16 +1854,6 @@ const HU_B4010W: React.FC = () => {
                       themeColor={"primary"}
                       fillMode={"flat"}
                     ></Button>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(5);
-                        }
-                      }}
-                      icon="chevron-right"
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                    ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
 
@@ -2213,52 +2207,44 @@ const HU_B4010W: React.FC = () => {
                     </ExcelExport>
                   </TabStripTab>
                 </TabStrip>
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={5}>
-              <GridContainer
-                style={{
-                  marginTop: "5px",
-                  marginBottom: "5px",
-                  width: "100%",
-                }}
-              >
-                <GridTitleContainer className="ButtonContainer6">
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(4);
-                        }
-                      }}
-                      icon="chevron-left"
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <GridMui
-                  container
-                  spacing={0.3}
+                <GridContainer
                   style={{
-                    height: mobileheight9,
+                    width: "100%",
                   }}
+                  className="ButtonContainer6"
                 >
-                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                    <Card
-                      style={{
-                        color: "white",
-                        backgroundColor: "#6495ed",
-                      }}
-                    >
-                      <CustomCardHeader
-                        subheaderTypographyProps={{
-                          color: "#8f918d",
-                          fontWeight: 500,
-                          fontFamily: "TheJamsil5Bold",
+                  <GridMui container spacing={0.3}>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        title={
-                          <>
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                지각
+                              </Typography>
+                            </>
+                          }
+                          subheader={
                             <Typography
                               style={{
                                 color: "white",
@@ -2267,48 +2253,48 @@ const HU_B4010W: React.FC = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontFamily: "TheJamsil5Bold",
-                                fontSize: "0.8rem",
+                                fontSize: "1rem",
                               }}
                             >
-                              지각
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].late}
                             </Typography>
-                          </>
-                        }
-                        subheader={
-                          <Typography
-                            style={{
-                              color: "white",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontFamily: "TheJamsil5Bold",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            {mainDataResult6.total <= 0
-                              ? "0 건"
-                              : mainDataResult6.data[0].late}
-                          </Typography>
-                        }
-                      />
-                    </Card>
-                  </GridMui>
-                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                    <Card
-                      style={{
-                        color: "white",
-                        backgroundColor: "#6495ed",
-                      }}
-                    >
-                      <CustomCardHeader
-                        subheaderTypographyProps={{
-                          color: "#8f918d",
-                          fontWeight: 500,
-                          fontFamily: "TheJamsil5Bold",
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        title={
-                          <>
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                근태경고
+                              </Typography>
+                            </>
+                          }
+                          subheader={
                             <Typography
                               style={{
                                 color: "white",
@@ -2317,48 +2303,48 @@ const HU_B4010W: React.FC = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontFamily: "TheJamsil5Bold",
-                                fontSize: "0.8rem",
+                                fontSize: "1rem",
                               }}
                             >
-                              근태경고
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].caution}
                             </Typography>
-                          </>
-                        }
-                        subheader={
-                          <Typography
-                            style={{
-                              color: "white",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontFamily: "TheJamsil5Bold",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            {mainDataResult6.total <= 0
-                              ? "0 건"
-                              : mainDataResult6.data[0].caution}
-                          </Typography>
-                        }
-                      />
-                    </Card>
-                  </GridMui>
-                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                    <Card
-                      style={{
-                        color: "white",
-                        backgroundColor: "#6495ed",
-                      }}
-                    >
-                      <CustomCardHeader
-                        subheaderTypographyProps={{
-                          color: "#8f918d",
-                          fontWeight: 500,
-                          fontFamily: "TheJamsil5Bold",
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        title={
-                          <>
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                교육이수
+                              </Typography>
+                            </>
+                          }
+                          subheader={
                             <Typography
                               style={{
                                 color: "white",
@@ -2367,48 +2353,48 @@ const HU_B4010W: React.FC = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontFamily: "TheJamsil5Bold",
-                                fontSize: "0.8rem",
+                                fontSize: "1rem",
                               }}
                             >
-                              교육이수
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].edu}
                             </Typography>
-                          </>
-                        }
-                        subheader={
-                          <Typography
-                            style={{
-                              color: "white",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontFamily: "TheJamsil5Bold",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            {mainDataResult6.total <= 0
-                              ? "0 건"
-                              : mainDataResult6.data[0].edu}
-                          </Typography>
-                        }
-                      />
-                    </Card>
-                  </GridMui>
-                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                    <Card
-                      style={{
-                        color: "white",
-                        backgroundColor: "#6495ed",
-                      }}
-                    >
-                      <CustomCardHeader
-                        subheaderTypographyProps={{
-                          color: "#8f918d",
-                          fontWeight: 500,
-                          fontFamily: "TheJamsil5Bold",
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        title={
-                          <>
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                상벌사항
+                              </Typography>
+                            </>
+                          }
+                          subheader={
                             <Typography
                               style={{
                                 color: "white",
@@ -2417,48 +2403,48 @@ const HU_B4010W: React.FC = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontFamily: "TheJamsil5Bold",
-                                fontSize: "0.8rem",
+                                fontSize: "1rem",
                               }}
                             >
-                              상벌사항
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].rnp}
                             </Typography>
-                          </>
-                        }
-                        subheader={
-                          <Typography
-                            style={{
-                              color: "white",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontFamily: "TheJamsil5Bold",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            {mainDataResult6.total <= 0
-                              ? "0 건"
-                              : mainDataResult6.data[0].rnp}
-                          </Typography>
-                        }
-                      />
-                    </Card>
-                  </GridMui>
-                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                    <Card
-                      style={{
-                        color: "white",
-                        backgroundColor: "#6495ed",
-                      }}
-                    >
-                      <CustomCardHeader
-                        subheaderTypographyProps={{
-                          color: "#8f918d",
-                          fontWeight: 500,
-                          fontFamily: "TheJamsil5Bold",
+                          }
+                        />
+                      </Card>
+                    </GridMui>
+                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                      <Card
+                        style={{
+                          color: "white",
+                          backgroundColor: "#6495ed",
                         }}
-                        title={
-                          <>
+                      >
+                        <CustomCardHeader
+                          subheaderTypographyProps={{
+                            color: "#8f918d",
+                            fontWeight: 500,
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                          title={
+                            <>
+                              <Typography
+                                style={{
+                                  color: "white",
+                                  fontWeight: 700,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontFamily: "TheJamsil5Bold",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                처리불량
+                              </Typography>
+                            </>
+                          }
+                          subheader={
                             <Typography
                               style={{
                                 color: "white",
@@ -2467,34 +2453,19 @@ const HU_B4010W: React.FC = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 fontFamily: "TheJamsil5Bold",
-                                fontSize: "0.8rem",
+                                fontSize: "1rem",
                               }}
                             >
-                              처리불량
+                              {mainDataResult6.total <= 0
+                                ? "0 건"
+                                : mainDataResult6.data[0].bad}
                             </Typography>
-                          </>
-                        }
-                        subheader={
-                          <Typography
-                            style={{
-                              color: "white",
-                              fontWeight: 700,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontFamily: "TheJamsil5Bold",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            {mainDataResult6.total <= 0
-                              ? "0 건"
-                              : mainDataResult6.data[0].bad}
-                          </Typography>
-                        }
-                      />
-                    </Card>
+                          }
+                        />
+                      </Card>
+                    </GridMui>
                   </GridMui>
-                </GridMui>
+                </GridContainer>
               </GridContainer>
             </SwiperSlide>
           </Swiper>
@@ -2502,7 +2473,7 @@ const HU_B4010W: React.FC = () => {
       ) : (
         <>
           <GridContainerWrap>
-            <GridContainer width="17%">
+            <GridContainer width="15%">
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>사원목록</GridTitle>
               </GridTitleContainer>
@@ -2572,7 +2543,7 @@ const HU_B4010W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>업무효율 및 능률</GridTitle>
@@ -2640,7 +2611,7 @@ const HU_B4010W: React.FC = () => {
                 </Chart>
               </GridContainer>
             </GridContainer>
-            <GridContainer width={`calc(33% - ${GAP}px)`}>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer5">
                   <GridTitle>월별 평균</GridTitle>
