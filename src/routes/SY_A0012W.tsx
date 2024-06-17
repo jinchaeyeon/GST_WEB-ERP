@@ -401,6 +401,121 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+const EncryptedCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const processApi = useApi();
+  let isInEdit = field == dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const pc = UseGetValueFromSessionItem("pc");
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const onDelete = async () => {
+    if (!permissions.save) return;
+    
+    if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
+      return false;
+    }
+
+    let data: any;
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "sys_upd_user_password",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "init",
+        "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_old_password": "",
+        "@p_new_password":
+          dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_check_new_password":
+          dataItem.user_id == undefined ? "" : dataItem.user_id,
+        "@p_id": userId,
+        "@p_pc": pc,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      alert("정상적으로 처리되었습니다.");
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input
+          value={value}
+          onChange={handleChange}
+          type={"password"}
+        ></Input>
+      ) : (
+        "*********"
+      )}
+      <ButtonInGridInput>
+        <Button
+          onClick={onDelete}
+          icon="close"
+          title="초기화"
+          fillMode="flat"
+          disabled={permissions.save ? false : true}
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render == undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+    </>
+  );
+};
+
 var height = 0;
 var height2 = 0;
 
@@ -1204,7 +1319,7 @@ const SY_A0120: React.FC = () => {
             "@p_apply_start_date":
               apply_start_date == "99991231" ? "" : apply_start_date,
             "@p_apply_end_date":
-              apply_end_date == "99991231" ? "" : apply_end_date,
+              apply_end_date == "99991231" ? "99991231" : apply_end_date,
             "@p_hold_check_yn":
               hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
@@ -1272,114 +1387,7 @@ const SY_A0120: React.FC = () => {
     }
   };
 
-  const EncryptedCell2 = (props: GridCellProps) => {
-    const {
-      ariaColumnIndex,
-      columnIndex,
-      dataItem,
-      field = "",
-      render,
-      onChange,
-      className = "",
-    } = props;
-    const processApi = useApi();
-    let isInEdit = field == dataItem.inEdit;
-    const value = field && dataItem[field] ? dataItem[field] : "";
-    const [loginResult] = useRecoilState(loginResultState);
-    const userId = loginResult ? loginResult.userId : "";
-    const pc = UseGetValueFromSessionItem("pc");
-
-    const handleChange = (e: InputChangeEvent) => {
-      if (onChange) {
-        onChange({
-          dataIndex: 0,
-          dataItem: dataItem,
-          field: field,
-          syntheticEvent: e.syntheticEvent,
-          value: e.target.value ?? "",
-        });
-      }
-    };
-
-    const onDelete = async () => {
-      if (!permissions.save) return;
-      
-      if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
-        return false;
-      }
-
-      let data: any;
-
-      //조회조건 파라미터
-      const parameters: Iparameters = {
-        procedureName: "sys_upd_user_password",
-        pageNumber: 0,
-        pageSize: 0,
-        parameters: {
-          "@p_work_type": "init",
-          "@p_user_id": dataItem.user_id == undefined ? "" : dataItem.user_id,
-          "@p_old_password": "",
-          "@p_new_password":
-            dataItem.user_id == undefined ? "" : dataItem.user_id,
-          "@p_check_new_password":
-            dataItem.user_id == undefined ? "" : dataItem.user_id,
-          "@p_id": userId,
-          "@p_pc": pc,
-        },
-      };
-
-      try {
-        data = await processApi<any>("procedure", parameters);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess == true) {
-        alert("정상적으로 처리되었습니다.");
-      } else {
-        console.log("[에러발생]");
-        console.log(data);
-        alert(data.resultMessage);
-      }
-    };
-
-    const defaultRendering = (
-      <td
-        className={className}
-        aria-colindex={ariaColumnIndex}
-        data-grid-col-index={columnIndex}
-        style={{ position: "relative" }}
-      >
-        {isInEdit ? (
-          <Input
-            value={value}
-            onChange={handleChange}
-            type={"password"}
-          ></Input>
-        ) : (
-          "*********"
-        )}
-        <ButtonInGridInput>
-          <Button
-            onClick={onDelete}
-            icon="close"
-            title="초기화"
-            fillMode="flat"
-            disabled={permissions.save ? false : true}
-          />
-        </ButtonInGridInput>
-      </td>
-    );
-
-    return (
-      <>
-        {render == undefined
-          ? null
-          : render?.call(undefined, defaultRendering, props)}
-      </>
-    );
-  };
-
+ 
   return (
     <>
       <TitleContainer className="TitleContainer">
