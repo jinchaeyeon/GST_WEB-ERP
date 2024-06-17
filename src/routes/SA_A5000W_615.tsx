@@ -29,6 +29,7 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
@@ -37,7 +38,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
 let timestamp = 0;
@@ -49,6 +50,13 @@ var height2 = 0;
 var height3 = 0;
 
 const SA_A5000W_615: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
@@ -210,13 +218,13 @@ const SA_A5000W_615: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
   var audio = new Audio("/Correct 9.mp3");
   var audio2 = new Audio("/Notice 6.mp3");
   audio.load();
@@ -227,6 +235,7 @@ const SA_A5000W_615: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -418,6 +427,7 @@ const SA_A5000W_615: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let dataArr: any = {
       ordnum_s: [],
       ordseq_s: [],
@@ -477,6 +487,7 @@ const SA_A5000W_615: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -506,10 +517,10 @@ const SA_A5000W_615: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onCheckItem = (item: any) => {
     const temp = mainDataResult2.data.filter(
@@ -660,7 +671,11 @@ const SA_A5000W_615: React.FC = () => {
                       >
                         ALLReset
                       </Button>
-                      <Button onClick={() => onSaveClick()} icon="save">
+                      <Button
+                        onClick={() => onSaveClick()}
+                        icon="save"
+                        disabled={permissions.save ? false : true}
+                      >
                         저장
                       </Button>
                       <Button
@@ -998,7 +1013,11 @@ const SA_A5000W_615: React.FC = () => {
                     >
                       ALLReset
                     </Button>
-                    <Button onClick={() => onSaveClick()} icon="save">
+                    <Button
+                      onClick={() => onSaveClick()}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    >
                       저장
                     </Button>
                     <Button

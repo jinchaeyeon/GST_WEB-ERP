@@ -7,10 +7,7 @@ import { detect } from "detect-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import {
-  loginResultState,
-  sessionItemState,
-} from "../store/atoms";
+import { loginResultState, sessionItemState } from "../store/atoms";
 import captionEnUs from "../store/cultures/Captions.en-US.json";
 import captionKoKr from "../store/cultures/Captions.ko-KR.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
@@ -18,12 +15,14 @@ import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
-export const getDeviceHeight = (bool : boolean) => { //라우터
+export const getDeviceHeight = (bool: boolean) => {
+  //라우터
   let height = getHeight(".visible-mobile-only"); //필터 모바일
   let height2 = getHeight(".filterBox"); //필터 웹
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  if(bool == false) { //필터없는경우
+  if (bool == false) {
+    //필터없는경우
     if (isMobile) {
       return document.documentElement.clientHeight - 70;
     } else {
@@ -38,10 +37,12 @@ export const getDeviceHeight = (bool : boolean) => { //라우터
   }
 };
 
-export const getWindowDeviceHeight = (bool : boolean, heights: any) => { //라우터
+export const getWindowDeviceHeight = (bool: boolean, heights: any) => {
+  //라우터
   let height = getHeight(".visible-mobile-only2"); //필터 모바일
   let height2 = getHeight(".filterBox2"); //필터 웹
-  if(bool == false) { //필터없는경우
+  if (bool == false) {
+    //필터없는경우
     return heights;
   } else {
     return heights - height - height2;
@@ -621,6 +622,10 @@ export const UsePermissions = (setListData: any) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      if (data == null) {
+        resetLocalStorage(); // 토큰, 로그인결과가 없을시
+        window.location.href = "/"; // 리다이렉션 처리
+      }
     }
   }, []);
 };
