@@ -29,6 +29,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
@@ -61,20 +62,13 @@ const SA_A2300_PDA: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
 
-  //   const [permissions, setPermissions] = useState<TPermissions>({
-  //    save: false,
-  //    print: false,
-  //    view: false,
-  //    delete: false,
-  //  });
-  // UsePermissions(setPermissions);
-  const [permissions, setPermissions] = useState<TPermissions | null>({
-    save: true,
-    view: true,
-    delete: true,
-    print: true,
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    view: false,
+    delete: false,
+    print: false,
   });
-
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -86,7 +80,7 @@ const SA_A2300_PDA: React.FC = () => {
   const [webheight3, setWebHeight3] = useState(0);
   const [webheight4, setWebHeight4] = useState(0);
   const [tabPage, setTabPage] = useState<number>(1);
-  
+
   useLayoutEffect(() => {
     height = getHeight(".TitleContainer");
     height2 = getHeight(".ButtonContainer");
@@ -158,7 +152,7 @@ const SA_A2300_PDA: React.FC = () => {
   >([]);
 
   const fetchScheduler = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -199,10 +193,10 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   useEffect(() => {
-    if (tabPage == 1) {
+    if (tabPage == 1 && permissions.view) {
       fetchScheduler();
     }
-  }, [tabPage]);
+  }, [tabPage, permissions]);
 
   const onClickSchedulerItem = (e: SchedulerItemMouseEvent) => {
     const item = e.target.props.dataItem;
@@ -315,13 +309,13 @@ const SA_A2300_PDA: React.FC = () => {
   });
 
   useEffect(() => {
-    if (customerFilters.isSearch) {
+    if (customerFilters.isSearch && permissions.view) {
       fetchCustomerGrid();
     }
-  }, [customerFilters]);
+  }, [customerFilters, permissions]);
 
   const fetchCustomerGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -535,6 +529,7 @@ const SA_A2300_PDA: React.FC = () => {
             themeColor={"primary"}
             icon="arrow-left"
             fillMode="outline"
+            disabled={permissions.view ? false : true}
           >
             이전
           </Button>
@@ -542,6 +537,7 @@ const SA_A2300_PDA: React.FC = () => {
             onClick={onClickNext}
             themeColor={"primary"}
             icon="arrow-right"
+            disabled={permissions.view ? false : true}
           >
             다음
           </Button>
@@ -650,13 +646,13 @@ const SA_A2300_PDA: React.FC = () => {
   });
 
   useEffect(() => {
-    if (orderFilters.isSearch) {
+    if (orderFilters.isSearch && permissions.view) {
       fetchOrderGrid();
     }
-  }, [orderFilters]);
+  }, [orderFilters, permissions]);
 
   const fetchOrderGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -813,6 +809,7 @@ const SA_A2300_PDA: React.FC = () => {
             themeColor={"primary"}
             icon="arrow-left"
             fillMode="outline"
+            disabled={permissions.view ? false : true}
           >
             이전
           </Button>
@@ -820,6 +817,7 @@ const SA_A2300_PDA: React.FC = () => {
             onClick={onClickLot}
             themeColor={"primary"}
             icon="detail-section"
+            disabled={permissions.view ? false : true}
           >
             리딩 목록
           </Button>
@@ -883,7 +881,7 @@ const SA_A2300_PDA: React.FC = () => {
   const lotIdGetter = getter(LOT_ITEM_KEY);
 
   const saveLotGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -1024,10 +1022,10 @@ const SA_A2300_PDA: React.FC = () => {
   });
 
   useEffect(() => {
-    if (lotFilters.isSearch) {
+    if (lotFilters.isSearch && permissions.view) {
       fetchLotGrid();
     }
-  }, [lotFilters]);
+  }, [lotFilters, permissions]);
 
   const chkQty = (row: any) => {
     const ordkey = row.ordkey;
@@ -1052,7 +1050,7 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   const fetchLotGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1211,6 +1209,7 @@ const SA_A2300_PDA: React.FC = () => {
             themeColor={"primary"}
             icon="arrow-left"
             fillMode="outline"
+            disabled={permissions.view ? false : true}
           >
             이전
           </Button>
@@ -1220,6 +1219,7 @@ const SA_A2300_PDA: React.FC = () => {
               themeColor={"primary"}
               icon="delete"
               fillMode="outline"
+              disabled={permissions.save ? false : true}
             >
               삭제
             </Button>
@@ -1227,6 +1227,7 @@ const SA_A2300_PDA: React.FC = () => {
               onClick={onClickConfirm}
               themeColor={"primary"}
               icon="check-circle"
+              disabled={permissions.save ? false : true}
             >
               확인
             </Button>
