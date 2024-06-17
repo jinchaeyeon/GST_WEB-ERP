@@ -19,6 +19,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -50,6 +51,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -71,9 +73,7 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -294,18 +294,44 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+
 const HU_A5020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
 
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A5020W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -334,10 +360,6 @@ const HU_A5020W: React.FC = () => {
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A5020W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A5020W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1294,7 +1316,7 @@ const HU_A5020W: React.FC = () => {
                 fileName="퇴직연금"
               >
                 <Grid
-                  style={{ height: deviceHeight - height }}
+                  style={{ height: mobileheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1413,7 +1435,7 @@ const HU_A5020W: React.FC = () => {
                 // fetchGrid,
               }}
             >
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>기본정보</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -1460,7 +1482,7 @@ const HU_A5020W: React.FC = () => {
                 fileName="퇴직연금"
               >
                 <Grid
-                  style={{ height: "81.5vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,

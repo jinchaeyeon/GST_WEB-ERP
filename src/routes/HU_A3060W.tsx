@@ -15,7 +15,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -49,6 +49,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -63,7 +64,10 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import {
+  isFilterHideState,
+  isLoading
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -171,16 +175,78 @@ type TdataArr4 = {
   cal4n_s: string[];
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const HU_A3060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
 
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A3060W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".k-tabstrip-items-wrapper");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height4 - height5);
+        setMobileHeight2(getDeviceHeight(false) - height4 - height5);
+        setMobileHeight3(getDeviceHeight(false) - height - height4 - height5);
+        setMobileHeight4(getDeviceHeight(false) - height - height4 - height5);
+        setMobileHeight5(getDeviceHeight(false) - height2 - height4 - height5);
+        setMobileHeight6(getDeviceHeight(true) - height - height4 - height5);
+        setWebHeight(getDeviceHeight(true) - height - height4 - height5);
+        setWebHeight2(getDeviceHeight(false) - height - height4 - height5);
+        setWebHeight3(getDeviceHeight(false) - height2 - height4 - height5);
+        setWebHeight4(getDeviceHeight(false) - height - height4 - height5);
+        setWebHeight5(getDeviceHeight(false) - height2 - height4 - height5);
+        setWebHeight6(getDeviceHeight(true) - height - height4 - height5);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+  ]);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -197,9 +263,7 @@ const HU_A3060W: React.FC = () => {
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A3060W", setMessagesData);
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3060W", setCustomOptionData);
+
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
@@ -295,7 +359,7 @@ const HU_A3060W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        if(tabSelected == 1 || tabSelected == 2) {
+        if (tabSelected == 1 || tabSelected == 2) {
           if (swiper && isMobile) {
             swiper.slideTo(0);
           }
@@ -306,9 +370,10 @@ const HU_A3060W: React.FC = () => {
     }
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
-
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     setTabSelected(e.selected);
   };
 
@@ -3303,7 +3368,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height3 }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -3391,7 +3456,7 @@ const HU_A3060W: React.FC = () => {
                       fileName="정산기준"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height3 }}
+                        style={{ height: mobileheight2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -3440,8 +3505,7 @@ const HU_A3060W: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
-                      <GridTitle></GridTitle>
+                    <GridTitleContainer className="ButtonContainer">
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -3462,7 +3526,7 @@ const HU_A3060W: React.FC = () => {
                     </GridTitleContainer>
                     <FormBoxWrap
                       style={{
-                        height: deviceHeight - height2 - height3,
+                        height: mobileheight3,
                         overflow: "auto",
                       }}
                     >
@@ -3755,7 +3819,7 @@ const HU_A3060W: React.FC = () => {
                       fileName="정산기준"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight4 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -3834,7 +3898,7 @@ const HU_A3060W: React.FC = () => {
                       fileName="정산기준"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight5 }}
                         data={process(
                           mainDataResult3_1.data.map((row) => ({
                             ...row,
@@ -3950,7 +4014,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height3 }}
+                    style={{ height: mobileheight6 }}
                     data={process(
                       mainDataResult4.data.map((row) => ({
                         ...row,
@@ -4057,7 +4121,7 @@ const HU_A3060W: React.FC = () => {
                 </FilterBox>
               </FilterContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>기본정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -4097,7 +4161,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: "74.2vh" }}
+                    style={{ height: webheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -4169,7 +4233,7 @@ const HU_A3060W: React.FC = () => {
             <TabStripTab title="급여기준정보">
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>기준일자</GridTitle>
                   </GridTitleContainer>
                   <ExcelExport
@@ -4180,7 +4244,7 @@ const HU_A3060W: React.FC = () => {
                     fileName="정산기준"
                   >
                     <Grid
-                      style={{ height: "80vh" }}
+                      style={{ height: webheight2 }}
                       data={process(
                         mainDataResult2.data.map((row) => ({
                           ...row,
@@ -4227,7 +4291,7 @@ const HU_A3060W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle></GridTitle>
                     <ButtonContainer>
                       <Button
@@ -4247,7 +4311,7 @@ const HU_A3060W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </GridTitleContainer>
-                  <FormBoxWrap>
+                  <FormBoxWrap style={{ height: webheight3, overflow: "auto" }}>
                     <FormBox>
                       <tbody>
                         <tr>
@@ -4481,7 +4545,7 @@ const HU_A3060W: React.FC = () => {
             <TabStripTab title="소득세조건표">
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer">
                     <GridTitle>기준일자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -4502,7 +4566,7 @@ const HU_A3060W: React.FC = () => {
                     fileName="정산기준"
                   >
                     <Grid
-                      style={{ height: "80vh" }}
+                      style={{ height: webheight4 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -4549,7 +4613,7 @@ const HU_A3060W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 <GridContainer width={`calc(85% - ${GAP}px)`}>
-                  <GridTitleContainer>
+                  <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>기본정보</GridTitle>
                     <ButtonContainer>
                       <ExcelUploadButton
@@ -4579,7 +4643,7 @@ const HU_A3060W: React.FC = () => {
                     fileName="정산기준"
                   >
                     <Grid
-                      style={{ height: "80vh" }}
+                      style={{ height: webheight5 }}
                       data={process(
                         mainDataResult3_1.data.map((row) => ({
                           ...row,
@@ -4660,7 +4724,7 @@ const HU_A3060W: React.FC = () => {
                 </FilterBox>
               </FilterContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer">
                   <GridTitle>기본정보</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -4693,7 +4757,7 @@ const HU_A3060W: React.FC = () => {
                   fileName="정산기준"
                 >
                   <Grid
-                    style={{ height: "74.2vh" }}
+                    style={{ height: webheight6 }}
                     data={process(
                       mainDataResult4.data.map((row) => ({
                         ...row,

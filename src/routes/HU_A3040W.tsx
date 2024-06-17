@@ -19,8 +19,9 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -48,11 +49,12 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   getMonPayQuery,
   numberWithCommas,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -64,12 +66,10 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isFilterHideState,
   isFilterheightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -398,13 +398,100 @@ let temp2 = 0;
 let temp4 = 0;
 let temp6 = 0;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const HU_A3040W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A3040W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".TitleContainer");
+      height6 = getHeight(".ButtonContainer3");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(
+          getDeviceHeight(true) - height - height3 - height5 - height6
+        );
+        setMobileHeight2(
+          getDeviceHeight(true) - height2 - height3 - height5 - height6
+        );
+        setMobileHeight3(
+          getDeviceHeight(true) - height - height3 - height5 - height6
+        );
+        setMobileHeight4(
+          getDeviceHeight(true) - height2 - height3 - height5 - height6
+        );
+        setMobileHeight5(
+          getDeviceHeight(true) - height - height3 - height5 - height6
+        );
+        setMobileHeight6(
+          getDeviceHeight(true) - height2 - height3 - height5 - height6
+        );
+        setWebHeight(
+          getDeviceHeight(false) - height - height3 - height4 - height5
+        );
+        setWebHeight2(
+          getDeviceHeight(false) - height2 - height3 - height4 - height5
+        );
+        setWebHeight3(
+          getDeviceHeight(false) - height - height3 - height4 - height5
+        );
+        setWebHeight4(
+          getDeviceHeight(false) - height2 - height3 - height4 - height5
+        );
+        setWebHeight5(
+          getDeviceHeight(false) - height - height3 - height4 - height5
+        );
+        setWebHeight6(
+          getDeviceHeight(false) - height2 - height3 - height4 - height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+  ]);
 
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
@@ -442,7 +529,7 @@ const HU_A3040W: React.FC = () => {
   const [prsnnm6, setPrsnnm6] = useState<string>("");
   const [prsnnum6, setPrsnnum6] = useState<string>("");
   const [dptcd6, setDptcd6] = useState<string>("");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -451,9 +538,7 @@ const HU_A3040W: React.FC = () => {
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3040W", setCustomOptionData);
+
   //엑셀 내보내기
   let _export: any;
   let _export2: any;
@@ -581,8 +666,6 @@ const HU_A3040W: React.FC = () => {
       [name]: value,
     }));
   };
-
-  const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -3750,12 +3833,15 @@ const HU_A3040W: React.FC = () => {
       </TitleContainer>
       {isMobile ? (
         <>
-          <ButtonContainer style={{ justifyContent: "flex-end" }}>
+          <ButtonContainer
+            className="ButtonContainer3"
+            style={{ justifyContent: "flex-end" }}
+          >
             <Button
               onClick={() => {
                 setIsFilterHideStates((prev) => !prev);
               }}
-              icon={isFilterHideStates ? "chevron-up" : "chevron-down"}
+              icon={isFilterHideStates ? "chevron-down" : "chevron-up"}
               fillMode={"flat"}
               themeColor={"secondary"}
             >
@@ -3887,7 +3973,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight }}
                         data={process(
                           mainDataResult.data.map((row) => ({
                             ...row,
@@ -3982,7 +4068,7 @@ const HU_A3040W: React.FC = () => {
                         fileName="연금보험료"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 - height3 }}
+                          style={{ height: mobileheight2 }}
                           data={process(
                             mainDataResult2.data.map((row) => ({
                               ...row,
@@ -4111,7 +4197,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight3 }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
@@ -4206,7 +4292,7 @@ const HU_A3040W: React.FC = () => {
                         fileName="연금보험료"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 - height3 }}
+                          style={{ height: mobileheight4 }}
                           data={process(
                             mainDataResult4.data.map((row) => ({
                               ...row,
@@ -4335,7 +4421,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight5 }}
                         data={process(
                           mainDataResult5.data.map((row) => ({
                             ...row,
@@ -4430,7 +4516,7 @@ const HU_A3040W: React.FC = () => {
                         fileName="연금보험료"
                       >
                         <Grid
-                          style={{ height: deviceHeight - height2 - height3 }}
+                          style={{ height: mobileheight6 }}
                           data={process(
                             mainDataResult6.data.map((row) => ({
                               ...row,
@@ -4524,7 +4610,7 @@ const HU_A3040W: React.FC = () => {
         </>
       ) : (
         <>
-          <FormBoxWrap border={true}>
+          <FormBoxWrap border={true} className="FormBoxWrap">
             <FormBox>
               <tbody>
                 <tr>
@@ -4612,7 +4698,10 @@ const HU_A3040W: React.FC = () => {
             <TabStripTab title="국민연금">
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <GridTitleContainer>
+                  <GridTitleContainer
+                    className="ButtonContainer"
+                    style={{ flexWrap: "wrap" }}
+                  >
                     <GridTitle>기준일자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -4640,7 +4729,7 @@ const HU_A3040W: React.FC = () => {
                     fileName="연금보험료"
                   >
                     <Grid
-                      style={{ height: "68vh" }}
+                      style={{ height: webheight }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -4700,7 +4789,7 @@ const HU_A3040W: React.FC = () => {
                   }}
                 >
                   <GridContainer width={`calc(85% - ${GAP}px)`}>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>국민연금</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -4733,7 +4822,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: "68vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
                             ...row,
@@ -4817,7 +4906,10 @@ const HU_A3040W: React.FC = () => {
             <TabStripTab title="건강보험">
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <GridTitleContainer>
+                  <GridTitleContainer
+                    className="ButtonContainer"
+                    style={{ flexWrap: "wrap" }}
+                  >
                     <GridTitle>기준일자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -4845,7 +4937,7 @@ const HU_A3040W: React.FC = () => {
                     fileName="연금보험료"
                   >
                     <Grid
-                      style={{ height: "68vh" }}
+                      style={{ height: webheight3 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -4905,7 +4997,7 @@ const HU_A3040W: React.FC = () => {
                   }}
                 >
                   <GridContainer width={`calc(85% - ${GAP}px)`}>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>건강보험</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -4938,7 +5030,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: "68vh" }}
+                        style={{ height: webheight4 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -5022,7 +5114,10 @@ const HU_A3040W: React.FC = () => {
             <TabStripTab title="고용보험">
               <GridContainerWrap>
                 <GridContainer width="15%">
-                  <GridTitleContainer>
+                  <GridTitleContainer
+                    className="ButtonContainer"
+                    style={{ flexWrap: "wrap" }}
+                  >
                     <GridTitle>기준일자</GridTitle>
                     <ButtonContainer>
                       <Button
@@ -5050,7 +5145,7 @@ const HU_A3040W: React.FC = () => {
                     fileName="연금보험료"
                   >
                     <Grid
-                      style={{ height: "68vh" }}
+                      style={{ height: webheight5 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -5110,7 +5205,7 @@ const HU_A3040W: React.FC = () => {
                   }}
                 >
                   <GridContainer width={`calc(85% - ${GAP}px)`}>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>고용보험</GridTitle>
                       <ButtonContainer>
                         <Button
@@ -5143,7 +5238,7 @@ const HU_A3040W: React.FC = () => {
                       fileName="연금보험료"
                     >
                       <Grid
-                        style={{ height: "68vh" }}
+                        style={{ height: webheight6 }}
                         data={process(
                           mainDataResult6.data.map((row) => ({
                             ...row,

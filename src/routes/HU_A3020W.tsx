@@ -170,7 +170,7 @@ const HU_A3020W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, tabSelected, webheight]);
+  }, [customOptionData, tabSelected, webheight, webheight2]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);

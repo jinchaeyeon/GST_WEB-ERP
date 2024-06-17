@@ -19,6 +19,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -50,6 +51,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
@@ -219,11 +221,37 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-const HU_A4100W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+var height = 0;
+var height2 = 0;
 
-  var height = getHeight(".ButtonContainer");
+const HU_A4100W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_A4100W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setWebHeight(getDeviceHeight(true) - height - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -260,10 +288,6 @@ const HU_A4100W: React.FC = () => {
   };
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A4100W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A4100W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1149,7 +1173,7 @@ const HU_A4100W: React.FC = () => {
             fileName="복지포인트등록"
           >
             <Grid
-              style={{ height: isMobile ? deviceHeight - height : "81.5vh" }}
+              style={{ height: isMobile ? mobileheight : webheight }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
