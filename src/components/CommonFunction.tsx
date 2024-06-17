@@ -520,6 +520,11 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     }
 
     if (data !== null) {
+      data.map((item: any) => {
+        item.data.Rows = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y");
+        item.data.RowCount = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y").length
+      })
+      
       //비즈니스 컴포넌트 조회 반환문 참조하여 쿼리 및 컬럼정보 추가
       data.forEach((bcItem: any) => {
         if (queryOptionsData) {
@@ -656,6 +661,11 @@ export const UseBizComponent = (bizComponentId: string, setListData: any) => {
 
     if (data !== null) {
       //setListData((prev: any) => [...prev, ...data]);
+      data.map((item: any) => {
+        item.data.Rows = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y");
+        item.data.RowCount = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y").length
+      })
+
       setListData([...data]);
     }
   }, []);

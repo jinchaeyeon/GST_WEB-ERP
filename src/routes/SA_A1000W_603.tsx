@@ -817,7 +817,7 @@ const SA_A1000W_603: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_CM501_603, R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "L_CM501_603, R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, R_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
   const [materialgbListData, setMaterialgbListData] = React.useState([
@@ -1868,7 +1868,7 @@ const SA_A1000W_603: React.FC = () => {
 
     const status =
       filters.status.length == 0
-        ? "1|2|3|4"
+        ? "2|3|4"
         : filters.status.length == 1
         ? filters.status[0].sub_code
         : getName(filters.status);
@@ -3344,7 +3344,7 @@ const SA_A1000W_603: React.FC = () => {
       quonum: Information.quonum,
       quorev: Information.quorev,
       quoseq: 0,
-      quosts: "1",
+      quosts: "",
       quotestnum: "",
       remark: "",
       startdt: "99991231",
@@ -5322,23 +5322,20 @@ const SA_A1000W_603: React.FC = () => {
                           <td>
                             {worktype == "N"
                               ? customOptionData !== null && (
-                                  <CustomOptionComboBox
+                                  <CustomOptionRadioGroup
                                     name="requestgb"
-                                    value={Information.requestgb}
                                     type="new"
                                     customOptionData={customOptionData}
-                                    changeData={ComboBoxChange}
-                                    className="required"
+                                    changeData={RadioChange}
                                   />
                                 )
                               : bizComponentData !== null && (
-                                  <BizComponentComboBox
+                                  <BizComponentRadioGroup
                                     name="requestgb"
                                     value={Information.requestgb}
-                                    bizComponentId="L_Requestgb"
+                                    bizComponentId="R_Requestgb"
                                     bizComponentData={bizComponentData}
-                                    changeData={ComboBoxChange}
-                                    className="required"
+                                    changeData={RadioChange}
                                   />
                                 )}
                           </td>
@@ -6095,7 +6092,7 @@ const SA_A1000W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>PJT NO.</th>
+                      <th style={{ width: "5%" }}>PJT NO.</th>
                       <td>
                         <Input
                           name="quonum"
@@ -6104,7 +6101,7 @@ const SA_A1000W_603: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>REV</th>
+                      <th style={{ width: "5%" }}>REV</th>
                       <td>
                         <Input
                           name="quorev"
@@ -6113,7 +6110,7 @@ const SA_A1000W_603: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>작성일자</th>
+                      <th style={{ width: "5%" }}>작성일자</th>
                       <td>
                         <DatePicker
                           name="quodt"
@@ -6124,7 +6121,7 @@ const SA_A1000W_603: React.FC = () => {
                           className="required"
                         />
                       </td>
-                      <th>등록자</th>
+                      <th style={{ width: "5%" }}>등록자</th>
                       <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
@@ -6139,7 +6136,7 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th>영업담당자</th>
+                      <th style={{ width: "5%" }}>영업담당자</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6167,7 +6164,7 @@ const SA_A1000W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>의뢰유형</th>
+                      <th style={{ width: "5%" }}>의뢰유형</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6191,7 +6188,7 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>국가</th>
+                      <th style={{ width: "5%" }}>국가</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6217,7 +6214,7 @@ const SA_A1000W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>진행단계</th>
+                      <th style={{ width: "5%" }}>진행단계</th>
                       <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
@@ -6230,7 +6227,7 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th>수주상태</th>
+                      <th style={{ width: "5%" }}>수주상태</th>
                       <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
@@ -6243,7 +6240,7 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th>견적발행일</th>
+                      <th style={{ width: "5%" }}>견적발행일</th>
                       <td>
                         <DatePicker
                           name="pubdt"
@@ -6256,7 +6253,7 @@ const SA_A1000W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>개정사유</th>
+                      <th style={{ width: "5%" }}>개정사유</th>
                       <td colSpan={9}>
                         <Input
                           name="rev_reason"
@@ -6276,7 +6273,7 @@ const SA_A1000W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>업체명</th>
+                      <th style={{ width: "5%" }}>업체명</th>
                       <td colSpan={5}>
                         <Input
                           name="custnm"
@@ -6293,13 +6290,13 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         </ButtonInInput>
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>의뢰자</th>
+                      <th style={{ width: "5%" }}>의뢰자</th>
                       <td>
                         <Input
                           name="custprsnnm"
@@ -6308,7 +6305,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>소속</th>
+                      <th style={{ width: "5%" }}>소속</th>
                       <td>
                         <Input
                           name="remark2"
@@ -6317,7 +6314,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>직위</th>
+                      <th style={{ width: "5%" }}>직위</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6339,13 +6336,13 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>TEL</th>
+                      <th style={{ width: "5%" }}>TEL</th>
                       <td>
                         <Input
                           name="tel"
@@ -6354,7 +6351,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>C.P</th>
+                      <th style={{ width: "5%" }}>C.P</th>
                       <td>
                         <Input
                           name="extra_field4"
@@ -6363,7 +6360,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>이메일</th>
+                      <th style={{ width: "5%" }}>이메일</th>
                       <td>
                         <Input
                           name="email"
@@ -6372,9 +6369,9 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                   </tbody>
@@ -6387,7 +6384,7 @@ const SA_A1000W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>모니터사</th>
+                      <th style={{ width: "5%" }}>모니터사</th>
                       <td colSpan={5}>
                         <Input
                           name="rcvcustnm"
@@ -6398,7 +6395,7 @@ const SA_A1000W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>모니터</th>
+                      <th style={{ width: "5%" }}>모니터</th>
                       <td>
                         <Input
                           name="rcvcustprsnnm"
@@ -6407,7 +6404,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>소속</th>
+                      <th style={{ width: "5%" }}>소속</th>
                       <td>
                         <Input
                           name="remark3"
@@ -6416,7 +6413,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>직위</th>
+                      <th style={{ width: "5%" }}>직위</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6438,13 +6435,13 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>TEL</th>
+                      <th style={{ width: "5%" }}>TEL</th>
                       <td>
                         <Input
                           name="rcvtel"
@@ -6453,7 +6450,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>C.P</th>
+                      <th style={{ width: "5%" }}>C.P</th>
                       <td>
                         <Input
                           name="extra_field5"
@@ -6462,7 +6459,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>이메일</th>
+                      <th style={{ width: "5%" }}>이메일</th>
                       <td>
                         <Input
                           name="rcvemail"
@@ -6471,9 +6468,9 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                   </tbody>
@@ -6486,7 +6483,7 @@ const SA_A1000W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>의뢰분야</th>
+                      <th style={{ width: "5%" }}>의뢰분야</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6508,31 +6505,28 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>의뢰목적</th>
+                      <th style={{ width: "5%" }}>의뢰목적</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
-                              <CustomOptionComboBox
+                              <CustomOptionRadioGroup
                                 name="requestgb"
-                                value={Information.requestgb}
                                 type="new"
                                 customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="required"
+                                changeData={RadioChange}
                               />
                             )
                           : bizComponentData !== null && (
-                              <BizComponentComboBox
+                              <BizComponentRadioGroup
                                 name="requestgb"
                                 value={Information.requestgb}
-                                bizComponentId="L_Requestgb"
+                                bizComponentId="R_Requestgb"
                                 bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                className="required"
+                                changeData={RadioChange}
                               />
                             )}
                       </td>
-                      <th>적응증</th>
+                      <th style={{ width: "5%" }}>적응증</th>
                       <td colSpan={3}>
                         <Input
                           name="extra_field3"
@@ -6541,11 +6535,11 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>물질분야</th>
+                      <th style={{ width: "5%" }}>물질분야</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6567,7 +6561,7 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>물질상세분야</th>
+                      <th style={{ width: "5%" }}>물질상세분야</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -6589,7 +6583,7 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>물질정보</th>
+                      <th style={{ width: "5%" }}>물질정보</th>
                       <td colSpan={3}>
                         <Input
                           name="materialinfo"
@@ -6598,7 +6592,7 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th>물질입고예정일</th>
+                      <th style={{ width: "5%" }}>물질입고예정일</th>
                       <td>
                         <DatePicker
                           name="materialindt"
@@ -6612,7 +6606,7 @@ const SA_A1000W_603: React.FC = () => {
                     </tr>
 
                     <tr>
-                      <th>시험물질명</th>
+                      <th style={{ width: "5%" }}>시험물질명</th>
                       <td colSpan={5}>
                         <Input
                           name="materialnm"
@@ -6623,7 +6617,7 @@ const SA_A1000W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>허가기관</th>
+                      <th style={{ width: "5%" }}>허가기관</th>
                       <td>
                         <Checkbox
                           title="MFDS"
@@ -6695,11 +6689,11 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>가이드라인</th>
+                      <th style={{ width: "5%" }}>가이드라인</th>
                       <td>
                         <Checkbox
                           title="MFDS"
@@ -6771,11 +6765,11 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>GLP기준</th>
+                      <th style={{ width: "5%" }}>GLP기준</th>
                       <td>
                         <Checkbox
                           title="MFDS"
@@ -6847,11 +6841,11 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>최종보고서</th>
+                      <th style={{ width: "5%" }}>최종보고서</th>
                       <td>
                         <Checkbox
                           title="한국어"
@@ -6914,11 +6908,11 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>번역보고서</th>
+                      <th style={{ width: "5%" }}>번역보고서</th>
                       <td>
                         <Checkbox
                           title="한국어"
@@ -6981,11 +6975,11 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>비고</th>
+                      <th style={{ width: "5%" }}>비고</th>
                       <td colSpan={7}>
                         <TextArea
                           value={Information.remark}
@@ -6994,11 +6988,11 @@ const SA_A1000W_603: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>첨부파일</th>
+                      <th style={{ width: "5%" }}>첨부파일</th>
                       <td colSpan={7}>
                         <Input
                           name="files"
@@ -7015,11 +7009,11 @@ const SA_A1000W_603: React.FC = () => {
                           />
                         </ButtonInInput>
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th>시험시작요청일</th>
+                      <th style={{ width: "5%" }}>시험시작요청일</th>
                       <td>
                         <DatePicker
                           name="teststdt"
@@ -7029,7 +7023,7 @@ const SA_A1000W_603: React.FC = () => {
                           placeholder=""
                         />
                       </td>
-                      <th>시험종료요청일</th>
+                      <th style={{ width: "5%" }}>시험종료요청일</th>
                       <td>
                         <DatePicker
                           name="testenddt"
@@ -7039,7 +7033,7 @@ const SA_A1000W_603: React.FC = () => {
                           placeholder=""
                         />
                       </td>
-                      <th>분석법 필요여부</th>
+                      <th style={{ width: "5%" }}>분석법 필요여부</th>
                       <td>
                         {worktype == "N"
                           ? customOptionData !== null && (
@@ -7060,7 +7054,7 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>분석법 제공예정일</th>
+                      <th style={{ width: "5%" }}>분석법 제공예정일</th>
                       <td>
                         <DatePicker
                           name="assaydt"
@@ -7070,7 +7064,7 @@ const SA_A1000W_603: React.FC = () => {
                           placeholder=""
                         />
                       </td>
-                      <th></th>
+                      <th style={{ width: "5%" }}></th>
                       <td></td>
                     </tr>
                   </tbody>
@@ -7271,7 +7265,7 @@ const SA_A1000W_603: React.FC = () => {
                       </GridTitleContainer>
                       <tbody>
                         <tr>
-                          <th>물질확보여부</th>
+                          <th style={{ width: "5%" }}>물질확보여부</th>
                           <td>
                             <Input
                               name="materialgb"
@@ -7304,7 +7298,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>분석법 보유 여부</th>
+                          <th style={{ width: "5%" }}>분석법 보유 여부</th>
                           <td>
                             <Input
                               name="assaygbe"
@@ -7336,7 +7330,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>시작예정</th>
+                          <th style={{ width: "5%" }}>시작예정</th>
                           <td>
                             <Input
                               name="startschgb"
@@ -7369,7 +7363,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>재무/투자현황</th>
+                          <th style={{ width: "5%" }}>재무/투자현황</th>
                           <td>
                             <Input
                               name="financegb"
@@ -7401,7 +7395,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>합계</th>
+                          <th style={{ width: "5%" }}>합계</th>
                           <td colSpan={2}>
                             <Input
                               name="totgrade1"
@@ -7415,7 +7409,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>결과</th>
+                          <th style={{ width: "5%" }}>결과</th>
                           <td colSpan={2}>
                             <Input
                               name="level1"
@@ -7436,7 +7430,7 @@ const SA_A1000W_603: React.FC = () => {
                       </GridTitleContainer>
                       <tbody>
                         <tr>
-                          <th>금액</th>
+                          <th style={{ width: "5%" }}>금액</th>
                           <td>
                             <Input
                               name="amtgb"
@@ -7468,7 +7462,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>추가수주</th>
+                          <th style={{ width: "5%" }}>추가수주</th>
                           <td>
                             <Input
                               name="addordgb"
@@ -7500,7 +7494,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>BTT관계사 확장</th>
+                          <th style={{ width: "5%" }}>BTT관계사 확장</th>
                           <td>
                             <Input
                               name="relationgb"
@@ -7533,7 +7527,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>합계</th>
+                          <th style={{ width: "5%" }}>합계</th>
                           <td colSpan={2}>
                             <Input
                               name="totgrade2"
@@ -7547,7 +7541,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>결과</th>
+                          <th style={{ width: "5%" }}>결과</th>
                           <td colSpan={2}>
                             <Input
                               name="level2"
@@ -8131,7 +8125,7 @@ const SA_A1000W_603: React.FC = () => {
                       </GridTitleContainer>
                       <tbody>
                         <tr>
-                          <th>물질확보여부</th>
+                          <th style={{ width: "5%" }}>물질확보여부</th>
                           <td>
                             <Input
                               name="materialgb"
@@ -8164,7 +8158,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>분석법 보유 여부</th>
+                          <th style={{ width: "5%" }}>분석법 보유 여부</th>
                           <td>
                             <Input
                               name="assaygbe"
@@ -8196,7 +8190,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>시작예정</th>
+                          <th style={{ width: "5%" }}>시작예정</th>
                           <td>
                             <Input
                               name="startschgb"
@@ -8229,7 +8223,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>재무/투자현황</th>
+                          <th style={{ width: "5%" }}>재무/투자현황</th>
                           <td>
                             <Input
                               name="financegb"
@@ -8261,7 +8255,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>합계</th>
+                          <th style={{ width: "5%" }}>합계</th>
                           <td colSpan={2}>
                             <Input
                               name="totgrade1"
@@ -8275,7 +8269,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>결과</th>
+                          <th style={{ width: "5%" }}>결과</th>
                           <td colSpan={2}>
                             <Input
                               name="level1"
@@ -8296,7 +8290,7 @@ const SA_A1000W_603: React.FC = () => {
                       </GridTitleContainer>
                       <tbody>
                         <tr>
-                          <th>금액</th>
+                          <th style={{ width: "5%" }}>금액</th>
                           <td>
                             <Input
                               name="amtgb"
@@ -8328,7 +8322,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>추가수주</th>
+                          <th style={{ width: "5%" }}>추가수주</th>
                           <td>
                             <Input
                               name="addordgb"
@@ -8360,7 +8354,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>BTT관계사 확장</th>
+                          <th style={{ width: "5%" }}>BTT관계사 확장</th>
                           <td>
                             <Input
                               name="relationgb"
@@ -8393,7 +8387,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>합계</th>
+                          <th style={{ width: "5%" }}>합계</th>
                           <td colSpan={2}>
                             <Input
                               name="totgrade2"
@@ -8407,7 +8401,7 @@ const SA_A1000W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>결과</th>
+                          <th style={{ width: "5%" }}>결과</th>
                           <td colSpan={2}>
                             <Input
                               name="level2"
@@ -8494,7 +8488,7 @@ const SA_A1000W_603: React.FC = () => {
                                 className="readonly"
                               />
                             </td>
-                            <th></th>
+                            <th style={{ width: "5%" }}></th>
                             <td></td>
                           </tr>
                         </tbody>
