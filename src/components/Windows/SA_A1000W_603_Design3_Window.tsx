@@ -1117,13 +1117,13 @@ const CopyWindow = ({
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_base: Math.floor(Number(value) / 7),
+        experiment_week_base: Math.ceil(Number(value) / 7),
       }));
     } else if (name == "testperiod_ex") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_ex: Math.floor(Number(value) / 7),
+        experiment_week_ex: Math.ceil(Number(value) / 7),
       }));
     } else if (name == "yn_ex") {
       setInformation((prev) => ({

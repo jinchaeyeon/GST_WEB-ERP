@@ -880,10 +880,18 @@ const CopyWindow = ({
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "testperiod_base") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        experiment_week_base: Math.ceil(Number(value) / 7),
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);

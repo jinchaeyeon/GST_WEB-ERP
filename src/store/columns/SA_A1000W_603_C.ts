@@ -160,6 +160,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_itemacnt",
+        field: "itemacnt",
+        caption: "품목계정",
+        width: 120,
+      },
+      {
         id: "col_glpyn",
         field: "glpyn",
         caption: "GLP/N-GLP",

@@ -749,6 +749,7 @@ const SA_A1000W_603: React.FC = () => {
               itemlvl4: itemInfo.itemlvl4,
               itemlvl5: itemInfo.itemlvl5,
               custitemnm: itemInfo.custitemnm,
+              itemacnt: itemInfo.itemacnt,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
@@ -817,9 +818,12 @@ const SA_A1000W_603: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_CM501_603, R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, R_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "L_BA061,L_CM501_603, R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, R_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
+  const [itemacntListData, setItemacntListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [materialgbListData, setMaterialgbListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -877,6 +881,7 @@ const SA_A1000W_603: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
       setMaterialgbListData(getBizCom(bizComponentData, "L_SA012_603"));
       setAssaygbeListData(getBizCom(bizComponentData, "L_SA013_603"));
       setStartschgbListData(getBizCom(bizComponentData, "L_SA014_603"));
@@ -3236,7 +3241,9 @@ const SA_A1000W_603: React.FC = () => {
       field != "quosts" &&
       field != "quoseq" &&
       field != "quotestnum" &&
-      field != "itemlvl1"
+      field != "itemlvl1" &&
+      field != "itemnm" &&
+      field != "itemacnt"
     ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
@@ -3341,6 +3348,7 @@ const SA_A1000W_603: React.FC = () => {
       itemcd: "",
       itemlvl1: "",
       itemnm: "",
+      itemacnt: "",
       quonum: Information.quonum,
       quorev: Information.quorev,
       quoseq: 0,
@@ -5955,6 +5963,9 @@ const SA_A1000W_603: React.FC = () => {
                               ordsts: ordstsListData.find(
                                 (items: any) => items.sub_code == row.ordsts
                               )?.code_name,
+                              itemacnt: itemacntListData.find(
+                                (items: any) => items.sub_code == row.itemacnt
+                              )?.code_name,
                               [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                             })),
                             mainDataState2
@@ -7138,6 +7149,9 @@ const SA_A1000W_603: React.FC = () => {
                             )?.code_name,
                             ordsts: ordstsListData.find(
                               (items: any) => items.sub_code == row.ordsts
+                            )?.code_name,
+                            itemacnt: itemacntListData.find(
+                              (items: any) => items.sub_code == row.itemacnt
                             )?.code_name,
                             [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                           })),

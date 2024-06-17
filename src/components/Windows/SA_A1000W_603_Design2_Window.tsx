@@ -1126,13 +1126,13 @@ const CopyWindow = ({
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_base: Math.floor(Number(value) / 7),
+        experiment_week_base: Math.ceil(Number(value) / 7),
       }));
     } else if (name == "testperiod_ex") {
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_ex: Math.floor(Number(value) / 7),
+        experiment_week_ex: Math.ceil(Number(value) / 7),
       }));
     } else if (name == "experimentqty_base") {
       setInformation((prev) => ({
@@ -1199,6 +1199,10 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_ex == "U"
             ? 0
             : Information_ori.testperiod_ex,
+        experiment_week_ex:
+          value == false && Information_ori.rowstatus_ex == "U"
+            ? 0
+            : Information_ori.experiment_week_ex,
         totqty_ex:
           value == false && Information_ori.rowstatus_ex == "U"
             ? 0
