@@ -1347,10 +1347,10 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
             : Information_ori.pointqty_tk,
-        totqty_tk:
+        tkqty_tk:
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
-            : Information_ori.totqty_tk,
+            : Information_ori.tkqty_tk,
         experimentqty_tk:
           value == false && Information_ori.rowstatus_tk == "U"
             ? 0
@@ -1383,6 +1383,32 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_tk == "U"
             ? false
             : Information_ori.bonyn_tk,
+      }));
+    } else if (name == "bonyn_tk") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        seq_tk: Information_ori.seq_tk,
+        tkqty_tk:
+          value == true && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.tkqty_tk,
+        experimentqty_tk:
+          value == true && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.experimentqty_tk,
+        maleqty_tk:
+          value == true && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.maleqty_tk,
+        femaleqty_tk:
+          value == true && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.femaleqty_tk,
+        spareqty_tk:
+          value == true && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.spareqty_tk,
       }));
     } else {
       setInformation((prev) => ({
@@ -4514,29 +4540,59 @@ const CopyWindow = ({
                     <tr>
                       <th>동물 전체 마리수</th>
                       <td>
-                        <Input
-                          name="tkqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.tkqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="tkqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.tkqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="tkqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.tkqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>실험동물수</th>
                       <td>
-                        <Input
-                          name="experimentqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experimentqty_tk
-                          )}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="experimentqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.experimentqty_tk
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="experimentqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.experimentqty_tk
+                            )}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>샘플수</th>
                       <td>
@@ -4566,39 +4622,81 @@ const CopyWindow = ({
                     <tr>
                       <th>수컷</th>
                       <td>
-                        <Input
-                          name="maleqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.maleqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="maleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.maleqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="maleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.maleqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>암컷</th>
                       <td>
-                        <Input
-                          name="femaleqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.femaleqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="femaleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.femaleqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="femaleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.femaleqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>여유동물수</th>
                       <td>
-                        <Input
-                          name="spareqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.spareqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="spareqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.spareqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="spareqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.spareqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -6035,29 +6133,59 @@ const CopyWindow = ({
                     <tr>
                       <th>동물 전체 마리수</th>
                       <td>
-                        <Input
-                          name="tkqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.tkqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="tkqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.tkqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="tkqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.tkqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>실험동물수</th>
                       <td>
-                        <Input
-                          name="experimentqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experimentqty_tk
-                          )}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="experimentqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.experimentqty_tk
+                            )}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="experimentqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(
+                              Information.experimentqty_tk
+                            )}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>샘플수</th>
                       <td>
@@ -6087,39 +6215,81 @@ const CopyWindow = ({
                     <tr>
                       <th>수컷</th>
                       <td>
-                        <Input
-                          name="maleqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.maleqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="maleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.maleqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="maleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.maleqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>암컷</th>
                       <td>
-                        <Input
-                          name="femaleqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.femaleqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="femaleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.femaleqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="femaleqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.femaleqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                       <th>여유동물수</th>
                       <td>
-                        <Input
-                          name="spareqty_tk"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.spareqty_tk)}
-                          className="readonly"
-                        />
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
+                          <Input
+                            name="spareqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.spareqty_tk)}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="spareqty_tk"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(Information.spareqty_tk)}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>
