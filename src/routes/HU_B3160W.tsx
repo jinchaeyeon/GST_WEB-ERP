@@ -13,15 +13,15 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -35,29 +35,57 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getDeviceHeight,
+  getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3160W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["totpayamt", "totded", "rlpayamt"];
 
+var height = 0;
+
 const HU_B3160W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B3160W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height);
+        setWebHeight(getDeviceHeight(true) - height);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
 
   const processApi = useApi();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -85,10 +113,6 @@ const HU_B3160W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B3160W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -414,7 +438,7 @@ const HU_B3160W: React.FC = () => {
           fileName="급상여이체명부"
         >
           <Grid
-            style={{ height: isMobile ? deviceHeight : "84vh" }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

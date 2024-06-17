@@ -11,8 +11,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -20,11 +20,10 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  GridContainerWrap,
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -39,6 +38,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -46,7 +46,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
@@ -56,16 +56,48 @@ const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+
 const HU_B3220W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B3220W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height3 - height);
+        setMobileHeight2(getDeviceHeight(true) - height3 - height2);
+        setWebHeight((getDeviceHeight(true) - height3) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height3) / 2 - height2);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
 
   const [swiper, setSwiper] = useState<SwiperCore>();
   const processApi = useApi();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -127,10 +159,6 @@ const HU_B3220W: React.FC = () => {
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
     }
   }, [bizComponentData]);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B3220W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -833,7 +861,7 @@ const HU_B3220W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: isMobile ? deviceHeight - height : "39vh",
+                      height: mobileheight,
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -896,10 +924,10 @@ const HU_B3220W: React.FC = () => {
                           swiper.slideTo(0);
                         }
                       }}
-                      icon="arrow-left"
-                    >
-                      이전
-                    </Button>
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
@@ -911,7 +939,7 @@ const HU_B3220W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: isMobile ? deviceHeight - height2 : "38vh",
+                      height: mobileheight2,
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({
@@ -987,7 +1015,7 @@ const HU_B3220W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer">
               <GridTitle>기본정보</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -999,7 +1027,7 @@ const HU_B3220W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: "39vh",
+                  height: webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1051,7 +1079,7 @@ const HU_B3220W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer2">
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -1063,7 +1091,7 @@ const HU_B3220W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: "38vh",
+                  height: webheight2,
                 }}
                 data={process(
                   detailDataResult.data.map((row) => ({
