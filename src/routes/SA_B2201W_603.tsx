@@ -356,7 +356,7 @@ const SA_B2201W_603: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "SA_B2201W_603_Q",
+      procedureName: "P_SA_B2201W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -432,7 +432,7 @@ const SA_B2201W_603: React.FC = () => {
     setLoading(true);
 
     const detailParameters: Iparameters = {
-      procedureName: "SA_B2201W_603_Q",
+      procedureName: "P_SA_B2201W_603_Q",
       pageNumber: detailFilters.pgNum,
       pageSize: detailFilters.pgSize,
       parameters: {
