@@ -10,7 +10,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { Input, NumericTextBox, TextArea } from "@progress/kendo-react-inputs";
 import {
   createContext,
   useContext,
@@ -49,7 +49,6 @@ import {
   getHeight,
   getWindowDeviceHeight,
   numberWithCommas,
-  numberWithCommas3,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -2825,28 +2824,23 @@ const CopyWindow = ({
                       <th>표준물질수량</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="matterqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.matterqty_base
-                            )}
+                            value={Information.matterqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="matterqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.matterqty_base
-                            )}
+                            value={Information.matterqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -2871,52 +2865,46 @@ const CopyWindow = ({
                       <th>농도분석횟수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="concentrationcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.concentrationcnt_base
-                            )}
+                            value={Information.concentrationcnt_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="concentrationcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.concentrationcnt_base
-                            )}
+                            value={Information.concentrationcnt_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>RUNTIME</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="runtime_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.runtime_base)}
+                            value={Information.runtime_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="runtime_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.runtime_base)}
+                            value={Information.runtime_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -2927,24 +2915,23 @@ const CopyWindow = ({
                       <th>군구성</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="gunqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.gunqty_base)}
+                            value={Information.gunqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="gunqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.gunqty_base)}
+                            value={Information.gunqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -2952,30 +2939,23 @@ const CopyWindow = ({
                       <td>
                         <div style={{ display: "flex" }}>
                           {save == true ? (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype1_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype1_base
-                              )}
+                              value={Information.assaytype1_base}
+                              format="n0"
                               onChange={InputChange}
                             />
                           ) : (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype1_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype1_base
-                              )}
+                              value={Information.assaytype1_base}
+                              format="n0"
                               className="readonly"
+                              disabled={true}
                             />
                           )}
                           <p style={{ display: "flex", alignItems: "center" }}>
@@ -2986,30 +2966,23 @@ const CopyWindow = ({
                       <td>
                         <div style={{ display: "flex" }}>
                           {save == true ? (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype2_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype2_base
-                              )}
+                              value={Information.assaytype2_base}
+                              format="n0"
                               onChange={InputChange}
                             />
                           ) : (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype2_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype2_base
-                              )}
+                              value={Information.assaytype2_base}
+                              format="n0"
                               className="readonly"
+                              disabled={true}
                             />
                           )}
                           <p style={{ display: "flex", alignItems: "center" }}>
@@ -3023,28 +2996,23 @@ const CopyWindow = ({
                       <th>총 SAMPLE 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="sampleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.sampleqty_base
-                            )}
+                            value={Information.sampleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="sampleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.sampleqty_base
-                            )}
+                            value={Information.sampleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3102,43 +3070,36 @@ const CopyWindow = ({
                       <th>시험기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>시험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_base
-                          )}
+                          value={Information.experiment_week_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                       <th></th>
@@ -3627,28 +3588,23 @@ const CopyWindow = ({
                       <th>표준물질수량</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="matterqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.matterqty_base
-                            )}
+                            value={Information.matterqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="matterqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.matterqty_base
-                            )}
+                            value={Information.matterqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3673,52 +3629,46 @@ const CopyWindow = ({
                       <th>농도분석횟수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="concentrationcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.concentrationcnt_base
-                            )}
+                            value={Information.concentrationcnt_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="concentrationcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.concentrationcnt_base
-                            )}
+                            value={Information.concentrationcnt_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>RUNTIME</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="runtime_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.runtime_base)}
+                            value={Information.runtime_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="runtime_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.runtime_base)}
+                            value={Information.runtime_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3729,24 +3679,23 @@ const CopyWindow = ({
                       <th>군구성</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="gunqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.gunqty_base)}
+                            value={Information.gunqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="gunqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.gunqty_base)}
+                            value={Information.gunqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3754,30 +3703,23 @@ const CopyWindow = ({
                       <td>
                         <div style={{ display: "flex" }}>
                           {save == true ? (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype1_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype1_base
-                              )}
+                              value={Information.assaytype1_base}
+                              format="n0"
                               onChange={InputChange}
                             />
                           ) : (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype1_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype1_base
-                              )}
+                              value={Information.assaytype1_base}
+                              format="n0"
                               className="readonly"
+                              disabled={true}
                             />
                           )}
                           <p style={{ display: "flex", alignItems: "center" }}>
@@ -3788,30 +3730,23 @@ const CopyWindow = ({
                       <td>
                         <div style={{ display: "flex" }}>
                           {save == true ? (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype2_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype2_base
-                              )}
+                              value={Information.assaytype2_base}
+                              format="n0"
                               onChange={InputChange}
                             />
                           ) : (
-                            <Input
+                            <NumericTextBox
+                              spinners={false}
+                              min={0}
                               name="assaytype2_base"
-                              type="number"
-                              style={{
-                                textAlign: "right",
-                                width: "50%",
-                              }}
-                              value={numberWithCommas3(
-                                Information.assaytype2_base
-                              )}
+                              value={Information.assaytype2_base}
+                              format="n0"
                               className="readonly"
+                              disabled={true}
                             />
                           )}
                           <p style={{ display: "flex", alignItems: "center" }}>
@@ -3825,28 +3760,23 @@ const CopyWindow = ({
                       <th>총 SAMPLE 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="sampleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.sampleqty_base
-                            )}
+                            value={Information.sampleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="sampleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.sampleqty_base
-                            )}
+                            value={Information.sampleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3904,43 +3834,36 @@ const CopyWindow = ({
                       <th>시험기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>시험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_base
-                          )}
+                          value={Information.experiment_week_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                       <th></th>

@@ -10,7 +10,12 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  NumericTextBox,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import {
   createContext,
   useContext,
@@ -48,7 +53,6 @@ import {
   getHeight,
   getWindowDeviceHeight,
   numberWithCommas,
-  numberWithCommas3,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -3282,84 +3286,69 @@ const CopyWindow = ({
                       <th>투여횟수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcnt_base
-                            )}
+                            value={Information.injectcnt_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcnt_base
-                            )}
+                            value={Information.injectcnt_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>투여시간</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_base
-                            )}
+                            value={Information.injectcycle_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_base
-                            )}
+                            value={Information.injectcycle_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>차수간격</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasuspace_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.chasuspace_base
-                            )}
+                            value={Information.chasuspace_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasuspace_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.chasuspace_base
-                            )}
+                            value={Information.chasuspace_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3368,67 +3357,59 @@ const CopyWindow = ({
                       <th>차수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_base)}
+                            value={Information.chasu_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_base)}
+                            value={Information.chasu_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_base
-                          )}
+                          value={Information.experiment_week_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -3436,76 +3417,69 @@ const CopyWindow = ({
                       <th>동물 전체 마리수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_base)}
+                            value={Information.totqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_base)}
+                            value={Information.totqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험동물수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_base
-                            )}
+                            value={Information.experimentqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_base
-                            )}
+                            value={Information.experimentqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>여유동물수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_base)}
+                            value={Information.spareqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_base)}
+                            value={Information.spareqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3514,76 +3488,69 @@ const CopyWindow = ({
                       <th>수컷</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_base)}
+                            value={Information.maleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_base)}
+                            value={Information.maleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>암컷</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.femaleqty_base
-                            )}
+                            value={Information.femaleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.femaleqty_base
-                            )}
+                            value={Information.femaleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>측정 POINT</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_base)}
+                            value={Information.point_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_base)}
+                            value={Information.point_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3592,69 +3559,59 @@ const CopyWindow = ({
                       <th>검체제작 마리 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheqty_base
-                            )}
+                            value={Information.geomcheqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheqty_base
-                            )}
+                            value={Information.geomcheqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>검체제작 장기 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheprodqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheprodqty_base
-                            )}
+                            value={Information.geomcheprodqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheprodqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheprodqty_base
-                            )}
+                            value={Information.geomcheprodqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>총 장기수</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="totgeomche_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.totgeomche_base)}
+                          value={Information.totgeomche_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -3662,28 +3619,23 @@ const CopyWindow = ({
                       <th>순화기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_base
-                            )}
+                            value={Information.refineperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_base
-                            )}
+                            value={Information.refineperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3797,52 +3749,46 @@ const CopyWindow = ({
                       <th>투여횟수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.injectcnt_ex)}
+                            value={Information.injectcnt_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.injectcnt_ex)}
+                            value={Information.injectcnt_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>투여시간</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_ex
-                            )}
+                            value={Information.injectcycle_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_ex
-                            )}
+                            value={Information.injectcycle_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3851,63 +3797,59 @@ const CopyWindow = ({
                       <th>차수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_ex)}
+                            value={Information.chasu_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_ex)}
+                            value={Information.chasu_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(D)</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.testperiod_ex)}
+                            value={Information.testperiod_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.testperiod_ex)}
+                            value={Information.testperiod_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_ex"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_ex
-                          )}
+                          value={Information.experiment_week_ex}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -3915,76 +3857,69 @@ const CopyWindow = ({
                       <th>동물 전체 마리수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_ex)}
+                            value={Information.totqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_ex)}
+                            value={Information.totqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험동물수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_ex
-                            )}
+                            value={Information.experimentqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_ex
-                            )}
+                            value={Information.experimentqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>여유동물</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_ex)}
+                            value={Information.spareqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_ex)}
+                            value={Information.spareqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -3993,72 +3928,69 @@ const CopyWindow = ({
                       <th>수컷</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_ex)}
+                            value={Information.maleqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_ex)}
+                            value={Information.maleqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>암컷</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.femaleqty_ex)}
+                            value={Information.femaleqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.femaleqty_ex)}
+                            value={Information.femaleqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>측정 POINT</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_ex)}
+                            value={Information.point_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_ex)}
+                            value={Information.point_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -4067,28 +3999,23 @@ const CopyWindow = ({
                       <th>순화기간(D)</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_ex
-                            )}
+                            value={Information.refineperiod_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_ex
-                            )}
+                            value={Information.refineperiod_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -4563,84 +4490,69 @@ const CopyWindow = ({
                       <th>투여횟수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcnt_base
-                            )}
+                            value={Information.injectcnt_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcnt_base
-                            )}
+                            value={Information.injectcnt_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>투여시간</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_base
-                            )}
+                            value={Information.injectcycle_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_base
-                            )}
+                            value={Information.injectcycle_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>차수간격</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasuspace_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.chasuspace_base
-                            )}
+                            value={Information.chasuspace_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasuspace_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.chasuspace_base
-                            )}
+                            value={Information.chasuspace_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -4649,67 +4561,59 @@ const CopyWindow = ({
                       <th>차수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_base)}
+                            value={Information.chasu_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_base)}
+                            value={Information.chasu_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.testperiod_base
-                            )}
+                            value={Information.testperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_base
-                          )}
+                          value={Information.experiment_week_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -4717,76 +4621,69 @@ const CopyWindow = ({
                       <th>동물 전체 마리수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_base)}
+                            value={Information.totqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_base)}
+                            value={Information.totqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험동물수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_base
-                            )}
+                            value={Information.experimentqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_base
-                            )}
+                            value={Information.experimentqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>여유동물수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_base)}
+                            value={Information.spareqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_base)}
+                            value={Information.spareqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -4795,76 +4692,69 @@ const CopyWindow = ({
                       <th>수컷</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_base)}
+                            value={Information.maleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_base)}
+                            value={Information.maleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>암컷</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.femaleqty_base
-                            )}
+                            value={Information.femaleqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.femaleqty_base
-                            )}
+                            value={Information.femaleqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>측정 POINT</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_base)}
+                            value={Information.point_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_base)}
+                            value={Information.point_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -4873,69 +4763,59 @@ const CopyWindow = ({
                       <th>검체제작 마리 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheqty_base
-                            )}
+                            value={Information.geomcheqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheqty_base
-                            )}
+                            value={Information.geomcheqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>검체제작 장기 수</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheprodqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheprodqty_base
-                            )}
+                            value={Information.geomcheprodqty_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="geomcheprodqty_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.geomcheprodqty_base
-                            )}
+                            value={Information.geomcheprodqty_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>총 장기수</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="totgeomche_base"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(Information.totgeomche_base)}
+                          value={Information.totgeomche_base}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -4943,28 +4823,23 @@ const CopyWindow = ({
                       <th>순화기간(D)</th>
                       <td>
                         {save == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_base
-                            )}
+                            value={Information.refineperiod_base}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_base"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_base
-                            )}
+                            value={Information.refineperiod_base}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -5049,52 +4924,46 @@ const CopyWindow = ({
                       <th>투여횟수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.injectcnt_ex)}
+                            value={Information.injectcnt_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcnt_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.injectcnt_ex)}
+                            value={Information.injectcnt_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>투여시간</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_ex
-                            )}
+                            value={Information.injectcycle_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="injectcycle_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.injectcycle_ex
-                            )}
+                            value={Information.injectcycle_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -5103,63 +4972,59 @@ const CopyWindow = ({
                       <th>차수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_ex)}
+                            value={Information.chasu_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="chasu_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.chasu_ex)}
+                            value={Information.chasu_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(D)</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.testperiod_ex)}
+                            value={Information.testperiod_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="testperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.testperiod_ex)}
+                            value={Information.testperiod_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험기간(W)</th>
                       <td>
-                        <Input
+                        <NumericTextBox
+                          spinners={false}
+                          min={0}
                           name="experiment_week_ex"
-                          type="number"
-                          style={{
-                            textAlign: "right",
-                          }}
-                          value={numberWithCommas3(
-                            Information.experiment_week_ex
-                          )}
+                          value={Information.experiment_week_ex}
+                          format="n0"
                           className="readonly"
+                          disabled={true}
                         />
                       </td>
                     </tr>
@@ -5167,76 +5032,69 @@ const CopyWindow = ({
                       <th>동물 전체 마리수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_ex)}
+                            value={Information.totqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="totqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.totqty_ex)}
+                            value={Information.totqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>실험동물수</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_ex
-                            )}
+                            value={Information.experimentqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="experimentqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.experimentqty_ex
-                            )}
+                            value={Information.experimentqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>여유동물</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_ex)}
+                            value={Information.spareqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="spareqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.spareqty_ex)}
+                            value={Information.spareqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -5245,72 +5103,69 @@ const CopyWindow = ({
                       <th>수컷</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_ex)}
+                            value={Information.maleqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="maleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.maleqty_ex)}
+                            value={Information.maleqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>암컷</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.femaleqty_ex)}
+                            value={Information.femaleqty_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="femaleqty_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.femaleqty_ex)}
+                            value={Information.femaleqty_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
                       <th>측정 POINT</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_ex)}
+                            value={Information.point_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="point_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(Information.point_ex)}
+                            value={Information.point_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
@@ -5319,28 +5174,23 @@ const CopyWindow = ({
                       <th>순화기간(D)</th>
                       <td>
                         {save == true && Information.yn_ex == true ? (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_ex
-                            )}
+                            value={Information.refineperiod_ex}
+                            format="n0"
                             onChange={InputChange}
                           />
                         ) : (
-                          <Input
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
                             name="refineperiod_ex"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(
-                              Information.refineperiod_ex
-                            )}
+                            value={Information.refineperiod_ex}
+                            format="n0"
                             className="readonly"
+                            disabled={true}
                           />
                         )}
                       </td>
