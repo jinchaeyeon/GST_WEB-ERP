@@ -31,7 +31,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -60,6 +60,7 @@ import {
   dateformat2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   numberWithCommas,
@@ -73,7 +74,10 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import {
+  isFilterHideState,
+  isLoading
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -92,21 +96,106 @@ let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 let targetRowIndex5: null | number = null;
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+var height7 = 0;
+var height8 = 0;
+
 const HU_B4010W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
-  var height4 = getHeight(".ButtonContainer4");
-  var height5 = getHeight(".ButtonContainer5");
-  var height6 = getHeight(".ButtonContainer6");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [mobileheight6, setMobileHeight6] = useState(0);
+  const [mobileheight7, setMobileHeight7] = useState(0);
+  const [mobileheight8, setMobileHeight8] = useState(0);
+  const [mobileheight9, setMobileHeight9] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight6, setWebHeight6] = useState(0);
+  const [webheight7, setWebHeight7] = useState(0);
+  const [webheight8, setWebHeight8] = useState(0);
 
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B4010W", setCustomOptionData);
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".ButtonContainer5");
+      height6 = getHeight(".ButtonContainer6");
+      height7 = getHeight(".k-tabstrip-items-wrapper");
+      height8 = getHeight(".TitleContainer");
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height8);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height8);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height8);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height8);
+        setMobileHeight5(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight6(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight7(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight8(getDeviceHeight(true) - height5 - height7 - height8);
+        setMobileHeight9(getDeviceHeight(true) - height6 - height8);
+
+        setWebHeight(getDeviceHeight(true) - height - height8);
+        setWebHeight2((getDeviceHeight(true) - height8) / 3 - height2);
+        setWebHeight3((getDeviceHeight(true) - height8) / 3 - height3);
+        setWebHeight4((getDeviceHeight(true) - height8) / 3 - height4);
+        setWebHeight5(
+          (getDeviceHeight(true) - height8 - height6) / 2 - height5
+        );
+        setWebHeight6(
+          (getDeviceHeight(true) - height8 - height6) / 2 - height7
+        );
+        setWebHeight7(
+          (getDeviceHeight(true) - height8 - height6) / 2 - height7
+        );
+        setWebHeight8(
+          (getDeviceHeight(true) - height8 - height6) / 2 - height7
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+    webheight7,
+    webheight8,
+  ]);
   const setLoading = useSetRecoilState(isLoading);
 
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -118,10 +207,6 @@ const HU_B4010W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_B4010W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B4010W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -344,8 +429,11 @@ const HU_B4010W: React.FC = () => {
   const [selectedState6, setSelectedState6] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [tabSelected, setTabSelected] = React.useState(0);
+
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     setTabSelected(e.selected);
   };
 
@@ -1461,28 +1549,28 @@ const HU_B4010W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
+      <FilterContainer>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+          <tbody>
+            <tr>
+              <th>기준년월</th>
+              <td>
+                <DatePicker
+                  name="yyyymm"
+                  value={filters.yyyymm}
+                  format="yyyy-MM"
+                  onChange={filterInputChange}
+                  className="required"
+                  placeholder=""
+                  calendar={MonthCalendar}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FilterBox>
+      </FilterContainer>
       {isMobile ? (
         <>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>기준년월</th>
-                  <td>
-                    <DatePicker
-                      name="yyyymm"
-                      value={filters.yyyymm}
-                      format="yyyy-MM"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                      calendar={MonthCalendar}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
           <Swiper
             onSwiper={(swiper) => {
               setSwiper(swiper);
@@ -1493,6 +1581,21 @@ const HU_B4010W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%" }}>
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                  <GridTitle>사원목록</GridTitle>
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
@@ -1501,7 +1604,7 @@ const HU_B4010W: React.FC = () => {
                   fileName="인사고과 모니터링"
                 >
                   <Grid
-                    style={{ height: deviceHeight }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1560,13 +1663,14 @@ const HU_B4010W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
+
             <SwiperSlide key={1}>
               <GridContainer
                 style={{
                   width: "100%",
                 }}
               >
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer2">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
@@ -1574,26 +1678,26 @@ const HU_B4010W: React.FC = () => {
                           swiper.slideTo(0);
                         }
                       }}
-                      icon="arrow-left"
-                      style={{ marginRight: "5px" }}
-                    >
-                      이전
-                    </Button>
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
                     <Button
                       onClick={() => {
                         if (swiper && isMobile) {
                           swiper.slideTo(2);
                         }
                       }}
-                    >
-                      월별 평균
-                    </Button>
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
                   </ButtonContainer>
                   <GridTitle>업무효율 및 능률</GridTitle>
                 </GridTitleContainer>
                 <Chart
                   style={{
-                    height: (deviceHeight - height - height5 - height6) / 3,
+                    height: mobileheight2,
                   }}
                 >
                   <ChartTooltip format="{0}" />
@@ -1614,12 +1718,42 @@ const HU_B4010W: React.FC = () => {
                   </ChartCategoryAxis>
                   <ChartSeries>{Barchart()}</ChartSeries>
                 </Chart>
-                <GridTitleContainer className="ButtonContainer5">
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer
+                style={{
+                  width: "100%",
+                }}
+              >
+                <GridTitleContainer className="ButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(3);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
                   <GridTitle>인사고과 - 기본항목</GridTitle>
                 </GridTitleContainer>
                 <Chart
                   style={{
-                    height: (deviceHeight - height - height5 - height6) / 3,
+                    height: mobileheight3,
                   }}
                 >
                   <ChartTooltip format="{0}" />
@@ -1640,12 +1774,42 @@ const HU_B4010W: React.FC = () => {
                   </ChartCategoryAxis>
                   <ChartSeries>{Barchart2()}</ChartSeries>
                 </Chart>
-                <GridTitleContainer className="ButtonContainer6">
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={3}>
+              <GridContainer
+                style={{
+                  width: "100%",
+                }}
+              >
+                <GridTitleContainer className="ButtonContainer4">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(4);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
                   <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
                 </GridTitleContainer>
                 <Chart
                   style={{
-                    height: (deviceHeight - height - height5 - height6) / 3,
+                    height: mobileheight4,
                   }}
                 >
                   <ChartTooltip format="{0}" />
@@ -1668,285 +1832,37 @@ const HU_B4010W: React.FC = () => {
                 </Chart>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={2}>
+            <SwiperSlide key={4}>
               <GridContainer
                 style={{
                   width: "100%",
                 }}
               >
-                <GridTitleContainer className="ButtonContainer4">
+                <GridTitleContainer className="ButtonContainer5">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
                         if (swiper && isMobile) {
-                          swiper.slideTo(1);
+                          swiper.slideTo(3);
                         }
                       }}
-                      icon="arrow-left"
-                      style={{ marginRight: "5px" }}
-                    >
-                      이전
-                    </Button>
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(5);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
 
-                <GridContainer
-                  style={{ marginTop: "5px", marginBottom: "5px" }}
-                  className="ButtonContainer2"
-                >
-                  <GridMui container spacing={0.3}>
-                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                      <Card
-                        style={{
-                          color: "white",
-                          backgroundColor: "#6495ed",
-                        }}
-                      >
-                        <CustomCardHeader
-                          subheaderTypographyProps={{
-                            color: "#8f918d",
-                            fontWeight: 500,
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                지각
-                              </Typography>
-                            </>
-                          }
-                          subheader={
-                            <Typography
-                              style={{
-                                color: "white",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: "TheJamsil5Bold",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              {mainDataResult6.total <= 0
-                                ? "0 건"
-                                : mainDataResult6.data[0].late}
-                            </Typography>
-                          }
-                        />
-                      </Card>
-                    </GridMui>
-                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                      <Card
-                        style={{
-                          color: "white",
-                          backgroundColor: "#6495ed",
-                        }}
-                      >
-                        <CustomCardHeader
-                          subheaderTypographyProps={{
-                            color: "#8f918d",
-                            fontWeight: 500,
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                근태경고
-                              </Typography>
-                            </>
-                          }
-                          subheader={
-                            <Typography
-                              style={{
-                                color: "white",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: "TheJamsil5Bold",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              {mainDataResult6.total <= 0
-                                ? "0 건"
-                                : mainDataResult6.data[0].caution}
-                            </Typography>
-                          }
-                        />
-                      </Card>
-                    </GridMui>
-                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                      <Card
-                        style={{
-                          color: "white",
-                          backgroundColor: "#6495ed",
-                        }}
-                      >
-                        <CustomCardHeader
-                          subheaderTypographyProps={{
-                            color: "#8f918d",
-                            fontWeight: 500,
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                교육이수
-                              </Typography>
-                            </>
-                          }
-                          subheader={
-                            <Typography
-                              style={{
-                                color: "white",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: "TheJamsil5Bold",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              {mainDataResult6.total <= 0
-                                ? "0 건"
-                                : mainDataResult6.data[0].edu}
-                            </Typography>
-                          }
-                        />
-                      </Card>
-                    </GridMui>
-                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                      <Card
-                        style={{
-                          color: "white",
-                          backgroundColor: "#6495ed",
-                        }}
-                      >
-                        <CustomCardHeader
-                          subheaderTypographyProps={{
-                            color: "#8f918d",
-                            fontWeight: 500,
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                상벌사항
-                              </Typography>
-                            </>
-                          }
-                          subheader={
-                            <Typography
-                              style={{
-                                color: "white",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: "TheJamsil5Bold",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              {mainDataResult6.total <= 0
-                                ? "0 건"
-                                : mainDataResult6.data[0].rnp}
-                            </Typography>
-                          }
-                        />
-                      </Card>
-                    </GridMui>
-                    <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
-                      <Card
-                        style={{
-                          color: "white",
-                          backgroundColor: "#6495ed",
-                        }}
-                      >
-                        <CustomCardHeader
-                          subheaderTypographyProps={{
-                            color: "#8f918d",
-                            fontWeight: 500,
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                          title={
-                            <>
-                              <Typography
-                                style={{
-                                  color: "white",
-                                  fontWeight: 700,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontFamily: "TheJamsil5Bold",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                처리불량
-                              </Typography>
-                            </>
-                          }
-                          subheader={
-                            <Typography
-                              style={{
-                                color: "white",
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: "TheJamsil5Bold",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              {mainDataResult6.total <= 0
-                                ? "0 건"
-                                : mainDataResult6.data[0].bad}
-                            </Typography>
-                          }
-                        />
-                      </Card>
-                    </GridMui>
-                  </GridMui>
-                </GridContainer>
                 <TabStrip
                   selected={tabSelected}
                   onSelect={handleSelectTab}
@@ -1962,7 +1878,7 @@ const HU_B4010W: React.FC = () => {
                     >
                       <Grid
                         style={{
-                          height: deviceHeight - height2 - height3 - height4,
+                          height: mobileheight5,
                         }}
                         data={process(
                           mainDataResult2.data.map((row) => ({
@@ -2078,7 +1994,7 @@ const HU_B4010W: React.FC = () => {
                     >
                       <Grid
                         style={{
-                          height: deviceHeight - height2 - height3 - height4,
+                          height: mobileheight6,
                         }}
                         data={process(
                           mainDataResult3.data.map((row) => ({
@@ -2151,7 +2067,7 @@ const HU_B4010W: React.FC = () => {
                       fileName="인사고과 모니터링"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight7 }}
                         data={process(
                           mainDataResult4.data.map((row) => ({
                             ...row,
@@ -2228,7 +2144,7 @@ const HU_B4010W: React.FC = () => {
                       fileName="인사고과 모니터링"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight8 }}
                         data={process(
                           mainDataResult5.data.map((row) => ({
                             ...row,
@@ -2299,36 +2215,295 @@ const HU_B4010W: React.FC = () => {
                 </TabStrip>
               </GridContainer>
             </SwiperSlide>
+            <SwiperSlide key={5}>
+              <GridContainer
+                style={{
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                  width: "100%",
+                }}
+              >
+                <GridTitleContainer className="ButtonContainer6">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(4);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <GridMui
+                  container
+                  spacing={0.3}
+                  style={{
+                    height: mobileheight9,
+                  }}
+                >
+                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CustomCardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              지각
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].late}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CustomCardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              근태경고
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].caution}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CustomCardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              교육이수
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].edu}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CustomCardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              상벌사항
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].rnp}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                  <GridMui item xs={2.4} sm={2.4} md={6} lg={2.4} xl={2.4}>
+                    <Card
+                      style={{
+                        color: "white",
+                        backgroundColor: "#6495ed",
+                      }}
+                    >
+                      <CustomCardHeader
+                        subheaderTypographyProps={{
+                          color: "#8f918d",
+                          fontWeight: 500,
+                          fontFamily: "TheJamsil5Bold",
+                        }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                color: "white",
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                                fontSize: "0.8rem",
+                              }}
+                            >
+                              처리불량
+                            </Typography>
+                          </>
+                        }
+                        subheader={
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "TheJamsil5Bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {mainDataResult6.total <= 0
+                              ? "0 건"
+                              : mainDataResult6.data[0].bad}
+                          </Typography>
+                        }
+                      />
+                    </Card>
+                  </GridMui>
+                </GridMui>
+              </GridContainer>
+            </SwiperSlide>
           </Swiper>
         </>
       ) : (
         <>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>기준년월</th>
-                  <td>
-                    <DatePicker
-                      name="yyyymm"
-                      value={filters.yyyymm}
-                      format="yyyy-MM"
-                      onChange={filterInputChange}
-                      className="required"
-                      placeholder=""
-                      calendar={MonthCalendar}
-                    />
-                  </td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-
           <GridContainerWrap>
             <GridContainer width="17%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>사원목록</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -2339,7 +2514,7 @@ const HU_B4010W: React.FC = () => {
                 fileName="인사고과 모니터링"
               >
                 <Grid
-                  style={{ height: "78vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -2399,10 +2574,10 @@ const HU_B4010W: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>업무효율 및 능률</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "24vh" }}>
+                <Chart style={{ height: webheight2 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -2421,10 +2596,10 @@ const HU_B4010W: React.FC = () => {
                 </Chart>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer3">
                   <GridTitle>인사고과 - 기본항목</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "24vh" }}>
+                <Chart style={{ height: webheight3 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -2443,10 +2618,10 @@ const HU_B4010W: React.FC = () => {
                 </Chart>
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>인사고과 - 업무특화(모듈)</GridTitle>
                 </GridTitleContainer>
-                <Chart style={{ height: "24vh" }}>
+                <Chart style={{ height: webheight4 }}>
                   <ChartTooltip format="{0}" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -2467,7 +2642,7 @@ const HU_B4010W: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(33% - ${GAP}px)`}>
               <GridContainer>
-                <GridTitleContainer>
+                <GridTitleContainer className="ButtonContainer5">
                   <GridTitle>월별 평균</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2478,7 +2653,7 @@ const HU_B4010W: React.FC = () => {
                   fileName="인사고과 모니터링"
                 >
                   <Grid
-                    style={{ height: "28vh" }}
+                    style={{ height: webheight5 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
@@ -2597,7 +2772,7 @@ const HU_B4010W: React.FC = () => {
                     fileName="인사고과 모니터링"
                   >
                     <Grid
-                      style={{ height: "30vh" }}
+                      style={{ height: webheight6 }}
                       data={process(
                         mainDataResult3.data.map((row) => ({
                           ...row,
@@ -2667,7 +2842,7 @@ const HU_B4010W: React.FC = () => {
                     fileName="인사고과 모니터링"
                   >
                     <Grid
-                      style={{ height: "30vh" }}
+                      style={{ height: webheight7 }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -2742,7 +2917,7 @@ const HU_B4010W: React.FC = () => {
                     fileName="인사고과 모니터링"
                   >
                     <Grid
-                      style={{ height: "30vh" }}
+                      style={{ height: webheight8 }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -2810,7 +2985,7 @@ const HU_B4010W: React.FC = () => {
                 </TabStripTab>
               </TabStrip>
               <GridContainer style={{ marginTop: "10px" }}>
-                <GridMui container spacing={2}>
+                <GridMui container spacing={2} className="ButtonContainer6">
                   <GridMui item xs={12} sm={6} md={6} lg={2.4} xl={2.4}>
                     <Card
                       style={{

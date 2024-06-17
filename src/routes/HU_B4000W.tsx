@@ -25,8 +25,9 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -63,10 +64,11 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -79,12 +81,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isFilterHideState, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -224,14 +221,78 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
 const HU_B4000W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".k-tabstrip-items-wrapper");
-  var height4 = getHeight(".ButtonContainer4");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B4000W", setCustomOptionData);
+
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [isFilterHideStates, setIsFilterHideStates] =
+    useRecoilState(isFilterHideState);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".k-tabstrip-items-wrapper");
+      height6 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5 - height6);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5 - height6);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5 - height6);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height5 - height6);
+        setMobileHeight5(getDeviceHeight(true) - height - height5 - height6);
+        setWebHeight(getDeviceHeight(true) - height - height5 - height6);
+        setWebHeight2(getDeviceHeight(true) - height2 - height5 - height6);
+        setWebHeight3(
+          (getDeviceHeight(true) - height5 - height6) / 2 - height3
+        );
+        setWebHeight4(
+          (getDeviceHeight(true) - height5 - height6) / 2 - height4
+        );
+        setWebHeight5(getDeviceHeight(true) - height - height5 - height6);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+  ]);
 
   const setLoading = useSetRecoilState(isLoading);
   const idGetter_use = getter(DATA_ITEM_KEY_USE);
@@ -245,7 +306,7 @@ const HU_B4000W: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -283,10 +344,6 @@ const HU_B4000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_B4000W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B4000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1329,8 +1386,10 @@ const HU_B4000W: React.FC = () => {
     setSelectedAdjState(newSelectedState);
   };
 
-  const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    if (isMobile) {
+      setIsFilterHideStates(true);
+    }
     if (e.selected == 1) {
       setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     }
@@ -1950,6 +2009,18 @@ const HU_B4000W: React.FC = () => {
                 <SwiperSlide key={0}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </ButtonContainer>
                       <GridTitle>사용자별 연차 집계</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -1960,7 +2031,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height - height3 }}
+                        style={{ height: mobileheight }}
                         data={process(
                           userAdjDataResult.data.map((row) => ({
                             ...row,
@@ -2035,9 +2106,6 @@ const HU_B4000W: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%" }}>
                     <GridTitleContainer className="ButtonContainer2">
-                      <GridTitleContainer>
-                        <GridTitle>연차상세</GridTitle>
-                      </GridTitleContainer>
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
@@ -2047,32 +2115,22 @@ const HU_B4000W: React.FC = () => {
                               swiper.slideTo(0);
                             }
                           }}
-                          icon="arrow-left"
-                        >
-                          이전
-                        </Button>
-                        <div>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(2);
-                              }
-                            }}
-                            style={{ marginRight: "5px" }}
-                          >
-                            출퇴근부
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(3);
-                              }
-                            }}
-                          >
-                            일지
-                          </Button>
-                        </div>
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
                       </ButtonContainer>
+                      <GridTitle>연차상세</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
                       data={adjDetailDataResult.data}
@@ -2082,7 +2140,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight2 }}
                         data={process(
                           adjDetailDataResult.data.map((row) => ({
                             ...row,
@@ -2156,45 +2214,32 @@ const HU_B4000W: React.FC = () => {
                 </SwiperSlide>
                 <SwiperSlide key={2}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
-                      <GridTitleContainer>
-                        <GridTitle>출퇴근부</GridTitle>
-                      </GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer3">
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
-                        <div>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(0);
-                              }
-                            }}
-                            icon="arrow-left"
-                            style={{ marginRight: "5px" }}
-                          >
-                            이전
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(1);
-                              }
-                            }}
-                          >
-                            연차상세
-                          </Button>
-                        </div>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
                         <Button
                           onClick={() => {
                             if (swiper && isMobile) {
                               swiper.slideTo(3);
                             }
                           }}
-                        >
-                          일지
-                        </Button>
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
                       </ButtonContainer>
+                      <GridTitle>출퇴근부</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
                       data={commuteDataResult.data}
@@ -2204,7 +2249,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight3 }}
                         data={process(
                           commuteDataResult.data.map((row) => ({
                             ...row,
@@ -2253,47 +2298,24 @@ const HU_B4000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </SwiperSlide>
-                <SwiperSlide key={1}>
+                <SwiperSlide key={3}>
                   <GridContainer style={{ width: "100%" }}>
-                    <GridTitleContainer className="ButtonContainer2">
-                      <GridTitleContainer>
-                        <GridTitle>일지상세</GridTitle>
-                      </GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer4">
                       <ButtonContainer
                         style={{ justifyContent: "space-between" }}
                       >
-                        <div>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(0);
-                              }
-                            }}
-                            style={{ marginRight: "5px" }}
-                            icon="arrow-left"
-                          >
-                            이전
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(1);
-                              }
-                            }}
-                          >
-                            연차상세
-                          </Button>
-                        </div>
                         <Button
                           onClick={() => {
                             if (swiper && isMobile) {
                               swiper.slideTo(2);
                             }
                           }}
-                        >
-                          출퇴근부
-                        </Button>
+                          icon="chevron-left"
+                          fillMode={"flat"}
+                          themeColor={"primary"}
+                        ></Button>
                       </ButtonContainer>
+                      <GridTitle>일지상세</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
                       data={journalDataResult.data}
@@ -2303,7 +2325,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: deviceHeight - height2 - height3 }}
+                        style={{ height: mobileheight4 }}
                         data={process(
                           journalDataResult.data.map((row) => ({
                             ...row,
@@ -2380,7 +2402,7 @@ const HU_B4000W: React.FC = () => {
               <GridContainerWrap>
                 <Splitter panes={horizontalPanes} onChange={onHorizontalChange}>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer">
                       <GridTitle>사용자별 연차 집계</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2391,7 +2413,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: "72.5vh" }}
+                        style={{ height: webheight }}
                         data={process(
                           userAdjDataResult.data.map((row) => ({
                             ...row,
@@ -2463,7 +2485,7 @@ const HU_B4000W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitleContainer>
+                    <GridTitleContainer className="ButtonContainer2">
                       <GridTitle>연차상세</GridTitle>
                     </GridTitleContainer>
                     <ExcelExport
@@ -2474,7 +2496,7 @@ const HU_B4000W: React.FC = () => {
                       fileName="연차사용현황(관리자)"
                     >
                       <Grid
-                        style={{ height: "72.5vh" }}
+                        style={{ height: webheight2 }}
                         data={process(
                           adjDetailDataResult.data.map((row) => ({
                             ...row,
@@ -2547,7 +2569,7 @@ const HU_B4000W: React.FC = () => {
                   </GridContainer>
                   <GridContainer>
                     <GridContainer>
-                      <GridTitleContainer>
+                      <GridTitleContainer className="ButtonContainer3">
                         <GridTitle>출퇴근부</GridTitle>
                       </GridTitleContainer>
                       <ExcelExport
@@ -2558,7 +2580,7 @@ const HU_B4000W: React.FC = () => {
                         fileName="연차사용현황(관리자)"
                       >
                         <Grid
-                          style={{ height: "40vh" }}
+                          style={{ height: webheight3 }}
                           data={process(
                             commuteDataResult.data.map((row) => ({
                               ...row,
@@ -2606,9 +2628,8 @@ const HU_B4000W: React.FC = () => {
                         </Grid>
                       </ExcelExport>
                     </GridContainer>
-
                     <GridContainer>
-                      <GridTitleContainer>
+                      <GridTitleContainer className="ButtonContainer4">
                         <GridTitle>일지상세</GridTitle>
                       </GridTitleContainer>
                       <ExcelExport
@@ -2619,7 +2640,7 @@ const HU_B4000W: React.FC = () => {
                         fileName="연차사용현황(관리자)"
                       >
                         <Grid
-                          style={{ height: "28vh" }}
+                          style={{ height: webheight4 }}
                           data={process(
                             journalDataResult.data.map((row) => ({
                               ...row,
@@ -2755,7 +2776,7 @@ const HU_B4000W: React.FC = () => {
                 setAdjDataState,
               }}
             >
-              <GridTitleContainer className="ButtonContainer4">
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>연차조정</GridTitle>
                 <ButtonContainer>
                   <Button
@@ -2789,7 +2810,7 @@ const HU_B4000W: React.FC = () => {
               >
                 <Grid
                   style={{
-                    height: isMobile ? deviceHeight - height4 : "72.7vh",
+                    height: isMobile ? mobileheight5 : webheight5,
                   }}
                   data={process(
                     adjDataResult.data.map((row) => ({

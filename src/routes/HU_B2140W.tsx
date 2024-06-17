@@ -11,8 +11,8 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -35,6 +35,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
   setDefaultDate,
@@ -42,7 +43,7 @@ import {
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B2140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -57,16 +58,59 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 
-const HU_B2140W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
 
+const HU_B2140W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
+  const [webheight4, setWebHeight4] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B2140W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".ButtonContainer4");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5);
+        setMobileHeight4(getDeviceHeight(true) - height4 - height5);
+        setWebHeight((getDeviceHeight(true) - height5) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height5) / 2 - height2);
+        setWebHeight3((getDeviceHeight(true) - height5) / 2 - height3);
+        setWebHeight4((getDeviceHeight(true) - height5) / 2 - height4);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2, webheight3, webheight4]);
   const processApi = useApi();
   const [swiper, setSwiper] = useState<SwiperCore>();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -144,10 +188,6 @@ const HU_B2140W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B2140W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -801,27 +841,6 @@ const HU_B2140W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <ButtonContainer
-            style={{
-              justifyContent: "space-around",
-            }}
-            className="ButtonContainer"
-          >
-            {["연/반차", "외근", "연장", "지각"].map((label, index) => (
-              <Button
-                key={label}
-                onClick={() => {
-                  if (swiper && isMobile) {
-                    swiper.slideTo(index);
-                  }
-                }}
-                style={{ width: "60px" }}
-                themeColor={activeIndex === index ? "primary" : undefined}
-              >
-                {label}
-              </Button>
-            ))}
-          </ButtonContainer>
           <Swiper
             onSwiper={(swiper) => {
               setSwiper(swiper);
@@ -836,8 +855,24 @@ const HU_B2140W: React.FC = () => {
                   width: "100%",
                 }}
               >
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>연차/반차</GridTitle>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      연차/반차
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
@@ -847,7 +882,7 @@ const HU_B2140W: React.FC = () => {
                   fileName="근태모니터링"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height2 }}
+                    style={{ height: mobileheight }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -917,7 +952,31 @@ const HU_B2140W: React.FC = () => {
                 }}
               >
                 <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>외근</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      외근
+                    </GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
@@ -927,7 +986,7 @@ const HU_B2140W: React.FC = () => {
                   fileName="근태모니터링"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height2 }}
+                    style={{ height: mobileheight2 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
@@ -992,8 +1051,32 @@ const HU_B2140W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%" }}>
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>연장</GridTitle>
+                <GridTitleContainer className="ButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      연장
+                    </GridTitle>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(3);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult3.data}
@@ -1003,7 +1086,7 @@ const HU_B2140W: React.FC = () => {
                   fileName="근태모니터링"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height2 }}
+                    style={{ height: mobileheight3 }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,
@@ -1072,8 +1155,22 @@ const HU_B2140W: React.FC = () => {
                   width: "100%",
                 }}
               >
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>지각</GridTitle>
+                <GridTitleContainer className="ButtonContainer4">
+                  <ButtonContainer style={{ justifyContent: "left" }}>
+                    <GridTitle>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      지각
+                    </GridTitle>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult4.data}
@@ -1083,7 +1180,7 @@ const HU_B2140W: React.FC = () => {
                   fileName="근태모니터링"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height - height2 }}
+                    style={{ height: mobileheight4 }}
                     data={process(
                       mainDataResult4.data.map((row) => ({
                         ...row,
@@ -1168,7 +1265,7 @@ const HU_B2140W: React.FC = () => {
           </FilterContainer>
           <GridContainerWrap>
             <GridContainer width="25%">
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>연차/반차</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1179,7 +1276,7 @@ const HU_B2140W: React.FC = () => {
                 fileName="근태모니터링"
               >
                 <Grid
-                  style={{ height: "50vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1242,7 +1339,7 @@ const HU_B2140W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>외근</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1253,7 +1350,7 @@ const HU_B2140W: React.FC = () => {
                 fileName="근태모니터링"
               >
                 <Grid
-                  style={{ height: "50vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -1316,7 +1413,7 @@ const HU_B2140W: React.FC = () => {
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(25% - ${GAP}px)`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle>연장</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1327,7 +1424,7 @@ const HU_B2140W: React.FC = () => {
                 fileName="근태모니터링"
               >
                 <Grid
-                  style={{ height: "50vh" }}
+                  style={{ height: webheight3 }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
@@ -1391,7 +1488,7 @@ const HU_B2140W: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
           <GridContainer>
-            <GridTitleContainer>
+            <GridTitleContainer className="ButtonContainer4">
               <GridTitle>지각</GridTitle>
             </GridTitleContainer>
             <ExcelExport
@@ -1402,7 +1499,7 @@ const HU_B2140W: React.FC = () => {
               fileName="근태모니터링"
             >
               <Grid
-                style={{ height: "28vh" }}
+                style={{ height: webheight4 }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,

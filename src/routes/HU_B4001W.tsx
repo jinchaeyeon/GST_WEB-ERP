@@ -12,7 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -48,6 +48,7 @@ import {
   dateformat2,
   findMessage,
   getBizCom,
+  getDeviceHeight,
   getHeight,
   isValidDate,
 } from "../components/CommonFunction";
@@ -58,12 +59,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState,
-  loginResultState,
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -76,12 +72,54 @@ const DateField = ["startdate"];
 const YearDateField = ["yyyymm"];
 const CenterField = ["insert_time"];
 
+var height = 0;
+var height2 = 0;
+var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
 const HU_B4001W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
-  var height = getHeight(".ButtonContainer");
-  var height2 = getHeight(".ButtonContainer2");
-  var height3 = getHeight(".ButtonContainer3");
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B4001W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".ButtonContainer");
+      height2 = getHeight(".ButtonContainer2");
+      height3 = getHeight(".ButtonContainer3");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height5);
+        setMobileHeight2(getDeviceHeight(true) - height2 - height5);
+        setMobileHeight3(getDeviceHeight(true) - height3 - height5);
+        setWebHeight(
+          getDeviceHeight(true) - height - height2 - height4 - height5
+        );
+        setWebHeight2(
+          getDeviceHeight(true) - height - height3 - height4 - height5
+        );
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight, webheight2]);
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter_use = getter(DATA_ITEM_KEY_USE);
   const idGetter_adj = getter(DATA_ITEM_KEY_ADJ);
@@ -91,7 +129,7 @@ const HU_B4001W: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -105,10 +143,6 @@ const HU_B4001W: React.FC = () => {
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_B4001W", setMessagesData);
-
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B4001W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -781,13 +815,25 @@ const HU_B4001W: React.FC = () => {
           >
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer3">
+                <GridTitleContainer className="ButtonContainer">
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
                   <GridTitle>사원정보</GridTitle>
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
                   style={{
-                    height: deviceHeight - height3
+                    height: mobileheight,
                   }}
                 >
                   <FormBox>
@@ -881,32 +927,34 @@ const HU_B4001W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainerWrap>
-                <GridTitleContainer className="ButtonContainer">
-                  <GridTitle>연차상세</GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                      icon="arrow-left"
-                    >
-                      이전
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(2);
-                        }
-                      }}
-                    >
-                      연차조정
-                    </Button>
-                  </ButtonContainer>
-                  <GridContainer></GridContainer>
-                </GridTitleContainer>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="chevron-left"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="chevron-right"
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                      ></Button>
+                    </ButtonContainer>
+                    <GridTitle>연차상세</GridTitle>
+                  </GridTitleContainer>
                   <ExcelExport
                     data={useDataResult.data}
                     ref={(exporter) => {
@@ -915,7 +963,7 @@ const HU_B4001W: React.FC = () => {
                     fileName="연차사용현황(개인)"
                   >
                     <Grid
-                      style={{ height: deviceHeight - height }}
+                      style={{ height: mobileheight2 }}
                       data={process(
                         useDataResult.data.map((row) => ({
                           ...row,
@@ -980,8 +1028,7 @@ const HU_B4001W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide key={2}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>연차조정</GridTitle>
+                <GridTitleContainer className="ButtonContainer3">
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
@@ -989,11 +1036,12 @@ const HU_B4001W: React.FC = () => {
                           swiper.slideTo(1);
                         }
                       }}
-                      icon="arrow-left"
-                    >
-                      이전
-                    </Button>
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
                   </ButtonContainer>
+                  <GridTitle>연차조정</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
                   data={adjDataResult.data}
@@ -1003,7 +1051,7 @@ const HU_B4001W: React.FC = () => {
                   fileName="연차사용현황(개인)"
                 >
                   <Grid
-                    style={{ height: deviceHeight - height2 }}
+                    style={{ height: mobileheight3 }}
                     data={process(
                       adjDataResult.data.map((row) => ({
                         ...row,
@@ -1083,8 +1131,10 @@ const HU_B4001W: React.FC = () => {
       ) : (
         <>
           <GridContainer>
-            <GridTitle>사원정보</GridTitle>
-            <FormBoxWrap border={true}>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>사원정보</GridTitle>
+            </GridTitleContainer>
+            <FormBoxWrap border={true} className="FormBoxWrap">
               <FormBox>
                 <tbody>
                   <tr>
@@ -1163,10 +1213,9 @@ const HU_B4001W: React.FC = () => {
               </FormBox>
             </FormBoxWrap>
           </GridContainer>
-
           <GridContainerWrap>
             <GridContainer width={`20%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer2">
                 <GridTitle style={{ height: "10%" }}>연차상세</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1177,7 +1226,7 @@ const HU_B4001W: React.FC = () => {
                 fileName="연차사용현황(개인)"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: webheight }}
                   data={process(
                     useDataResult.data.map((row) => ({
                       ...row,
@@ -1238,9 +1287,8 @@ const HU_B4001W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-
             <GridContainer width={`80%`}>
-              <GridTitleContainer>
+              <GridTitleContainer className="ButtonContainer3">
                 <GridTitle style={{ height: "10%" }}>연차조정</GridTitle>
               </GridTitleContainer>
               <ExcelExport
@@ -1251,7 +1299,7 @@ const HU_B4001W: React.FC = () => {
                 fileName="연차사용현황(개인)"
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: webheight2 }}
                   data={process(
                     adjDataResult.data.map((row) => ({
                       ...row,

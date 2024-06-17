@@ -12,14 +12,14 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
@@ -33,7 +33,9 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   getBizCom,
+  getDeviceHeight,
   getGridItemChangedData,
+  getHeight,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -46,7 +48,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B1040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -130,14 +132,39 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
-const HU_B1040W: React.FC = () => {
-  const [deviceHeight, setDeviceHeight] = useRecoilState(heightstate);
-  const [isMobile, setIsMobile] = useRecoilState(isMobileState);
+var height = 0;
 
+const HU_B1040W: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("HU_B1040W", setCustomOptionData);
+
+  useLayoutEffect(() => {
+    if (customOptionData !== null) {
+      height = getHeight(".TitleContainer");
+
+      const handleWindowResize = () => {
+        let deviceWidth = document.documentElement.clientWidth;
+        setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height);
+        setWebHeight(getDeviceHeight(true) - height);
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [customOptionData, webheight]);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -146,9 +173,6 @@ const HU_B1040W: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B1040W", setCustomOptionData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -526,7 +550,7 @@ const HU_B1040W: React.FC = () => {
         >
           <Grid
             style={{
-              height: isMobile ? deviceHeight : "83vh",
+              height: isMobile ? mobileheight : webheight,
             }}
             data={process(
               mainDataResult.data.map((row) => ({
