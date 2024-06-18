@@ -439,7 +439,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
 
   const onDelete = async () => {
     if (!permissions.save) return;
-    
+
     if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
       return false;
     }
@@ -487,11 +487,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
       style={{ position: "relative" }}
     >
       {isInEdit ? (
-        <Input
-          value={value}
-          onChange={handleChange}
-          type={"password"}
-        ></Input>
+        <Input value={value} onChange={handleChange} type={"password"}></Input>
       ) : (
         "*********"
       )}
@@ -675,7 +671,7 @@ const SY_A0120: React.FC = () => {
         user_category: defaultOption.find(
           (item: any) => item.id == "user_category"
         )?.valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -1319,7 +1315,9 @@ const SY_A0120: React.FC = () => {
             "@p_apply_start_date":
               apply_start_date == "99991231" ? "" : apply_start_date,
             "@p_apply_end_date":
-              apply_end_date == "99991231" ? "99991231" : apply_end_date,
+              apply_end_date == "99991231" || apply_end_date == ""
+                ? "99991231"
+                : apply_end_date,
             "@p_hold_check_yn":
               hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
@@ -1387,7 +1385,6 @@ const SY_A0120: React.FC = () => {
     }
   };
 
- 
   return (
     <>
       <TitleContainer className="TitleContainer">
