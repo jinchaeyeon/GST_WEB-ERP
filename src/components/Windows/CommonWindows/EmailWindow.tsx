@@ -13,9 +13,10 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import { TEditorHandle } from "../../../store/types";
+import { TEditorHandle, TPermissions } from "../../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../../CommonFunction";
@@ -30,7 +31,6 @@ type TKendoWindow = {
 };
 var height = 0;
 var height2 = 0;
-var height3 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -38,41 +38,51 @@ const KendoWindow = ({
   quorev,
   modal = false,
 }: TKendoWindow) => {
-  const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
-
-  const [mobileheight, setMobileHeight] = useState(0);
-  const [webheight, setWebHeight] = useState(0);
-
-  useLayoutEffect(() => {
-    height = getHeight(".k-window-titlebar");
-    height2 = getHeight(".FormBoxWrap"); //FormBox부분
-    height3 = getHeight(".BottomContainer"); //하단 버튼부분
-
-    setMobileHeight(
-      getWindowDeviceHeight(false, deviceHeight) - height - height3
-    );
-    setWebHeight(
-      getWindowDeviceHeight(false, position.height) - height - height2 - height3
-    );
-  }, []);
-
-  const onChangePostion = (position: any) => {
-    setPosition(position);
-    setWebHeight(
-      getWindowDeviceHeight(false, position.height) - height - height2 - height3
-    );
-  };
-
-  const processApi = useApi();
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 780) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 780,
   });
+
+  const setLoading = useSetRecoilState(isLoading);
+
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [webheight, setWebHeight] = useState(0);
+
+  let form = 200;
+
+  useLayoutEffect(() => {
+    height = getHeight(".k-window-titlebar");
+    height2 = getHeight(".BottomContainer"); //하단 버튼부분
+
+    setMobileHeight(
+      getWindowDeviceHeight(false, deviceHeight) - height - form - height2
+    );
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - form - height2
+    );
+  }, [permissions, position]);
+
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+    setWebHeight(
+      getWindowDeviceHeight(false, position.height) - height - form - height2
+    );
+  };
+
+  const processApi = useApi();
+
   const handleChange = (newValue: MuiChipsInputChip[]) => {
     setFilters((prev) => ({
       ...prev,
@@ -100,6 +110,7 @@ const KendoWindow = ({
   const [files, setFiles] = useState<FileList | null>();
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const onSend = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -172,102 +183,101 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <GridContainer style={{ overflow: "auto" }}>
-        <FormBoxWrap border={true} className="FormBoxWrap">
-          <FormBox>
-            <tbody>
-              <tr>
-                <th style={{ width: isMobile ? "" : "10%" }}>보내는 사람</th>
-                <td>
-                  <Input
-                    name="sender_name"
-                    type="text"
-                    value={"no-reply@gsti.co.kr"}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th style={{ width: isMobile ? "" : "10%" }}>받는 사람</th>
-                <td>
-                  <MuiChipsInput
-                    value={filters.recieveuser}
-                    onChange={handleChange}
-                    size="small"
-                    placeholder="이메일 입력 후 Enter를 눌러주세요"
-                    hideClearAll
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th style={{ width: isMobile ? "" : "10%" }}>제목</th>
-                <td>
-                  <Input
-                    name="title"
-                    type="text"
-                    value={filters.title}
-                    onChange={InputChange}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>첨부파일</th>
-                <td>
-                  <Button
-                    onClick={upload}
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                    icon={"upload"}
-                    style={{ width: "100%" }}
-                  >
-                    {placeholder}
-                    <input
-                      id="uploadAttachment"
-                      style={{ display: "none" }}
-                      type="file"
-                      accept="*"
-                      multiple
-                      ref={excelInput}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setFiles(event.target.files);
-                        if (event.target.files != null) {
-                          if (event.target.files.length > 0) {
-                            setPlaceholder(
-                              "현재 파일 : " +
-                                (event.target.files.length > 1
-                                  ? event.target.files[0].name +
-                                    "외 " +
-                                    (event.target.files.length - 1) +
-                                    "건"
-                                  : event.target.files[0].name)
-                            );
-                          } else {
-                            setPlaceholder("파일 선택");
-                          }
+      <FormBoxWrap border={true}>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th style={{ width: isMobile ? "" : "10%" }}>보내는 사람</th>
+              <td>
+                <Input
+                  name="sender_name"
+                  type="text"
+                  value={"no-reply@gsti.co.kr"}
+                  className="readonly"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th style={{ width: isMobile ? "" : "10%" }}>받는 사람</th>
+              <td>
+                <MuiChipsInput
+                  value={filters.recieveuser}
+                  onChange={handleChange}
+                  size="small"
+                  placeholder="이메일 입력 후 Enter를 눌러주세요"
+                  hideClearAll
+                />
+              </td>
+            </tr>
+            <tr>
+              <th style={{ width: isMobile ? "" : "10%" }}>제목</th>
+              <td>
+                <Input
+                  name="title"
+                  type="text"
+                  value={filters.title}
+                  onChange={InputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>첨부파일</th>
+              <td>
+                <Button
+                  onClick={upload}
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  icon={"upload"}
+                  style={{ width: "100%" }}
+                  disabled={permissions.save ? false : true}
+                >
+                  {placeholder}
+                  <input
+                    id="uploadAttachment"
+                    style={{ display: "none" }}
+                    type="file"
+                    accept="*"
+                    multiple
+                    ref={excelInput}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setFiles(event.target.files);
+                      if (event.target.files != null) {
+                        if (event.target.files.length > 0) {
+                          setPlaceholder(
+                            "현재 파일 : " +
+                              (event.target.files.length > 1
+                                ? event.target.files[0].name +
+                                  "외 " +
+                                  (event.target.files.length - 1) +
+                                  "건"
+                                : event.target.files[0].name)
+                          );
+                        } else {
+                          setPlaceholder("파일 선택");
                         }
-                      }}
-                    />
-                  </Button>
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <GridContainer
-          style={{
-            height: isMobile ? mobileheight : webheight,
-          }}
-        >
-          <RichEditor id="docEditor" ref={docEditorRef} />
-        </GridContainer>
+                      }
+                    }}
+                  />
+                </Button>
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
+      <GridContainer
+        style={{
+          height: isMobile ? mobileheight : webheight,
+        }}
+      >
+        <RichEditor id="docEditor" ref={docEditorRef} />
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onSend}>
-            전송
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={onSend}>
+              전송
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

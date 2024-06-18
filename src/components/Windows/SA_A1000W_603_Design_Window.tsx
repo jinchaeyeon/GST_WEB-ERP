@@ -40,13 +40,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   dateformat,
   getBizCom,
   getGridItemChangedData,
@@ -460,6 +461,13 @@ const CopyWindow = ({
   save = false,
   modal = false,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -676,7 +684,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -990,10 +998,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (bizComponentData !== null) {
+    if (permissions.view && bizComponentData !== null) {
       fetchMainGrid();
     }
-  }, [bizComponentData]);
+  }, [permissions, bizComponentData]);
 
   const [Information, setInformation] = useState({
     orgdiv: "",
@@ -1422,16 +1430,8 @@ const CopyWindow = ({
     }
   };
 
-  const ComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const onSave = async () => {
+    if (!permissions.save) return;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       seq_s: [],
@@ -4684,7 +4684,13 @@ const CopyWindow = ({
                         onClick={onAddClick}
                         icon="plus"
                         title="행 추가"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         themeColor={"primary"}
@@ -4692,7 +4698,13 @@ const CopyWindow = ({
                         onClick={onDeleteClick}
                         icon="minus"
                         title="행 삭제"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         onClick={() => {
@@ -4828,7 +4840,13 @@ const CopyWindow = ({
                         onClick={onAddClick2}
                         icon="plus"
                         title="행 추가"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         themeColor={"primary"}
@@ -4836,7 +4854,13 @@ const CopyWindow = ({
                         onClick={onDeleteClick2}
                         icon="minus"
                         title="행 삭제"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         onClick={() => {
@@ -4945,7 +4969,13 @@ const CopyWindow = ({
                         onClick={onAddClick3}
                         icon="plus"
                         title="행 추가"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         themeColor={"primary"}
@@ -4953,7 +4983,13 @@ const CopyWindow = ({
                         onClick={onDeleteClick3}
                         icon="minus"
                         title="행 삭제"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                     </div>
                   </ButtonContainer>
@@ -6174,7 +6210,13 @@ const CopyWindow = ({
                         onClick={onAddClick}
                         icon="plus"
                         title="행 추가"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                       <Button
                         themeColor={"primary"}
@@ -6182,7 +6224,13 @@ const CopyWindow = ({
                         onClick={onDeleteClick}
                         icon="minus"
                         title="행 삭제"
-                        disabled={save == true ? false : true}
+                        disabled={
+                          permissions.save
+                            ? save == true
+                              ? false
+                              : true
+                            : true
+                        }
                       />
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -6286,7 +6334,9 @@ const CopyWindow = ({
                       onClick={onAddClick2}
                       icon="plus"
                       title="행 추가"
-                      disabled={save == true ? false : true}
+                      disabled={
+                        permissions.save ? (save == true ? false : true) : true
+                      }
                     />
                     <Button
                       themeColor={"primary"}
@@ -6294,7 +6344,9 @@ const CopyWindow = ({
                       onClick={onDeleteClick2}
                       icon="minus"
                       title="행 삭제"
-                      disabled={save == true ? false : true}
+                      disabled={
+                        permissions.save ? (save == true ? false : true) : true
+                      }
                     />
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -6377,7 +6429,9 @@ const CopyWindow = ({
                       onClick={onAddClick3}
                       icon="plus"
                       title="행 추가"
-                      disabled={save == true ? false : true}
+                      disabled={
+                        permissions.save ? (save == true ? false : true) : true
+                      }
                     />
                     <Button
                       themeColor={"primary"}
@@ -6385,7 +6439,9 @@ const CopyWindow = ({
                       onClick={onDeleteClick3}
                       icon="minus"
                       title="행 삭제"
-                      disabled={save == true ? false : true}
+                      disabled={
+                        permissions.save ? (save == true ? false : true) : true
+                      }
                     />
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -6446,7 +6502,7 @@ const CopyWindow = ({
         )}
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            {save == true ? (
+            {save == true && permissions.save ? (
               <Button themeColor={"primary"} onClick={onSave}>
                 저장
               </Button>

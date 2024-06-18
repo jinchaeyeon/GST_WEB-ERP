@@ -1199,6 +1199,7 @@ const SA_A1000W_603: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -1618,6 +1619,7 @@ const SA_A1000W_603: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
   const onPrint = () => {
+    if (!permissions.print) return;
     if (mainDataResult2.total > 0) {
       setPrintWindowVisible(true);
     } else {
@@ -1703,7 +1705,7 @@ const SA_A1000W_603: React.FC = () => {
     quorev: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
@@ -1711,7 +1713,7 @@ const SA_A1000W_603: React.FC = () => {
     quonum: "",
     quorev: 0,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
@@ -1719,7 +1721,7 @@ const SA_A1000W_603: React.FC = () => {
     quonum: "",
     quorev: 0,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters5, setFilters5] = useState({
     pgSize: PAGE_SIZE,
@@ -1727,7 +1729,7 @@ const SA_A1000W_603: React.FC = () => {
     quonum: "",
     quorev: 0,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters6, setFilters6] = useState({
     pgSize: PAGE_SIZE,
@@ -1735,7 +1737,7 @@ const SA_A1000W_603: React.FC = () => {
     quonum: "",
     quorev: 0,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters7, setFilters7] = useState({
     pgSize: PAGE_SIZE,
@@ -1743,7 +1745,7 @@ const SA_A1000W_603: React.FC = () => {
     quorev: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters8, setFilters8] = useState({
     pgSize: PAGE_SIZE,
@@ -1752,7 +1754,7 @@ const SA_A1000W_603: React.FC = () => {
     quoseq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     custcd: "",
@@ -1867,7 +1869,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2021,7 +2023,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2266,7 +2268,7 @@ const SA_A1000W_603: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2413,7 +2415,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2484,7 +2486,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters5: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2555,7 +2557,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters6: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2634,7 +2636,7 @@ const SA_A1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async (filters7: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2714,7 +2716,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const fetchMainGrid8 = async (filters8: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2822,16 +2824,26 @@ const SA_A1000W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, customOptionData]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
 
@@ -2843,10 +2855,15 @@ const SA_A1000W_603: React.FC = () => {
 
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
 
@@ -2858,11 +2875,16 @@ const SA_A1000W_603: React.FC = () => {
 
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -2872,11 +2894,16 @@ const SA_A1000W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters5.isSearch && permissions !== null) {
+    if (
+      filters5.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({
@@ -2886,11 +2913,16 @@ const SA_A1000W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters5]);
+  }, [filters5, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters6.isSearch && permissions !== null) {
+    if (
+      filters6.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters6);
       setFilters6((prev) => ({
@@ -2900,10 +2932,15 @@ const SA_A1000W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters6]);
+  }, [filters6, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (filters7.isSearch) {
+    if (
+      filters7.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters7);
 
@@ -2915,10 +2952,15 @@ const SA_A1000W_603: React.FC = () => {
 
       fetchMainGrid7(deepCopiedFilters);
     }
-  }, [filters7]);
+  }, [filters7, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (filters8.isSearch && permissions !== null) {
+    if (
+      filters8.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters8);
       setFilters8((prev) => ({
@@ -2928,7 +2970,7 @@ const SA_A1000W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid8(deepCopiedFilters);
     }
-  }, [filters8]);
+  }, [filters8, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -3640,6 +3682,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -3981,6 +4024,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4078,10 +4122,10 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
@@ -4162,6 +4206,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -4219,6 +4264,7 @@ const SA_A1000W_603: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -4242,8 +4288,8 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const onLinkChange = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
@@ -4377,6 +4423,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const onRevClick = () => {
+    if (!permissions.save) return;
     if (mainDataResult2.total > 0) {
       setRevWindowVisible(true);
     } else {
@@ -4385,6 +4432,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const onPlanClick = () => {
+    if (!permissions.save) return;
     if (mainDataResult2.total > 0) {
       if (Information.quosts == "2") {
         alert("이미 진행단계가 [계획요청] 상태입니다.");
@@ -4403,6 +4451,7 @@ const SA_A1000W_603: React.FC = () => {
   };
 
   const onPlanDeleteClick = () => {
+    if (!permissions.save) return;
     if (mainDataResult2.total > 0) {
       if (Information.quosts != "2") {
         alert("진행단계가 [계획요청] 상태만 취소 가능합니다.");
@@ -4441,7 +4490,10 @@ const SA_A1000W_603: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="요약정보">
+        <TabStripTab
+          title="요약정보"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -4636,6 +4688,7 @@ const SA_A1000W_603: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -4644,6 +4697,7 @@ const SA_A1000W_603: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -4749,7 +4803,13 @@ const SA_A1000W_603: React.FC = () => {
         </TabStripTab>
         <TabStripTab
           title="시험의뢰서"
-          disabled={mainDataResult.total == 0 && worktype == "U" ? true : false}
+          disabled={
+            permissions.view
+              ? mainDataResult.total == 0 && worktype == "U"
+                ? true
+                : false
+              : true
+          }
         >
           {isMobile ? (
             <>
@@ -4760,7 +4820,13 @@ const SA_A1000W_603: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onPrint}
                     icon="print"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.print
+                        ? worktype == "N"
+                          ? true
+                          : false
+                        : true
+                    }
                   >
                     시험의뢰서 출력
                   </Button>
@@ -4768,7 +4834,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onRevClick}
                     themeColor={"primary"}
                     icon="track-changes"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     리비전
                   </Button>
@@ -4776,7 +4844,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onPlanClick}
                     themeColor={"primary"}
                     icon="track-changes-accept"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     계획요청
                   </Button>
@@ -4784,7 +4854,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onPlanDeleteClick}
                     themeColor={"primary"}
                     icon="track-changes-reject"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     계획요청취소
                   </Button>
@@ -4793,6 +4865,7 @@ const SA_A1000W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -5918,6 +5991,7 @@ const SA_A1000W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="palette"
                             onClick={onDesignWndClick}
+                            disabled={permissions.view ? false : true}
                           >
                             디자인상세
                           </Button>
@@ -5926,6 +6000,7 @@ const SA_A1000W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onDeleteClick}
@@ -5933,6 +6008,7 @@ const SA_A1000W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -6066,7 +6142,13 @@ const SA_A1000W_603: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onPrint}
                     icon="print"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.print
+                        ? worktype == "N"
+                          ? true
+                          : false
+                        : true
+                    }
                   >
                     시험의뢰서 출력
                   </Button>
@@ -6074,7 +6156,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onRevClick}
                     themeColor={"primary"}
                     icon="track-changes"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     리비전
                   </Button>
@@ -6082,7 +6166,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onPlanClick}
                     themeColor={"primary"}
                     icon="track-changes-accept"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     계획요청
                   </Button>
@@ -6090,7 +6176,9 @@ const SA_A1000W_603: React.FC = () => {
                     onClick={onPlanDeleteClick}
                     themeColor={"primary"}
                     icon="track-changes-reject"
-                    disabled={worktype == "N" ? true : false}
+                    disabled={
+                      permissions.save ? (worktype == "N" ? true : false) : true
+                    }
                   >
                     계획요청취소
                   </Button>
@@ -6099,6 +6187,7 @@ const SA_A1000W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -7105,6 +7194,7 @@ const SA_A1000W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="palette"
                           onClick={onDesignWndClick}
+                          disabled={permissions.view ? false : true}
                         >
                           디자인상세
                         </Button>
@@ -7113,6 +7203,7 @@ const SA_A1000W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -7120,6 +7211,7 @@ const SA_A1000W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -7243,7 +7335,9 @@ const SA_A1000W_603: React.FC = () => {
         </TabStripTab>
         <TabStripTab
           title="상세이력"
-          disabled={mainDataResult.total == 0 ? true : false}
+          disabled={
+            permissions.view ? (mainDataResult.total == 0 ? true : false) : true
+          }
         >
           {isMobile ? (
             <Swiper
@@ -8849,7 +8943,9 @@ const SA_A1000W_603: React.FC = () => {
         </TabStripTab>
         <TabStripTab
           title="시험진행관리"
-          disabled={mainDataResult.total == 0 ? true : false}
+          disabled={
+            permissions.view ? (mainDataResult.total == 0 ? true : false) : true
+          }
         >
           {isMobile ? (
             <Swiper
@@ -9342,6 +9438,11 @@ const SA_A1000W_603: React.FC = () => {
           setData={getAttachmentsData}
           para={Information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>

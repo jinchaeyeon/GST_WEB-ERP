@@ -78,10 +78,7 @@ import SA_A1000W_603_Design4_Window from "../components/Windows/SA_A1000W_603_De
 import SA_A1000W_603_Design_Window from "../components/Windows/SA_A1000W_603_Design_Window";
 import SA_A1001W_603_Window from "../components/Windows/SA_A1001W_603_Window";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -459,7 +456,7 @@ const SA_A1001W_603: React.FC = () => {
     quorev: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -569,7 +566,7 @@ const SA_A1001W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -736,7 +733,7 @@ const SA_A1001W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -816,23 +813,33 @@ const SA_A1001W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, customOptionData, bizComponentData]);
 
   let _export: any;
   let _export2: any;
@@ -917,27 +924,6 @@ const SA_A1001W_603: React.FC = () => {
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
         건
-      </td>
-    );
-  };
-
-  const editNumberFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;
-    mainDataResult2.data.forEach((item) =>
-      props.field !== undefined
-        ? (sum += Math.ceil(
-            parseFloat(
-              item[props.field] == "" || item[props.field] == undefined
-                ? 0
-                : item[props.field]
-            )
-          ))
-        : 0
-    );
-
-    return (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {numberWithCommas(Math.ceil(sum))}
       </td>
     );
   };
@@ -1051,6 +1037,7 @@ const SA_A1001W_603: React.FC = () => {
   };
 
   const onPrint = () => {
+    if (!permissions.print) return;
     if (!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
       return false;
     }
@@ -1100,6 +1087,7 @@ const SA_A1001W_603: React.FC = () => {
   };
 
   const onCal = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
     if (dataItem.length == 0) {
@@ -1175,6 +1163,8 @@ const SA_A1001W_603: React.FC = () => {
   };
 
   const onSALTRN = () => {
+    if (!permissions.save) return;
+
     if (!window.confirm("계약 확정하시겠습니까?")) {
       return false;
     }
@@ -1267,6 +1257,8 @@ const SA_A1001W_603: React.FC = () => {
   };
 
   const onSave = () => {
+    if (!permissions.save) return;
+
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1382,12 +1374,23 @@ const SA_A1001W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (
+      ParaData.workType != "" &&
+      permissions.save &&
+      ParaData.workType != "PRINT"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+
+    if (ParaData.workType == "PRINT" && permissions.print) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (ParaData.workType != "PRINT" && !permissions.save) return;
+    if (ParaData.workType == "PRINT" && !permissions.print) return;
+
     let data: any;
     setLoading(true);
     try {
@@ -1620,7 +1623,10 @@ const SA_A1001W_603: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="견적(조회)">
+        <TabStripTab
+          title="견적(조회)"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox
               onKeyPress={(e) => handleKeyPressSearch(e, search)}
@@ -1885,18 +1891,26 @@ const SA_A1001W_603: React.FC = () => {
         </TabStripTab>
         <TabStripTab
           title="견적(처리)"
-          disabled={mainDataResult.total == 0 ? true : false}
+          disabled={
+            permissions.view ? (mainDataResult.total == 0 ? true : false) : true
+          }
         >
           {isMobile ? (
             <>
               <ButtonContainer className="ButtonContainer2">
-                <Button themeColor={"primary"} onClick={onPrint} icon="print">
+                <Button
+                  themeColor={"primary"}
+                  onClick={onPrint}
+                  icon="print"
+                  disabled={permissions.print ? false : true}
+                >
                   견적서 출력
                 </Button>
                 <Button
                   themeColor={"primary"}
                   onClick={onSendEmail}
                   icon="email"
+                  disabled={permissions.save ? false : true}
                 >
                   이메일 전송
                 </Button>
@@ -1905,6 +1919,7 @@ const SA_A1001W_603: React.FC = () => {
                   themeColor={"primary"}
                   icon="palette"
                   onClick={onDesignWndClick}
+                  disabled={permissions.view ? false : true}
                 >
                   디자인상세
                 </Button>
@@ -1913,6 +1928,7 @@ const SA_A1001W_603: React.FC = () => {
                   fillMode="outline"
                   onClick={onCal}
                   icon="calculator"
+                  disabled={permissions.save ? false : true}
                 >
                   견적 산출
                 </Button>
@@ -1921,6 +1937,7 @@ const SA_A1001W_603: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>
@@ -1929,6 +1946,7 @@ const SA_A1001W_603: React.FC = () => {
                   onClick={onSALTRN}
                   fillMode="outline"
                   icon="dictionary-add"
+                  disabled={permissions.save ? false : true}
                 >
                   계약 전환
                 </Button>
@@ -2208,13 +2226,19 @@ const SA_A1001W_603: React.FC = () => {
               <GridTitleContainer className="ButtonContainer2">
                 <GridTitle>상세정보</GridTitle>
                 <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={onPrint} icon="print">
+                  <Button
+                    themeColor={"primary"}
+                    onClick={onPrint}
+                    icon="print"
+                    disabled={permissions.print ? false : true}
+                  >
                     견적서 출력
                   </Button>
                   <Button
                     themeColor={"primary"}
                     onClick={onSendEmail}
                     icon="email"
+                    disabled={permissions.save ? false : true}
                   >
                     이메일 전송
                   </Button>
@@ -2223,6 +2247,7 @@ const SA_A1001W_603: React.FC = () => {
                     themeColor={"primary"}
                     icon="palette"
                     onClick={onDesignWndClick}
+                    disabled={permissions.view ? false : true}
                   >
                     디자인상세
                   </Button>
@@ -2231,6 +2256,7 @@ const SA_A1001W_603: React.FC = () => {
                     fillMode="outline"
                     onClick={onCal}
                     icon="calculator"
+                    disabled={permissions.save ? false : true}
                   >
                     견적 산출
                   </Button>
@@ -2239,6 +2265,7 @@ const SA_A1001W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2247,6 +2274,7 @@ const SA_A1001W_603: React.FC = () => {
                     onClick={onSALTRN}
                     fillMode="outline"
                     icon="dictionary-add"
+                    disabled={permissions.save ? false : true}
                   >
                     계약 전환
                   </Button>

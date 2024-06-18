@@ -291,7 +291,7 @@ const SA_A1100W_603: React.FC = () => {
     extra_field2: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     query: false,
     pgSize: PAGE_SIZE,
   });
@@ -304,7 +304,7 @@ const SA_A1100W_603: React.FC = () => {
     groupgb: "A",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -315,7 +315,7 @@ const SA_A1100W_603: React.FC = () => {
     contractno: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -326,7 +326,7 @@ const SA_A1100W_603: React.FC = () => {
     contractno: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
   const [Information, setInformation] = useState<{ [name: string]: any }>({
@@ -432,7 +432,6 @@ const SA_A1100W_603: React.FC = () => {
       ...prev,
       workType: "DETAIL",
       contractno: selectedRowData.contractno,
-      groupgb: "A",
       pgNum: 1,
       isSearch: true,
     }));
@@ -725,46 +724,66 @@ const SA_A1100W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subFilters.isSearch && permissions !== null) {
+    if (
+      subFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subFilters);
 
       setSubFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subFilters, permissions]);
+  }, [subFilters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subFilters2.isSearch && permissions !== null) {
+    if (
+      subFilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subFilters2);
 
       setSubFilters2((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subFilters2, permissions]);
+  }, [subFilters2, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subFilters6.isSearch && permissions !== null) {
+    if (
+      subFilters6.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subFilters6);
 
       setSubFilters6((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchSubGrid6(deepCopiedFilters);
     }
-  }, [subFilters6, permissions]);
+  }, [subFilters6, permissions, customOptionData, bizComponentData]);
 
   let gridRef: any = useRef(null);
 
@@ -793,6 +812,7 @@ const SA_A1100W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -879,7 +899,6 @@ const SA_A1100W_603: React.FC = () => {
               ...prev,
               workType: "DETAIL",
               contractno: selectedRow.contractno,
-              groupgb: "A",
               pgNum: 1,
               isSearch: true,
             }));
@@ -942,6 +961,7 @@ const SA_A1100W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid = async (subFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1072,6 +1092,7 @@ const SA_A1100W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid2 = async (subFilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1135,6 +1156,7 @@ const SA_A1100W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid6 = async (subFilters6: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -2013,6 +2035,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2104,6 +2127,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const onSaveClick6 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult6.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2189,12 +2213,22 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+
+    if (
+      ParaData.workType != "D" &&
+      ParaData.workType != "" &&
+      permissions.save
+    ) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (ParaData.workType != "D" && !permissions.save) return;
+    if (ParaData.workType == "D" && !permissions.delete) return;
     let data: any;
 
     setLoading(true);
@@ -2231,7 +2265,6 @@ const SA_A1100W_603: React.FC = () => {
         setSubFilters((prev) => ({
           ...prev,
           workType: "DETAIL",
-          groupgb: "A",
           pgNum: 1,
           isSearch: true,
         }));
@@ -2276,6 +2309,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = mainDataResult3.data.filter(
       (item: any) => {
         return (
@@ -2371,6 +2405,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     setLoading(true);
@@ -2384,7 +2419,6 @@ const SA_A1100W_603: React.FC = () => {
       setSubFilters((prev) => ({
         ...prev,
         workType: "DETAIL",
-        groupgb: "A",
         pgNum: 1,
         isSearch: true,
       }));
@@ -2406,8 +2440,9 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved.work_type !== "") fetchTodoGridSaved2();
-  }, [paraDataSaved]);
+    if (paraDataSaved.work_type !== "" && permissions.save)
+      fetchTodoGridSaved2();
+  }, [paraDataSaved, permissions]);
 
   const onCopyClick = () => {
     mainDataResult2.data.map((item) => {
@@ -2538,6 +2573,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const onDeleteClick3 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm("계약 삭제 하시겠습니까?")) {
       return false;
     }
@@ -2580,6 +2616,7 @@ const SA_A1100W_603: React.FC = () => {
   };
 
   const onChangeStatus = () => {
+    if (!permissions.save) return;
     if (!window.confirm("계약 완료처리를 하시겠습니까?")) {
       return false;
     }
@@ -2612,7 +2649,10 @@ const SA_A1100W_603: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="요약정보">
+        <TabStripTab
+          title="요약정보"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2828,7 +2868,10 @@ const SA_A1100W_603: React.FC = () => {
           </GridContainer>
         </TabStripTab>
 
-        <TabStripTab title="상세정보" disabled={checked == true ? false : true}>
+        <TabStripTab
+          title="상세정보"
+          disabled={permissions.view ? (checked == true ? false : true) : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2935,21 +2978,12 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>계약명 </th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <Input
-                                name="project"
-                                type="text"
-                                value={Information.project}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="project"
-                                type="text"
-                                value={Information.project}
-                                onChange={InfoInputChange}
-                              />
-                            )}
+                            <Input
+                              name="project"
+                              type="text"
+                              value={Information.project}
+                              onChange={InfoInputChange}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -2966,54 +3000,33 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>계약일자</th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <DatePicker
-                                name="cotracdt"
-                                value={Information.cotracdt}
-                                format="yyyy-MM-dd"
-                                className="readonly"
-                                disabled={true}
-                                placeholder=""
-                              />
-                            ) : (
-                              <DatePicker
-                                name="cotracdt"
-                                value={Information.cotracdt}
-                                format="yyyy-MM-dd"
-                                placeholder=""
-                                onChange={InfoInputChange}
-                              />
-                            )}
+                            <DatePicker
+                              name="cotracdt"
+                              value={Information.cotracdt}
+                              format="yyyy-MM-dd"
+                              placeholder=""
+                              onChange={InfoInputChange}
+                            />
                           </td>
                         </tr>
                         <tr>
                           <th>계약기간</th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <CommonDateRangePicker
-                                value={{
-                                  start: Information.strdt,
-                                  end: Information.enddt,
-                                }}
-                                disabled={true}
-                              />
-                            ) : (
-                              <CommonDateRangePicker
-                                value={{
-                                  start: Information.strdt,
-                                  end: Information.enddt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) =>
-                                  setInformation((prev) => ({
-                                    ...prev,
-                                    strdt: e.value.start,
-                                    enddt: e.value.end,
-                                  }))
-                                }
-                              />
-                            )}
+                            <CommonDateRangePicker
+                              value={{
+                                start: Information.strdt,
+                                end: Information.enddt,
+                              }}
+                              onChange={(e: {
+                                value: { start: any; end: any };
+                              }) =>
+                                setInformation((prev) => ({
+                                  ...prev,
+                                  strdt: e.value.start,
+                                  enddt: e.value.end,
+                                }))
+                              }
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3065,50 +3078,26 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>화폐단위</th>
                           <td>
-                            {subFilters.groupgb == "B"
-                              ? customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="amtunit"
-                                    type="new"
-                                    value={Information.amtunit}
-                                    customOptionData={customOptionData}
-                                    changeData={ComboBoxChange}
-                                    className="readonly"
-                                    disabled={true}
-                                  />
-                                )
-                              : customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="amtunit"
-                                    type="new"
-                                    value={Information.amtunit}
-                                    customOptionData={customOptionData}
-                                    changeData={ComboBoxChange}
-                                  />
-                                )}
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="amtunit"
+                                type="new"
+                                value={Information.amtunit}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
                           </td>
                         </tr>
                         <tr>
                           <th>환율 </th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <Input
-                                name="wonchgrat"
-                                type="text"
-                                value={numberWithCommas3(Information.wonchgrat)}
-                                style={{
-                                  textAlign: "end",
-                                }}
-                                className="readonly"
-                              />
-                            ) : (
-                              <NumericTextBox
-                                name="wonchgrat"
-                                value={Information.wonchgrat}
-                                format="n0"
-                                onChange={InfoInputChange2}
-                              />
-                            )}
+                            <NumericTextBox
+                              name="wonchgrat"
+                              value={Information.wonchgrat}
+                              format="n0"
+                              onChange={InfoInputChange2}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3120,18 +3109,14 @@ const SA_A1100W_603: React.FC = () => {
                               value={Information.files}
                               className="readonly"
                             />
-                            {subFilters.groupgb != "B" ? (
-                              <ButtonInInput>
-                                <Button
-                                  type={"button"}
-                                  onClick={onAttachmentsWndClick}
-                                  icon="more-horizontal"
-                                  fillMode="flat"
-                                />
-                              </ButtonInInput>
-                            ) : (
-                              ""
-                            )}
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
                           </td>
                         </tr>
                       </tbody>
@@ -3178,7 +3163,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         fillMode="outline"
                         onClick={onDeleteClick3}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.delete ? false : true}
                       >
                         계약삭제
                       </Button>
@@ -3186,7 +3171,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         fillMode="outline"
                         onClick={onCopyClick}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         계약변경
                       </Button>
@@ -3194,7 +3179,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onDeleteClick2}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         변경계약 삭제
                       </Button>
@@ -3202,7 +3187,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onSaveClick}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -3210,7 +3195,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onChangeStatus}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         계약완료
                       </Button>
@@ -3259,17 +3244,9 @@ const SA_A1100W_603: React.FC = () => {
                       reorderable={true}
                       //컬럼너비조정
                       resizable={true}
-                      onItemChange={
-                        subFilters.groupgb == "B"
-                          ? undefined
-                          : ongrdDetailItemChange
-                      }
-                      cellRender={
-                        subFilters.groupgb == "B" ? undefined : customCellRender
-                      }
-                      rowRender={
-                        subFilters.groupgb == "B" ? undefined : customRowRender
-                      }
+                      onItemChange={ongrdDetailItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
                       editField={EDIT_FIELD}
                     >
                       <GridColumn field="rowstatus" title=" " width="50px" />
@@ -3346,6 +3323,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick6}
@@ -3353,6 +3331,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick6}
@@ -3360,6 +3339,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3474,6 +3454,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick}
@@ -3481,6 +3462,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick3}
@@ -3488,6 +3470,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3648,21 +3631,12 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>계약명 </th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <Input
-                                name="project"
-                                type="text"
-                                value={Information.project}
-                                className="readonly"
-                              />
-                            ) : (
-                              <Input
-                                name="project"
-                                type="text"
-                                value={Information.project}
-                                onChange={InfoInputChange}
-                              />
-                            )}
+                            <Input
+                              name="project"
+                              type="text"
+                              value={Information.project}
+                              onChange={InfoInputChange}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3679,55 +3653,34 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>계약일자</th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <DatePicker
-                                name="cotracdt"
-                                value={Information.cotracdt}
-                                format="yyyy-MM-dd"
-                                className="readonly"
-                                disabled={true}
-                                placeholder=""
-                              />
-                            ) : (
-                              <DatePicker
-                                name="cotracdt"
-                                value={Information.cotracdt}
-                                format="yyyy-MM-dd"
-                                placeholder=""
-                                className="required"
-                                onChange={InfoInputChange}
-                              />
-                            )}
+                            <DatePicker
+                              name="cotracdt"
+                              value={Information.cotracdt}
+                              format="yyyy-MM-dd"
+                              placeholder=""
+                              className="required"
+                              onChange={InfoInputChange}
+                            />
                           </td>
                         </tr>
                         <tr>
                           <th>계약기간</th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <CommonDateRangePicker
-                                value={{
-                                  start: Information.strdt,
-                                  end: Information.enddt,
-                                }}
-                                disabled={true}
-                              />
-                            ) : (
-                              <CommonDateRangePicker
-                                value={{
-                                  start: Information.strdt,
-                                  end: Information.enddt,
-                                }}
-                                onChange={(e: {
-                                  value: { start: any; end: any };
-                                }) =>
-                                  setInformation((prev) => ({
-                                    ...prev,
-                                    strdt: e.value.start,
-                                    enddt: e.value.end,
-                                  }))
-                                }
-                              />
-                            )}
+                            <CommonDateRangePicker
+                              value={{
+                                start: Information.strdt,
+                                end: Information.enddt,
+                              }}
+                              onChange={(e: {
+                                value: { start: any; end: any };
+                              }) =>
+                                setInformation((prev) => ({
+                                  ...prev,
+                                  strdt: e.value.start,
+                                  enddt: e.value.end,
+                                }))
+                              }
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3779,50 +3732,26 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>화폐단위</th>
                           <td>
-                            {subFilters.groupgb == "B"
-                              ? customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="amtunit"
-                                    type="new"
-                                    value={Information.amtunit}
-                                    customOptionData={customOptionData}
-                                    changeData={ComboBoxChange}
-                                    className="readonly"
-                                    disabled={true}
-                                  />
-                                )
-                              : customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="amtunit"
-                                    type="new"
-                                    value={Information.amtunit}
-                                    customOptionData={customOptionData}
-                                    changeData={ComboBoxChange}
-                                  />
-                                )}
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="amtunit"
+                                type="new"
+                                value={Information.amtunit}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
                           </td>
                         </tr>
                         <tr>
                           <th>환율 </th>
                           <td>
-                            {subFilters.groupgb == "B" ? (
-                              <Input
-                                name="wonchgrat"
-                                type="text"
-                                value={numberWithCommas3(Information.wonchgrat)}
-                                style={{
-                                  textAlign: "end",
-                                }}
-                                className="readonly"
-                              />
-                            ) : (
-                              <NumericTextBox
-                                name="wonchgrat"
-                                value={Information.wonchgrat}
-                                format="n0"
-                                onChange={InfoInputChange2}
-                              />
-                            )}
+                            <NumericTextBox
+                              name="wonchgrat"
+                              value={Information.wonchgrat}
+                              format="n0"
+                              onChange={InfoInputChange2}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3834,18 +3763,14 @@ const SA_A1100W_603: React.FC = () => {
                               value={Information.files}
                               className="readonly"
                             />
-                            {subFilters.groupgb != "B" ? (
-                              <ButtonInInput>
-                                <Button
-                                  type={"button"}
-                                  onClick={onAttachmentsWndClick}
-                                  icon="more-horizontal"
-                                  fillMode="flat"
-                                />
-                              </ButtonInInput>
-                            ) : (
-                              ""
-                            )}
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
                           </td>
                         </tr>
                       </tbody>
@@ -3860,6 +3785,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick6}
@@ -3867,6 +3793,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick6}
@@ -3874,6 +3801,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3975,6 +3903,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -3982,6 +3911,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick3}
@@ -3989,6 +3919,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -4080,7 +4011,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         fillMode="outline"
                         onClick={onDeleteClick3}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.delete ? false : true}
                       >
                         계약삭제
                       </Button>
@@ -4088,7 +4019,7 @@ const SA_A1100W_603: React.FC = () => {
                         themeColor={"primary"}
                         fillMode="outline"
                         onClick={onCopyClick}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         계약변경
                       </Button>
@@ -4096,7 +4027,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onDeleteClick2}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         변경계약 삭제
                       </Button>
@@ -4104,7 +4035,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onSaveClick}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -4112,7 +4043,7 @@ const SA_A1100W_603: React.FC = () => {
                         onClick={onChangeStatus}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={subFilters.groupgb == "B" ? true : false}
+                        disabled={permissions.save ? false : true}
                       >
                         계약완료
                       </Button>
@@ -4161,17 +4092,9 @@ const SA_A1100W_603: React.FC = () => {
                       reorderable={true}
                       //컬럼너비조정
                       resizable={true}
-                      onItemChange={
-                        subFilters.groupgb == "B"
-                          ? undefined
-                          : ongrdDetailItemChange
-                      }
-                      cellRender={
-                        subFilters.groupgb == "B" ? undefined : customCellRender
-                      }
-                      rowRender={
-                        subFilters.groupgb == "B" ? undefined : customRowRender
-                      }
+                      onItemChange={ongrdDetailItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
                       editField={EDIT_FIELD}
                     >
                       <GridColumn field="rowstatus" title=" " width="50px" />
@@ -4228,6 +4151,11 @@ const SA_A1100W_603: React.FC = () => {
           setData={getAttachmentsData}
           para={Information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {projectWindowVisible && (

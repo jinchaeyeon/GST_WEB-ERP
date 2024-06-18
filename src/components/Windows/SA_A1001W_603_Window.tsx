@@ -5,8 +5,10 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
+import { TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -28,6 +30,13 @@ const SA_A1001W_603_Window = ({
   quorev,
   modal = false,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -71,7 +80,7 @@ const SA_A1001W_603_Window = ({
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchmanualGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -106,8 +115,10 @@ const SA_A1001W_603_Window = ({
   };
 
   useEffect(() => {
-    fetchmanualGrid();
-  }, []);
+    if (permissions.view) {
+      fetchmanualGrid();
+    }
+  }, [permissions]);
 
   return (
     <Window
@@ -123,7 +134,7 @@ const SA_A1001W_603_Window = ({
           height: isMobile ? mobileheight : webheight,
         }}
       >
-        {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+        {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
       </div>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>

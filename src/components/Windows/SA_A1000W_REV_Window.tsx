@@ -11,9 +11,10 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -34,6 +35,13 @@ const KendoWindow = ({
   information,
   modal = false,
 }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -89,19 +97,8 @@ const KendoWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
 
-  //조회조건 초기값
-  const [filters, setFilters] = useState({
-    dptcd: "",
-    orgdiv: "",
-    rtrchk: "Y",
-    user_id: "",
-    user_name: "",
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: true,
-  });
-
   const onConfirmClick = () => {
+    if (!permissions.save) return;
     setParaData((prev) => ({
       ...prev,
       workType: "REV",
@@ -249,6 +246,7 @@ const KendoWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -337,10 +335,10 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   return (
     <Window
@@ -372,9 +370,11 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmClick}>
-            확인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={onConfirmClick}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
