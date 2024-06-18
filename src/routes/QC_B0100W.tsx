@@ -13,6 +13,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getBizCom,
   getDeviceHeight,
@@ -30,6 +31,7 @@ import GroupTable from "../components/KPIcomponents/Table/GroupTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 interface TList {
   code_name: string;
@@ -49,6 +51,13 @@ interface TList {
 }
 
 const QC_B0100W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
 
@@ -107,6 +116,7 @@ const QC_B0100W: React.FC = () => {
         frym: setDefaultDate(customOptionData, "frym"),
         toym: setDefaultDate(customOptionData, "toym"),
         gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -134,7 +144,7 @@ const QC_B0100W: React.FC = () => {
     proccdQuery: "",
     gubun: "",
     card_click: "P",
-    isSearch: true,
+    isSearch: false,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
@@ -233,6 +243,7 @@ const QC_B0100W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -319,6 +330,7 @@ const QC_B0100W: React.FC = () => {
   };
 
   const fetchChartGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", Monthparameters);
@@ -353,17 +365,28 @@ const QC_B0100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
       }));
       fetchMainGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    fetchChartGrid();
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchChartGrid();
+    }
   }, [selected]);
 
   const startContent = (
@@ -475,30 +498,36 @@ const QC_B0100W: React.FC = () => {
   ];
 
   const selectCard = (title: string) => {
-    if (title == "불량률 TOP 공정") {
-      setFilters((prev) => ({
-        ...prev,
-        card_click: "P",
-        isSearch: true,
-      }));
-    } else if (title == "불량률 TOP 고객사") {
-      setFilters((prev) => ({
-        ...prev,
-        card_click: "C",
-        isSearch: true,
-      }));
-    } else if (title == "불량률 TOP 품목") {
-      setFilters((prev) => ({
-        ...prev,
-        card_click: "I",
-        isSearch: true,
-      }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        card_click: "F",
-        isSearch: true,
-      }));
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      if (title == "불량률 TOP 공정") {
+        setFilters((prev) => ({
+          ...prev,
+          card_click: "P",
+          isSearch: true,
+        }));
+      } else if (title == "불량률 TOP 고객사") {
+        setFilters((prev) => ({
+          ...prev,
+          card_click: "C",
+          isSearch: true,
+        }));
+      } else if (title == "불량률 TOP 품목") {
+        setFilters((prev) => ({
+          ...prev,
+          card_click: "I",
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          card_click: "F",
+          isSearch: true,
+        }));
+      }
     }
   };
   return (
@@ -522,6 +551,7 @@ const QC_B0100W: React.FC = () => {
                     isSearch: true,
                   }))
                 }
+                disabled={permissions.view ? false : true}
                 className="mr-2"
               />
             </ButtonContainer>

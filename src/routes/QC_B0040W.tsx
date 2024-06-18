@@ -259,6 +259,7 @@ const QC_B0040W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -368,7 +369,7 @@ const QC_B0040W: React.FC = () => {
     prodlot: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -376,7 +377,7 @@ const QC_B0040W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -384,7 +385,7 @@ const QC_B0040W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters3, setDetailFilters3] = useState({
@@ -392,12 +393,12 @@ const QC_B0040W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -524,6 +525,7 @@ const QC_B0040W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -617,6 +619,7 @@ const QC_B0040W: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailFilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters2: Iparameters = {
@@ -708,6 +711,7 @@ const QC_B0040W: React.FC = () => {
   };
 
   const fetchDetailGrid3 = async (detailFilters3: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters3: Iparameters = {
@@ -800,7 +804,12 @@ const QC_B0040W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -810,10 +819,16 @@ const QC_B0040W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -823,11 +838,16 @@ const QC_B0040W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters2.isSearch && permissions !== null) {
+    if (
+      detailFilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
@@ -837,11 +857,16 @@ const QC_B0040W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2]);
+  }, [detailFilters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters3.isSearch && permissions !== null) {
+    if (
+      detailFilters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters3);
       setDetailFilters3((prev) => ({
@@ -851,7 +876,7 @@ const QC_B0040W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid3(deepCopiedFilters);
     }
-  }, [detailFilters3]);
+  }, [detailFilters3, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);

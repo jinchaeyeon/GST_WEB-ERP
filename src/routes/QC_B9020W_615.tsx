@@ -130,6 +130,10 @@ const QC_B9020W_615: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
       setFilters2((prev) => ({
         ...prev,
         yyyymmdd: setDefaultDate(customOptionData, "yyyymmdd"),
@@ -216,7 +220,7 @@ const QC_B9020W_615: React.FC = () => {
     orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
       ?.value,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -233,7 +237,7 @@ const QC_B9020W_615: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     //조회조건 파라미터
@@ -277,7 +281,7 @@ const QC_B9020W_615: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     setLoading(true);
     let data: any;
     //조회조건 파라미터
@@ -331,7 +335,7 @@ const QC_B9020W_615: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -341,10 +345,10 @@ const QC_B9020W_615: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -354,7 +358,7 @@ const QC_B9020W_615: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, customOptionData]);
 
   //그리드 데이터 스테이트
   const [mainDataState2, setMainDataState2] = useState<State>({
@@ -855,7 +859,10 @@ const QC_B9020W_615: React.FC = () => {
           onSelect={handleSelectTab}
           scrollable={isMobile}
         >
-          <TabStripTab title="수집위치">
+          <TabStripTab
+            title="수집위치"
+            disabled={permissions.view ? false : true}
+          >
             <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -1137,7 +1144,9 @@ const QC_B9020W_615: React.FC = () => {
           </TabStripTab>
           <TabStripTab
             title="세부정보"
-            disabled={filters2.prodmac == "" ? true : false}
+            disabled={
+              permissions.view ? (filters2.prodmac == "" ? true : false) : true
+            }
           >
             <FilterContainer>
               <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>

@@ -54,10 +54,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import {
-  isLoading,
-  sessionItemState
-} from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0300W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -160,6 +157,7 @@ const QC_B0300W: React.FC = () => {
           ?.valueCode,
         inspeccd: defaultOption.find((item: any) => item.id == "inspeccd")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -261,12 +259,12 @@ const QC_B0300W: React.FC = () => {
     service_id: "20190218001",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -366,7 +364,12 @@ const QC_B0300W: React.FC = () => {
   let gridRef: any = useRef(null);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -376,7 +379,7 @@ const QC_B0300W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동

@@ -428,7 +428,7 @@ const QC_A3000: React.FC = () => {
     company_code: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -438,7 +438,7 @@ const QC_A3000: React.FC = () => {
     reseq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -449,7 +449,7 @@ const QC_A3000: React.FC = () => {
     qcnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [information, setInformation] = useState({
@@ -519,7 +519,7 @@ const QC_A3000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -636,6 +636,7 @@ const QC_A3000: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -812,6 +813,7 @@ const QC_A3000: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailFilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters2: Iparameters = {
@@ -1000,17 +1002,27 @@ const QC_A3000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -1020,11 +1032,16 @@ const QC_A3000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters2.isSearch && permissions !== null) {
+    if (
+      detailFilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
@@ -1034,11 +1051,11 @@ const QC_A3000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2, permissions]);
+  }, [detailFilters2, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1305,6 +1322,7 @@ const QC_A3000: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1330,6 +1348,7 @@ const QC_A3000: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1600,6 +1619,7 @@ const QC_A3000: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1657,10 +1677,10 @@ const QC_A3000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.qcno != "") {
+    if (ParaData.qcno != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const getAttachmentsData = (data: IAttachmentData) => {
     setInformation((prev) => {
@@ -1857,6 +1877,7 @@ const QC_A3000: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const data = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
@@ -2267,6 +2288,7 @@ const QC_A3000: React.FC = () => {
                         onClick={onAddClick}
                         themeColor={"primary"}
                         icon="file-add"
+                        disabled={permissions.save ? false : true}
                       >
                         생성
                       </Button>
@@ -2275,6 +2297,7 @@ const QC_A3000: React.FC = () => {
                         icon="delete"
                         fillMode="outline"
                         themeColor={"primary"}
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>
@@ -2396,6 +2419,7 @@ const QC_A3000: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -2742,6 +2766,7 @@ const QC_A3000: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     생성
                   </Button>
@@ -2750,6 +2775,7 @@ const QC_A3000: React.FC = () => {
                     icon="delete"
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -2758,6 +2784,7 @@ const QC_A3000: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -3061,6 +3088,11 @@ const QC_A3000: React.FC = () => {
           setData={getAttachmentsData}
           para={information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>

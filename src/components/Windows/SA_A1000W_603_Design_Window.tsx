@@ -1217,7 +1217,7 @@ const CopyWindow = ({
       setInformation((prev) => ({
         ...prev,
         [name]: Number(value),
-        experiment_week_ex: Math.ceil(Number(value) / 7),
+        recoverweek_ex: Math.ceil(Number(value) / 7),
       }));
     } else if (name == "experimentqty_base") {
       setInformation((prev) => ({
@@ -3988,8 +3988,8 @@ const CopyWindow = ({
                         <NumericTextBox
                           spinners={false}
                           min={0}
-                          name="experiment_week_ex"
-                          value={Information.experiment_week_ex}
+                          name="recoverweek_ex"
+                          value={Information.recoverweek_ex}
                           format="n0"
                           className="readonly"
                           disabled={true}
@@ -5550,8 +5550,8 @@ const CopyWindow = ({
                         <NumericTextBox
                           spinners={false}
                           min={0}
-                          name="experiment_week_ex"
-                          value={Information.experiment_week_ex}
+                          name="recoverweek_ex"
+                          value={Information.recoverweek_ex}
                           format="n0"
                           className="readonly"
                           disabled={true}
