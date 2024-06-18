@@ -90,7 +90,7 @@ import {
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -225,7 +225,13 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext2);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -282,7 +288,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
           modal={true}
         />
       )}
@@ -359,7 +369,7 @@ const PR_A0060: React.FC = () => {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".k-tabstrip-items-wrapper");
-      if(height4 == 0 && !isMobile) {
+      if (height4 == 0 && !isMobile) {
         setTabSelected(0);
         height4 = getHeight(".FormBoxWrap");
       }
@@ -403,6 +413,7 @@ const PR_A0060: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -492,6 +503,7 @@ const PR_A0060: React.FC = () => {
   }, [custcd, custnm]);
 
   const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
     if (custcd == "") return;
     let data: any;
     let custInfo: null | { custcd: string; custnm: string } = null;
@@ -661,7 +673,7 @@ const PR_A0060: React.FC = () => {
     location: sessionLocation,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setsubFilters] = useState({
@@ -684,12 +696,12 @@ const PR_A0060: React.FC = () => {
     location: sessionLocation,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -975,7 +987,7 @@ const PR_A0060: React.FC = () => {
   };
 
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -1075,10 +1087,10 @@ const PR_A0060: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -1087,10 +1099,15 @@ const PR_A0060: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters.isSearch) {
+    if (
+      subfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
 
@@ -1102,7 +1119,7 @@ const PR_A0060: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1738,6 +1755,7 @@ const PR_A0060: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -2030,10 +2048,11 @@ const PR_A0060: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
 
     subDataResult.data.map((item: any) => {
@@ -2184,6 +2203,7 @@ const PR_A0060: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -2242,10 +2262,12 @@ const PR_A0060: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     fetchSaved();
   };
 
   const fetchSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     let valid = true;
@@ -2296,6 +2318,7 @@ const PR_A0060: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2330,10 +2353,10 @@ const PR_A0060: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.rowstatus_s != "") {
+    if (paraData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -2575,6 +2598,7 @@ const PR_A0060: React.FC = () => {
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     생성
                   </Button>
@@ -2583,6 +2607,7 @@ const PR_A0060: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -2591,7 +2616,13 @@ const PR_A0060: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
-                    disabled={tabSelected == 1 ? true : false}
+                    disabled={
+                      permissions.save
+                        ? tabSelected == 1
+                          ? true
+                          : false
+                        : true
+                    }
                   >
                     저장
                   </Button>
@@ -3028,6 +3059,7 @@ const PR_A0060: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onDeleteClick}
@@ -3035,6 +3067,7 @@ const PR_A0060: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onSaveClick}
@@ -3042,6 +3075,7 @@ const PR_A0060: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -3162,6 +3196,7 @@ const PR_A0060: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   생성
                 </Button>
@@ -3170,6 +3205,7 @@ const PR_A0060: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -3178,7 +3214,9 @@ const PR_A0060: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
-                  disabled={tabSelected == 1 ? true : false}
+                  disabled={
+                    permissions.save ? (tabSelected == 1 ? true : false) : true
+                  }
                 >
                   저장
                 </Button>
@@ -3602,6 +3640,7 @@ const PR_A0060: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -3609,6 +3648,7 @@ const PR_A0060: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick}
@@ -3616,6 +3656,7 @@ const PR_A0060: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3750,6 +3791,11 @@ const PR_A0060: React.FC = () => {
           setData={getAttachmentsData}
           para={infomation.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>

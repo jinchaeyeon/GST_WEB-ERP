@@ -159,6 +159,10 @@ const PR_B0020W: React.FC = () => {
         "query"
       );
       onResetCard();
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
     }
   }, [customOptionData]);
 
@@ -232,7 +236,7 @@ const PR_B0020W: React.FC = () => {
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
   });
 
@@ -240,7 +244,7 @@ const PR_B0020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -329,13 +333,18 @@ const PR_B0020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const newData = setExpandedState({
     data: resultState,
@@ -694,6 +703,7 @@ const PR_B0020W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="image-export"
+                    disabled={permissions.view ? false : true}
                   >
                     바코드 추가
                   </Button>
@@ -809,6 +819,7 @@ const PR_B0020W: React.FC = () => {
                       onClick={onResetCard}
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.view ? false : true}
                     >
                       초기화
                     </Button>
@@ -818,6 +829,7 @@ const PR_B0020W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="print"
+                          disabled={permissions.print ? false : true}
                         >
                           출력
                         </Button>
@@ -914,6 +926,7 @@ const PR_B0020W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="image-export"
+                    disabled={permissions.view ? false : true}
                   >
                     바코드 추가
                   </Button>
@@ -1014,6 +1027,7 @@ const PR_B0020W: React.FC = () => {
                     onClick={onResetCard}
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.view ? false : true}
                   >
                     초기화
                   </Button>
@@ -1023,6 +1037,7 @@ const PR_B0020W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="print"
+                        disabled={permissions.print ? false : true}
                       >
                         출력
                       </Button>

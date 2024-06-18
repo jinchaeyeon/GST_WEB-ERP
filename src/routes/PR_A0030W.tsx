@@ -272,6 +272,11 @@ const PR_A0030W: React.FC = () => {
           ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
+      }));
+      setsubFilters((prev) => ({
+        ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -379,7 +384,7 @@ const PR_A0030W: React.FC = () => {
     proccd2: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -396,7 +401,7 @@ const PR_A0030W: React.FC = () => {
     proccd2: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters2, setsubFilters2] = useState({
@@ -405,12 +410,12 @@ const PR_A0030W: React.FC = () => {
     pattern_id: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     setsubFilters((prev) => ({
@@ -529,7 +534,7 @@ const PR_A0030W: React.FC = () => {
   };
 
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const subparameters: Iparameters = {
@@ -584,7 +589,7 @@ const PR_A0030W: React.FC = () => {
   };
 
   const fetchSubGrid2 = async (subfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     const subparameters2: Iparameters = {
       procedureName: "P_PR_A0030W_Q",
@@ -664,7 +669,7 @@ const PR_A0030W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -672,10 +677,10 @@ const PR_A0030W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (customOptionData != null && subfilters.isSearch) {
+    if (subfilters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
 
@@ -687,10 +692,10 @@ const PR_A0030W: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (customOptionData != null && subfilters2.isSearch) {
+    if (subfilters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters2);
 
@@ -702,7 +707,7 @@ const PR_A0030W: React.FC = () => {
 
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subfilters2]);
+  }, [subfilters2, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1052,6 +1057,7 @@ const PR_A0030W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1097,10 +1103,11 @@ const PR_A0030W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.pattern_id != "") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.pattern_id != "" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1234,6 +1241,7 @@ const PR_A0030W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
     if (infomation.pattern_id == "") {
       alert("패턴ID를 입력해주세요.");
@@ -1326,6 +1334,7 @@ const PR_A0030W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1390,10 +1399,10 @@ const PR_A0030W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   type TDataInfo = {
     SUB_DATA_ITEM_KEY: string;
@@ -1704,6 +1713,7 @@ const PR_A0030W: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     생성
                   </Button>
@@ -1712,6 +1722,7 @@ const PR_A0030W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -1720,6 +1731,7 @@ const PR_A0030W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -1833,7 +1845,11 @@ const PR_A0030W: React.FC = () => {
                       </td>
                       <th>
                         <ButtonContainer style={{ justifyContent: "center" }}>
-                          <Button onClick={search2} themeColor={"primary"}>
+                          <Button
+                            onClick={search2}
+                            themeColor={"primary"}
+                            disabled={permissions.view ? false : true}
+                          >
                             조회
                           </Button>
                         </ButtonContainer>
@@ -1934,6 +1950,7 @@ const PR_A0030W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   />
                   <Button
                     onClick={() =>
@@ -1946,6 +1963,7 @@ const PR_A0030W: React.FC = () => {
                     themeColor={"primary"}
                     icon="chevron-up"
                     title="행 위로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={() =>
@@ -1958,6 +1976,7 @@ const PR_A0030W: React.FC = () => {
                     themeColor={"primary"}
                     icon="chevron-down"
                     title="행 아래로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2130,6 +2149,7 @@ const PR_A0030W: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     생성
                   </Button>
@@ -2138,6 +2158,7 @@ const PR_A0030W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -2146,6 +2167,7 @@ const PR_A0030W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2232,7 +2254,11 @@ const PR_A0030W: React.FC = () => {
                             />
                           </td>
                           <th>
-                            <Button onClick={search2} themeColor={"primary"}>
+                            <Button
+                              onClick={search2}
+                              themeColor={"primary"}
+                              disabled={permissions.view ? false : true}
+                            >
                               조회
                             </Button>
                           </th>
@@ -2319,6 +2345,7 @@ const PR_A0030W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       />
                       <Button
                         onClick={() =>
@@ -2331,6 +2358,7 @@ const PR_A0030W: React.FC = () => {
                         themeColor={"primary"}
                         icon="chevron-up"
                         title="행 위로 이동"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={() =>
@@ -2343,6 +2371,7 @@ const PR_A0030W: React.FC = () => {
                         themeColor={"primary"}
                         icon="chevron-down"
                         title="행 아래로 이동"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>

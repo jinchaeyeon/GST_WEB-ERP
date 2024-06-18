@@ -12,6 +12,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat2,
   getBizCom,
@@ -29,11 +30,8 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import Timelines from "../components/KPIcomponents/Timeline/Timelines";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
-import {
-  colors,
-  colorsName,
-  isLoading
-} from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 interface TList {
   planno: string;
@@ -52,6 +50,13 @@ interface TimelineEvent {
 }
 
 const PR_B1104W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
@@ -112,6 +117,7 @@ const PR_B1104W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         option: defaultOption.find((item: any) => item.id == "option")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -146,7 +152,7 @@ const PR_B1104W: React.FC = () => {
     todt: new Date(),
     planno: "",
     option: "W",
-    isSearch: true,
+    isSearch: false,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState<any>([]);
@@ -156,19 +162,7 @@ const PR_B1104W: React.FC = () => {
     value: 0,
     argument: "",
   });
-  const [DetailList, setDetailList] = useState<TimelineEvent[]>([
-    {
-      proccd: "",
-      proccdnm: "",
-      proddt: "",
-      prodemp: "",
-      prodempnm: "",
-      prodmac: "",
-      prodmacnm: "",
-      soyoday: 0,
-      number: 1,
-    },
-  ]);
+  const [DetailList, setDetailList] = useState<any>([]);
   const [selected, setSelected] = useState<TList | null>(null);
   const [stackChartAllLabel, setStackChartAllLabel] = useState([]);
 
@@ -229,6 +223,7 @@ const PR_B1104W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -325,6 +320,7 @@ const PR_B1104W: React.FC = () => {
   };
 
   const fetchChartGrid = async () => {
+    if (!permissions.view) return;
     let data3: any;
     try {
       data3 = await processApi<any>("procedure", Detailparameters);
@@ -344,18 +340,29 @@ const PR_B1104W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         isSearch: false,
       }));
       fetchMainGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    fetchChartGrid();
-  }, [selected]);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchChartGrid();
+    }
+  }, [selected, permissions, bizComponentData, customOptionData]);
 
   const startContent = (
     <React.Fragment>
@@ -465,6 +472,7 @@ const PR_B1104W: React.FC = () => {
                     isSearch: true,
                   }))
                 }
+                disabled={permissions.view ? false : true}
                 className="mr-2"
               />
             </ButtonContainer>

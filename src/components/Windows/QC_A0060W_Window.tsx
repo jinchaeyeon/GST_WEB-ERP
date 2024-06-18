@@ -36,7 +36,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -46,6 +46,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
@@ -65,7 +66,6 @@ import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
-import CopyWindow2 from "./MA_A2500W_Order_Window";
 import Window from "./WindowComponent/Window";
 
 type IWindow = {
@@ -159,6 +159,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -210,6 +217,21 @@ const CopyWindow = ({
         height4
     );
   };
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_QC003",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회 ()
+  const [qcgbListData, setQcgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setQcgbListData(getBizCom(bizComponentData, "L_QC003"));
+    }
+  }, [bizComponentData]);
 
   const pc = UseGetValueFromSessionItem("pc");
   const DATA_ITEM_KEY = "num";
@@ -242,6 +264,7 @@ const CopyWindow = ({
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
         recdt: setDefaultDate(customOptionData, "recdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -262,8 +285,6 @@ const CopyWindow = ({
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [CopyWindowVisible, setCopyWindowVisible] = useState<boolean>(false);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -363,13 +384,13 @@ const CopyWindow = ({
     rev: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -428,7 +449,13 @@ const CopyWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (workType != "N" && filters.isSearch) {
+    if (
+      workType != "N" &&
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -438,10 +465,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType !== "N" && data != undefined) {
+    if (
+      workType !== "N" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         mngnum: data.mngnum,
@@ -462,7 +495,7 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -552,6 +585,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     let valid = true;
 
     for (var i = 0; i < mainDataResult.data.length; i++) {
@@ -847,6 +881,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -911,10 +946,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1201,22 +1236,6 @@ const CopyWindow = ({
     }
   };
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_QC003",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  //공통코드 리스트 조회 ()
-  const [qcgbListData, setQcgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setQcgbListData(getBizCom(bizComponentData, "L_QC003"));
-    }
-  }, [bizComponentData]);
-
   const onAddClick = () => {
     let stdnums = data == undefined ? "" : data.stdnum;
     let stdrevs = data == undefined ? "" : data.stdrev;
@@ -1472,6 +1491,7 @@ const CopyWindow = ({
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick}
@@ -1479,6 +1499,7 @@ const CopyWindow = ({
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -1596,9 +1617,11 @@ const CopyWindow = ({
                 </Grid>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button themeColor={"primary"} onClick={selectData}>
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button themeColor={"primary"} onClick={selectData}>
+                        저장
+                      </Button>
+                    )}
                     <Button
                       themeColor={"primary"}
                       fillMode={"outline"}
@@ -1778,6 +1801,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -1785,6 +1809,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1898,9 +1923,11 @@ const CopyWindow = ({
             </GridContainer>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -1913,18 +1940,16 @@ const CopyWindow = ({
           </>
         )}
       </Window>
-      {CopyWindowVisible && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-          pathname={pathname}
-        />
-      )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {itemWindowVisible && (

@@ -14,6 +14,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat2,
   getBizCom,
@@ -32,8 +33,16 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
 
 const PR_B1103W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
 
@@ -99,6 +108,7 @@ const PR_B1103W: React.FC = () => {
           ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -134,7 +144,7 @@ const PR_B1103W: React.FC = () => {
     itemlvl3: "",
     proccd: "",
     recdt: "",
-    isSearch: true,
+    isSearch: false,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
@@ -233,6 +243,7 @@ const PR_B1103W: React.FC = () => {
   };
 
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -274,6 +285,7 @@ const PR_B1103W: React.FC = () => {
   };
 
   const fetchChartGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", chartparameters);
@@ -307,6 +319,7 @@ const PR_B1103W: React.FC = () => {
   };
 
   const fetchDetailGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", Detailparameters);
@@ -341,14 +354,21 @@ const PR_B1103W: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchDetailGrid();
-  }, [selected]);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchDetailGrid();
+    }
+  }, [selected, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
       filters.isSearch &&
-      customOptionData != null &&
-      bizComponentData != null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       setFilters((prev) => ({
         ...prev,
@@ -357,7 +377,7 @@ const PR_B1103W: React.FC = () => {
       fetchMainGrid();
       fetchChartGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const startContent = (
     <React.Fragment>
@@ -565,6 +585,7 @@ const PR_B1103W: React.FC = () => {
                     }));
                   }
                 }}
+                disabled={permissions.view ? false : true}
                 className="mr-2"
               />
             </ButtonContainer>

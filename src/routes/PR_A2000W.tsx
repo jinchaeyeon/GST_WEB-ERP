@@ -222,6 +222,7 @@ const PR_A2000W: React.FC = () => {
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
+    if (!permissions.view || !permissions.save) return;
     const { name, value } = e;
 
     // 작업자, 설비가 변경될 경우 생산실적 진행됐는지 확인
@@ -643,6 +644,7 @@ const PR_A2000W: React.FC = () => {
             onClick={onPlanWndClick}
             themeColor={"primary"}
             icon="folder-open"
+            disabled={permissions.save ? false : true}
           >
             생산계획참조
           </Button>
@@ -651,6 +653,7 @@ const PR_A2000W: React.FC = () => {
             themeColor={"primary"}
             icon="delete"
             fillMode={"outline"}
+            disabled={permissions.delete ? false : true}
           >
             생산실적삭제
           </Button>
@@ -864,83 +867,81 @@ const PR_A2000W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              {permissions && (
-                <>
-                  <ButtonContainer
-                    style={{ justifyContent: "center" }}
-                    className="ButtonContainer3"
-                  >
-                    <Button
-                      onClick={onClickWork}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save && stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn green"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {startOrEnd == "start" ? "시작" : "종료"}
-                    </Button>
-                    <Button
-                      onClick={onDefectWndClick}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save &&
-                        startOrEnd == "end" &&
-                        stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn red"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      불량입력
-                    </Button>
-                    <Button
-                      onClick={onInLotWndClick}
-                      themeColor={"primary"}
-                      disabled={
-                        permissions.save &&
-                        startOrEnd == "end" &&
-                        stopStartOrEnd == "start"
-                          ? false
-                          : true
-                      }
-                      className="iot-btn"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      투입 LOT 선택
-                    </Button>
-                    <Button
-                      onClick={onClickStop}
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                      className="iot-btn gray"
-                      style={{
-                        width: "110px",
-                        height: "50px",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
-                    </Button>
-                  </ButtonContainer>
-                </>
-              )}
+              <ButtonContainer
+                style={{ justifyContent: "center" }}
+                className="ButtonContainer3"
+              >
+                <Button
+                  onClick={onClickWork}
+                  themeColor={"primary"}
+                  disabled={
+                    permissions.save
+                      ? stopStartOrEnd == "start"
+                        ? false
+                        : true
+                      : true
+                  }
+                  className="iot-btn green"
+                  style={{
+                    width: "110px",
+                    height: "50px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {startOrEnd == "start" ? "시작" : "종료"}
+                </Button>
+                <Button
+                  onClick={onDefectWndClick}
+                  themeColor={"primary"}
+                  disabled={
+                    permissions.save
+                      ? startOrEnd == "end" && stopStartOrEnd == "start"
+                        ? false
+                        : true
+                      : true
+                  }
+                  className="iot-btn red"
+                  style={{
+                    width: "110px",
+                    height: "50px",
+                    fontSize: "16px",
+                  }}
+                >
+                  불량입력
+                </Button>
+                <Button
+                  onClick={onInLotWndClick}
+                  themeColor={"primary"}
+                  disabled={
+                    permissions.save
+                      ? startOrEnd == "end" && stopStartOrEnd == "start"
+                        ? false
+                        : true
+                      : true
+                  }
+                  className="iot-btn"
+                  style={{
+                    width: "110px",
+                    height: "50px",
+                    fontSize: "16px",
+                  }}
+                >
+                  투입 LOT 선택
+                </Button>
+                <Button
+                  onClick={onClickStop}
+                  themeColor={"primary"}
+                  className="iot-btn gray"
+                  style={{
+                    width: "110px",
+                    height: "50px",
+                    fontSize: "16px",
+                  }}
+                  disabled={permissions.save ? false : true}
+                >
+                  {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
+                </Button>
+              </ButtonContainer>
             </GridContainer>
           </SwiperSlide>
         </Swiper>
@@ -1102,60 +1103,60 @@ const PR_A2000W: React.FC = () => {
             </FilterContainer>
           </GridContainer>
           <ButtonContainer className="ButtonContainer3">
-            {permissions && (
-              <>
-                <Button
-                  onClick={onClickWork}
-                  icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
-                  themeColor={"primary"}
-                  disabled={
-                    permissions.save && stopStartOrEnd == "start" ? false : true
-                  }
-                  className="iot-btn green"
-                >
-                  {startOrEnd == "start" ? "시작" : "종료"}
-                </Button>
-                <Button
-                  onClick={onDefectWndClick}
-                  icon="exclamation-circle"
-                  themeColor={"primary"}
-                  disabled={
-                    permissions.save &&
-                    startOrEnd == "end" &&
-                    stopStartOrEnd == "start"
-                      ? false
-                      : true
-                  }
-                  className="iot-btn red"
-                >
-                  불량입력
-                </Button>
-                <Button
-                  onClick={onInLotWndClick}
-                  icon="sort-desc-sm"
-                  themeColor={"primary"}
-                  disabled={
-                    permissions.save &&
-                    startOrEnd == "end" &&
-                    stopStartOrEnd == "start"
-                      ? false
-                      : true
-                  }
-                  className="iot-btn"
-                >
-                  투입 LOT 선택
-                </Button>
-                <Button
-                  onClick={onClickStop}
-                  icon="pencil"
-                  themeColor={"primary"}
-                  disabled={permissions.save ? false : true}
-                  className="iot-btn gray"
-                >
-                  {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
-                </Button>
-              </>
-            )}
+            <Button
+              onClick={onClickWork}
+              icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
+              themeColor={"primary"}
+              disabled={
+                permissions.save
+                  ? stopStartOrEnd == "start"
+                    ? false
+                    : true
+                  : true
+              }
+              className="iot-btn green"
+            >
+              {startOrEnd == "start" ? "시작" : "종료"}
+            </Button>
+            <Button
+              onClick={onDefectWndClick}
+              icon="exclamation-circle"
+              themeColor={"primary"}
+              disabled={
+                permissions.save
+                  ? startOrEnd == "end" && stopStartOrEnd == "start"
+                    ? false
+                    : true
+                  : true
+              }
+              className="iot-btn red"
+            >
+              불량입력
+            </Button>
+            <Button
+              onClick={onInLotWndClick}
+              icon="sort-desc-sm"
+              themeColor={"primary"}
+              disabled={
+                permissions.save
+                  ? startOrEnd == "end" && stopStartOrEnd == "start"
+                    ? false
+                    : true
+                  : true
+              }
+              className="iot-btn"
+            >
+              투입 LOT 선택
+            </Button>
+            <Button
+              onClick={onClickStop}
+              icon="pencil"
+              themeColor={"primary"}
+              className="iot-btn gray"
+              disabled={permissions.save ? false : true}
+            >
+              {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
+            </Button>
           </ButtonContainer>
         </>
       )}

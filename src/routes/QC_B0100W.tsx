@@ -387,7 +387,7 @@ const QC_B0100W: React.FC = () => {
     ) {
       fetchChartGrid();
     }
-  }, [selected]);
+  }, [selected, permissions, bizComponentData, customOptionData]);
 
   const startContent = (
     <React.Fragment>

@@ -10,13 +10,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   findMessage,
   getHeight,
   getWindowDeviceHeight,
@@ -46,6 +47,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -129,10 +137,10 @@ const KendoWindow = ({
     prodmac: data.prodmac,
     prodemp: userId,
     stopcd: "",
-    isSearch: true,
   });
 
   const onCheckClick = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     try {
@@ -283,13 +291,15 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button
-            themeColor={"primary"}
-            fillMode={"outline"}
-            onClick={onCheckClick}
-          >
-            확인
-          </Button>
+          {permissions.save && (
+            <Button
+              themeColor={"primary"}
+              fillMode={"outline"}
+              onClick={onCheckClick}
+            >
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             취소
           </Button>

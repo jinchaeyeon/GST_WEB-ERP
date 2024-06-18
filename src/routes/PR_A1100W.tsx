@@ -51,6 +51,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -66,6 +67,7 @@ import {
   getGridItemChangedData,
   getHeight,
   handleKeyPressSearch,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -273,6 +275,33 @@ const PR_A1100W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_A1100W", setCustomOptionData);
 
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        cboOrdsts: defaultOption.find((item: any) => item.id == "cboOrdsts")
+          ?.valueCode,
+        cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
+          ?.valueCode,
+        isSearch: true,
+      }));
+    }
+  }, [customOptionData]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_fxcode, L_sysUserMaster_001,L_BA020,L_BA007, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_002,L_dptcd_001,L_BA061,L_BA015,L_BA002_426,L_BA171,L_BA172,L_BA173,R_FINYN",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 발주형태, 대분류,중분류,소분류,수주완료여부
+    setBizComponentData
+  );
+
   const [tabSelected, setTabSelected] = React.useState(0);
 
   let deviceWidth = document.documentElement.clientWidth;
@@ -448,16 +477,13 @@ const PR_A1100W: React.FC = () => {
     }));
   };
 
-  const initFrdt = new Date();
-  initFrdt.setMonth(initFrdt.getMonth() - 3);
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     location: sessionLocation,
     dtgb: "A",
-    frdt: initFrdt,
+    frdt: new Date(),
     todt: new Date(),
     custcd: "",
     custnm: "",
@@ -478,7 +504,7 @@ const PR_A1100W: React.FC = () => {
     cboPerson: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [materialFilters, setMaterialFilters] = useState({
@@ -487,92 +513,8 @@ const PR_A1100W: React.FC = () => {
     plankey: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
-
-  //삭제 프로시저 초기값
-  const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "",
-    orgdiv: sessionOrgdiv,
-    ordnum: "",
-  });
-
-  //삭제 프로시저 파라미터
-  const paraDeleted: Iparameters = {
-    procedureName: "P_SA_A2000W_S",
-    pageNumber: 1,
-    pageSize: 10,
-    parameters: {
-      "@p_work_type": paraDataDeleted.work_type,
-      "@p_service_id": "",
-      "@p_orgdiv": paraDataDeleted.orgdiv,
-      "@p_location": "",
-      "@p_ordnum": paraDataDeleted.ordnum,
-      "@p_poregnum": "",
-      "@p_project": "",
-      "@p_ordtype": "",
-      "@p_ordsts": "",
-      "@p_taxdiv": "",
-      "@p_orddt": "",
-      "@p_dlvdt": "",
-      "@p_dptcd": "",
-      "@p_person": "",
-      "@p_amtunit": "",
-      "@p_portnm": "",
-      "@p_finaldes": "",
-      "@p_paymeth": "",
-      "@p_prcterms": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_rcvcustcd": "",
-      "@p_rcvcustnm": "",
-      "@p_wonchgrat": "0",
-      "@p_uschgrat": "0",
-      "@p_doexdiv": "",
-      "@p_remark": "",
-      "@p_attdatnum": "",
-      "@p_userid": userId,
-      "@p_pc": "",
-      "@p_ship_method": "",
-      "@p_dlv_method": "",
-      "@p_hullno": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ordseq_s": "",
-      "@p_poregseq_s": "",
-      "@p_itemcd_s": "",
-      "@p_itemnm_s": "",
-      "@p_itemacnt_s": "",
-      "@p_insiz_s": "",
-      "@p_bnatur_s": "",
-      "@p_qty_s": "",
-      "@p_qtyunit_s": "",
-      "@p_totwgt_s": "",
-      "@p_wgtunit_s": "",
-      "@p_len_s": "",
-      "@p_totlen_s": "",
-      "@p_lenunit_s": "",
-      "@p_thickness_s": "",
-      "@p_width_s": "",
-      "@p_length_s": "",
-      "@p_unpcalmeth_s": "",
-      "@p_unp_s": "",
-      "@p_amt_s": "",
-      "@p_taxamt_s": "",
-      "@p_dlramt_s": "",
-      "@p_wonamt_s": "",
-      "@p_remark_s": "",
-      "@p_pac_s": "",
-      "@p_finyn_s": "",
-      "@p_specialunp_s": "",
-      "@p_lotnum_s": "",
-      "@p_dlvdt_s": "",
-      "@p_specialamt_s": "",
-      "@p_heatno_s": "",
-      "@p_bf_qty_s": "",
-      "@p_form_id": "",
-    },
-  };
 
   //계획 저장 파라미터 초기값
   const [paraDataPlanSaved, setParaDataPlanSaved] = useState({
@@ -711,7 +653,7 @@ const PR_A1100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //수주상세 조회 파라미터
     const parameters: Iparameters = {
@@ -825,7 +767,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchPlanGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //생산계획 조회 파라미터
@@ -952,6 +894,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchMaterialGrid = async (materialFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     //소요자재리스트 조회 파라미터
@@ -1059,7 +1002,12 @@ const PR_A1100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -1069,10 +1017,15 @@ const PR_A1100W: React.FC = () => {
         fetchPlanGrid(deepCopiedFilters);
       }
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (materialFilters.isSearch && permissions !== null) {
+    if (
+      materialFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(materialFilters);
       setMaterialFilters((prev) => ({
@@ -1082,15 +1035,12 @@ const PR_A1100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMaterialGrid(deepCopiedFilters);
     }
-  }, [materialFilters, permissions]);
+  }, [materialFilters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
-
-  useEffect(() => {
-    if (paraDataPlanSaved.work_type !== "") fetchToSavePlan();
-  }, [paraDataPlanSaved]);
+    if (paraDataPlanSaved.work_type !== "" && permissions.save)
+      fetchToSavePlan();
+  }, [paraDataPlanSaved, permissions]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1519,29 +1469,8 @@ const PR_A1100W: React.FC = () => {
     }
   };
 
-  const fetchToDelete = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", paraDeleted);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      alert(findMessage(messagesData, "PR_A1100W_001"));
-
-      resetAllGrid();
-    } else {
-      alert(data.resultMessage);
-    }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
-    paraDataDeleted.orgdiv = sessionOrgdiv;
-  };
-
   const onSavePlanClick = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = planDataResult.data.filter(
       (item: any) => {
         return (
@@ -1730,6 +1659,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const onSaveMtrClick = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = materialDataResult.data.filter(
       (item: any) => {
         return (
@@ -1835,6 +1765,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchToSavePlan = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -1912,10 +1843,6 @@ const PR_A1100W: React.FC = () => {
     } else {
       alert(data.resultMessage);
     }
-
-    paraDataDeleted.work_type = ""; //초기화
-    paraDataDeleted.ordnum = "";
-    paraDataDeleted.orgdiv = sessionOrgdiv;
   };
 
   interface ICustData {
@@ -1989,13 +1916,6 @@ const PR_A1100W: React.FC = () => {
   const onMaterialSortChange = (e: any) => {
     setMaterialDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_fxcode, L_sysUserMaster_001,L_BA020,L_BA007, L_SA002,L_BA005,L_BA029,L_BA002,L_sysUserMaster_002,L_dptcd_001,L_BA061,L_BA015,L_BA002_426,L_BA171,L_BA172,L_BA173,R_FINYN",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 발주형태, 대분류,중분류,소분류,수주완료여부
-    setBizComponentData
-  );
 
   //공통코드 리스트 조회
   const [ordstsListData, setOrdstsListData] = useState([
@@ -2660,7 +2580,7 @@ const PR_A1100W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="처리">
+        <TabStripTab title="처리" disabled={permissions.view ? false : true}>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <GridTitleContainer className="ButtonContainer">
               <GridTitle>수주상세자료</GridTitle>
@@ -2784,7 +2704,7 @@ const PR_A1100W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="리스트">
+        <TabStripTab title="리스트" disabled={permissions.view ? false : true}>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2824,6 +2744,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onRemovePlanClick}
@@ -2831,6 +2752,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSavePlanClick}
@@ -2838,6 +2760,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -2988,6 +2911,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onRemoveMaterialClick}
@@ -2995,6 +2919,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveMtrClick}
@@ -3002,6 +2927,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3121,6 +3047,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onRemovePlanClick}
@@ -3128,6 +3055,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSavePlanClick}
@@ -3135,6 +3063,7 @@ const PR_A1100W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3272,6 +3201,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onRemoveMaterialClick}
@@ -3279,6 +3209,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveMtrClick}
@@ -3286,6 +3217,7 @@ const PR_A1100W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>

@@ -72,10 +72,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  sessionItemState
-} from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -462,6 +459,7 @@ const PR_A9100W: React.FC = () => {
         ymdYyymm: setDefaultDate(customOptionData, "ymdYyymm"),
         cboLocation: defaultOption.find((item: any) => item.id == "cboLocation")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -693,13 +691,13 @@ const PR_A9100W: React.FC = () => {
     insiz: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -794,13 +792,18 @@ const PR_A9100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1006,6 +1009,8 @@ const PR_A9100W: React.FC = () => {
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
+
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -1260,6 +1265,7 @@ const PR_A9100W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1364,6 +1370,7 @@ const PR_A9100W: React.FC = () => {
   };
 
   const fetchGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -1456,8 +1463,8 @@ const PR_A9100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchGridSaved();
+  }, [paraData, permissions]);
 
   const search = () => {
     try {

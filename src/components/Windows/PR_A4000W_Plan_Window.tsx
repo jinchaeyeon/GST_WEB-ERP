@@ -28,7 +28,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -38,6 +38,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
@@ -84,6 +85,13 @@ const PlanWindow = ({
   custdiv,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -189,6 +197,7 @@ const PlanWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt2"),
         todt: setDefaultDate(customOptionData, "todt2"),
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -261,9 +270,7 @@ const PlanWindow = ({
   const [keepingDataResult, setKeepingDataResult] = useState<DataResult>(
     process([], keepingDataState)
   );
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
+  
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -328,7 +335,7 @@ const PlanWindow = ({
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
   });
 
@@ -345,6 +352,7 @@ const PlanWindow = ({
   let gridRef: any = useRef(null);
   // 그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -431,7 +439,12 @@ const PlanWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -441,7 +454,7 @@ const PlanWindow = ({
       }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, customOptionData, bizComponentData, permissions]);
 
   // 그리드 리셋
   const resetAllGrid = () => {
@@ -629,7 +642,12 @@ const PlanWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>

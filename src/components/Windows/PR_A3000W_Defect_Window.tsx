@@ -38,11 +38,12 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { sessionItemState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   arrayLengthValidator,
   getCodeFromValue,
   getHeight,
@@ -404,6 +405,13 @@ const KendoWindow = ({
   setData,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -465,8 +473,10 @@ const KendoWindow = ({
     process([], dataState)
   );
   useEffect(() => {
-    fetchGrid();
-  }, []);
+    if (permissions.view && bizComponentData !== null) {
+      fetchGrid();
+    }
+  }, [permissions, bizComponentData]);
 
   // 세션 아이템
   const [sessionItem] = useRecoilState(sessionItemState);
@@ -492,6 +502,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -562,6 +573,7 @@ const KendoWindow = ({
   };
 
   const fetchSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -594,6 +606,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = (dataItem: { [name: string]: any }) => {
+    if (!permissions.save) return;
     const { dataDetails } = dataItem;
 
     let detailArr: TDetailData = {
@@ -622,7 +635,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchSaved();
+    if (paraData.work_type !== "" && permissions.save) fetchSaved();
   }, [paraData]);
 
   useEffect(() => {
@@ -670,9 +683,11 @@ const KendoWindow = ({
 
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"}>
-                  확인
-                </Button>
+                {permissions.save && (
+                  <Button type={"submit"} themeColor={"primary"}>
+                    확인
+                  </Button>
+                )}
                 <Button
                   type={"button"}
                   onClick={onClose}

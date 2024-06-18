@@ -36,7 +36,7 @@ import {
   isLoading,
   loginResultState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -46,6 +46,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getBizCom,
@@ -96,6 +97,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -254,6 +262,7 @@ const CopyWindow = ({
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -470,7 +479,7 @@ const CopyWindow = ({
     finyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -578,16 +587,26 @@ const CopyWindow = ({
   }, [detailDataResult2]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailFilters.isSearch) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -597,10 +616,15 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailFilters2.isSearch) {
+    if (
+      detailFilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
@@ -610,11 +634,11 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2]);
+  }, [detailFilters2, permissions, bizComponentData, customOptionData]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -702,7 +726,7 @@ const CopyWindow = ({
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -770,7 +794,7 @@ const CopyWindow = ({
   };
 
   const fetchDetailGrid2 = async (detailFilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1285,6 +1309,7 @@ const CopyWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>

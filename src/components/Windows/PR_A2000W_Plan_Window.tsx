@@ -27,7 +27,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -37,6 +37,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
@@ -72,6 +73,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -148,6 +156,7 @@ const KendoWindow = ({
       setFilters((prev) => ({
         ...prev,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -267,10 +276,11 @@ const KendoWindow = ({
     itemnm: "",
     finyn: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -336,7 +346,12 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -346,7 +361,7 @@ const KendoWindow = ({
       }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   // 그리드 리셋
   const resetAllGrid = () => {
@@ -431,6 +446,7 @@ const KendoWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>

@@ -376,6 +376,7 @@ const PR_A7000W: React.FC = () => {
         prodemp: defaultOption.find((item: any) => item.id == "prodemp")
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -561,14 +562,14 @@ const PR_A7000W: React.FC = () => {
     companyCode: companyCode,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -578,7 +579,7 @@ const PR_A7000W: React.FC = () => {
     planno: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -589,12 +590,12 @@ const PR_A7000W: React.FC = () => {
     godt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -728,7 +729,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters2: Iparameters = {
@@ -839,7 +840,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid = async (detailfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -951,7 +952,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid2 = async (detailfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1066,38 +1067,38 @@ const PR_A7000W: React.FC = () => {
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       detailfilters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
@@ -1112,10 +1113,10 @@ const PR_A7000W: React.FC = () => {
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       detailfilters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
@@ -1580,6 +1581,7 @@ const PR_A7000W: React.FC = () => {
   };
 
   const onAddClick = async () => {
+    if (!permissions.save) return;
     const data = detailDataResult.data.filter((item: any) => item.chk == true);
 
     let valid = true;
@@ -1685,6 +1687,7 @@ const PR_A7000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onRemoveClick = async () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1758,6 +1761,7 @@ const PR_A7000W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = detailDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1839,6 +1843,7 @@ const PR_A7000W: React.FC = () => {
   };
 
   const onCompleteClick = async () => {
+    if (!permissions.save) return;
     const data = mainDataResult2.data.filter((item: any) => item.chk == true);
 
     if (data.length == 0) {
@@ -2489,7 +2494,10 @@ const PR_A7000W: React.FC = () => {
         style={{ width: "100%" }}
         scrollable={isMobile}
       >
-        <TabStripTab title="작업지시">
+        <TabStripTab
+          title="작업지시"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2769,6 +2777,7 @@ const PR_A7000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -2899,14 +2908,17 @@ const PR_A7000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="minus"
-                        title="삭제"
-                      ></Button>
+                        disabled={permissions.delete ? false : true}
+                      >
+                        삭제
+                      </Button>
                       <Button
                         onClick={onSaveClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3104,6 +3116,7 @@ const PR_A7000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -3221,14 +3234,17 @@ const PR_A7000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
-                      title="삭제"
-                    ></Button>
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
                     <Button
                       onClick={onSaveClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -3328,7 +3344,10 @@ const PR_A7000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="작업지시내역">
+        <TabStripTab
+          title="작업지시내역"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -3511,6 +3530,7 @@ const PR_A7000W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   강제완료
                 </Button>

@@ -28,7 +28,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -38,6 +38,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
@@ -76,6 +77,13 @@ const ProdStockWindow = ({
   pathname,
   modal = false,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
@@ -300,7 +308,7 @@ const ProdStockWindow = ({
     proccd: "",
     scrollDirrection: "down",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
   });
 
@@ -317,6 +325,7 @@ const ProdStockWindow = ({
   let gridRef: any = useRef(null);
   // 그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -404,7 +413,12 @@ const ProdStockWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -414,7 +428,7 @@ const ProdStockWindow = ({
       }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   // 그리드 리셋
   const resetAllGrid = () => {
@@ -581,7 +595,12 @@ const ProdStockWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>

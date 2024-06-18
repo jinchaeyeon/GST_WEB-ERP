@@ -27,7 +27,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -37,6 +37,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   getGridItemChangedData,
   getHeight,
@@ -137,12 +138,18 @@ const DetailWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
 
   const pc = UseGetValueFromSessionItem("pc");
   const processApi = useApi();
   const [isInitSearch, setIsInitSearch] = useState(false);
-
   const [stockWindowVisible, setStockWindowVisible] = useState<boolean>(false);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
@@ -312,6 +319,7 @@ const DetailWindow = ({
 
   // 그리드 데이터 조회
   const fetchInGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -412,6 +420,7 @@ const DetailWindow = ({
   };
 
   const fetchBadGrid = async (badfilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -515,17 +524,17 @@ const DetailWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchInGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (badfilters.isSearch) {
+    if (badfilters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(badfilters);
       setBadFilters((prev) => ({
@@ -535,7 +544,7 @@ const DetailWindow = ({
       }));
       fetchBadGrid(deepCopiedFilters);
     }
-  }, [badfilters]);
+  }, [badfilters, permissions, customOptionData]);
 
   const resetAllGrid = () => {
     setPage(initialPageState); // 페이지 초기화
@@ -590,8 +599,6 @@ const DetailWindow = ({
         ...prev,
         rekey: firstRowData.rekey,
       }));
-
-      setIsInitSearch(true);
     }
   }, [inDataResult]);
 
@@ -604,8 +611,6 @@ const DetailWindow = ({
         ...prev,
         rekey: firstRowData.rekey,
       }));
-
-      setIsInitSearch(true);
     }
   }, [badDataResult]);
 
@@ -1025,17 +1030,18 @@ const DetailWindow = ({
     }
 
     setBadDataResult((prev) => ({
-      ...prev,
       data: newData,
       total: prev.total - Object.length,
     }));
-
-    setBadSelectedState({
-      [data != undefined ? data[BAD_DATA_ITEM_KEY] : newData[0]]: true,
-    });
+    if (Object.length > 0) {
+      setBadSelectedState({
+        [data != undefined ? data[BAD_DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = inDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1370,11 +1376,13 @@ const DetailWindow = ({
                 onClick={onInRemoveClick}
                 title="행 삭제"
                 icon="minus"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 themeColor={"primary"}
                 onClick={onStockWndClick}
                 icon="folder-open"
+                disabled={permissions.save ? false : true}
               >
                 재고참조
               </Button>
@@ -1467,6 +1475,7 @@ const DetailWindow = ({
                 onClick={onBadAddClick}
                 title="행 추가"
                 icon="plus"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 themeColor={"primary"}
@@ -1474,6 +1483,7 @@ const DetailWindow = ({
                 onClick={onBadRemoveClick}
                 title="행 삭제"
                 icon="minus"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1553,9 +1563,11 @@ const DetailWindow = ({
       </GridContainerWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button onClick={onSaveClick} themeColor={"primary"} icon="save">
-            저장
-          </Button>
+          {permissions.save && (
+            <Button onClick={onSaveClick} themeColor={"primary"} icon="save">
+              저장
+            </Button>
+          )}
           <Button onClick={onClose} themeColor={"primary"} fillMode="outline">
             닫기
           </Button>

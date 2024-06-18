@@ -162,6 +162,7 @@ const QC_A0120: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -252,6 +253,7 @@ const QC_A0120: React.FC = () => {
     select_item: "all",
     select_code: "%",
     cboDptcd: "",
+    isSearch: false,
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
@@ -270,12 +272,13 @@ const QC_A0120: React.FC = () => {
     select_item: "all",
     select_code: "%",
     dptcd: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (tab: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -317,10 +320,16 @@ const QC_A0120: React.FC = () => {
         pgNum: 1,
       }));
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   const fetchDetailGrid1 = async (detailFilters1: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -365,6 +374,11 @@ const QC_A0120: React.FC = () => {
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setDetailFilters1((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
@@ -464,24 +478,23 @@ const QC_A0120: React.FC = () => {
     }
   };
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData !== null &&
-      isInitSearch == false &&
-      permissions !== null
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       fetchMainGrid(tabSelected);
-      setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
     if (
       detailFilters1.isSearch &&
-      permissions !== null &&
+      permissions.view &&
+      bizComponentData !== null &&
       customOptionData !== null
     ) {
       const _ = require("lodash");
@@ -489,7 +502,7 @@ const QC_A0120: React.FC = () => {
       setDetailFilters1((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchDetailGrid1(deepCopiedFilters);
     }
-  }, [detailFilters1, permissions]);
+  }, [detailFilters1, permissions, customOptionData, bizComponentData]);
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -826,7 +839,10 @@ const QC_A0120: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="공정불량">
+            <TabStripTab
+              title="공정불량"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -952,7 +968,10 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="소재불량">
+            <TabStripTab
+              title="소재불량"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -1079,7 +1098,10 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="검사불량">
+            <TabStripTab
+              title="검사불량"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -1162,7 +1184,10 @@ const QC_A0120: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="공정불량">
+            <TabStripTab
+              title="공정불량"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer
                   style={{
@@ -1275,7 +1300,10 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="소재불량">
+            <TabStripTab
+              title="소재불량"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="60%">
                   <GridContainerWrap>
@@ -1385,7 +1413,10 @@ const QC_A0120: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="검사불량">
+            <TabStripTab
+              title="검사불량"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="30%">
                   <GridContainerWrap>

@@ -182,7 +182,7 @@ const PR_A2200W: React.FC = () => {
   });
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -233,7 +233,7 @@ const PR_A2200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -284,7 +284,7 @@ const PR_A2200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     if (filters3.attdatnum == "") {
@@ -383,7 +383,7 @@ const PR_A2200W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -391,11 +391,11 @@ const PR_A2200W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
 
@@ -403,11 +403,11 @@ const PR_A2200W: React.FC = () => {
 
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (filters3.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
 
@@ -415,7 +415,7 @@ const PR_A2200W: React.FC = () => {
 
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions]);
 
   const [information, setInformation] = useState({
     devmngnum: "",
@@ -710,6 +710,8 @@ const PR_A2200W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
+
     const dataItem: any = mainDataResult3.data[0].image.filter((item: any) => {
       return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
@@ -808,6 +810,7 @@ const PR_A2200W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     setLoading(true);
@@ -852,8 +855,8 @@ const PR_A2200W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType !== "") fetchTodoGridSaved();
-  }, [paraData]);
+    if (paraData.workType !== "" && permissions.save) fetchTodoGridSaved();
+  }, [paraData, permissions]);
 
   return (
     <>
@@ -876,6 +879,7 @@ const PR_A2200W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => search()}
                     icon="search"
+                    disabled={permissions.view ? false : true}
                   >
                     조회
                   </Button>
@@ -954,6 +958,7 @@ const PR_A2200W: React.FC = () => {
                         swiper.slideTo(1);
                       }
                     }}
+                    disabled={permissions.view ? false : true}
                     style={{ width: "100%" }}
                   >
                     프로젝트 미선택
@@ -972,6 +977,7 @@ const PR_A2200W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => search2()}
                     icon="search"
+                    disabled={permissions.view ? false : true}
                   >
                     조회
                   </Button>
@@ -1278,6 +1284,7 @@ const PR_A2200W: React.FC = () => {
                                   fillMode={"solid"}
                                   onClick={() => onSaveClick()}
                                   style={{ width: "100%" }}
+                                  disabled={permissions.save ? false : true}
                                 >
                                   저장
                                 </Button>
@@ -1372,6 +1379,7 @@ const PR_A2200W: React.FC = () => {
                                   fillMode={"solid"}
                                   onClick={() => onSaveClick()}
                                   style={{ width: "100%" }}
+                                  disabled={permissions.save ? false : true}
                                 >
                                   저장
                                 </Button>
@@ -1409,6 +1417,7 @@ const PR_A2200W: React.FC = () => {
                       }));
                       setStep(1);
                     }}
+                    disabled={permissions.view ? false : true}
                   >
                     프로젝트 미선택
                   </Button>
@@ -1417,6 +1426,7 @@ const PR_A2200W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => search()}
                     icon="search"
+                    disabled={permissions.view ? false : true}
                   >
                     조회
                   </Button>
@@ -1509,6 +1519,7 @@ const PR_A2200W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => search2()}
                     icon="search"
+                    disabled={permissions.view ? false : true}
                   >
                     조회
                   </Button>
@@ -1705,6 +1716,7 @@ const PR_A2200W: React.FC = () => {
                         themeColor={"primary"}
                         fillMode={"solid"}
                         onClick={() => onSaveClick()}
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>

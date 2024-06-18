@@ -8,9 +8,10 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -41,6 +42,13 @@ var height2 = 0;
 var height3 = 0;
 
 const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -114,6 +122,8 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   };
 
   const fetchBarcordGrid = async () => {
+    if (!permissions.view) return;
+
     let data: any;
     try {
       data = await processApi<any>("procedure", BarCodeParameters);
@@ -136,8 +146,10 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
   };
 
   useEffect(() => {
-    fetchBarcordGrid();
-  }, [barcodeFilters]);
+    if (permissions.view) {
+      fetchBarcordGrid();
+    }
+  }, [barcodeFilters, permissions]);
 
   useEffect(() => {
     let lotnum: any = [];
@@ -165,7 +177,12 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
         <ButtonContainer className="WindowTitleContainer">
           <ReactToPrint
             trigger={() => (
-              <Button fillMode="outline" themeColor={"primary"} icon="print">
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
                 출력
               </Button>
             )}

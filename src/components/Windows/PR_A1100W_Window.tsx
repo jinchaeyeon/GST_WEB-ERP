@@ -44,7 +44,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import {
@@ -52,6 +52,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   checkIsDDLValid,
   convertDateToStr,
   findMessage,
@@ -437,6 +438,14 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
   const pc = UseGetValueFromSessionItem("pc");
@@ -632,6 +641,7 @@ const KendoWindow = ({
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -802,7 +812,7 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -812,11 +822,11 @@ const KendoWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -826,16 +836,16 @@ const KendoWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData]);
 
   useEffect(() => {
-    fetchInfor();
-  }, []);
+    if (permissions.view && customOptionData !== null) fetchInfor();
+  }, [permissions, customOptionData]);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchInfor = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //수주정보 조회조건 파라미터
@@ -899,7 +909,7 @@ const KendoWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //수주정보 조회조건 파라미터
@@ -974,7 +984,7 @@ const KendoWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //수주정보 조회조건 파라미터
@@ -1555,6 +1565,7 @@ const KendoWindow = ({
   };
 
   const onSave = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       if (Information2.planqty < 1) {
@@ -1841,10 +1852,11 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchGridSaved();
+  }, [paraData, permissions]);
 
   const fetchGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -2006,6 +2018,7 @@ const KendoWindow = ({
                         type={"button"}
                         themeColor={"primary"}
                         onClick={onCopyEditClick2}
+                        disabled={permissions.save ? false : true}
                       >
                         패턴공정도
                       </Button>
@@ -2015,6 +2028,7 @@ const KendoWindow = ({
                         onClick={onAddClick}
                         title="행 추가"
                         icon="add"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         type={"button"}
@@ -2023,6 +2037,7 @@ const KendoWindow = ({
                         onClick={onDeleteClick}
                         title="행 삭제"
                         icon="minus"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={() => {
@@ -2137,6 +2152,7 @@ const KendoWindow = ({
                         onClick={onAddClick2}
                         title="행 추가"
                         icon="add"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         type={"button"}
@@ -2145,6 +2161,7 @@ const KendoWindow = ({
                         onClick={onDeleteClick2}
                         title="행 삭제"
                         icon="minus"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -2240,9 +2257,15 @@ const KendoWindow = ({
                 </Grid>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button onClick={onSave} themeColor={"primary"} icon="save">
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button
+                        onClick={onSave}
+                        themeColor={"primary"}
+                        icon="save"
+                      >
+                        저장
+                      </Button>
+                    )}
                   </ButtonContainer>
                 </BottomContainer>
               </GridContainer>
@@ -2311,6 +2334,7 @@ const KendoWindow = ({
                         type={"button"}
                         themeColor={"primary"}
                         onClick={onCopyEditClick2}
+                        disabled={permissions.save ? false : true}
                       >
                         패턴공정도
                       </Button>
@@ -2320,12 +2344,14 @@ const KendoWindow = ({
                         onClick={onAddClick}
                         title="행 추가"
                         icon="add"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         type={"button"}
                         themeColor={"primary"}
                         fillMode="outline"
                         onClick={onDeleteClick}
+                        disabled={permissions.save ? false : true}
                         title="행 삭제"
                         icon="minus"
                       ></Button>
@@ -2424,6 +2450,7 @@ const KendoWindow = ({
                           onClick={onAddClick2}
                           title="행 추가"
                           icon="add"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           type={"button"}
@@ -2432,6 +2459,7 @@ const KendoWindow = ({
                           onClick={onDeleteClick2}
                           title="행 삭제"
                           icon="minus"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -2530,9 +2558,11 @@ const KendoWindow = ({
             </GridContainerWrap>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button onClick={onSave} themeColor={"primary"} icon="save">
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button onClick={onSave} themeColor={"primary"} icon="save">
+                    저장
+                  </Button>
+                )}
               </ButtonContainer>
             </BottomContainer>
           </>

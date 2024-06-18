@@ -76,10 +76,7 @@ import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWind
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/PR_A9000W_Window";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -685,6 +682,11 @@ const PR_A9000W: React.FC = () => {
           ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
+      }));
+      setDetailFilters((prev) => ({
+        ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -846,6 +848,7 @@ const PR_A9000W: React.FC = () => {
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -1001,6 +1004,7 @@ const PR_A9000W: React.FC = () => {
 
   const fetchItemData2 = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -1221,19 +1225,19 @@ const PR_A9000W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1327,6 +1331,7 @@ const PR_A9000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -1418,18 +1423,28 @@ const PR_A9000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -1440,7 +1455,7 @@ const PR_A9000W: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -2133,6 +2148,7 @@ const PR_A9000W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2308,6 +2324,7 @@ const PR_A9000W: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2716,7 +2733,10 @@ const PR_A9000W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="재공기타입고">
+        <TabStripTab
+          title="재공기타입고"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainerWrap>
             <FormContext.Provider
               value={{
@@ -2732,6 +2752,7 @@ const PR_A9000W: React.FC = () => {
                       onClick={onWndClick2}
                       themeColor={"primary"}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       품목참조
                     </Button>
@@ -2740,6 +2761,7 @@ const PR_A9000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -2747,6 +2769,7 @@ const PR_A9000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -2754,6 +2777,7 @@ const PR_A9000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2854,7 +2878,10 @@ const PR_A9000W: React.FC = () => {
             </FormContext.Provider>
           </GridContainerWrap>
         </TabStripTab>
-        <TabStripTab title="재공기타출고">
+        <TabStripTab
+          title="재공기타출고"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext2.Provider
             value={{
               itemInfo2,
@@ -2869,6 +2896,7 @@ const PR_A9000W: React.FC = () => {
                     onClick={onWndClick}
                     themeColor={"primary"}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     재공참조
                   </Button>
@@ -2877,6 +2905,7 @@ const PR_A9000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -2884,6 +2913,7 @@ const PR_A9000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
@@ -2891,6 +2921,7 @@ const PR_A9000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

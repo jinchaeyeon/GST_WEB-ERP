@@ -344,7 +344,6 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const menu_id = menulist.filter((item) => item.formId == pathname)[0];
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -400,7 +399,6 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
   //그리드 데이터 조회
   const fetchmanualGrid = async () => {
-    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -921,7 +919,11 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
                 width: "100%",
               }}
             >
-              {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+              {url != "" ? (
+                <FileViewers fileUrl={url} isMobile={isMobile} />
+              ) : (
+                ""
+              )}
             </div>
           </SwiperSlide>
           <SwiperSlide key={1}>
@@ -1049,7 +1051,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
               height: webheight,
             }}
           >
-            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+            {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
           <FormContext.Provider
             value={{

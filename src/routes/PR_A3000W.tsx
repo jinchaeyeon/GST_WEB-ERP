@@ -50,6 +50,13 @@ var height3 = 0;
 var height4 = 0;
 
 const PR_A3000W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const pc = UseGetValueFromSessionItem("pc");
@@ -86,14 +93,6 @@ const PR_A3000W: React.FC = () => {
 
   const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
-
-  const [permissions, setPermissions] = useState<TPermissions>({
-    save: false,
-    print: false,
-    view: false,
-    delete: false,
-  });
-  UsePermissions(setPermissions);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_PR010,L_sysUserMaster_001,L_fxcode", setBizComponentData);
@@ -145,6 +144,7 @@ const PR_A3000W: React.FC = () => {
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
+    if (!permissions.view || !permissions.save) return;
     const { value, name } = e.target;
 
     setFilters((prev) => ({
@@ -170,6 +170,7 @@ const PR_A3000W: React.FC = () => {
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
+    if (!permissions.view || !permissions.save) return;
     const { name, value } = e;
 
     setFiltersSaved((prev) => ({
@@ -332,7 +333,6 @@ const PR_A3000W: React.FC = () => {
 
   // 데이터 조회
   const fetchMain = async () => {
-    //if (!permissions?.view) return;
     if (filters.plankey == "") return;
     let data: any;
     setLoading(true);
@@ -362,7 +362,6 @@ const PR_A3000W: React.FC = () => {
 
   // 시작정보 조회
   const fetchMaster = async () => {
-    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -401,8 +400,6 @@ const PR_A3000W: React.FC = () => {
   };
 
   const fetchMainSaved = async () => {
-    if (!permissions?.save) return;
-
     let data: any;
 
     try {
@@ -449,13 +446,13 @@ const PR_A3000W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch && permissions !== null) {
+    if (isInitSearch) {
       fetchMain();
       setIsInitSearch(false);
     }
     fetchStopData();
     fetchMaster();
-  }, [filters, permissions]);
+  }, [filters]);
 
   useEffect(() => {
     if (filtersSaved.work_type == "ValueChanged") {
@@ -480,10 +477,6 @@ const PR_A3000W: React.FC = () => {
 
     return () => clearTimeout(timeId);
   }, [filtersSaved]);
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {}, []);
 
   const search = () => {
     fetchMain();
@@ -727,61 +720,57 @@ const PR_A3000W: React.FC = () => {
                   style={{ justifyContent: "center" }}
                   className="ButtonContainer3"
                 >
-                  {permissions && (
-                    <>
-                      <Button
-                        onClick={onClickWork}
-                        themeColor={"primary"}
-                        disabled={
-                          permissions.save && stopStartOrEnd == "start"
-                            ? false
-                            : true
-                        }
-                        className="iot-btn green"
-                        style={{
-                          width: "90px",
-                          height: "50px",
-                          fontSize: "16px",
-                        }}
-                      >
-                        {startOrEnd == "start" ? "시작" : "종료"}
-                      </Button>
-                      <Button
-                        onClick={onClickDefect}
-                        themeColor={"primary"}
-                        disabled={
-                          permissions.save &&
-                          startOrEnd == "end" &&
-                          stopStartOrEnd == "start"
-                            ? false
-                            : true
-                        }
-                        className="iot-btn red"
-                        style={{
-                          width: "95px",
-                          height: "50px",
-                          fontSize: "16px",
-                        }}
-                      >
-                        불량입력
-                      </Button>
-                      <Button
-                        onClick={onClickStop}
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                        className="iot-btn gray"
-                        style={{
-                          width: "100px",
-                          height: "50px",
-                          fontSize: "16px",
-                        }}
-                      >
-                        {stopStartOrEnd == "start"
-                          ? "비가동입력"
-                          : "비가동종료"}
-                      </Button>
-                    </>
-                  )}
+                  <Button
+                    onClick={onClickWork}
+                    themeColor={"primary"}
+                    disabled={
+                      permissions.save
+                        ? stopStartOrEnd == "start"
+                          ? false
+                          : true
+                        : true
+                    }
+                    className="iot-btn green"
+                    style={{
+                      width: "90px",
+                      height: "50px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {startOrEnd == "start" ? "시작" : "종료"}
+                  </Button>
+                  <Button
+                    onClick={onClickDefect}
+                    themeColor={"primary"}
+                    className="iot-btn red"
+                    style={{
+                      width: "95px",
+                      height: "50px",
+                      fontSize: "16px",
+                    }}
+                    disabled={
+                      permissions.save
+                        ? startOrEnd == "end" && stopStartOrEnd == "start"
+                          ? false
+                          : true
+                        : true
+                    }
+                  >
+                    불량입력
+                  </Button>
+                  <Button
+                    onClick={onClickStop}
+                    themeColor={"primary"}
+                    className="iot-btn gray"
+                    style={{
+                      width: "100px",
+                      height: "50px",
+                      fontSize: "16px",
+                    }}
+                    disabled={permissions.save ? false : true}
+                  >
+                    {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
+                  </Button>
                 </ButtonContainer>
               </GridContainer>
             </SwiperSlide>
@@ -908,45 +897,45 @@ const PR_A3000W: React.FC = () => {
             </FilterContainer>
           </GridContainer>
           <ButtonContainer className="ButtonContainer3">
-            {permissions && (
-              <>
-                <Button
-                  onClick={onClickWork}
-                  icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
-                  themeColor={"primary"}
-                  disabled={
-                    permissions.save && stopStartOrEnd == "start" ? false : true
-                  }
-                  className="iot-btn green"
-                >
-                  {startOrEnd == "start" ? "시작" : "종료"}
-                </Button>
-                <Button
-                  onClick={onClickDefect}
-                  icon="exclamation-circle"
-                  themeColor={"primary"}
-                  disabled={
-                    permissions.save &&
-                    startOrEnd == "end" &&
-                    stopStartOrEnd == "start"
-                      ? false
-                      : true
-                  }
-                  className="iot-btn red"
-                >
-                  불량입력
-                </Button>
-                <Button
-                  onClick={onClickStop}
-                  icon="pencil"
-                  themeColor={"primary"}
-                  disabled={permissions.save ? false : true}
-                  className="iot-btn gray"
-                >
-                  {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
-                </Button>
-              </>
-            )}
+            <Button
+              onClick={onClickWork}
+              icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
+              themeColor={"primary"}
+              disabled={
+                permissions.save
+                  ? stopStartOrEnd == "start"
+                    ? false
+                    : true
+                  : true
+              }
+              className="iot-btn green"
+            >
+              {startOrEnd == "start" ? "시작" : "종료"}
+            </Button>
+            <Button
+              onClick={onClickDefect}
+              icon="exclamation-circle"
+              themeColor={"primary"}
+              disabled={
+                permissions.save
+                  ? startOrEnd == "end" && stopStartOrEnd == "start"
+                    ? false
+                    : true
+                  : true
+              }
+              className="iot-btn red"
+            >
+              불량입력
+            </Button>
+            <Button
+              onClick={onClickStop}
+              icon="pencil"
+              themeColor={"primary"}
+              className="iot-btn gray"
+              disabled={permissions.save ? false : true}
+            >
+              {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
+            </Button>
           </ButtonContainer>
         </>
       )}

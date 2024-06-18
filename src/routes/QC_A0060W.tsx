@@ -57,10 +57,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/QC_A0060W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -199,6 +196,7 @@ const QC_A0060W: React.FC = () => {
           ?.valueCode,
         qcgb: defaultOption.find((item: any) => item.id == "qcgb")?.valueCode,
         rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -339,7 +337,7 @@ const QC_A0060W: React.FC = () => {
     rev: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -347,7 +345,7 @@ const QC_A0060W: React.FC = () => {
     stdnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //삭제 프로시저 초기값
@@ -402,7 +400,7 @@ const QC_A0060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -503,6 +501,7 @@ const QC_A0060W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -596,7 +595,12 @@ const QC_A0060W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -606,11 +610,16 @@ const QC_A0060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -620,11 +629,11 @@ const QC_A0060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -751,6 +760,7 @@ const QC_A0060W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -775,6 +785,7 @@ const QC_A0060W: React.FC = () => {
   const [rev, setrev] = useState<boolean>(false);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1028,6 +1039,7 @@ const QC_A0060W: React.FC = () => {
                       onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="track-changes"
+                      disabled={permissions.save ? false : true}
                     >
                       리비전
                     </Button>
@@ -1035,6 +1047,7 @@ const QC_A0060W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       검사표준서생성
                     </Button>
@@ -1043,6 +1056,7 @@ const QC_A0060W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       검사표준서삭제
                     </Button>
@@ -1240,6 +1254,7 @@ const QC_A0060W: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="track-changes"
+                  disabled={permissions.save ? false : true}
                 >
                   리비전
                 </Button>
@@ -1247,6 +1262,7 @@ const QC_A0060W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   검사표준서생성
                 </Button>
@@ -1255,6 +1271,7 @@ const QC_A0060W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   검사표준서삭제
                 </Button>

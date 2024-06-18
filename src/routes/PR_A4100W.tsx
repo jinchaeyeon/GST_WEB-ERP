@@ -74,10 +74,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A4100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -346,12 +343,12 @@ const PR_A4100W: React.FC = () => {
     finyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -470,17 +467,17 @@ const PR_A4100W: React.FC = () => {
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -849,6 +846,7 @@ const PR_A4100W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = async (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -923,6 +921,7 @@ const PR_A4100W: React.FC = () => {
   };
 
   const onCheckClick = async (e: any) => {
+    if (!permissions.save) return;
     if (!window.confirm("선택한 자료를 완료/완료해제 처리합니다.")) {
       return false;
     }
@@ -998,6 +997,7 @@ const PR_A4100W: React.FC = () => {
   };
 
   const onSaveClick = async (e: any) => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1304,6 +1304,7 @@ const PR_A4100W: React.FC = () => {
               themeColor={"primary"}
               icon="check"
               title="일괄처리"
+              disabled={permissions.save ? false : true}
             ></Button>
             <Button
               onClick={onDeleteClick}
@@ -1311,6 +1312,7 @@ const PR_A4100W: React.FC = () => {
               themeColor={"primary"}
               icon="minus"
               title="행 삭제"
+              disabled={permissions.delete ? false : true}
             ></Button>
             <Button
               onClick={onSaveClick}
@@ -1318,6 +1320,7 @@ const PR_A4100W: React.FC = () => {
               themeColor={"primary"}
               icon="save"
               title="저장"
+              disabled={permissions.save ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>

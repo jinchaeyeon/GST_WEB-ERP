@@ -13,12 +13,13 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStrWithTime2,
   getHeight,
   getWindowDeviceHeight,
@@ -78,6 +79,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -229,7 +237,12 @@ const CopyWindow = ({
   });
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       const prodmacs = prodmac.find(
         (item: any) => item.fxfull == data.prodmac
       )?.fxcode;
@@ -254,7 +267,7 @@ const CopyWindow = ({
         losshh: data.losshh,
       }));
     }
-  }, []);
+  }, [permissions, customOptionData]);
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = () => {
@@ -309,6 +322,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -344,10 +358,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.location != "") {
+    if (ParaData.location != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   return (
     <>
@@ -460,9 +474,11 @@ const CopyWindow = ({
         </FormBoxWrap>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                저장
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

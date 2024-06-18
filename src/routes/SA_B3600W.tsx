@@ -363,8 +363,10 @@ const SA_B3600W: React.FC = () => {
   }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
-    fetchChartGrid();
-  }, [selected]);
+    if (permissions.view && customOptionData !== null) {
+      fetchChartGrid();
+    }
+  }, [selected, permissions, customOptionData]);
 
   const startContent = (
     <React.Fragment>

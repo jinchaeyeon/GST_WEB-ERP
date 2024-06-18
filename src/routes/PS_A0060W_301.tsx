@@ -152,6 +152,7 @@ const PS_A0060W_301: React.FC = () => {
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -224,14 +225,14 @@ const PS_A0060W_301: React.FC = () => {
     yyyymm: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -328,13 +329,13 @@ const PS_A0060W_301: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -542,6 +543,7 @@ const PS_A0060W_301: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
@@ -645,6 +647,7 @@ const PS_A0060W_301: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -691,7 +694,11 @@ const PS_A0060W_301: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved != undefined && paraDataSaved.orgdiv != "") {
+    if (
+      paraDataSaved != undefined &&
+      paraDataSaved.orgdiv != "" &&
+      permissions.save
+    ) {
       fetchTodoGridSaved();
     }
   }, [paraDataSaved]);
@@ -1040,6 +1047,7 @@ const PS_A0060W_301: React.FC = () => {
               onClick={onSetSaturdayClick}
               themeColor={"primary"}
               icon="calendar"
+              disabled={permissions.save ? false : true}
             >
               토요일 자동 생성
             </Button>
@@ -1047,6 +1055,7 @@ const PS_A0060W_301: React.FC = () => {
               onClick={onSetSundayClick}
               themeColor={"primary"}
               icon="calendar"
+              disabled={permissions.save ? false : true}
             >
               일요일 자동 생성
             </Button>
@@ -1054,6 +1063,7 @@ const PS_A0060W_301: React.FC = () => {
               onClick={onHolidayClick}
               themeColor={"primary"}
               icon="calendar"
+              disabled={permissions.save ? false : true}
             >
               공휴일 자동 생성
             </Button>
@@ -1062,6 +1072,7 @@ const PS_A0060W_301: React.FC = () => {
               themeColor={"primary"}
               icon="plus"
               title="행 추가"
+              disabled={permissions.save ? false : true}
             ></Button>
             <Button
               onClick={onRemoveClick}
@@ -1069,6 +1080,7 @@ const PS_A0060W_301: React.FC = () => {
               themeColor={"primary"}
               icon="minus"
               title="행 삭제"
+              disabled={permissions.save ? false : true}
             ></Button>
             <Button
               onClick={onSaveClick}
@@ -1076,6 +1088,7 @@ const PS_A0060W_301: React.FC = () => {
               themeColor={"primary"}
               icon="save"
               title="저장"
+              disabled={permissions.save ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>

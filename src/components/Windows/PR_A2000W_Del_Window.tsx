@@ -24,13 +24,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getBizCom,
   getGridItemChangedData,
   getHeight,
@@ -71,6 +72,13 @@ const KendoWindow = ({
   reloadData,
   modal = false,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -187,6 +195,7 @@ const KendoWindow = ({
 
   let gridRef: any = useRef(null);
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -276,13 +285,13 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && bizComponentData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData]);
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -398,6 +407,7 @@ const KendoWindow = ({
   });
 
   const onSaveClick = () => {
+    if (!permissions.delete) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -442,6 +452,7 @@ const KendoWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.delete) return;
     let data: any;
     setLoading(true);
 
@@ -534,10 +545,10 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraSaved.workType != "") {
+    if (paraSaved.workType != "" && permissions.delete) {
       fetchTodoGridSaved();
     }
-  }, [paraSaved]);
+  }, [paraSaved, permissions]);
 
   const [values, setValues] = React.useState<boolean>(false);
   const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
@@ -636,6 +647,7 @@ const KendoWindow = ({
               themeColor={"primary"}
               icon="minus"
               title="행 삭제"
+              disabled={permissions.delete ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
@@ -748,14 +760,16 @@ const KendoWindow = ({
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button
-            themeColor={"primary"}
-            fillMode={"outline"}
-            onClick={onSaveClick}
-            icon="save"
-          >
-            저장
-          </Button>
+          {permissions.delete && (
+            <Button
+              themeColor={"primary"}
+              fillMode={"outline"}
+              onClick={onSaveClick}
+              icon="save"
+            >
+              저장
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

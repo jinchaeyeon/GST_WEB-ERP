@@ -380,7 +380,7 @@ const PR_A6000W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
@@ -394,14 +394,14 @@ const PR_A6000W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     fxnum: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //삭제 프로시저 초기값
@@ -434,7 +434,7 @@ const PR_A6000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -530,6 +530,7 @@ const PR_A6000W: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -619,6 +620,7 @@ const PR_A6000W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters3: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters3: Iparameters = {
@@ -715,35 +717,50 @@ const PR_A6000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -899,6 +916,7 @@ const PR_A6000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -919,6 +937,7 @@ const PR_A6000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1492,6 +1511,7 @@ const PR_A6000W: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     비가동내역생성
                   </Button>
@@ -1500,6 +1520,7 @@ const PR_A6000W: React.FC = () => {
                     icon="delete"
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
                   >
                     비가동내역삭제
                   </Button>
@@ -1759,6 +1780,7 @@ const PR_A6000W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   비가동내역생성
                 </Button>
@@ -1767,6 +1789,7 @@ const PR_A6000W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   비가동내역삭제
                 </Button>

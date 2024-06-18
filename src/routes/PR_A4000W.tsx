@@ -92,7 +92,6 @@ const CeneterField = ["strtime", "endtime", "ordnum", "gb"];
 
 let temp = 0;
 let targetRowIndex: null | number = null;
-let targetRowIndex1: null | number = null;
 let deletedRows: object[] = [];
 let custdiv = "";
 
@@ -256,11 +255,13 @@ const PR_A4000W: React.FC = () => {
           ?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
           ?.valueCode,
+        isSearch: true,
       }));
       setGoFilters((prev) => ({
         ...prev,
         frdt1: setDefaultDate(customOptionData, "frdt1"), // 가동-비가동 일자
         todt1: setDefaultDate(customOptionData, "todt1"), // 가동-비가동 일자
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -615,7 +616,7 @@ const PR_A4000W: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   // 조회조건 초기값
@@ -643,7 +644,7 @@ const PR_A4000W: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters, setDetailFilters] = useState({
@@ -651,7 +652,7 @@ const PR_A4000W: React.FC = () => {
     prodmac: "",
     prodemp: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [dailyfilters, setDailyFilters] = useState({
@@ -678,13 +679,13 @@ const PR_A4000W: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -788,7 +789,7 @@ const PR_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchGoGrid = async (gofilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -867,7 +868,7 @@ const PR_A4000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -946,7 +947,7 @@ const PR_A4000W: React.FC = () => {
   };
 
   const fetchDailyGrid = async (dailyfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1017,17 +1018,27 @@ const PR_A4000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && gofilters.isSearch) {
+    if (
+      gofilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(gofilters);
       setGoFilters((prev) => ({
@@ -1037,10 +1048,15 @@ const PR_A4000W: React.FC = () => {
       }));
       fetchGoGrid(deepCopiedFilters);
     }
-  }, [gofilters]);
+  }, [gofilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (customOptionData != null && detailfilters.isSearch) {
+    if (
+      detailfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
@@ -1050,10 +1066,15 @@ const PR_A4000W: React.FC = () => {
       }));
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters]);
+  }, [detailfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (customOptionData != null && dailyfilters.isSearch) {
+    if (
+      dailyfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(dailyfilters);
       setDailyFilters((prev) => ({
@@ -1063,7 +1084,7 @@ const PR_A4000W: React.FC = () => {
       }));
       fetchDailyGrid(deepCopiedFilters);
     }
-  }, [dailyfilters]);
+  }, [dailyfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1458,6 +1479,7 @@ const PR_A4000W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1629,12 +1651,13 @@ const PR_A4000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraSaved.rowstatus != "") {
+    if (paraSaved.rowstatus != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraSaved]);
+  }, [paraSaved, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -1862,7 +1885,10 @@ const PR_A4000W: React.FC = () => {
         style={{ width: "100%" }}
         scrollable={isMobile}
       >
-        <TabStripTab title="생산실적관리">
+        <TabStripTab
+          title="생산실적관리"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2051,6 +2077,7 @@ const PR_A4000W: React.FC = () => {
                   onClick={onPlanWndClick}
                   themeColor={"primary"}
                   icon="folder-open"
+                  disabled={permissions.save ? false : true}
                 >
                   생산계획참조
                 </Button>
@@ -2060,6 +2087,7 @@ const PR_A4000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -2067,6 +2095,7 @@ const PR_A4000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -2163,7 +2192,10 @@ const PR_A4000W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="가동-비가동">
+        <TabStripTab
+          title="가동-비가동"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2602,7 +2634,10 @@ const PR_A4000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="일일생산율">
+        <TabStripTab
+          title="일일생산율"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tr>

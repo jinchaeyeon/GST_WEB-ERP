@@ -25,7 +25,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import {
@@ -33,6 +33,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getBizCom,
   getGridItemChangedData,
   getHeight,
@@ -68,6 +69,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -95,16 +103,19 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
 
   useLayoutEffect(() => {
-    if(customOptionData != null) {
+    if (customOptionData != null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowButtonContainer");
-  
+
       setMobileHeight(
         getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
       );
       setWebHeight(
-        getWindowDeviceHeight(false, position.height) - height - height2 - height3
+        getWindowDeviceHeight(false, position.height) -
+          height -
+          height2 -
+          height3
       );
     }
   }, [customOptionData]);
@@ -189,10 +200,11 @@ const KendoWindow = ({
     itemnm: "",
     finyn: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -258,7 +270,12 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -268,7 +285,7 @@ const KendoWindow = ({
       }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const [values, setValues] = React.useState<boolean>(false);
   const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
@@ -392,6 +409,7 @@ const KendoWindow = ({
   };
 
   const onConfirmBtnClick = () => {
+    if (!permissions.save) return;
     const selectedRowData = mainDataResult.data.find(
       (item) => item.chk == true
     );
@@ -440,6 +458,7 @@ const KendoWindow = ({
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return item.chk == true;
     });
@@ -479,6 +498,7 @@ const KendoWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -569,10 +589,10 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraSaved.initemcd != "") {
+    if (paraSaved.initemcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraSaved]);
+  }, [paraSaved, permissions]);
 
   return (
     <>
@@ -588,7 +608,6 @@ const KendoWindow = ({
             <GridTitle>투입가능 소재 리스트</GridTitle>
             <ButtonContainer>
               <Button
-                icon="delete"
                 onClick={onSaveClick}
                 fillMode={"outline"}
                 themeColor={"primary"}
@@ -678,13 +697,15 @@ const KendoWindow = ({
         </GridContainer>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button
-              themeColor={"primary"}
-              onClick={onConfirmBtnClick}
-              fillMode={"outline"}
-            >
-              확인
-            </Button>
+            {permissions.save && (
+              <Button
+                themeColor={"primary"}
+                onClick={onConfirmBtnClick}
+                fillMode={"outline"}
+              >
+                확인
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

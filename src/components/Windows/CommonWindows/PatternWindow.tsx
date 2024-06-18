@@ -10,7 +10,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -26,11 +26,12 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPermissions } from "../../../store/types";
 import NumberCell from "../../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
@@ -69,6 +70,13 @@ const KendoWindow = ({
   para = { user_id: "", user_name: "" },
   modal = false,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   // 비즈니스 컴포넌트 조회
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -90,7 +98,7 @@ const KendoWindow = ({
   const [webheight, setWebHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
     height3 = getHeight(".WindowButtonContainer");
@@ -231,6 +239,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -328,6 +337,7 @@ const KendoWindow = ({
   };
   //상세그리드 조회
   const fetchGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     //조회조건 파라미터
@@ -438,22 +448,22 @@ const KendoWindow = ({
   }, [bizComponentData]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && bizComponentData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view && bizComponentData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData]);
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onDetailDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -532,6 +542,7 @@ const KendoWindow = ({
   };
 
   const onRowDoubleClick = async (props: any) => {
+    if (!permissions.view) return;
     let data: any;
     const parameters2: Iparameters = {
       procedureName: "P_BA_A0050W_Sub2_Q ",

@@ -17,10 +17,11 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { sessionItemState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -42,6 +43,14 @@ var height = 0;
 var height2 = 0;
 
 const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
@@ -173,6 +182,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   };
 
   const fetchMainSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -202,8 +212,8 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchMainSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchMainSaved();
+  }, [paraData, permissions]);
 
   return (
     <Window
@@ -295,9 +305,12 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
             </fieldset>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button type={"submit"} themeColor={"primary"}>
-                  확인
-                </Button>
+                {permissions.save && (
+                  <Button type={"submit"} themeColor={"primary"}>
+                    확인
+                  </Button>
+                )}
+
                 <Button
                   type={"button"}
                   themeColor={"primary"}

@@ -61,10 +61,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import BarcodeWindow from "../components/Windows/PR_A5000W_Barcode_Window";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -173,6 +170,7 @@ const PR_A5000W: React.FC = () => {
           ?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -266,19 +264,19 @@ const PR_A5000W: React.FC = () => {
     prntqty_s: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -367,6 +365,7 @@ const PR_A5000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -461,10 +460,10 @@ const PR_A5000W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -473,10 +472,15 @@ const PR_A5000W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailFilters.isSearch) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
 
@@ -488,7 +492,7 @@ const PR_A5000W: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -886,6 +890,7 @@ const PR_A5000W: React.FC = () => {
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -938,6 +943,8 @@ const PR_A5000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (ParaData.workType != "D" && !permissions.save) return;
+    if (ParaData.workType == "D" && !permissions.delete) return;
     let data: any;
     setLoading(true);
     try {
@@ -1026,7 +1033,18 @@ const PR_A5000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rekey_s != "" || ParaData.seq1_s != "") {
+    if (
+      (ParaData.rekey_s != "" || ParaData.seq1_s != "") &&
+      permissions.save &&
+      ParaData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (
+      (ParaData.rekey_s != "" || ParaData.seq1_s != "") &&
+      permissions.delete &&
+      ParaData.workType == "D"
+    ) {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -1064,6 +1082,7 @@ const PR_A5000W: React.FC = () => {
   };
 
   const onRemove = () => {
+    if (!permissions.delete) return;
     const dataItem = detailDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -1099,6 +1118,7 @@ const PR_A5000W: React.FC = () => {
   };
 
   const onPrint = () => {
+    if (!permissions.print) return;
     const datas = detailDataResult.data.filter((item: any) => item.chk == true);
 
     try {
@@ -1274,6 +1294,7 @@ const PR_A5000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1395,6 +1416,7 @@ const PR_A5000W: React.FC = () => {
                     onClick={onPrint}
                     icon="print"
                     title="미리보기"
+                    disabled={permissions.print ? false : true}
                   ></Button>
                   <Button
                     onClick={onRemove}
@@ -1402,12 +1424,14 @@ const PR_A5000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="delete"
                     title="삭제"
+                    disabled={permissions.delete ? false : true}
                   ></Button>
                   <Button
                     onClick={onSearch}
                     themeColor={"primary"}
                     icon="search"
                     title="조회"
+                    disabled={permissions.view ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1543,6 +1567,7 @@ const PR_A5000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -1643,6 +1668,31 @@ const PR_A5000W: React.FC = () => {
           <GridContainer>
             <GridTitleContainer className="ButtonContainer2">
               <GridTitle>완제품입고내역</GridTitle>
+              <ButtonContainer>
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  onClick={onPrint}
+                  icon="print"
+                  title="미리보기"
+                  disabled={permissions.print ? false : true}
+                ></Button>
+                <Button
+                  onClick={onRemove}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                  title="삭제"
+                  disabled={permissions.delete ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSearch}
+                  themeColor={"primary"}
+                  icon="search"
+                  title="조회"
+                  disabled={permissions.view ? false : true}
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <GridContainer className="FormBoxWrap">
               <FormBoxWrap style={{ width: "25%", marginLeft: "-4%" }}>
@@ -1670,30 +1720,6 @@ const PR_A5000W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <div>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  onClick={onPrint}
-                  icon="print"
-                  title="미리보기"
-                  style={{ marginRight: "5px" }}
-                ></Button>
-                <Button
-                  onClick={onRemove}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="delete"
-                  title="삭제"
-                  style={{ marginRight: "5px" }}
-                ></Button>
-                <Button
-                  onClick={onSearch}
-                  themeColor={"primary"}
-                  icon="search"
-                  title="조회"
-                ></Button>
-              </div>
             </GridContainer>
             <ExcelExport
               data={detailDataResult.data}

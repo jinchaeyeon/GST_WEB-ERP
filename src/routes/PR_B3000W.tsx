@@ -55,10 +55,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IItemData, IWindowPosition } from "../hooks/interfaces";
-import {
-  isLoading,
-  sessionItemState
-} from "../store/atoms";
+import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -110,14 +107,14 @@ const PR_B3000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("PR_B3000W", setCustomOptionData);
-
+  let deviceHeight = document.documentElement.clientHeight;
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
-    top: isMobile == true ? 0 : (deviceWidth - 800) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
     width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceWidth : 800,
+    height: isMobile == true ? deviceHeight : 800,
   });
 
   const [mobileheight, setMobileHeight] = useState(0);
@@ -153,6 +150,7 @@ const PR_B3000W: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -219,6 +217,7 @@ const PR_B3000W: React.FC = () => {
   };
 
   const onPrintWndClick = () => {
+    if (!permissions.print) return;
     if (mainDataResult.total > 0) {
       window.scrollTo(0, 0);
       setPreviewVisible((prev) => !prev);
@@ -278,12 +277,12 @@ const PR_B3000W: React.FC = () => {
     service_id: "20190218001",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     //조회조건 파라미터
@@ -349,7 +348,12 @@ const PR_B3000W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -359,7 +363,7 @@ const PR_B3000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -599,19 +603,17 @@ const PR_B3000W: React.FC = () => {
       <GridContainer>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>작업 리스트</GridTitle>
-          {permissions && (
-            <ButtonContainer>
-              <Button
-                onClick={onPrintWndClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="print"
-                disabled={permissions.print ? false : true}
-              >
-                작업일보 출력
-              </Button>
-            </ButtonContainer>
-          )}
+          <ButtonContainer>
+            <Button
+              onClick={onPrintWndClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
+              작업일보 출력
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
