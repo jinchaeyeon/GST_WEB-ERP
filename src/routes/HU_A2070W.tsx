@@ -63,10 +63,8 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -154,7 +152,7 @@ const HU_A2070W: React.FC = () => {
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
-  
+
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A2070W", setCustomOptionData);
   useLayoutEffect(() => {
@@ -226,7 +224,7 @@ const HU_A2070W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const userId = UseGetValueFromSessionItem("user_id");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -238,7 +236,6 @@ const HU_A2070W: React.FC = () => {
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A2070W", setMessagesData);
-
 
   useEffect(() => {
     if (customOptionData !== null) {

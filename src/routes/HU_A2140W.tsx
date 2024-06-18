@@ -77,12 +77,10 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -289,7 +287,7 @@ const HU_A2140W: React.FC = () => {
     });
   };
   let gridRef: any = useRef(null);
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,

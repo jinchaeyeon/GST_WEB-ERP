@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -49,10 +49,7 @@ import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IWindowPosition } from "../hooks/interfaces";
 import {
-  heightstate,
-  isDeviceWidthState,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1280W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";

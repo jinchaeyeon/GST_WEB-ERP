@@ -1,6 +1,6 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -26,7 +26,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
 
 var height = 0;

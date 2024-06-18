@@ -92,12 +92,10 @@ import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isLoading,
-  isMobileState,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -314,9 +312,15 @@ const BA_A0020: React.FC = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height7);
-        setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height6 - height7);
-        setMobileHeight3(getDeviceHeight(true) - height2 - height4 - height6 - height7);
-        setMobileHeight4(getDeviceHeight(true) - height2 - height5 - height6 - height7);
+        setMobileHeight2(
+          getDeviceHeight(true) - height2 - height3 - height6 - height7
+        );
+        setMobileHeight3(
+          getDeviceHeight(true) - height2 - height4 - height6 - height7
+        );
+        setMobileHeight4(
+          getDeviceHeight(true) - height2 - height5 - height6 - height7
+        );
         setWebHeight(getDeviceHeight(true) - height - height7);
         setWebHeight2(getDeviceHeight(true) - height6 - height3 - height7);
         setWebHeight3(getDeviceHeight(true) - height6 - height4 - height7);
@@ -3383,7 +3387,7 @@ const BA_A0020: React.FC = () => {
                   <FormBoxWrap
                     style={{
                       height: mobileheight2,
-                      width: "100%"
+                      width: "100%",
                     }}
                   >
                     <FormBox>

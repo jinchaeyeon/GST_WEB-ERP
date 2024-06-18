@@ -61,7 +61,10 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isFilterHideState, isLoading, isMobileState } from "../store/atoms";
+import {
+  isFilterHideState,
+  isLoading
+} from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0021W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -119,7 +122,7 @@ const BA_A0021W_603: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   const [tabSelected2, setTabSelected2] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
-  useRecoilState(isFilterHideState);
+    useRecoilState(isFilterHideState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0021W_603", setCustomOptionData);
@@ -141,7 +144,9 @@ const BA_A0021W_603: React.FC = () => {
         setMobileHeight5(getDeviceHeight(true) - height3 - height4);
         setMobileHeight6(getDeviceHeight(true) - height3 - height4);
         setWebHeight(getDeviceHeight(true) - height3 - height4);
-        setWebHeight2(getDeviceHeight(false) - height2 - height3 - height3 - height4);
+        setWebHeight2(
+          getDeviceHeight(false) - height2 - height3 - height3 - height4
+        );
         setWebHeight3(getDeviceHeight(false) - height3 - height3 - height4);
         setWebHeight4(getDeviceHeight(false) - height3 - height3 - height4);
         setWebHeight5(getDeviceHeight(false) - height3 - height3 - height4);

@@ -155,14 +155,6 @@ export const OSState = atom<boolean>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const heightstate = atom<number>({
-  key: "heightstate",
-  default:
-    document.documentElement.clientWidth <= 1200
-      ? document.documentElement.clientHeight - 60
-      : document.documentElement.clientHeight - 30,
-});
-
 export const isFilterheightstate = atom<number>({
   key: "isFilterheightstate",
   default: 0,
@@ -176,14 +168,4 @@ export const isFilterHideState = atom<boolean>({
 export const isFilterHideState2 = atom<boolean>({
   key: "isFilterHideState2",
   default: document.documentElement.clientWidth <= 1200,
-});
-
-export const isMobileState = atom<boolean>({
-  key: "isMobileState",
-  default: document.documentElement.clientWidth <= 1200,
-});
-
-export const isDeviceWidthState = atom<number>({
-  key: "isDeviceWidthState",
-  default: document.documentElement.clientWidth,
 });

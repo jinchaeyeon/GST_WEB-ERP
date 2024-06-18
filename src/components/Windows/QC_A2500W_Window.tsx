@@ -18,13 +18,14 @@ import {
   isLoading,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getHeight,
@@ -99,6 +100,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -305,7 +313,12 @@ const CopyWindow = ({
   });
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         workType: workType,
@@ -336,7 +349,12 @@ const CopyWindow = ({
         reseq: data.reseq,
         title: data.title,
       }));
-    } else if (workType == "N" && basicdata != undefined) {
+    } else if (
+      workType == "N" &&
+      basicdata != undefined &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         workType: workType,
@@ -350,7 +368,7 @@ const CopyWindow = ({
         reseq: basicdata.reseq,
       }));
     }
-  }, []);
+  }, [permissions, customOptionData]);
 
   const getAttachmentsData = (data: IAttachmentData) => {
     setFilters((prev: any) => {
@@ -366,12 +384,20 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     try {
       if (
         convertDateToStr(filters.qcdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.qcdt).substring(6, 8) > "31" ||
         convertDateToStr(filters.qcdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.qcdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A2500W_001");
+      } else if (
+        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "QC_A2500W_001");
       } else if (
@@ -484,6 +510,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -539,10 +566,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   return (
     <>
@@ -779,9 +806,11 @@ const CopyWindow = ({
         </FormBoxWrap>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                저장
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
@@ -811,6 +840,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

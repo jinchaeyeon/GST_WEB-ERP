@@ -11,7 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -41,11 +41,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
-import {
-  heightstate,
-  isLoading,
-  isMobileState
-} from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B1340W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -89,7 +85,7 @@ const AC_B1340W: React.FC = () => {
   let gridRef: any = useRef(null);
 
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -120,7 +116,6 @@ const AC_B1340W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -366,7 +361,7 @@ const AC_B1340W: React.FC = () => {
       </FilterContainer>
       <GridContainer>
         <GridTitleContainer className="ButtonContainer">
-          <GridTitle/>
+          <GridTitle />
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}

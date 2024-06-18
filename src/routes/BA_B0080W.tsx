@@ -44,10 +44,8 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import {
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
@@ -84,12 +82,11 @@ const BA_B0080W: React.FC = () => {
     }
   }, [customOptionData, webheight]);
 
-
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,

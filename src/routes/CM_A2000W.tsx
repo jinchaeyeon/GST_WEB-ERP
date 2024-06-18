@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -53,9 +53,7 @@ import DetailWindow from "../components/Windows/CM_A2000W_Window";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
-  isLoading,
-  isMobileState,
+  isLoading
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -103,7 +101,7 @@ const CM_A2000W: React.FC = () => {
   }, [customOptionData, webheight]);
 
   const pc = UseGetValueFromSessionItem("pc");
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,

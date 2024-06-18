@@ -88,12 +88,10 @@ import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
-  heightstate,
   isFilterHideState,
   isLoading,
-  isMobileState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A5000W_C";
 import {
@@ -1838,11 +1836,11 @@ const CM_A5000W: React.FC = () => {
       >
         <TabStripTab title="요약정보">
           <FilterContainer>
-          {!isMobile && (
-            <GridTitleContainer className="ButtonContainer">
+            {!isMobile && (
+              <GridTitleContainer className="ButtonContainer">
                 <GridTitle>조회조건</GridTitle>
-            </GridTitleContainer>
-          )}
+              </GridTitleContainer>
+            )}
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>

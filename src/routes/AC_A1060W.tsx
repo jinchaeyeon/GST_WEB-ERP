@@ -16,7 +16,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -66,7 +66,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -149,18 +149,10 @@ const AC_A1060W: React.FC = () => {
         setMobileHeight2(getDeviceHeight(true) - height2 - height3 - height4);
         setMobileHeight3(getDeviceHeight(true) - height2 - height3 - height4);
         setMobileHeight4(getDeviceHeight(true) - height2 - height3 - height4);
-        setWebHeight(
-          ((getDeviceHeight(true) - height4) / 2) - height
-        );
-        setWebHeight2(
-          ((getDeviceHeight(true) - height4) / 2) - height3
-        );
-        setWebHeight3(
-          ((getDeviceHeight(true) - height4) / 2) - height3
-        );
-        setWebHeight4(
-          ((getDeviceHeight(true) - height4) / 2) - height3
-        );
+        setWebHeight((getDeviceHeight(true) - height4) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height4) / 2 - height3);
+        setWebHeight3((getDeviceHeight(true) - height4) / 2 - height3);
+        setWebHeight4((getDeviceHeight(true) - height4) / 2 - height3);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);

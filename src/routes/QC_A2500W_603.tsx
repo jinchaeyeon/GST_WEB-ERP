@@ -503,7 +503,7 @@ const QC_A2500W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -617,7 +617,7 @@ const QC_A2500W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchCommentGrid = async (commentFilter: any) => {
-    if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -766,23 +766,33 @@ const QC_A2500W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (commentfilters.isSearch && permissions !== null) {
+    if (
+      commentfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(commentfilters);
       setCommentFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchCommentGrid(deepCopiedFilters);
     }
-  }, [commentfilters, permissions]);
+  }, [commentfilters, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1198,6 +1208,7 @@ const QC_A2500W_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     if (
       Information.ncrdiv == "" ||
       Information.combytype == "" ||
@@ -1414,12 +1425,21 @@ const QC_A2500W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+    if (paraData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [paraData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (paraData.workType != "D" && !permissions.save) return;
+    if (paraData.workType == "D" && !permissions.delete) return;
     let data: any;
     setLoading(true);
 
@@ -1656,6 +1676,7 @@ const QC_A2500W_603: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1726,7 +1747,10 @@ const QC_A2500W_603: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="요약정보">
+        <TabStripTab
+          title="요약정보"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox>
               <tbody>
@@ -1891,6 +1915,7 @@ const QC_A2500W_603: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규 등록
                 </Button>
@@ -1899,6 +1924,7 @@ const QC_A2500W_603: React.FC = () => {
                   themeColor={"primary"}
                   fillMode={"outline"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -2001,7 +2027,11 @@ const QC_A2500W_603: React.FC = () => {
         <TabStripTab
           title="상세정보"
           disabled={
-            mainDataResult.data.length == 0 && workType == "" ? true : false
+            permissions.view
+              ? mainDataResult.data.length == 0 && workType == ""
+                ? true
+                : false
+              : true
           }
         >
           {isMobile ? (
@@ -2013,6 +2043,7 @@ const QC_A2500W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2416,6 +2447,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onCommentRemoveClick}
@@ -2423,6 +2455,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -2555,6 +2588,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onCommentRemoveClick2}
@@ -2562,6 +2596,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -2680,6 +2715,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onCommentRemoveClick3}
@@ -2687,6 +2723,7 @@ const QC_A2500W_603: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -2755,6 +2792,7 @@ const QC_A2500W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -3065,6 +3103,7 @@ const QC_A2500W_603: React.FC = () => {
                               themeColor={"primary"}
                               icon="plus"
                               title="행 추가"
+                              disabled={permissions.save ? false : true}
                             ></Button>
                             <Button
                               onClick={onCommentRemoveClick}
@@ -3072,6 +3111,7 @@ const QC_A2500W_603: React.FC = () => {
                               themeColor={"primary"}
                               icon="minus"
                               title="행 삭제"
+                              disabled={permissions.save ? false : true}
                             ></Button>
                           </ButtonContainer>
                         </GridTitleContainer>
@@ -3180,6 +3220,7 @@ const QC_A2500W_603: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                               <Button
                                 onClick={onCommentRemoveClick2}
@@ -3187,6 +3228,7 @@ const QC_A2500W_603: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>
@@ -3299,6 +3341,7 @@ const QC_A2500W_603: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                               <Button
                                 onClick={onCommentRemoveClick3}
@@ -3306,6 +3349,7 @@ const QC_A2500W_603: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>

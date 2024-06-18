@@ -91,7 +91,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -197,7 +197,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
   } = useContext(FormContext);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -254,6 +260,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -280,7 +291,13 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   } = useContext(FormContext2);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -337,6 +354,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -530,6 +552,11 @@ const QC_A2000: React.FC = () => {
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
         qcdiv: defaultOption.find((item: any) => item.id == "qcdiv")?.valueCode,
+        isSearch: true,
+      }));
+      setDetailFilters((prev) => ({
+        ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -659,14 +686,14 @@ const QC_A2000: React.FC = () => {
     purnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters2, setDetailFilters2] = useState({
@@ -674,12 +701,12 @@ const QC_A2000: React.FC = () => {
     qcnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -775,6 +802,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -882,6 +910,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailFilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -993,10 +1022,10 @@ const QC_A2000: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -1005,15 +1034,15 @@ const QC_A2000: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       detailFilters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
@@ -1026,15 +1055,15 @@ const QC_A2000: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, customOptionData, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       detailFilters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
@@ -1047,7 +1076,7 @@ const QC_A2000: React.FC = () => {
 
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2, permissions]);
+  }, [detailFilters2, permissions, customOptionData, bizComponentData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1558,6 +1587,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1709,10 +1739,10 @@ const QC_A2000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.purnum_s != "") {
+    if (ParaData.purnum_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDetailHeaderSelectionChange = useCallback(
     (event: GridHeaderSelectionChangeEvent) => {
@@ -2132,6 +2162,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       qcdt_s: [],
@@ -2205,6 +2236,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     const datas = detailDataResult.data.filter(
       (item: any) =>
         item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
@@ -2271,6 +2303,7 @@ const QC_A2000: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
 
     let valid = true;
@@ -2607,7 +2640,10 @@ const QC_A2000: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="발주정보">
+        <TabStripTab
+          title="발주정보"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainerWrap>
             <FormContext.Provider
               value={{
@@ -2630,6 +2666,7 @@ const QC_A2000: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2712,7 +2749,10 @@ const QC_A2000: React.FC = () => {
             </FormContext.Provider>
           </GridContainerWrap>
         </TabStripTab>
-        <TabStripTab title="검사내역">
+        <TabStripTab
+          title="검사내역"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2744,6 +2784,7 @@ const QC_A2000: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick}
@@ -2751,6 +2792,7 @@ const QC_A2000: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -2878,6 +2920,7 @@ const QC_A2000: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick2}
@@ -2885,6 +2928,7 @@ const QC_A2000: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick2}
@@ -2892,6 +2936,7 @@ const QC_A2000: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </div>
                     </ButtonContainer>
@@ -3007,6 +3052,7 @@ const QC_A2000: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick}
@@ -3014,6 +3060,7 @@ const QC_A2000: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3121,6 +3168,7 @@ const QC_A2000: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick2}
@@ -3128,6 +3176,7 @@ const QC_A2000: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick2}
@@ -3135,6 +3184,7 @@ const QC_A2000: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>

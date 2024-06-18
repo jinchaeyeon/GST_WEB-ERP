@@ -14,7 +14,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -64,7 +64,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8250W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -193,7 +193,6 @@ const CM_A8250W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A8250W", setMessagesData);
-
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

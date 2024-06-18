@@ -59,10 +59,8 @@ import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
-  heightstate,
   isLoading,
-  isMobileState,
-  loginResultState,
+  loginResultState
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -82,7 +80,7 @@ var height2 = 0;
 const AC_A1020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-    const [permissions, setPermissions] = useState<TPermissions>({
+  const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
     view: false,
@@ -871,7 +869,7 @@ const AC_A1020W: React.FC = () => {
           fileName="지출결의서"
         >
           <Grid
-            style={{ height: isMobile? mobileheight : webheight }}
+            style={{ height: isMobile ? mobileheight : webheight }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

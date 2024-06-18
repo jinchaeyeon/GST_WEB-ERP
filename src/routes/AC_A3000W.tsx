@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -49,7 +49,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/AC_A3000W_Popup_Window";
 import { useApi } from "../hooks/api";
-import { heightstate, isLoading, isMobileState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -98,8 +98,8 @@ const AC_A3000W: React.FC = () => {
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height3);
         setMobileHeight2(getDeviceHeight(true) - height2 - height3);
-        setWebHeight(((getDeviceHeight(true) - height3) / 2) - height);
-        setWebHeight2(((getDeviceHeight(true) - height3) / 2) - height2);
+        setWebHeight((getDeviceHeight(true) - height3) / 2 - height);
+        setWebHeight2((getDeviceHeight(true) - height3) / 2 - height2);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
