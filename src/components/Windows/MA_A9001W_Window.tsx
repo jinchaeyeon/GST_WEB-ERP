@@ -37,7 +37,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import RadioGroupCell from "../Cells/RadioGroupCell";
@@ -48,6 +48,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -313,6 +314,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -336,9 +344,9 @@ const CopyWindow = ({
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
-      height3 = getHeight(".FormBoxWrap");
+      height3 = getHeight(".WindowFormBoxWrap");
       height4 = getHeight(".WindowButtonContainer");
-
+      console.log(height3)
       setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
       setMobileHeight2(
         getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
@@ -391,6 +399,7 @@ const CopyWindow = ({
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -514,21 +523,26 @@ const CopyWindow = ({
     frdt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -583,7 +597,12 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (data != undefined) {
+    if (
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       let dataArr: TdataArr = {
         reqdt_s: [],
         seq_s: [],
@@ -600,7 +619,7 @@ const CopyWindow = ({
         isSearch: true,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
@@ -656,6 +675,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     let valid = true;
     mainDataResult.data.map((item) => {
       if (item.qty == 0 && valid == true) {
@@ -837,7 +857,7 @@ const CopyWindow = ({
           >
             <SwiperSlide key={0}>
               <FormBoxWrap
-                className="FormBoxWrap"
+                className="WindowFormBoxWrap"
                 style={{ height: mobileheight }}
               >
                 <ButtonContainer style={{ justifyContent: "end" }}>
@@ -1065,9 +1085,11 @@ const CopyWindow = ({
                     </Grid>
                     <BottomContainer className="BottomContainer">
                       <ButtonContainer>
-                        <Button themeColor={"primary"} onClick={selectData}>
-                          저장
-                        </Button>
+                        {permissions.save && (
+                          <Button themeColor={"primary"} onClick={selectData}>
+                            저장
+                          </Button>
+                        )}
                         <Button
                           themeColor={"primary"}
                           fillMode={"outline"}
@@ -1084,7 +1106,7 @@ const CopyWindow = ({
           </Swiper>
         ) : (
           <>
-            <FormBoxWrap className="FormBoxWrap">
+            <FormBoxWrap className="WindowFormBoxWrap">
               <FormBox>
                 <tbody>
                   <tr>
@@ -1285,9 +1307,11 @@ const CopyWindow = ({
             </FormContext.Provider>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}

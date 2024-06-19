@@ -228,6 +228,11 @@ const MA_B7200W: React.FC = () => {
           ?.valueCode,
         stockyn: defaultOption.find((item: any) => item.id == "stockyn")
           ?.valueCode,
+        isSearch: true,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -396,7 +401,7 @@ const MA_B7200W: React.FC = () => {
     gubun: "I",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -404,7 +409,7 @@ const MA_B7200W: React.FC = () => {
     workType: "LIST2",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters, setDetailFilters] = useState({
@@ -415,7 +420,7 @@ const MA_B7200W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters2, setDetailFilters2] = useState({
@@ -426,7 +431,7 @@ const MA_B7200W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters3, setDetailFilters3] = useState({
@@ -437,7 +442,7 @@ const MA_B7200W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters4, setDetailFilters4] = useState({
@@ -448,7 +453,7 @@ const MA_B7200W: React.FC = () => {
     lotnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
@@ -586,7 +591,7 @@ const MA_B7200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -724,7 +729,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -790,7 +795,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -856,7 +861,7 @@ const MA_B7200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -998,7 +1003,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const fetchDetailGrid3 = async (detailfilters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -1062,7 +1067,7 @@ const MA_B7200W: React.FC = () => {
   };
 
   const fetchDetailGrid4 = async (detailfilters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -1178,29 +1183,40 @@ const MA_B7200W: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
       filters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions, bizComponentData]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters.isSearch) {
+    if (
+      detailfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
@@ -1211,10 +1227,15 @@ const MA_B7200W: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters, permissions]);
+  }, [detailfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters2.isSearch) {
+    if (
+      detailfilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
       setDetailFilters2((prev) => ({
@@ -1225,10 +1246,15 @@ const MA_B7200W: React.FC = () => {
 
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailfilters2, permissions]);
+  }, [detailfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters3.isSearch) {
+    if (
+      detailfilters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters3);
       setDetailFilters3((prev) => ({
@@ -1239,10 +1265,15 @@ const MA_B7200W: React.FC = () => {
 
       fetchDetailGrid3(deepCopiedFilters);
     }
-  }, [detailfilters3, permissions]);
+  }, [detailfilters3, , permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters4.isSearch) {
+    if (
+      detailfilters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters4);
       setDetailFilters4((prev) => ({
@@ -1253,7 +1284,7 @@ const MA_B7200W: React.FC = () => {
 
       fetchDetailGrid4(deepCopiedFilters);
     }
-  }, [detailfilters4, permissions]);
+  }, [detailfilters4, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1764,8 +1795,6 @@ const MA_B7200W: React.FC = () => {
     [collapsedState2]
   );
 
-  const [selectedMenu, setSelectedMenu] = useState(null);
-
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1903,7 +1932,10 @@ const MA_B7200W: React.FC = () => {
             }}
             scrollable={isMobile}
           >
-            <TabStripTab title="재고현황">
+            <TabStripTab
+              title="재고현황"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -2216,7 +2248,10 @@ const MA_B7200W: React.FC = () => {
                 </SwiperSlide>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="공정별 재공현황">
+            <TabStripTab
+              title="공정별 재공현황"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -2538,7 +2573,10 @@ const MA_B7200W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="재고현황">
+            <TabStripTab
+              title="재고현황"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width={`65%`}>
                   <GridTitleContainer className="ButtonContainer">
@@ -2796,7 +2834,10 @@ const MA_B7200W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="공정별 재공현황">
+            <TabStripTab
+              title="공정별 재공현황"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width={`65%`}>
                   <ExcelExport

@@ -320,7 +320,6 @@ const RichEditor = React.forwardRef(
         style={{
           height: "100%",
           border: border ? "2px solid #2289c3" : undefined,
-          marginTop: "5px",
         }}
       >
         <Editor

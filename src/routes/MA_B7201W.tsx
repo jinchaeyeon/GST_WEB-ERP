@@ -299,7 +299,7 @@ const MA_B7201W: React.FC = () => {
     zeroyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters, setDetailFilters] = useState({
@@ -309,7 +309,7 @@ const MA_B7201W: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters2, setDetailFilters2] = useState({
@@ -319,7 +319,7 @@ const MA_B7201W: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
@@ -392,7 +392,7 @@ const MA_B7201W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -535,7 +535,7 @@ const MA_B7201W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -595,7 +595,7 @@ const MA_B7201W: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -695,16 +695,26 @@ const MA_B7201W: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters.isSearch) {
+    if (
+      detailfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
@@ -715,10 +725,15 @@ const MA_B7201W: React.FC = () => {
 
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters, permissions]);
+  }, [detailfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (permissions !== null && detailfilters2.isSearch) {
+    if (
+      detailfilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
       setDetailFilters2((prev) => ({
@@ -729,7 +744,7 @@ const MA_B7201W: React.FC = () => {
 
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailfilters2, permissions]);
+  }, [detailfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동

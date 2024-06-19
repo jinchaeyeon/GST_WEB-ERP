@@ -22,10 +22,11 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
-import { Iparameters, TColumn } from "../../../store/types";
+import { Iparameters, TColumn, TPermissions } from "../../../store/types";
 import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
@@ -89,6 +90,13 @@ const AdjustApprovalWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
 
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -101,8 +109,8 @@ const AdjustApprovalWindow = ({
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : (deviceWidth - 600) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    left: isMobile == true ? 0 : (deviceWidth - 1000) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 600) / 2,
     width: isMobile == true ? deviceWidth : 1000,
     height: isMobile == true ? deviceHeight : 600,
   });
@@ -148,33 +156,6 @@ const AdjustApprovalWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  // const [bizComponentData, setBizComponentData] = useState<any>(null);
-  // UseBizComponent(
-  //   "R_USEYN",
-  //   //사용여부,
-  //   setBizComponentData
-  // );
-
-  // //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  // const filterInputChange = (e: any) => {
-  //   const { value, name } = e.target;
-
-  //   setFilters((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-
-  // //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  // const filterRadioChange = (e: any) => {
-  //   const { name, value } = e;
-
-  //   setFilters((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-
   const onClose = () => {
     setisFilterHideStates2(true);
     setVisible(false);
@@ -192,7 +173,7 @@ const AdjustApprovalWindow = ({
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
+      isSearch: false,
     }));
 
     setPage({
@@ -211,16 +192,17 @@ const AdjustApprovalWindow = ({
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //팝업 조회 파라미터
@@ -306,6 +288,7 @@ const AdjustApprovalWindow = ({
   };
 
   const fetchMainGridSaved = async () => {
+    if (!permissions.save) return;
     let keys: string[] = [];
     // 체크한 항목 승인
     mainDataResult.data.forEach((row) => {
@@ -415,15 +398,6 @@ const AdjustApprovalWindow = ({
     );
   };
 
-  const search = () => {
-    resetAllGrid();
-    setFilters((prev) => ({
-      ...prev,
-      pgNum: 1,
-      isSearch: true,
-    }));
-  };
-
   const columnData: TColumn[] = [
     {
       id: "",
@@ -528,9 +502,11 @@ const AdjustApprovalWindow = ({
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
-            승인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
+              승인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

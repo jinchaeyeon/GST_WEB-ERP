@@ -294,9 +294,7 @@ const MA_A9001W: React.FC = () => {
         setMobileHeight3(getDeviceHeight(true) - height - height6 - height2);
         setMobileHeight4(getDeviceHeight(true) - height - height6 - height2);
         setMobileHeight5(getDeviceHeight(true) - height - height6 - height2);
-        setWebHeight(
-          getDeviceHeight(true) - height3 - height - height4
-        );
+        setWebHeight(getDeviceHeight(true) - height3 - height - height4);
         setWebHeight2(height3 - height2);
         setWebHeight3(height3 - height2);
         setWebHeight4(height3 - height2);
@@ -344,6 +342,7 @@ const MA_A9001W: React.FC = () => {
           ?.valueCode,
         paydiv: defaultOption.find((item: any) => item.id == "paydiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -527,7 +526,7 @@ const MA_A9001W: React.FC = () => {
     seq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -537,7 +536,7 @@ const MA_A9001W: React.FC = () => {
     seq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -547,7 +546,7 @@ const MA_A9001W: React.FC = () => {
     seq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -557,7 +556,7 @@ const MA_A9001W: React.FC = () => {
     seq: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [infomation, setInfomation] = useState<{ [name: string]: any }>({
@@ -647,7 +646,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -896,7 +895,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid1 = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -960,7 +959,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid2 = async (subfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1024,7 +1023,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid3 = async (subfilters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1090,10 +1089,10 @@ const MA_A9001W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -1104,14 +1103,14 @@ const MA_A9001W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       subfilters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
@@ -1122,14 +1121,14 @@ const MA_A9001W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid1(deepCopiedFilters);
     }
-  }, [subfilters, permissions]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       subfilters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters2);
@@ -1140,14 +1139,14 @@ const MA_A9001W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subfilters2, permissions]);
+  }, [subfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       subfilters3.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters3);
@@ -1158,7 +1157,7 @@ const MA_A9001W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
     }
-  }, [subfilters3, permissions]);
+  }, [subfilters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1175,6 +1174,7 @@ const MA_A9001W: React.FC = () => {
   });
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1196,6 +1196,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onPurDropClick = (e: any) => {
+    if (!permissions.save) return;
     if (!window.confirm("해제하시겠습니까?")) {
       return false;
     }
@@ -1232,6 +1233,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onPayDropClick = (e: any) => {
+    if (!permissions.save) return;
     if (!window.confirm("해제하시겠습니까?")) {
       return false;
     }
@@ -1268,6 +1270,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onPurCreateClick = (e: any) => {
+    if (!permissions.save) return;
     let valid = true;
     const selectRows = mainDataResult.data.filter(
       (item: any) => item.chk == true
@@ -1303,10 +1306,12 @@ const MA_A9001W: React.FC = () => {
   };
 
   const onSaveClick = (e: any) => {
-    if (workType == "N") {
-      fetchTodoGridSaved3();
-    } else {
-      fetchTodoGridSaved();
+    if (permissions.save) {
+      if (workType == "N") {
+        fetchTodoGridSaved3();
+      } else {
+        fetchTodoGridSaved();
+      }
     }
   };
 
@@ -1730,10 +1735,11 @@ const MA_A9001W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -2116,6 +2122,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2140,12 +2147,13 @@ const MA_A9001W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaMaker.workType != "") {
+    if (ParaMaker.workType != "" && permissions.save) {
       fetchTodoGridMaked();
     }
-  }, [ParaMaker]);
+  }, [ParaMaker, permissions]);
 
   const fetchTodoGridMaked = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2247,6 +2255,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const setCopyData = (data: any, filter: any) => {
+    if (!permissions.save) return;
     let valid = true;
 
     if (data.length == 0) return false;
@@ -2341,12 +2350,13 @@ const MA_A9001W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved2();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2371,6 +2381,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   const fetchTodoGridSaved3 = async () => {
+    if (!permissions.save) return;
     let dataArr: TdataArr = {
       reqdt_s: [],
       seq_s: [],
@@ -2613,6 +2624,7 @@ const MA_A9001W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus-outline"
                         style={{ marginRight: "4px" }}
+                        disabled={permissions.save ? false : true}
                       >
                         매입 전표 생성
                       </Button>
@@ -2621,6 +2633,7 @@ const MA_A9001W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="minus-outline"
+                        disabled={permissions.save ? false : true}
                       >
                         매입 전표 해제
                       </Button>
@@ -2631,6 +2644,7 @@ const MA_A9001W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus-outline"
                         style={{ marginRight: "4px" }}
+                        disabled={permissions.save ? false : true}
                       >
                         지급 전표 생성
                       </Button>
@@ -2639,6 +2653,7 @@ const MA_A9001W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="minus-outline"
+                        disabled={permissions.save ? false : true}
                       >
                         지급 전표 해제
                       </Button>
@@ -2649,6 +2664,7 @@ const MA_A9001W: React.FC = () => {
                         themeColor={"primary"}
                         icon="file-add"
                         style={{ marginRight: "4px" }}
+                        disabled={permissions.save ? false : true}
                       >
                         매입 E-TAX(전표) 생성
                       </Button>
@@ -2657,6 +2673,7 @@ const MA_A9001W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         매입 E-TAX(전표) 삭제
                       </Button>
@@ -2800,6 +2817,7 @@ const MA_A9001W: React.FC = () => {
                       onClick={onSaveClick}
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       매입 E-TAX(전표) 저장
                     </Button>
@@ -3093,7 +3111,10 @@ const MA_A9001W: React.FC = () => {
                   onSelect={handleSelectTab}
                   scrollable={isMobile}
                 >
-                  <TabStripTab title="입고자료">
+                  <TabStripTab
+                    title="입고자료"
+                    disabled={permissions.view ? false : true}
+                  >
                     <GridContainer width="100%">
                       <ExcelExport
                         data={subDataResult.data}
@@ -3176,7 +3197,10 @@ const MA_A9001W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </TabStripTab>
-                  <TabStripTab title="매입전표">
+                  <TabStripTab
+                    title="매입전표"
+                    disabled={permissions.view ? false : true}
+                  >
                     <GridContainer width="100%">
                       <ExcelExport
                         data={subDataResult2.data}
@@ -3262,7 +3286,10 @@ const MA_A9001W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </TabStripTab>
-                  <TabStripTab title="지급전표">
+                  <TabStripTab
+                    title="지급전표"
+                    disabled={permissions.view ? false : true}
+                  >
                     <GridContainer width="100%">
                       <ExcelExport
                         data={subDataResult3.data}
@@ -3360,6 +3387,7 @@ const MA_A9001W: React.FC = () => {
                   onClick={onPurCreateClick}
                   themeColor={"primary"}
                   icon="plus-outline"
+                  disabled={permissions.save ? false : true}
                 >
                   매입 전표 생성
                 </Button>
@@ -3368,6 +3396,7 @@ const MA_A9001W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus-outline"
+                  disabled={permissions.save ? false : true}
                 >
                   매입 전표 해제
                 </Button>
@@ -3375,6 +3404,7 @@ const MA_A9001W: React.FC = () => {
                   onClick={onPayCreateClick}
                   themeColor={"primary"}
                   icon="plus-outline"
+                  disabled={permissions.save ? false : true}
                 >
                   지급 전표 생성
                 </Button>
@@ -3383,6 +3413,7 @@ const MA_A9001W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus-outline"
+                  disabled={permissions.save ? false : true}
                 >
                   지급 전표 해제
                 </Button>
@@ -3390,6 +3421,7 @@ const MA_A9001W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   매입 E-TAX(전표) 생성
                 </Button>
@@ -3398,6 +3430,7 @@ const MA_A9001W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   매입 E-TAX(전표) 삭제
                 </Button>
@@ -3405,6 +3438,7 @@ const MA_A9001W: React.FC = () => {
                   onClick={onSaveClick}
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   매입 E-TAX(전표) 저장
                 </Button>
@@ -3778,7 +3812,10 @@ const MA_A9001W: React.FC = () => {
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
-                <TabStripTab title="입고자료">
+                <TabStripTab
+                  title="입고자료"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainerWrap>
                     <GridContainer width="100%">
                       <ExcelExport
@@ -3861,7 +3898,10 @@ const MA_A9001W: React.FC = () => {
                     </GridContainer>
                   </GridContainerWrap>
                 </TabStripTab>
-                <TabStripTab title="매입전표">
+                <TabStripTab
+                  title="매입전표"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainerWrap>
                     <GridContainer width="100%">
                       <ExcelExport
@@ -3947,7 +3987,10 @@ const MA_A9001W: React.FC = () => {
                     </GridContainer>
                   </GridContainerWrap>
                 </TabStripTab>
-                <TabStripTab title="지급전표">
+                <TabStripTab
+                  title="지급전표"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainerWrap>
                     <GridContainer width="100%">
                       <ExcelExport

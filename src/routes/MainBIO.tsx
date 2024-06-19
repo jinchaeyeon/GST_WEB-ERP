@@ -18,6 +18,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getBizCom,
   getDeviceHeight,
@@ -28,7 +29,7 @@ import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import { useApi } from "../hooks/api";
 import { OSState, loginResultState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 type TSchedulerDataResult = {
   id: number;
@@ -51,6 +52,13 @@ var height3 = 0;
 var height4 = 0;
 
 const Main: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -102,10 +110,6 @@ const Main: React.FC = () => {
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
   const [mobileheight, setMobileHeight] = useState(0);
-  const [mobileheight2, setMobileHeight2] = useState(0);
-  const [mobileheight3, setMobileHeight3] = useState(0);
-  const [mobileheight4, setMobileHeight4] = useState(0);
-  const [mobileheight5, setMobileHeight5] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
 
@@ -140,7 +144,10 @@ const Main: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
       setSchedulerFilter((prev) => ({
         ...prev,
         isSearch: true,
@@ -205,6 +212,7 @@ const Main: React.FC = () => {
   >([]);
 
   const fetchScheduler = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -231,6 +239,7 @@ const Main: React.FC = () => {
   };
 
   const fetchTable = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -268,6 +277,7 @@ const Main: React.FC = () => {
   };
 
   const fetchCard = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -302,40 +312,55 @@ const Main: React.FC = () => {
     todt: new Date(),
     dtdiv: "W",
     dtgb: "B",
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     userId: userId,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: sessionOrgdiv,
     userId: userId,
-    isSearch: true,
+    isSearch: false,
   });
 
   useEffect(() => {
-    if (schedulerFilter.isSearch == true && bizComponentData !== null) {
+    if (
+      schedulerFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchScheduler();
     }
-  }, [schedulerFilter]);
+  }, [schedulerFilter, bizComponentData, permissions, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch == true && bizComponentData !== null) {
+    if (
+      filters2.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchCard();
     }
-  }, [filters2]);
+  }, [filters2, bizComponentData, permissions, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch == true && bizComponentData !== null) {
+    if (
+      filters3.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchTable();
     }
-  }, [filters3]);
+  }, [filters3, bizComponentData, permissions, customOptionData]);
 
   const cardOption = [
     {

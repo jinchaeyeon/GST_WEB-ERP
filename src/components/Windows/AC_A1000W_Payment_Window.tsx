@@ -146,7 +146,7 @@ const CopyWindow = ({
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
       height3 = getHeight(".BottomContainer"); //하단 버튼부분
-      height4 = getHeight(".FormBoxWrap");
+      height4 = getHeight(".WindowFormBoxWrap");
 
       setMobileHeight(
         getWindowDeviceHeight(false, deviceHeight) - height - height2
@@ -822,7 +822,7 @@ const CopyWindow = ({
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%" }}>
                 <FormBoxWrap
-                  className="FormBoxWrap"
+                  className="WindowFormBoxWrap"
                   style={{
                     height: mobileheight,
                   }}
@@ -1040,7 +1040,7 @@ const CopyWindow = ({
           </Swiper>
         ) : (
           <>
-            <FormBoxWrap className="FormBoxWrap">
+            <FormBoxWrap className="WindowFormBoxWrap">
               <FormBox>
                 <tbody>
                   <tr>

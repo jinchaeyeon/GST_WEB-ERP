@@ -60,10 +60,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B7000W_606_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -298,7 +295,7 @@ const MA_B7000W_606: React.FC = () => {
     radUseyn: "", //filterData.find((item: any) => item.name == "useyn").value,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     itemgrade: "",
   });
 
@@ -309,12 +306,12 @@ const MA_B7000W_606: React.FC = () => {
     itemgrade: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회1
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -387,6 +384,7 @@ const MA_B7000W_606: React.FC = () => {
 
   //그리드 데이터 조회2
   const fetchDetailGrid1 = async (detailFilters1: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const detailParameters: Iparameters = {
@@ -447,7 +445,12 @@ const MA_B7000W_606: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행1
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -457,11 +460,16 @@ const MA_B7000W_606: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행2
   useEffect(() => {
-    if (detailFilters1.isSearch && permissions !== null) {
+    if (
+      detailFilters1.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters1);
       setDetailFilters1((prev) => ({
@@ -471,7 +479,7 @@ const MA_B7000W_606: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid1(deepCopiedFilters);
     }
-  }, [detailFilters1]);
+  }, [detailFilters1, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -673,6 +681,7 @@ const MA_B7000W_606: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);

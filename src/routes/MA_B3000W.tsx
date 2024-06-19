@@ -67,10 +67,7 @@ import {
   numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -179,6 +176,7 @@ const MA_B3000W: React.FC = () => {
           ?.valueCode,
         rdoAmtdiv: defaultOption.find((item: any) => item.id == "rdoAmtdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -206,12 +204,9 @@ const MA_B3000W: React.FC = () => {
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetGrid();
+    search();
   };
   let gridRef: any = useRef(null);
-
-  useEffect(() => {
-    search();
-  }, [tabSelected]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -257,13 +252,13 @@ const MA_B3000W: React.FC = () => {
     rdoAmtdiv: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
   //그리드 데이터 조회
   const fetchGrid = async (workType: string, custcd?: string) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -369,10 +364,10 @@ const MA_B3000W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
 
@@ -404,7 +399,7 @@ const MA_B3000W: React.FC = () => {
         }
       }
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetGrid = () => {
@@ -677,7 +672,10 @@ const MA_B3000W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="전체">
+            <TabStripTab
+              title="전체"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -851,7 +849,10 @@ const MA_B3000W: React.FC = () => {
               </Swiper>
             </TabStripTab>
 
-            <TabStripTab title="월별">
+            <TabStripTab
+              title="월별"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -1074,7 +1075,10 @@ const MA_B3000W: React.FC = () => {
               </Swiper>
             </TabStripTab>
 
-            <TabStripTab title="분기별">
+            <TabStripTab
+              title="분기별"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -1500,7 +1504,10 @@ const MA_B3000W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="전체">
+            <TabStripTab
+              title="전체"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap flexDirection="column">
                 <GridContainer>
                   <Chart
@@ -1623,7 +1630,10 @@ const MA_B3000W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="월별">
+            <TabStripTab
+              title="월별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap flexDirection="column">
                 <GridContainer>
                   <ExcelExport
@@ -1767,7 +1777,10 @@ const MA_B3000W: React.FC = () => {
                 </GridContainerWrap>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="분기별">
+            <TabStripTab
+              title="분기별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap flexDirection="column">
                 <GridContainer>
                   <ExcelExport

@@ -270,8 +270,8 @@ const KendoWindow = ({
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
-      height3 = getHeight(".FormBoxWrap");
-      height4 = getHeight(".FormBoxWrap2");
+      height3 = getHeight(".WindowFormBoxWrap");
+      height4 = getHeight(".WindowFormBoxWrap2");
       height5 = getHeight(".WindowButtonContainer");
 
       setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
@@ -1395,7 +1395,7 @@ const KendoWindow = ({
         >
           <SwiperSlide key={0}>
             <FormBoxWrap
-              className="FormBoxWrap"
+              className="WindowFormBoxWrap"
               style={{ height: mobileheight }}
             >
               <ButtonContainer style={{ justifyContent: "end" }}>
@@ -1656,7 +1656,7 @@ const KendoWindow = ({
           <SwiperSlide key={2}>
             <GridContainer>
               <FormBoxWrap
-                className="FormBoxWrap2"
+                className="WindowFormBoxWrap2"
                 style={{ height: mobileheight3, overflow: "auto" }}
               >
                 <ButtonContainer style={{ justifyContent: "space-between" }}>
@@ -2120,7 +2120,7 @@ const KendoWindow = ({
         </Swiper>
       ) : (
         <>
-          <FormBoxWrap className="FormBoxWrap">
+          <FormBoxWrap className="WindowFormBoxWrap">
             <FormBox>
               <tbody>
                 <tr>
@@ -2335,7 +2335,7 @@ const KendoWindow = ({
               </Grid>
             </GridContainer>
           </FormContext.Provider>
-          <FormBoxWrap className="FormBoxWrap2">
+          <FormBoxWrap className="WindowFormBoxWrap2">
             <FormBox>
               <tbody>
                 <tr>

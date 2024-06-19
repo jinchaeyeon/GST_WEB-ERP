@@ -31,6 +31,7 @@ type TKendoWindow = {
 };
 var height = 0;
 var height2 = 0;
+var height3 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -60,24 +61,23 @@ const KendoWindow = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
 
-  let form = 200;
-
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".BottomContainer"); //하단 버튼부분
+    height3 = getHeight(".WindowFormBoxWrap"); //하단 버튼부분
 
     setMobileHeight(
-      getWindowDeviceHeight(false, deviceHeight) - height - form - height2
+      getWindowDeviceHeight(false, deviceHeight) - height - height3 - height2
     );
     setWebHeight(
-      getWindowDeviceHeight(false, position.height) - height - form - height2
+      getWindowDeviceHeight(false, position.height) - height - height3 - height2
     );
   }, [permissions, position]);
 
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
-      getWindowDeviceHeight(false, position.height) - height - form - height2
+      getWindowDeviceHeight(false, position.height) - height - height3 - height2
     );
   };
 
@@ -183,7 +183,7 @@ const KendoWindow = ({
       modals={modal}
       onChangePostion={onChangePostion}
     >
-      <FormBoxWrap border={true}>
+      <FormBoxWrap border={true} className="WindowFormBoxWrap">
         <FormBox>
           <tbody>
             <tr>

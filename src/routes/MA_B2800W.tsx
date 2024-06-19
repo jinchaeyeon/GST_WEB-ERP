@@ -35,7 +35,6 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -236,25 +235,20 @@ const MA_B2800W: React.FC = () => {
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           ?.valueCode,
         purdt: defaultOption.find((item: any) => item.id == "purdt")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA020,L_BA005,L_BA061,L_BA015",
+    "L_BA020,L_BA005",
     //화폐단위, 내수구분, 품목계정, 수량단위
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
   const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [itemacntListData, setItemacntListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [amtunitListData, setAmtunitListData] = useState([
@@ -264,8 +258,6 @@ const MA_B2800W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
-      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
-      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
       setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
     }
   }, [bizComponentData]);
@@ -287,7 +279,6 @@ const MA_B2800W: React.FC = () => {
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
 
   const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -341,7 +332,7 @@ const MA_B2800W: React.FC = () => {
     project: "",
     doexdiv: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     find_row_value: "",
   });
 
@@ -386,7 +377,7 @@ const MA_B2800W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -453,7 +444,12 @@ const MA_B2800W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -463,7 +459,7 @@ const MA_B2800W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -809,55 +805,6 @@ const MA_B2800W: React.FC = () => {
     return array;
   };
 
-  const createColumn5 = () => {
-    const array = [];
-
-    array.push(
-      <GridColumn field={"doexdiv"} title={"내수구분"} width="100px" />
-    );
-    array.push(
-      <GridColumn
-        field={"finyn"}
-        title={"완료여부"}
-        width="100px"
-        cell={CheckBoxCell}
-      />
-    );
-    array.push(<GridColumn field={"remark"} title={"비고"} width="150px" />);
-    return array;
-  };
-
-  const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      const rowData = props.dataItem;
-      setSelectedState({ [rowData.recnum]: true });
-
-      setDetailFilters((prev) => ({
-        ...prev,
-        purnum: rowData.purnum,
-        purseq: rowData.purseq,
-      }));
-
-      setWindowVisible(true);
-    };
-
-    return (
-      <td
-        style={props.style} // this applies styles that lock the column at a specific position
-        className={props.className} // this adds classes needed for locked columns
-        colSpan={props.colSpan}
-        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
-      >
-        <Button
-          themeColor={"primary"}
-          fillMode="outline"
-          onClick={() => onEditClick}
-          icon="edit"
-        ></Button>
-      </td>
-    );
-  };
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(

@@ -14,11 +14,12 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import { deletedNameState, unsavedNameState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getHeight,
@@ -50,6 +51,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -148,17 +156,18 @@ const KendoWindow = ({
     user_name: "",
     pgNum: 1,
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
 
   useEffect(() => {
-    if (workType == "U") {
+    if (workType == "U" && permissions.view && customOptionData !== null) {
       fetchMain(para);
     }
-  }, []);
+  }, [permissions, customOptionData]);
 
   //요약정보 조회
   const fetchMain = async (parameters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -256,6 +265,7 @@ const KendoWindow = ({
   };
 
   const fetchGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -282,6 +292,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
@@ -310,8 +321,8 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchGridSaved();
+  }, [paraData, permissions]);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -458,9 +469,11 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            저장
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={handleSubmit}>
+              저장
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
@@ -471,6 +484,11 @@ const KendoWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </Window>

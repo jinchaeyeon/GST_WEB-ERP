@@ -29,6 +29,7 @@ import {
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat2,
   getBizCom,
@@ -46,7 +47,7 @@ import DetailWindow2 from "../components/Windows/CM_A0000W_301_Window";
 import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -64,6 +65,13 @@ var height10 = 0;
 var height11 = 0;
 
 const Main: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -225,7 +233,7 @@ const Main: React.FC = () => {
     publish_start_date: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -235,7 +243,7 @@ const Main: React.FC = () => {
     category: "",
     pgNum: 1,
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
   const detailParameters: Iparameters = {
     procedureName: "P_CM_A0000W_Q",
@@ -258,7 +266,11 @@ const Main: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (mainNoticefilters.isSearch) {
+    if (
+      mainNoticefilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(mainNoticefilters);
       setMainNoticeFilters((prev) => ({
@@ -268,7 +280,7 @@ const Main: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [mainNoticefilters]);
+  }, [mainNoticefilters, permissions, bizComponentData]);
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -279,6 +291,7 @@ const Main: React.FC = () => {
     }));
   };
   const fetchMain = async () => {
+    if (!permissions.view) return;
     let data: any;
     const Parameters: Iparameters = {
       procedureName: "sys_sel_default_home_web",
@@ -340,8 +353,10 @@ const Main: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchMain();
-  }, [filters]);
+    if (permissions.view && bizComponentData !== null) {
+      fetchMain();
+    }
+  }, [filters, permissions, bizComponentData]);
 
   const onNoticeDataStateChange = (event: GridDataStateChangeEvent) => {
     setNoticeDataState(event.dataState);
@@ -358,6 +373,7 @@ const Main: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {

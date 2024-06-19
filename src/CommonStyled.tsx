@@ -339,6 +339,7 @@ export const FilterBox = styled.table`
 
 type TFormBoxWrap = {
   border?: boolean;
+  className? : string;
 };
 export const FormBoxWrap = styled.div<TFormBoxWrap>`
   width: 100%;

@@ -191,7 +191,7 @@ const CopyWindow = ({
         onChangePostion={onChangePostion}
       >
         <FormBoxWrap
-          className="FormBoxWrap"
+          className="WindowFormBoxWrap"
           style={{
             height: isMobile ? mobileheight : webheight,
           }}

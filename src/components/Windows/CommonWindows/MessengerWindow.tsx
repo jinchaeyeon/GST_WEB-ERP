@@ -68,7 +68,6 @@ var height5 = 0;
 var height6 = 0;
 var height7 = 0;
 var height8 = 0;
-var height9 = 0;
 
 const KendoWindow = ({
   setVisible,
@@ -115,24 +114,23 @@ const KendoWindow = ({
     height2 = getHeight(".WindowButtonContainer4"); //조회버튼
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
     height4 = getHeight(".k-tabstrip-items-wrapper"); //탭 부분
-    height5 = getHeight(".FormBoxWrap"); //폼박스 부분
-    height6 = getHeight(".FormBoxWrap"); //폼박스 부분2
-    height7 = getHeight(".WindowButtonContainer"); //버튼 부분
-    height8 = getHeight(".WindowButtonContainer2"); //버튼 부분
-    height9 = getHeight(".WindowButtonContainer3"); //버튼 부분
+    height5 = getHeight(".WindowFormBoxWrap"); //폼박스 부분
+    height6 = getHeight(".WindowButtonContainer"); //버튼 부분
+    height7 = getHeight(".WindowButtonContainer2"); //버튼 부분
+    height8 = getHeight(".WindowButtonContainer3"); //버튼 부분
 
     setMobileHeight(
-      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height7
+      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height6
     );
     setMobileHeight2(
-      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height8
+      getWindowDeviceHeight(false, deviceHeight) - height - height4 - height7
     );
     setMobileHeight3(
       getWindowDeviceHeight(true, deviceHeight) -
         height -
         height4 -
         height2 -
-        height9 -
+        height8 -
         height3
     );
 
@@ -140,7 +138,7 @@ const KendoWindow = ({
       getWindowDeviceHeight(false, position.height) - height - height4 - height5
     );
     setWebHeight2(
-      getWindowDeviceHeight(false, position.height) - height - height4 - height6
+      getWindowDeviceHeight(false, position.height) - height - height4 - height5
     );
     setWebHeight3(
       getWindowDeviceHeight(true, position.height) -
@@ -157,7 +155,7 @@ const KendoWindow = ({
       getWindowDeviceHeight(false, position.height) - height - height4 - height5
     );
     setWebHeight2(
-      getWindowDeviceHeight(false, position.height) - height - height4 - height6
+      getWindowDeviceHeight(false, position.height) - height - height4 - height5
     );
     setWebHeight3(
       getWindowDeviceHeight(true, position.height) -
@@ -933,7 +931,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight + height7 }}
+                    style={{ height: mobileheight + height6 }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1043,7 +1041,7 @@ const KendoWindow = ({
                 </ButtonContainer>
                 <FormBoxWrap
                   border={true}
-                  className="FormBoxWrap"
+                  className="WindowFormBoxWrap"
                   style={{
                     width: "100%",
                     height: mobileheight,
@@ -1245,7 +1243,7 @@ const KendoWindow = ({
                   />
                 </Grid>
               </GridContainer>
-              <FormBoxWrap border={true} className="FormBoxWrap">
+              <FormBoxWrap border={true} className="WindowFormBoxWrap">
                 <ButtonContainer>
                   <Button
                     onClick={onReceive}
@@ -1407,7 +1405,7 @@ const KendoWindow = ({
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%" }}>
                   <Grid
-                    style={{ height: mobileheight2 + height8 }}
+                    style={{ height: mobileheight2 + height7 }}
                     data={process(
                       mainDataResult2.data.map((row) => ({
                         ...row,
@@ -1500,7 +1498,7 @@ const KendoWindow = ({
                 </ButtonContainer>
                 <FormBoxWrap
                   border={true}
-                  className="FormBoxWrap"
+                  className="WindowFormBoxWrap"
                   style={{
                     width: "100%",
                     height: mobileheight2,
@@ -1692,7 +1690,7 @@ const KendoWindow = ({
                   />
                 </Grid>
               </GridContainer>
-              <FormBoxWrap border={true} className="FormBoxWrap">
+              <FormBoxWrap border={true} className="WindowFormBoxWrap">
                 <ButtonContainer>
                   <Button
                     onClick={onSearch}

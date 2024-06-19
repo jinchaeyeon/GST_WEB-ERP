@@ -43,18 +43,19 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   getBizCom,
   getDeviceHeight,
-  getHeight
+  getHeight,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
 import { OSState, loginResultState, sessionItemState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
 var index = 0;
@@ -77,6 +78,21 @@ var height5 = 0;
 var height6 = 0;
 
 const Main: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
+    }
+  }, [bizComponentData]);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
@@ -230,7 +246,7 @@ const Main: React.FC = () => {
   const [layoutFilter, setLayoutFilter] = useState({
     pgSize: PAGE_SIZE,
     worktype: "process_layout",
-    isSearch: true,
+    isSearch: false,
   });
 
   const layoutParameters: Iparameters = {
@@ -298,6 +314,7 @@ const Main: React.FC = () => {
   };
 
   const fetchNoticeGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -321,6 +338,7 @@ const Main: React.FC = () => {
   };
 
   const fetchWorkOrderGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -344,6 +362,7 @@ const Main: React.FC = () => {
   };
 
   const fetchScheduler = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -370,6 +389,7 @@ const Main: React.FC = () => {
   };
 
   const fetchLayout = async () => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -426,23 +446,38 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    if (sessionItem) {
+    if (
+      sessionItem &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchNoticeGrid();
       fetchWorkOrderGrid();
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (schedulerFilter.isSearch == true) {
+    if (
+      schedulerFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchScheduler();
     }
-  }, [schedulerFilter]);
+  }, [schedulerFilter, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (layoutFilter.isSearch == true) {
+    if (
+      layoutFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchLayout();
     }
-  }, [layoutFilter]);
+  }, [layoutFilter, permissions, bizComponentData, customOptionData]);
 
   //스크롤 핸들러
   const onNoticeScrollHandler = (event: GridEvent) => {
@@ -520,14 +555,6 @@ const Main: React.FC = () => {
   }, [customOptionData]);
 
   const [colorData, setColorData] = useState<any[]>([]);
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
-    }
-  }, [bizComponentData]);
 
   const CustomItem = (props: SchedulerItemProps) => {
     let colorCode = "";
@@ -722,7 +749,13 @@ const Main: React.FC = () => {
                   </TabStripTab>
                   <TabStripTab
                     title="프로세스 레이아웃"
-                    disabled={mainDataResult.total == 0 ? true : false}
+                    disabled={
+                      permissions.view
+                        ? mainDataResult.total == 0
+                          ? true
+                          : false
+                        : true
+                    }
                   >
                     <TabStrip
                       style={{
@@ -921,7 +954,13 @@ const Main: React.FC = () => {
                 </TabStripTab>
                 <TabStripTab
                   title="프로세스 레이아웃"
-                  disabled={mainDataResult.total == 0 ? true : false}
+                  disabled={
+                    permissions.view
+                      ? mainDataResult.total == 0
+                        ? true
+                        : false
+                      : true
+                  }
                 >
                   <TabStrip
                     style={{ width: "100%", height: webheight3 }}

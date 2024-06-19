@@ -217,7 +217,7 @@ const CopyWindow = ({
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
-      height3 = getHeight(".FormBoxWrap");
+      height3 = getHeight(".WindowFormBoxWrap");
       height4 = getHeight(".WindowButtonContainer");
 
       setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
@@ -1398,7 +1398,7 @@ const CopyWindow = ({
           >
             <SwiperSlide key={0}>
               <FormBoxWrap
-                className="FormBoxWrap"
+                className="WindowFormBoxWrap"
                 style={{ height: mobileheight }}
               >
                 <ButtonContainer style={{ justifyContent: "end" }}>
@@ -1775,7 +1775,7 @@ const CopyWindow = ({
           </Swiper>
         ) : (
           <>
-            <FormBoxWrap className="FormBoxWrap">
+            <FormBoxWrap className="WindowFormBoxWrap">
               <FormBox>
                 <tbody>
                   <tr>
