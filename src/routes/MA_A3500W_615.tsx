@@ -29,6 +29,7 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
@@ -36,7 +37,7 @@ import { PAGE_SIZE } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 var barcode = "";
 let interval: any;
@@ -47,6 +48,13 @@ var height2 = 0;
 var height3 = 0;
 
 const MA_A3500W_615: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
@@ -222,13 +230,13 @@ const MA_A3500W_615: React.FC = () => {
   });
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
   var audio = new Audio("/Correct 9.mp3");
   var audio2 = new Audio("/Notice 6.mp3");
   audio.load();
@@ -238,6 +246,7 @@ const MA_A3500W_615: React.FC = () => {
   audio2.volume = 1;
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -312,6 +321,7 @@ const MA_A3500W_615: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let dataArr: any = {
       barcode_s: [],
     };
@@ -359,6 +369,7 @@ const MA_A3500W_615: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -386,10 +397,10 @@ const MA_A3500W_615: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
@@ -503,7 +514,11 @@ const MA_A3500W_615: React.FC = () => {
                 >
                   AllCheck
                 </Button>
-                <Button onClick={() => onSaveClick()} icon="save">
+                <Button
+                  onClick={() => onSaveClick()}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
                   저장
                 </Button>
               </ButtonContainer>
@@ -742,7 +757,11 @@ const MA_A3500W_615: React.FC = () => {
                 >
                   AllCheck
                 </Button>
-                <Button onClick={() => onSaveClick()} icon="save">
+                <Button
+                  onClick={() => onSaveClick()}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
                   저장
                 </Button>
               </ButtonContainer>

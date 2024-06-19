@@ -61,11 +61,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState,
-  sessionItemState
-} from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2310W_606_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -188,6 +184,7 @@ const MA_A2310W_606: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -256,7 +253,7 @@ const MA_A2310W_606: React.FC = () => {
     finyn: "",
     invoiceno: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [Information, setInformation] = useState({
@@ -268,6 +265,7 @@ const MA_A2310W_606: React.FC = () => {
 
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -329,7 +327,7 @@ const MA_A2310W_606: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchLotNoGrid = async (Information: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     barcode = "";
     let data: any;
     setLoading(true);
@@ -501,23 +499,34 @@ const MA_A2310W_606: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (Information.isSearch && Information.lotnum != "") {
+    if (
+      Information.isSearch &&
+      Information.lotnum != "" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(Information);
       setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
       barcode = "";
     }
-  }, [Information, bizComponentData, customOptionData]);
+  }, [Information, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -763,6 +772,7 @@ const MA_A2310W_606: React.FC = () => {
   }, []);
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     const dataItem = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -803,6 +813,7 @@ const MA_A2310W_606: React.FC = () => {
   };
 
   const onAddClick = (e: any) => {
+    if (!permissions.save) return;
     if (mainDataResult2.data.length != 0) {
       let dataArr: any = {
         rekey_s: [],
@@ -987,6 +998,9 @@ const MA_A2310W_606: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (ParaData.workType == "N" && !permissions.save) return false;
+    if (ParaData.workType == "D" && permissions.delete) return false;
+
     let data: any;
     setLoading(true);
     try {
@@ -1028,10 +1042,13 @@ const MA_A2310W_606: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType == "N" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+    if (ParaData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
@@ -1229,6 +1246,7 @@ const MA_A2310W_606: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="check-circle"
+                      disabled={permissions.save ? false : true}
                     >
                       확정
                     </Button>
@@ -1238,6 +1256,7 @@ const MA_A2310W_606: React.FC = () => {
                       fillMode="outline"
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       themeColor={"primary"}
@@ -1340,6 +1359,7 @@ const MA_A2310W_606: React.FC = () => {
                         icon="close-circle"
                         fillMode="outline"
                         themeColor={"primary"}
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>
@@ -1348,6 +1368,7 @@ const MA_A2310W_606: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -1462,6 +1483,7 @@ const MA_A2310W_606: React.FC = () => {
                       icon="close-circle"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1470,6 +1492,7 @@ const MA_A2310W_606: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1582,6 +1605,7 @@ const MA_A2310W_606: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="check-circle"
+                  disabled={permissions.save ? false : true}
                 >
                   확정
                 </Button>
@@ -1591,6 +1615,7 @@ const MA_A2310W_606: React.FC = () => {
                   fillMode="outline"
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>

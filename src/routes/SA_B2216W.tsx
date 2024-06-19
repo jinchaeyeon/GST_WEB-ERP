@@ -162,7 +162,7 @@ const SA_B2216W: React.FC = () => {
     if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setChartList(rows);
@@ -202,7 +202,7 @@ const SA_B2216W: React.FC = () => {
     if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setBarData(rows2);
@@ -402,7 +402,7 @@ const SA_B2216W: React.FC = () => {
                 random={false}
               />
               <Typography variant="body2" style={{ textAlign: "right" }}>
-                (단위 : 억)
+                (단위 : 천원)
               </Typography>
             </Grid>
           </Grid>
@@ -424,9 +424,6 @@ const SA_B2216W: React.FC = () => {
                 alllabel={stackChartAllLabel2}
                 label={stackChartLabel2}
               />
-              <Typography variant="body2" style={{ textAlign: "right" }}>
-                (단위 : 억)
-              </Typography>
             </Grid>
           </Grid>
           <Divider />

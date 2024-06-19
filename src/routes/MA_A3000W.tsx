@@ -290,6 +290,7 @@ const MA_A3000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -389,7 +390,7 @@ const MA_A3000W: React.FC = () => {
     devmngnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -399,7 +400,7 @@ const MA_A3000W: React.FC = () => {
     devmngnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //삭제 프로시저 초기값
@@ -457,7 +458,7 @@ const MA_A3000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -569,6 +570,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -639,7 +641,12 @@ const MA_A3000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -649,11 +656,16 @@ const MA_A3000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -663,11 +675,11 @@ const MA_A3000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -871,6 +883,7 @@ const MA_A3000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     const data = mainDataResult.data.filter((item) => item.chk == true);
 
     if (data.length == 0) {
@@ -944,6 +957,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1164,6 +1178,7 @@ const MA_A3000W: React.FC = () => {
   });
 
   const onSave = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1236,6 +1251,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const onSave2 = () => {
+    if (!permissions.save) return;
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1466,6 +1482,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1532,10 +1549,10 @@ const MA_A3000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s.length != 0) {
+    if (ParaData.rowstatus_s.length != 0 && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
@@ -1838,6 +1855,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
     if (custcd == "") return;
     let data: any;
     let custInfo: null | { custcd: string; address: string; phonenum: string } =
@@ -2026,6 +2044,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const onPrint = () => {
+    if (!permissions.print) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
     try {
       if (datas.length == 0) {
@@ -2274,6 +2293,7 @@ const MA_A3000W: React.FC = () => {
                         onClick={onPrint}
                         icon="print"
                         style={{ marginLeft: "15px" }}
+                        disabled={permissions.print ? false : true}
                       >
                         바코드출력
                       </Button>
@@ -2284,6 +2304,7 @@ const MA_A3000W: React.FC = () => {
                       themeColor={"primary"}
                       onClick={onDataWndClick}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       입고참조
                     </Button>
@@ -2292,6 +2313,7 @@ const MA_A3000W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       장비관리삭제
                     </Button>
@@ -2300,6 +2322,7 @@ const MA_A3000W: React.FC = () => {
                       fillMode="outline"
                       icon="save"
                       themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
                     >
                       장비관리저장
                     </Button>
@@ -2455,15 +2478,17 @@ const MA_A3000W: React.FC = () => {
                         icon="plus"
                         title="행 추가"
                         disabled={
-                          mainDataResult.total == 0
-                            ? true
-                            : mainDataResult.data.filter(
-                                (item) =>
-                                  item[DATA_ITEM_KEY] ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus == "N"
-                            ? true
-                            : false
+                          permissions.save
+                            ? mainDataResult.total == 0
+                              ? true
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus == "N"
+                              ? true
+                              : false
+                            : true
                         }
                       ></Button>
                       <Button
@@ -2472,6 +2497,7 @@ const MA_A3000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSave2}
@@ -2479,6 +2505,7 @@ const MA_A3000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </div>
@@ -2612,6 +2639,7 @@ const MA_A3000W: React.FC = () => {
                   onClick={onPrint}
                   icon="print"
                   style={{ marginLeft: "15px" }}
+                  disabled={permissions.print ? false : true}
                 >
                   바코드출력
                 </Button>
@@ -2621,6 +2649,7 @@ const MA_A3000W: React.FC = () => {
                   themeColor={"primary"}
                   onClick={onDataWndClick}
                   icon="folder-open"
+                  disabled={permissions.save ? false : true}
                 >
                   입고참조
                 </Button>
@@ -2629,6 +2658,7 @@ const MA_A3000W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   장비관리삭제
                 </Button>
@@ -2637,6 +2667,7 @@ const MA_A3000W: React.FC = () => {
                   fillMode="outline"
                   icon="save"
                   themeColor={"primary"}
+                  disabled={permissions.save ? false : true}
                 >
                   장비관리저장
                 </Button>
@@ -2768,15 +2799,17 @@ const MA_A3000W: React.FC = () => {
                   icon="plus"
                   title="행 추가"
                   disabled={
-                    mainDataResult.total == 0
-                      ? true
-                      : mainDataResult.data.filter(
-                          (item) =>
-                            item[DATA_ITEM_KEY] ==
-                            Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].rowstatus == "N"
-                      ? true
-                      : false
+                    permissions.save
+                      ? mainDataResult.total == 0
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].rowstatus == "N"
+                        ? true
+                        : false
+                      : true
                   }
                 ></Button>
                 <Button
@@ -2785,6 +2818,7 @@ const MA_A3000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSave2}
@@ -2792,6 +2826,7 @@ const MA_A3000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>

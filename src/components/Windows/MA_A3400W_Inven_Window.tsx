@@ -39,7 +39,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -48,6 +48,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   getBizCom,
   getHeight,
@@ -96,6 +97,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -216,6 +224,7 @@ const CopyWindow = ({
             ? defaultOption.find((item: any) => item.id == "itemacnt")
                 ?.valueCode
             : itemacnt,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -388,7 +397,7 @@ const CopyWindow = ({
     itemgrade: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [Information, setInformation] = useState({
@@ -398,7 +407,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -499,7 +508,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchLotNoGrid = async (Information: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     barcode = "";
     let data: any;
     //조회조건 파라미터
@@ -603,25 +612,32 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, bizComponentData, customOptionData]);
+  }, [filters, bizComponentData, customOptionData, permissions]);
 
   useEffect(() => {
-    if (Information.isSearch && Information.lotnum != "") {
+    if (
+      Information.isSearch &&
+      Information.lotnum != "" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(Information);
       setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
     }
-  }, [Information, bizComponentData, customOptionData]);
+  }, [Information, bizComponentData, customOptionData, permissions]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -824,6 +840,7 @@ const CopyWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>

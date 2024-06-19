@@ -4,7 +4,12 @@ import { useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { getHeight, getWindowDeviceHeight } from "../CommonFunction";
+import { TPermissions } from "../../store/types";
+import {
+  UsePermissions,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type barcode = {
@@ -29,6 +34,13 @@ var height2 = 0;
 var height3 = 0;
 
 const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -79,7 +91,12 @@ const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
         <ButtonContainer className="WindowTitleContainer">
           <ReactToPrint
             trigger={() => (
-              <Button fillMode="outline" themeColor={"primary"} icon="print">
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
                 출력
               </Button>
             )}

@@ -30,7 +30,7 @@ import {
   isLoading,
   loginResultState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -40,6 +40,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   getBizCom,
   getHeight,
@@ -82,6 +83,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -191,6 +199,7 @@ const CopyWindow = ({
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -376,7 +385,7 @@ const CopyWindow = ({
     remark: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -402,17 +411,22 @@ const CopyWindow = ({
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -685,6 +699,7 @@ const CopyWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>

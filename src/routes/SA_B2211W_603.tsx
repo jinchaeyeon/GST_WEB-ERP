@@ -274,7 +274,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setChartList(rows);
@@ -343,7 +343,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setChartList2(rows2);
@@ -411,7 +411,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data3.isSuccess == true) {
       const rows3 = data3.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setChartList3(rows3);
@@ -480,7 +480,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data4.isSuccess == true) {
       const rows4 = data4.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setItemList(rows4);
@@ -498,7 +498,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data5.isSuccess == true) {
       const rows5 = data5.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setItemList2(rows5);
@@ -516,7 +516,7 @@ const SA_B2211W_603: React.FC = () => {
     if (data6.isSuccess == true) {
       const rows6 = data6.tables[0].Rows.map((item: any) => ({
         ...item,
-        value: Math.ceil(item.value),
+        value: Math.round(item.value),
       }));
 
       setItemList3(rows6);
@@ -592,7 +592,7 @@ const SA_B2211W_603: React.FC = () => {
                     random={false}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -603,7 +603,7 @@ const SA_B2211W_603: React.FC = () => {
                     numberCell={Column1.filter((item: any) => item != "구분")}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid
@@ -641,7 +641,7 @@ const SA_B2211W_603: React.FC = () => {
                     random={false}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -652,7 +652,7 @@ const SA_B2211W_603: React.FC = () => {
                     numberCell={Column2.filter((item: any) => item != "구분")}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid
@@ -690,7 +690,7 @@ const SA_B2211W_603: React.FC = () => {
                     random={false}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -701,7 +701,7 @@ const SA_B2211W_603: React.FC = () => {
                     numberCell={Column3.filter((item: any) => item != "구분")}
                   />
                   <Typography variant="body2" style={{ textAlign: "right" }}>
-                    (단위 : 억)
+                    (단위 : 천원)
                   </Typography>
                 </Grid>
                 <Grid

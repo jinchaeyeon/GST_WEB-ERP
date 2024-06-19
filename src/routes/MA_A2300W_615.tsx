@@ -41,13 +41,14 @@ import {
 } from "../CommonStyled";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 var barcode = "";
 let timestamp = 0;
@@ -64,6 +65,13 @@ var height5 = 0;
 var height6 = 0;
 
 const MA_A2300W_615: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
@@ -181,13 +189,13 @@ const MA_A2300W_615: React.FC = () => {
   const [filters, setFilters] = useState({
     custnm: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
   const [filters2, setFilters2] = useState({
     group_name: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
   const filterInputChange = (e: any) => {
@@ -207,6 +215,7 @@ const MA_A2300W_615: React.FC = () => {
 
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -263,6 +272,7 @@ const MA_A2300W_615: React.FC = () => {
 
   //요약정보 조회
   const fetchMainGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -372,22 +382,22 @@ const MA_A2300W_615: React.FC = () => {
     );
   };
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions]);
   var audio = new Audio("/Correct 9.mp3");
   var audio2 = new Audio("/Notice 6.mp3");
   audio.load();
@@ -576,6 +586,7 @@ const MA_A2300W_615: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let dataArr: any = {
       heatno_s: [],
       barcode_s: [],
@@ -639,6 +650,7 @@ const MA_A2300W_615: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -676,11 +688,10 @@ const MA_A2300W_615: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
-
+  }, [ParaData, permissions]);
   const resetAll = () => {
     if (swiper && isMobile) {
       swiper.slideTo(0);
@@ -1101,6 +1112,7 @@ const MA_A2300W_615: React.FC = () => {
                                   onClick={search}
                                   icon="search"
                                   themeColor={"primary"}
+                                  disabled={permissions.view ? false : true}
                                 >
                                   조회
                                 </Button>
@@ -1164,7 +1176,11 @@ const MA_A2300W_615: React.FC = () => {
                     <TitleContainer className="TitleContainer">
                       <Title>원료육입고</Title>
                       <ButtonContainer>
-                        <Button onClick={() => onSaveClick()} icon="save">
+                        <Button
+                          onClick={() => onSaveClick()}
+                          icon="save"
+                          disabled={permissions.save ? false : true}
+                        >
                           저장
                         </Button>
                       </ButtonContainer>
@@ -1190,6 +1206,7 @@ const MA_A2300W_615: React.FC = () => {
                                 onClick={search2}
                                 icon="search"
                                 themeColor={"primary"}
+                                disabled={permissions.view ? false : true}
                               >
                                 조회
                               </Button>
@@ -1299,9 +1316,8 @@ const MA_A2300W_615: React.FC = () => {
                 </Button>
                 <Button
                   onClick={() => onSaveClick()}
-                  themeColor={"primary"}
-                  fillMode={"solid"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>
@@ -1491,6 +1507,7 @@ const MA_A2300W_615: React.FC = () => {
                                 icon="search"
                                 id="search2"
                                 themeColor={"primary"}
+                                disabled={permissions.view ? false : true}
                               >
                                 조회
                               </Button>
@@ -1568,6 +1585,7 @@ const MA_A2300W_615: React.FC = () => {
                                 icon="search"
                                 id="search3"
                                 themeColor={"primary"}
+                                disabled={permissions.view ? false : true}
                               >
                                 조회
                               </Button>

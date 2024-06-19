@@ -337,6 +337,7 @@ const MA_A3500W: React.FC = () => {
           ?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
       setInfomation((prev) => ({
         ...prev,
@@ -642,7 +643,7 @@ const MA_A3500W: React.FC = () => {
     reckey_s: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [infomation, setInfomation] = useState({
@@ -681,6 +682,7 @@ const MA_A3500W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -776,6 +778,7 @@ const MA_A3500W: React.FC = () => {
   };
 
   const fetchSubGrid = async (infomation: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const stockparameters: Iparameters = {
@@ -847,6 +850,7 @@ const MA_A3500W: React.FC = () => {
   };
 
   const fetchSubGrid2 = async (infomation2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const BOMparameters: Iparameters = {
@@ -938,6 +942,7 @@ const MA_A3500W: React.FC = () => {
   };
 
   const fetchSubGrid3 = async (infomation3: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const BOMparameters2: Iparameters = {
@@ -1010,7 +1015,12 @@ const MA_A3500W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1020,11 +1030,16 @@ const MA_A3500W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (infomation.isSearch) {
+    if (
+      infomation.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(infomation);
       setInfomation((prev) => ({
@@ -1034,11 +1049,16 @@ const MA_A3500W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [infomation]);
+  }, [infomation, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (infomation2.isSearch) {
+    if (
+      infomation2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(infomation2);
       setInfomation2((prev) => ({
@@ -1048,11 +1068,16 @@ const MA_A3500W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [infomation2]);
+  }, [infomation2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (infomation3.isSearch) {
+    if (
+      infomation3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(infomation3);
       setInfomation3((prev) => ({
@@ -1062,7 +1087,7 @@ const MA_A3500W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
     }
-  }, [infomation3]);
+  }, [infomation3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1104,6 +1129,7 @@ const MA_A3500W: React.FC = () => {
   });
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1613,10 +1639,11 @@ const MA_A3500W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1941,6 +1968,7 @@ const MA_A3500W: React.FC = () => {
   });
 
   const setCopyData = () => {
+    if (!permissions.save) return;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       recdt_s: [],
@@ -2079,6 +2107,7 @@ const MA_A3500W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2110,10 +2139,10 @@ const MA_A3500W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s.length != 0) {
+    if (ParaData.rowstatus_s.length != 0 && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
     setSubDataState((prev) => ({ ...prev, sort: [] }));
@@ -2612,6 +2641,7 @@ const MA_A3500W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -2721,7 +2751,10 @@ const MA_A3500W: React.FC = () => {
                   onSelect={handleSelectTab}
                   scrollable={isMobile}
                 >
-                  <TabStripTab title="품목참조">
+                  <TabStripTab
+                    title="품목참조"
+                    disabled={permissions.view ? false : true}
+                  >
                     <GridContainer>
                       <GridTitleContainer className="FormBoxWrap">
                         <div
@@ -2804,6 +2837,9 @@ const MA_A3500W: React.FC = () => {
                                         onClick={onSearch2}
                                         themeColor={"primary"}
                                         icon="search"
+                                        disabled={
+                                          permissions.view ? false : true
+                                        }
                                       >
                                         조회
                                       </Button>
@@ -2818,6 +2854,7 @@ const MA_A3500W: React.FC = () => {
                               onClick={onAddClick}
                               themeColor={"primary"}
                               icon="plus"
+                              disabled={permissions.save ? false : true}
                             ></Button>
                           </ButtonContainer>
                         </div>
@@ -2925,7 +2962,10 @@ const MA_A3500W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </TabStripTab>
-                  <TabStripTab title="BOM참조">
+                  <TabStripTab
+                    title="BOM참조"
+                    disabled={permissions.view ? false : true}
+                  >
                     <Swiper
                       onSwiper={(swiper2) => {
                         setSwiper2(swiper2);
@@ -3012,6 +3052,9 @@ const MA_A3500W: React.FC = () => {
                                             onClick={onSearch3}
                                             themeColor={"primary"}
                                             icon="search"
+                                            disabled={
+                                              permissions.view ? false : true
+                                            }
                                           >
                                             조회
                                           </Button>
@@ -3206,6 +3249,9 @@ const MA_A3500W: React.FC = () => {
                                             onClick={onSearch4}
                                             themeColor={"primary"}
                                             icon="search"
+                                            disabled={
+                                              permissions.view ? false : true
+                                            }
                                           >
                                             조회
                                           </Button>
@@ -3221,6 +3267,7 @@ const MA_A3500W: React.FC = () => {
                                   themeColor={"primary"}
                                   icon="plus"
                                   title="행 추가"
+                                  disabled={permissions.save ? false : true}
                                 ></Button>
                               </ButtonContainer>
                             </div>
@@ -3375,6 +3422,7 @@ const MA_A3500W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={setCopyData}
@@ -3382,6 +3430,7 @@ const MA_A3500W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </div>
@@ -3495,6 +3544,7 @@ const MA_A3500W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="delete"
+                disabled={permissions.delete ? false : true}
               >
                 삭제
               </Button>
@@ -3602,7 +3652,10 @@ const MA_A3500W: React.FC = () => {
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
-                <TabStripTab title="품목참조">
+                <TabStripTab
+                  title="품목참조"
+                  disabled={permissions.view ? false : true}
+                >
                   <FormBoxWrap className="FormBoxWrap">
                     <FormBox>
                       <tbody>
@@ -3651,6 +3704,7 @@ const MA_A3500W: React.FC = () => {
                               onClick={onSearch2}
                               themeColor={"primary"}
                               icon="search"
+                              disabled={permissions.view ? false : true}
                             >
                               조회
                             </Button>
@@ -3666,6 +3720,7 @@ const MA_A3500W: React.FC = () => {
                           onClick={onAddClick}
                           themeColor={"primary"}
                           icon="plus"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3767,7 +3822,10 @@ const MA_A3500W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="BOM참조">
+                <TabStripTab
+                  title="BOM참조"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainerWrap>
                     <GridContainer width="50%">
                       <FormBoxWrap className="FormBoxWrap2">
@@ -3797,6 +3855,7 @@ const MA_A3500W: React.FC = () => {
                                   onClick={onSearch3}
                                   themeColor={"primary"}
                                   icon="search"
+                                  disabled={permissions.view ? false : true}
                                 >
                                   조회
                                 </Button>
@@ -3935,12 +3994,14 @@ const MA_A3500W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <ButtonContainer>
                           <Button
                             onClick={onSearch4}
                             themeColor={"primary"}
                             icon="search"
+                            disabled={permissions.view ? false : true}
                           >
                             조회
                           </Button>
@@ -4064,6 +4125,7 @@ const MA_A3500W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={setCopyData}
@@ -4071,6 +4133,7 @@ const MA_A3500W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

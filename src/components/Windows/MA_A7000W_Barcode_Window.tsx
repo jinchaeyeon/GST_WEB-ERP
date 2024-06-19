@@ -6,9 +6,10 @@ import ReactToPrint from "react-to-print";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getHeight,
   getWindowDeviceHeight,
@@ -54,6 +55,13 @@ const CopyWindow = ({
   total,
   modal = false,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -132,6 +140,7 @@ const CopyWindow = ({
   };
 
   const fetchBarcordGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     try {
       data = await processApi<any>("procedure", BarCodeParameters);
@@ -153,7 +162,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (barcodeFilters.isSearch) {
+    if (barcodeFilters.isSearch && permissions.view) {
       setBarCodeFilters((prev) => ({
         ...prev,
         find_row_value: "",
@@ -161,19 +170,21 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchBarcordGrid();
     }
-  }, [barcodeFilters]);
+  }, [barcodeFilters, permissions]);
 
   useEffect(() => {
-    let lotnum: any = [];
-    data.map((item: any) => {
-      lotnum.push(item.lotnum);
-    });
-    setBarCodeFilters((prev) => ({
-      ...prev,
-      lotnum: lotnum.join("|"),
-      isSearch: true,
-    }));
-  }, []);
+    if (permissions.view) {
+      let lotnum: any = [];
+      data.map((item: any) => {
+        lotnum.push(item.lotnum);
+      });
+      setBarCodeFilters((prev) => ({
+        ...prev,
+        lotnum: lotnum.join("|"),
+        isSearch: true,
+      }));
+    }
+  }, [permissions]);
 
   return (
     <>
@@ -187,7 +198,12 @@ const CopyWindow = ({
         <ButtonContainer className="WindowTitleContainer">
           <ReactToPrint
             trigger={() => (
-              <Button fillMode="outline" themeColor={"primary"} icon="print">
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
                 출력
               </Button>
             )}

@@ -496,6 +496,7 @@ const MA_A7000W: React.FC = () => {
           ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -605,6 +606,7 @@ const MA_A7000W: React.FC = () => {
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -794,12 +796,12 @@ const MA_A7000W: React.FC = () => {
     position: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -889,7 +891,12 @@ const MA_A7000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -899,7 +906,7 @@ const MA_A7000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -1325,6 +1332,7 @@ const MA_A7000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1398,12 +1406,13 @@ const MA_A7000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "") {
+    if (ParaData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1691,6 +1700,7 @@ const MA_A7000W: React.FC = () => {
   };
 
   const onPrint = () => {
+    if (!permissions.print) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true)[0];
     try {
       if (datas == null || datas == undefined) {
@@ -1834,6 +1844,7 @@ const MA_A7000W: React.FC = () => {
                   onClick={onPrint}
                   icon="print"
                   style={{ marginLeft: "15px" }}
+                  disabled={permissions.print ? false : true}
                 >
                   바코드출력
                 </Button>
@@ -1853,6 +1864,7 @@ const MA_A7000W: React.FC = () => {
                   onClick={onPrint}
                   icon="print"
                   style={{ marginLeft: "0px" }}
+                  disabled={permissions.print ? false : true}
                 >
                   바코드출력
                 </Button>
@@ -1862,6 +1874,7 @@ const MA_A7000W: React.FC = () => {
                   themeColor={"primary"}
                   onClick={onCopyWndClick}
                   icon="folder-open"
+                  disabled={permissions.save ? false : true}
                 >
                   품목참조
                 </Button>
@@ -1870,6 +1883,7 @@ const MA_A7000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -1877,6 +1891,7 @@ const MA_A7000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -1884,6 +1899,7 @@ const MA_A7000W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </div>

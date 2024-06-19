@@ -614,8 +614,9 @@ export const GridTitleContainer = styled.div`
 
 export const ButtonInInput = styled.div`
   position: absolute;
-  top: 5px;
+  top: 50%;
   right: 5px;
+  transform: translateY(-50%);
 `;
 
 export const ButtonInGridInput = styled.div`
