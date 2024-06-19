@@ -66,10 +66,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B3120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -315,6 +312,7 @@ const HU_B3120W: React.FC = () => {
         todt: todt,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
           ?.valueCode,
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
@@ -334,6 +332,7 @@ const HU_B3120W: React.FC = () => {
         paytypeCombo: defaultOption.find(
           (item: any) => item.id == "paytypeCombo"
         )?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -375,7 +374,7 @@ const HU_B3120W: React.FC = () => {
     paytype: "",
     prdate: new Date(),
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -385,7 +384,7 @@ const HU_B3120W: React.FC = () => {
     prsnnum: "",
     prsnnm: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -395,7 +394,7 @@ const HU_B3120W: React.FC = () => {
     prsnnum: "",
     prsnnm: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters4, setFilters4] = useState({
@@ -405,7 +404,7 @@ const HU_B3120W: React.FC = () => {
     prsnnm: "",
     prdate: new Date(),
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -438,6 +437,7 @@ const HU_B3120W: React.FC = () => {
 
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     const parameters: Iparameters = {
       procedureName: "P_HU_B3120W_Q",
@@ -510,6 +510,7 @@ const HU_B3120W: React.FC = () => {
 
   //그리드 조회
   const fetchMainGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     const parameters: Iparameters = {
       procedureName: "P_HU_B3120W_Q",
@@ -561,6 +562,7 @@ const HU_B3120W: React.FC = () => {
 
   //그리드 조회
   const fetchMainGrid3 = async (filters3: any) => {
+    if (!permissions.view) return;
     let data: any;
     const parameters: Iparameters = {
       procedureName: "P_HU_B3120W_Q",
@@ -609,7 +611,7 @@ const HU_B3120W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data2: any;
 
@@ -674,40 +676,60 @@ const HU_B3120W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch && customOptionData !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch && customOptionData !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters4.isSearch && customOptionData !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid4();
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -1074,6 +1096,7 @@ const HU_B3120W: React.FC = () => {
   const exitEdit = () => {};
 
   const onSend = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     const dataItem = mainDataResult.data.filter(
@@ -1211,6 +1234,7 @@ const HU_B3120W: React.FC = () => {
                         themeColor={"primary"}
                         onClick={onSend}
                         icon="email"
+                        disabled={permissions.save ? false : true}
                       >
                         전송
                       </Button>
@@ -1304,7 +1328,10 @@ const HU_B3120W: React.FC = () => {
                   onSelect={handleSelectTab}
                   scrollable={isMobile}
                 >
-                  <TabStripTab title="급여상여(월별 내역)">
+                  <TabStripTab
+                    title="급여상여(월별 내역)"
+                    disabled={permissions.view ? false : true}
+                  >
                     <FilterBox className="FilterBox">
                       <tbody>
                         <tr>
@@ -1337,6 +1364,7 @@ const HU_B3120W: React.FC = () => {
                               onClick={search2}
                               icon="search"
                               themeColor={"primary"}
+                              disabled={permissions.view ? false : true}
                             >
                               조회
                             </Button>
@@ -1565,7 +1593,10 @@ const HU_B3120W: React.FC = () => {
                       </SwiperSlide>
                     </Swiper>
                   </TabStripTab>
-                  <TabStripTab title="급여상여(명세서)">
+                  <TabStripTab
+                    title="급여상여(명세서)"
+                    disabled={permissions.view ? false : true}
+                  >
                     <FilterBox className="FilterBox2">
                       <tbody>
                         <tr>
@@ -1597,6 +1628,7 @@ const HU_B3120W: React.FC = () => {
                               onClick={search3}
                               icon="search"
                               themeColor={"primary"}
+                              disabled={permissions.view ? false : true}
                             >
                               조회
                             </Button>
@@ -1645,7 +1677,12 @@ const HU_B3120W: React.FC = () => {
               </div>
               <GridContainer>
                 <ButtonContainer className="ButtonContainer">
-                  <Button themeColor={"primary"} onClick={onSend} icon="email">
+                  <Button
+                    themeColor={"primary"}
+                    onClick={onSend}
+                    icon="email"
+                    disabled={permissions.save ? false : true}
+                  >
                     전송
                   </Button>
                 </ButtonContainer>
@@ -1761,7 +1798,10 @@ const HU_B3120W: React.FC = () => {
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
-                <TabStripTab title="급여상여(월별 내역)">
+                <TabStripTab
+                  title="급여상여(월별 내역)"
+                  disabled={permissions.view ? false : true}
+                >
                   <FilterContainer>
                     <FilterBox>
                       <tbody>
@@ -1795,6 +1835,7 @@ const HU_B3120W: React.FC = () => {
                               onClick={search2}
                               icon="search"
                               themeColor={"primary"}
+                              disabled={permissions.view ? false : true}
                             >
                               조회
                             </Button>
@@ -1961,7 +2002,10 @@ const HU_B3120W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="급여상여(명세서)">
+                <TabStripTab
+                  title="급여상여(명세서)"
+                  disabled={permissions.view ? false : true}
+                >
                   <FilterContainer>
                     <FilterBox>
                       <tbody>
@@ -1994,6 +2038,7 @@ const HU_B3120W: React.FC = () => {
                               onClick={search3}
                               icon="search"
                               themeColor={"primary"}
+                              disabled={permissions.view ? false : true}
                             >
                               조회
                             </Button>

@@ -359,6 +359,7 @@ const HU_B4000W: React.FC = () => {
           ?.valueCode,
         radRtryn: defaultOption.find((item: any) => item.id == "radRtryn")
           ?.valueCode,
+        isSearch: true,
       }));
       setAdjFilters((prev) => ({
         ...prev,
@@ -367,6 +368,7 @@ const HU_B4000W: React.FC = () => {
           ?.valueCode,
         adjdiv: defaultOption.find((item: any) => item.id == "adjdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -526,7 +528,7 @@ const HU_B4000W: React.FC = () => {
     radRtryn: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setSubFilters] = useState({
@@ -535,7 +537,7 @@ const HU_B4000W: React.FC = () => {
     prsnnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters2, setSubFilters2] = useState({
@@ -544,7 +546,7 @@ const HU_B4000W: React.FC = () => {
     prsnnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters3, setSubFilters3] = useState({
@@ -553,7 +555,7 @@ const HU_B4000W: React.FC = () => {
     prsnnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   // 연차조정
@@ -566,11 +568,12 @@ const HU_B4000W: React.FC = () => {
     adjnm: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -678,6 +681,7 @@ const HU_B4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid = async (subfilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -763,6 +767,7 @@ const HU_B4000W: React.FC = () => {
   };
 
   const fetchSubGrid2 = async (subfilters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -846,6 +851,7 @@ const HU_B4000W: React.FC = () => {
   };
 
   const fetchSubGrid3 = async (subfilters3: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -929,6 +935,7 @@ const HU_B4000W: React.FC = () => {
   };
 
   const fetchAdjGrid = async (adjfilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1026,16 +1033,27 @@ const HU_B4000W: React.FC = () => {
 
   // 조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters.isSearch && subfilters.prsnnum) {
+    if (
+      subfilters.isSearch &&
+      subfilters.prsnnum &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
@@ -1045,10 +1063,16 @@ const HU_B4000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters2.isSearch && subfilters2.prsnnum) {
+    if (
+      subfilters2.isSearch &&
+      subfilters2.prsnnum &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters2);
       setSubFilters2((prev) => ({
@@ -1058,10 +1082,16 @@ const HU_B4000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subfilters2]);
+  }, [subfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters3.isSearch && subfilters3.prsnnum) {
+    if (
+      subfilters3.isSearch &&
+      subfilters3.prsnnum &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters3);
       setSubFilters3((prev) => ({
@@ -1071,10 +1101,15 @@ const HU_B4000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
     }
-  }, [subfilters3]);
+  }, [subfilters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (adjfilters.isSearch && permissions !== null) {
+    if (
+      adjfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(adjfilters);
       setAdjFilters((prev) => ({
@@ -1084,7 +1119,7 @@ const HU_B4000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchAdjGrid(deepCopiedFilters);
     }
-  }, [adjfilters, permissions]);
+  }, [adjfilters, permissions, bizComponentData, customOptionData]);
 
   // 사용자별 연차 집계 페이지 변경
   const userAdjPageChange = (event: GridPageChangeEvent) => {
@@ -1577,6 +1612,7 @@ const HU_B4000W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       const dataItem = adjDataResult.data.filter((item: any) => {
@@ -1687,12 +1723,13 @@ const HU_B4000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraSaved.rowstatus_s != "" || paraSaved.workType == "D") {
+    if (paraSaved.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraSaved]);
+  }, [paraSaved, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -1952,7 +1989,10 @@ const HU_B4000W: React.FC = () => {
         style={{ width: "100%" }}
         scrollable={isMobile}
       >
-        <TabStripTab title="연차사용현황">
+        <TabStripTab
+          title="연차사용현황"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2715,7 +2755,10 @@ const HU_B4000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="연차조정">
+        <TabStripTab
+          title="연차조정"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2784,6 +2827,7 @@ const HU_B4000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -2791,6 +2835,7 @@ const HU_B4000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -2798,6 +2843,7 @@ const HU_B4000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

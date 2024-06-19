@@ -36,7 +36,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -46,6 +46,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -172,6 +173,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -250,9 +258,41 @@ const CopyWindow = ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA005,L_BA002, L_BA029,L_BA020",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회 ()
+  const [doexdivListData, setDoexdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [locationListData, setLocationListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  const [taxdivListData, setTaxdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [amtunitListData, setAmtunitListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
+      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
+      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
+    }
+  }, [bizComponentData]);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -374,7 +414,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -439,7 +479,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && workType != "N") {
+    if (
+      filters.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -449,10 +495,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         reckey: data.reckey,
@@ -478,7 +530,7 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -588,6 +640,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       if (mainDataResult.data.length == 0) {
@@ -998,6 +1051,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1081,10 +1135,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1241,37 +1295,6 @@ const CopyWindow = ({
       });
     }
   };
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA005,L_BA002, L_BA029,L_BA020",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  //공통코드 리스트 조회 ()
-  const [doexdivListData, setDoexdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  const [taxdivListData, setTaxdivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [amtunitListData, setAmtunitListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setAmtunitListData(getBizCom(bizComponentData, "L_BA020"));
-      setLocationListData(getBizCom(bizComponentData, "L_BA002"));
-      setDoexdivListData(getBizCom(bizComponentData, "L_BA005"));
-      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
-    }
-  }, [bizComponentData]);
 
   return (
     <>
@@ -1510,6 +1533,7 @@ const CopyWindow = ({
                         themeColor={"primary"}
                         onClick={onCopyWndClick}
                         icon="folder-open"
+                        disabled={permissions.save ? false : true}
                       >
                         발주참조
                       </Button>
@@ -1519,6 +1543,7 @@ const CopyWindow = ({
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -1640,9 +1665,11 @@ const CopyWindow = ({
                 </Grid>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button themeColor={"primary"} onClick={selectData}>
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button themeColor={"primary"} onClick={selectData}>
+                        저장
+                      </Button>
+                    )}
                     <Button
                       themeColor={"primary"}
                       fillMode={"outline"}
@@ -1847,6 +1874,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     onClick={onCopyWndClick}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     발주참조
                   </Button>
@@ -1856,6 +1884,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1977,9 +2006,11 @@ const CopyWindow = ({
             </GridContainer>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -2011,6 +2042,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

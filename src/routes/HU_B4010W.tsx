@@ -223,6 +223,7 @@ const HU_B4010W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
+        isSearch: true,
       }));
       const year = setDefaultDate(customOptionData, "yyyymm").getFullYear(); // 년
       const month = setDefaultDate(customOptionData, "yyyymm").getMonth(); // 월
@@ -459,7 +460,7 @@ const HU_B4010W: React.FC = () => {
     yyyymm: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -476,7 +477,7 @@ const HU_B4010W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -485,7 +486,7 @@ const HU_B4010W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters4, setFilters4] = useState({
@@ -494,7 +495,7 @@ const HU_B4010W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters5, setFilters5] = useState({
@@ -503,7 +504,7 @@ const HU_B4010W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters6, setFilters6] = useState({
@@ -512,12 +513,12 @@ const HU_B4010W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -609,7 +610,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -715,7 +716,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -767,7 +768,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -819,7 +820,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -871,7 +872,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters5: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -923,7 +924,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async (filters6: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -975,17 +976,27 @@ const HU_B4010W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -995,57 +1006,82 @@ const HU_B4010W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters3, permissions]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters4, permissions]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters5.isSearch && permissions !== null) {
+    if (
+      filters5.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters5, permissions]);
+  }, [filters5, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters6.isSearch && permissions !== null) {
+    if (
+      filters6.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters6);
       setFilters6((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid7(deepCopiedFilters);
     }
-  }, [filters6, permissions]);
+  }, [filters6, permissions, bizComponentData, customOptionData]);
 
   const search = () => {
     try {
@@ -1862,7 +1898,10 @@ const HU_B4010W: React.FC = () => {
                   onSelect={handleSelectTab}
                   scrollable={isMobile}
                 >
-                  <TabStripTab title="월별 평균">
+                  <TabStripTab
+                    title="월별 평균"
+                    disabled={permissions.view ? false : true}
+                  >
                     <ExcelExport
                       data={mainDataResult2.data}
                       ref={(exporter) => {
@@ -1978,7 +2017,10 @@ const HU_B4010W: React.FC = () => {
                       </Grid>
                     </ExcelExport>
                   </TabStripTab>
-                  <TabStripTab title="당월 평가내용">
+                  <TabStripTab
+                    title="당월 평가내용"
+                    disabled={permissions.view ? false : true}
+                  >
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
@@ -2052,7 +2094,10 @@ const HU_B4010W: React.FC = () => {
                       </Grid>
                     </ExcelExport>
                   </TabStripTab>
-                  <TabStripTab title="불량내역">
+                  <TabStripTab
+                    title="불량내역"
+                    disabled={permissions.view ? false : true}
+                  >
                     <ExcelExport
                       data={mainDataResult4.data}
                       ref={(exporter) => {
@@ -2129,7 +2174,10 @@ const HU_B4010W: React.FC = () => {
                       </Grid>
                     </ExcelExport>
                   </TabStripTab>
-                  <TabStripTab title="상벌내역">
+                  <TabStripTab
+                    title="상벌내역"
+                    disabled={permissions.view ? false : true}
+                  >
                     <ExcelExport
                       data={mainDataResult5.data}
                       ref={(exporter) => {
@@ -2734,7 +2782,10 @@ const HU_B4010W: React.FC = () => {
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
-                <TabStripTab title="당월 평가내용">
+                <TabStripTab
+                  title="당월 평가내용"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult3.data}
                     ref={(exporter) => {
@@ -2804,7 +2855,10 @@ const HU_B4010W: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
-                <TabStripTab title="불량내역">
+                <TabStripTab
+                  title="불량내역"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult4.data}
                     ref={(exporter) => {
@@ -2879,7 +2933,10 @@ const HU_B4010W: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
-                <TabStripTab title="상벌내역">
+                <TabStripTab
+                  title="상벌내역"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult5.data}
                     ref={(exporter) => {

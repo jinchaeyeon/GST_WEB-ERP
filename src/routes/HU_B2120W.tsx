@@ -52,10 +52,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B2120W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -180,10 +177,12 @@ const HU_B2120W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         dutydt: setDefaultDate(customOptionData, "dutydt"),
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
         dutydt: setDefaultDate(customOptionData, "dutydt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -262,7 +261,7 @@ const HU_B2120W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -277,7 +276,7 @@ const HU_B2120W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const setUserData = (data: IPrsnnum) => {
@@ -314,7 +313,7 @@ const HU_B2120W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -372,7 +371,7 @@ const HU_B2120W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -429,22 +428,32 @@ const HU_B2120W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, customOptionData, bizComponentData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -654,7 +663,10 @@ const HU_B2120W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="근무시간기록부">
+        <TabStripTab
+          title="근무시간기록부"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={newData}
@@ -721,7 +733,10 @@ const HU_B2120W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="근태별현황">
+        <TabStripTab
+          title="근태별현황"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={newData2}

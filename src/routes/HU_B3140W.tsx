@@ -257,6 +257,7 @@ const HU_B3140W: React.FC = () => {
           ?.valueCode,
         rtrdt: defaultOption.find((item: any) => item.id == "rtrdt")?.valueCode,
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -396,19 +397,19 @@ const HU_B3140W: React.FC = () => {
     rtrdt: "N",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -468,7 +469,7 @@ const HU_B3140W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -531,7 +532,7 @@ const HU_B3140W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters3: Iparameters = {
@@ -587,7 +588,7 @@ const HU_B3140W: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -644,7 +645,7 @@ const HU_B3140W: React.FC = () => {
   };
 
   const fetchMainGrid5 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters5: Iparameters = {
@@ -700,7 +701,7 @@ const HU_B3140W: React.FC = () => {
   };
 
   const fetchMainGrid6 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters6: Iparameters = {
@@ -756,7 +757,12 @@ const HU_B3140W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -776,20 +782,21 @@ const HU_B3140W: React.FC = () => {
         fetchMainGrid6(deepCopiedFilters);
       }
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
       filters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters2, permissions, bizComponentData]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -1743,7 +1750,10 @@ const HU_B3140W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="개인별월내역(합계)">
+        <TabStripTab
+          title="개인별월내역(합계)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult.data}
@@ -1826,7 +1836,10 @@ const HU_B3140W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="개인별월내역(분리)">
+        <TabStripTab
+          title="개인별월내역(분리)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={newData}
@@ -1907,7 +1920,10 @@ const HU_B3140W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="월별급상여내역">
+        <TabStripTab
+          title="월별급상여내역"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2243,7 +2259,10 @@ const HU_B3140W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="급여상세내역">
+        <TabStripTab
+          title="급여상세내역"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult5.data}
@@ -2309,7 +2328,10 @@ const HU_B3140W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="상여상세내역">
+        <TabStripTab
+          title="상여상세내역"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult6.data}

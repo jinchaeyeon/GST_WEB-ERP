@@ -61,10 +61,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/MA_A2410W_Window";
 import { useApi } from "../hooks/api";
 import { ICustData, IItemData } from "../hooks/interfaces";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2410W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -172,6 +169,7 @@ const MA_A2410W: React.FC = () => {
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -390,7 +388,7 @@ const MA_A2410W: React.FC = () => {
     purnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters, setDetailFilters] = useState({
@@ -399,11 +397,11 @@ const MA_A2410W: React.FC = () => {
     purnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -505,7 +503,7 @@ const MA_A2410W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailfilters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -597,7 +595,12 @@ const MA_A2410W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -607,11 +610,16 @@ const MA_A2410W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailfilters.isSearch && permissions !== null) {
+    if (
+      detailfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
@@ -621,7 +629,7 @@ const MA_A2410W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters]);
+  }, [detailfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -834,6 +842,7 @@ const MA_A2410W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -853,6 +862,7 @@ const MA_A2410W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -909,8 +919,8 @@ const MA_A2410W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   return (
     <>
@@ -1074,6 +1084,7 @@ const MA_A2410W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       외주처리생성
                     </Button>
@@ -1082,6 +1093,7 @@ const MA_A2410W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       외주처리삭제
                     </Button>
@@ -1299,6 +1311,7 @@ const MA_A2410W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   외주처리생성
                 </Button>
@@ -1307,6 +1320,7 @@ const MA_A2410W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   외주처리삭제
                 </Button>

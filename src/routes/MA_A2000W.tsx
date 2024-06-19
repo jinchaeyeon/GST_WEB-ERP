@@ -60,10 +60,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/MA_A2000W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -220,6 +217,7 @@ const MA_A2000W: React.FC = () => {
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -367,7 +365,7 @@ const MA_A2000W: React.FC = () => {
     purdt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -375,7 +373,7 @@ const MA_A2000W: React.FC = () => {
     purnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //삭제 프로시저 초기값
@@ -444,7 +442,7 @@ const MA_A2000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -551,6 +549,7 @@ const MA_A2000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -621,7 +620,12 @@ const MA_A2000W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -631,11 +635,16 @@ const MA_A2000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -645,11 +654,11 @@ const MA_A2000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -818,6 +827,7 @@ const MA_A2000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -838,6 +848,7 @@ const MA_A2000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1201,6 +1212,7 @@ const MA_A2000W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       자재발주생성
                     </Button>
@@ -1209,6 +1221,7 @@ const MA_A2000W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       자재발주삭제
                     </Button>
@@ -1580,6 +1593,7 @@ const MA_A2000W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   자재발주생성
                 </Button>
@@ -1588,6 +1602,7 @@ const MA_A2000W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   자재발주삭제
                 </Button>

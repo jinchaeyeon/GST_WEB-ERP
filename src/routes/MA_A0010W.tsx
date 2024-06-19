@@ -143,6 +143,7 @@ const MA_A0010W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -180,12 +181,12 @@ const MA_A0010W: React.FC = () => {
     code_name: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -263,7 +264,7 @@ const MA_A0010W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -273,7 +274,7 @@ const MA_A0010W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -551,6 +552,7 @@ const MA_A0010W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -607,12 +609,13 @@ const MA_A0010W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.row_status_s != "") {
+    if (ParaData.row_status_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -693,6 +696,7 @@ const MA_A0010W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
     } else {
@@ -809,6 +813,7 @@ const MA_A0010W: React.FC = () => {
                   saveExcel={saveExcel}
                   permissions={permissions}
                   style={{ marginLeft: "15px" }}
+                  disabled={permissions.save ? false : true}
                 />
                 <Button
                   title="Export Excel"
@@ -817,6 +822,7 @@ const MA_A0010W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   style={{ marginLeft: "10px" }}
+                  disabled={permissions.view ? false : true}
                 >
                   엑셀양식
                 </Button>
@@ -836,6 +842,7 @@ const MA_A0010W: React.FC = () => {
                   saveExcel={saveExcel}
                   permissions={permissions}
                   style={{ marginLeft: "0px" }}
+                  disabled={permissions.save ? false : true}
                 />
                 <Button
                   title="Export Excel"
@@ -844,6 +851,7 @@ const MA_A0010W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   style={{ marginLeft: "4px" }}
+                  disabled={permissions.view ? false : true}
                 >
                   엑셀양식
                 </Button>
@@ -855,6 +863,7 @@ const MA_A0010W: React.FC = () => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -862,6 +871,7 @@ const MA_A0010W: React.FC = () => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -869,6 +879,7 @@ const MA_A0010W: React.FC = () => {
                 themeColor={"primary"}
                 icon="save"
                 title="저장"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </div>
@@ -974,6 +985,11 @@ const MA_A0010W: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           para={"MA_A0010W"}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

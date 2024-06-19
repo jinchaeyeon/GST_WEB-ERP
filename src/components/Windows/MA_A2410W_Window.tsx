@@ -38,7 +38,7 @@ import {
   isLoading,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -48,6 +48,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -148,6 +149,13 @@ const DetailWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -180,6 +188,7 @@ const DetailWindow = ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -501,7 +510,7 @@ const DetailWindow = ({
 
   // 그리드 데이터  조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -568,7 +577,13 @@ const DetailWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && workType != "N") {
+    if (
+      filters.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -578,10 +593,16 @@ const DetailWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         purnum: data.purnum,
@@ -605,7 +626,7 @@ const DetailWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -777,6 +798,7 @@ const DetailWindow = ({
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     for (var i = 0; i < mainDataResult.data.length; i++) {
       if (mainDataResult.data[i].unp == 0 && valid == true) {
@@ -987,6 +1009,7 @@ const DetailWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -1072,10 +1095,10 @@ const DetailWindow = ({
   };
 
   useEffect(() => {
-    if (paraSaved.custcd != "") {
+    if (paraSaved.custcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraSaved]);
+  }, [paraSaved, permissions]);
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -1437,6 +1460,7 @@ const DetailWindow = ({
                         themeColor={"primary"}
                         onClick={onPlanWndClick}
                         icon="folder-open"
+                        disabled={permissions.save ? false : true}
                       >
                         계획참조
                       </Button>
@@ -1444,6 +1468,7 @@ const DetailWindow = ({
                         themeColor={"primary"}
                         onClick={onStockWndClick}
                         icon="folder-open"
+                        disabled={permissions.save ? false : true}
                       >
                         재고참조
                       </Button>
@@ -1453,6 +1478,7 @@ const DetailWindow = ({
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -1559,9 +1585,11 @@ const DetailWindow = ({
                 </Grid>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button themeColor={"primary"} onClick={onSaveClick}>
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button themeColor={"primary"} onClick={onSaveClick}>
+                        저장
+                      </Button>
+                    )}
                     <Button
                       themeColor={"primary"}
                       fillMode={"outline"}
@@ -1730,6 +1758,7 @@ const DetailWindow = ({
                     themeColor={"primary"}
                     onClick={onPlanWndClick}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     계획참조
                   </Button>
@@ -1737,6 +1766,7 @@ const DetailWindow = ({
                     themeColor={"primary"}
                     onClick={onStockWndClick}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     재고참조
                   </Button>
@@ -1746,6 +1776,7 @@ const DetailWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1848,9 +1879,11 @@ const DetailWindow = ({
             </GridContainer>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={onSaveClick}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={onSaveClick}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -1889,6 +1922,11 @@ const DetailWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

@@ -158,7 +158,7 @@ const HU_B1020W: React.FC = () => {
     cboPaycd: "",
     ymdFrdt: new Date(),
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
     find_row_value: "",
     scrollDirrection: "down",
@@ -187,6 +187,7 @@ const HU_B1020W: React.FC = () => {
           ?.valueCode,
         cboPaycd: defaultOption.find((item: any) => item.id == "cboPaycd")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -214,10 +215,10 @@ const HU_B1020W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -226,7 +227,7 @@ const HU_B1020W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   const search = () => {
     try {
@@ -255,7 +256,7 @@ const HU_B1020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
 
     let data: any;
     setLoading(true);

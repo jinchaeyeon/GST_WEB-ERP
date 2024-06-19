@@ -48,7 +48,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
@@ -59,6 +59,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
@@ -469,6 +470,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -563,6 +571,7 @@ const CopyWindow = ({
         purdt: setDefaultDate(customOptionData, "purdt"),
         custprsncd: defaultOption.find((item: any) => item.id == "custprsncd")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -672,6 +681,7 @@ const CopyWindow = ({
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -924,7 +934,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -990,7 +1000,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && workType != "N") {
+    if (
+      filters.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1000,10 +1016,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         custcd: data.custcd,
@@ -1031,7 +1053,7 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1150,6 +1172,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     let valid = true;
     mainDataResult.data.map((item) => {
       if (item.qty == 0 && valid == true) {
@@ -1538,6 +1561,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1620,10 +1644,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s.length != 0 || ParaData.custcd != "") {
+    if (
+      (ParaData.rowstatus_s.length != 0 || ParaData.custcd != "") &&
+      permissions.save
+    ) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -2171,6 +2198,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           onClick={onCopyWndClick2}
                           icon="folder-open"
+                          disabled={permissions.save ? false : true}
                         >
                           BOM
                         </Button>
@@ -2178,6 +2206,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           onClick={onCopyWndClick}
                           icon="folder-open"
+                          disabled={permissions.save ? false : true}
                         >
                           수주BOM
                         </Button>
@@ -2185,6 +2214,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           onClick={onCopyWndClick3}
                           icon="folder-open"
+                          disabled={permissions.save ? false : true}
                         >
                           품목
                         </Button>
@@ -2192,6 +2222,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           onClick={onCopyWndClick4}
                           icon="folder-open"
+                          disabled={permissions.save ? false : true}
                         >
                           수주
                         </Button>
@@ -2200,6 +2231,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -2207,6 +2239,7 @@ const CopyWindow = ({
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </div>
                     </ButtonContainer>
@@ -2332,9 +2365,11 @@ const CopyWindow = ({
                   </Grid>
                   <BottomContainer className="BottomContainer">
                     <ButtonContainer>
-                      <Button themeColor={"primary"} onClick={selectData}>
-                        저장
-                      </Button>
+                      {permissions.save && (
+                        <Button themeColor={"primary"} onClick={selectData}>
+                          저장
+                        </Button>
+                      )}
                       <Button
                         themeColor={"primary"}
                         fillMode={"outline"}
@@ -2593,6 +2628,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       onClick={onCopyWndClick2}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       BOM
                     </Button>
@@ -2600,6 +2636,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       onClick={onCopyWndClick}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       수주BOM
                     </Button>
@@ -2607,6 +2644,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       onClick={onCopyWndClick3}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       품목
                     </Button>
@@ -2614,6 +2652,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       onClick={onCopyWndClick4}
                       icon="folder-open"
+                      disabled={permissions.save ? false : true}
                     >
                       수주
                     </Button>
@@ -2622,6 +2661,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -2629,6 +2669,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2755,9 +2796,11 @@ const CopyWindow = ({
             </FormContext.Provider>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -2818,6 +2861,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

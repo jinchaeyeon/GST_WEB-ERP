@@ -53,7 +53,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import NumberTreeCell from "../Cells/NumberTreeCell";
@@ -64,6 +64,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   getBizCom,
   getGridItemChangedData,
   getHeight,
@@ -163,6 +164,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -322,6 +330,7 @@ const CopyWindow = ({
         finyn: defaultOption.find((item: any) => item.id == "finyn2")
           ?.valueCode,
         dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -502,7 +511,7 @@ const CopyWindow = ({
     finyn: "Y",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -510,12 +519,12 @@ const CopyWindow = ({
     itemcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -583,7 +592,7 @@ const CopyWindow = ({
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -665,16 +674,26 @@ const CopyWindow = ({
     setLoading(false);
   };
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailFilters.isSearch) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -684,7 +703,7 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters]);
+  }, [detailFilters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -855,20 +874,6 @@ const CopyWindow = ({
     );
   };
 
-  const detailTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = detailDataResult.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총
-        {detailDataResult.total == -1
-          ? 0
-          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subDataResult.total.toString().split(".");
     return (
@@ -885,10 +890,6 @@ const CopyWindow = ({
 
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onDetailSortChange = (e: any) => {
-    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const onSubSortChange = (e: any) => {
@@ -1134,6 +1135,7 @@ const CopyWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>
