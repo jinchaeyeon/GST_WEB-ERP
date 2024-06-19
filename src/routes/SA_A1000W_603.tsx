@@ -1620,10 +1620,10 @@ const SA_A1000W_603: React.FC = () => {
   };
   const onPrint = () => {
     if (!permissions.print) return;
-    if (mainDataResult2.total > 0) {
+    if(mainDataResult2.total > 0) {
       setPrintWindowVisible(true);
     } else {
-      alert("의뢰품목이 없습니다.");
+      alert("의뢰품목이 없습니다.")
     }
   };
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -4424,48 +4424,36 @@ const SA_A1000W_603: React.FC = () => {
 
   const onRevClick = () => {
     if (!permissions.save) return;
-    if (mainDataResult2.total > 0) {
-      setRevWindowVisible(true);
-    } else {
-      alert("의뢰품목이 없습니다.");
-    }
+    setRevWindowVisible(true);
   };
 
   const onPlanClick = () => {
     if (!permissions.save) return;
-    if (mainDataResult2.total > 0) {
-      if (Information.quosts == "2") {
-        alert("이미 진행단계가 [계획요청] 상태입니다.");
-      } else {
-        setParaData((prev) => ({
-          ...prev,
-          workType: "DesTran",
-          orgdiv: sessionOrgdiv,
-          quonum: Information.quonum,
-          quorev: Information.quorev,
-        }));
-      }
+    if (Information.quosts == "2") {
+      alert("이미 진행단계가 [계획요청] 상태입니다.");
     } else {
-      alert("의뢰품목이 없습니다.");
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DesTran",
+        orgdiv: sessionOrgdiv,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+      }));
     }
   };
 
   const onPlanDeleteClick = () => {
     if (!permissions.save) return;
-    if (mainDataResult2.total > 0) {
-      if (Information.quosts != "2") {
-        alert("진행단계가 [계획요청] 상태만 취소 가능합니다.");
-      } else {
-        setParaData((prev) => ({
-          ...prev,
-          workType: "DesTran_d",
-          orgdiv: sessionOrgdiv,
-          quonum: Information.quonum,
-          quorev: Information.quorev,
-        }));
-      }
+    if (Information.quosts != "2") {
+      alert("진행단계가 [계획요청] 상태만 취소 가능합니다.");
     } else {
-      alert("의뢰품목이 없습니다.");
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DesTran_d",
+        orgdiv: sessionOrgdiv,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+      }));
     }
   };
 
