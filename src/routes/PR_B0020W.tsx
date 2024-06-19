@@ -35,7 +35,7 @@ import {
 } from "@progress/kendo-react-layout";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -72,7 +72,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -218,7 +218,7 @@ const PR_B0020W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
+  const [loginResult] = useRecoilState(loginResultState);
   const [group, setGroup] = React.useState(initialGroup);
   const [resultState, setResultState] = React.useState<GroupResult[]>(
     processWithGroups([], initialGroup)
@@ -232,7 +232,7 @@ const PR_B0020W: React.FC = () => {
     code: "",
     name: "",
     cboDiv: "",
-    company_code: "2207A046",
+    company_code: loginResult.companyCode,
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
