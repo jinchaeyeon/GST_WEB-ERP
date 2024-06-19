@@ -62,13 +62,13 @@ export const gridList: Array<TGrid> = [
         id: "col_project",
         field: "project",
         caption: "PJT NO.",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_document_id",
         field: "document_id",
         caption: "등록번호",
-        width: 150,
+        width: 200,
       },
       {
         id: "col_materialtype",

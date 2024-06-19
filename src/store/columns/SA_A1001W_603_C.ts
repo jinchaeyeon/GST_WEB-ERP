@@ -14,13 +14,13 @@ export const gridList: Array<TGrid> = [
         id: "col_quorev",
         field: "quorev",
         caption: "REV",
-        width: 80,
+        width: 60,
       },
       {
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_custprsnnm",
@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
         id: "col_materialtype",
         field: "materialtype",
         caption: "물질분야",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_extra_field2",
@@ -115,7 +115,7 @@ export const gridList: Array<TGrid> = [
         id: "col_num",
         field: "num",
         caption: "NO",
-        width: 150,
+        width: 60,
       },
       {
         id: "col_itemcd",
@@ -127,7 +127,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 150,
+        width: 250,
       },
       {
         id: "col_week_b",

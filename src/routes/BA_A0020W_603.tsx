@@ -284,7 +284,7 @@ const BA_A0020W_603: React.FC = () => {
         setMobileHeight4(getDeviceHeight(true) - height2 - height5 - height3);
         setMobileHeight5(getDeviceHeight(true) - height2 - height5 - height3);
         setWebHeight(
-          getDeviceHeight(true) - height - height4 - height5 - height3
+          getDeviceHeight(true) * 1.2 - height - height4 - height5 - height3
         );
         setWebHeight2(height4 - height2);
         setWebHeight3(height4 - height2);

@@ -39,7 +39,7 @@ export const gridList: Array<TGrid> = [
         id: "col_project",
         field: "project",
         caption: "계약명",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_custnm",
@@ -69,13 +69,13 @@ export const gridList: Array<TGrid> = [
         id: "col_extra_field2",
         field: "extra_field2",
         caption: "물질상세분야",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_totamt",
         field: "totamt",
         caption: "최종계약금액",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_payment",

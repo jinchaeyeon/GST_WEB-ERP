@@ -38,7 +38,7 @@ export const gridList: Array<TGrid> = [
         id: "col_quotestnum",
         field: "quotestnum",
         caption: "예약번호",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_exdlvdt2",
@@ -87,7 +87,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 150,
+        width: 250,
       },
       {
         id: "col_itemacnt",

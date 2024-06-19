@@ -26,7 +26,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_custprsnnm",
@@ -50,27 +50,27 @@ export const gridList: Array<TGrid> = [
         id: "col_cnt",
         field: "cnt",
         caption: "시험수",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_conamt",
         field: "conamt",
         caption: "계약금액",
-        width: 130,
+        width: 100,
       },
 
       {
         id: "col_stramt",
         field: "stramt",
         caption: "개시금액",
-        width: 130,
+        width: 100,
       },
 
       {
         id: "col_janamt",
         field: "janamt",
         caption: "잔고금액",
-        width: 130,
+        width: 100,
       },
     ]
   },
@@ -87,7 +87,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
-        width: 150,
+        width: 250,
       },
       {
         id: "col_ordsts",
@@ -99,21 +99,21 @@ export const gridList: Array<TGrid> = [
         id: "col_amt",
         field: "amt",
         caption: "계약금액",
-        width: 130,
+        width: 100,
       },
 
       {
         id: "col_stramt2",
         field: "stramt",
         caption: "개시금액",
-        width: 130,
+        width: 100,
       },
 
       {
         id: "col_janamt2",
         field: "janamt",
         caption: "잔고금액",
-        width: 130,
+        width: 100,
       },
     ]
   }

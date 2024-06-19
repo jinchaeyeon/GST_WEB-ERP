@@ -8,19 +8,19 @@ export const gridList: Array<TGrid> = [
         id: "col_ref_key",
         field: "ref_key",
         caption: "PJT NO.",
-        width: 120,
+        width: 180,
       },
       {
         id: "col_ordnum",
         field: "ordnum",
         caption: "수주번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_quotestnum",
         field: "quotestnum",
         caption: "예약번호",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_testnum",
@@ -38,7 +38,7 @@ export const gridList: Array<TGrid> = [
         id: "col_ncrdiv",
         field: "ncrdiv",
         caption: "이슈 유형",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_combytype",
@@ -50,7 +50,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_chkperson ",
