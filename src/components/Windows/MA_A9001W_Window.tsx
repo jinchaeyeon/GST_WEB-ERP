@@ -346,7 +346,7 @@ const CopyWindow = ({
       height2 = getHeight(".BottomContainer"); //하단 버튼부분
       height3 = getHeight(".WindowFormBoxWrap");
       height4 = getHeight(".WindowButtonContainer");
-      console.log(height3)
+
       setMobileHeight(getWindowDeviceHeight(false, deviceHeight) - height);
       setMobileHeight2(
         getWindowDeviceHeight(false, deviceHeight) - height - height2 - height4
