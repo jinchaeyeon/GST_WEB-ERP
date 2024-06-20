@@ -256,7 +256,7 @@ const CR_A1100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -351,13 +351,18 @@ const CR_A1100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트
   const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -508,6 +513,7 @@ const CR_A1100W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
@@ -590,6 +596,7 @@ const CR_A1100W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -636,10 +643,10 @@ const CR_A1100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved != undefined) {
+    if (paraDataSaved != undefined && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraDataSaved]);
+  }, [paraDataSaved, permissions]);
 
   const enterEdit = (dataItem: any, field: string) => {
     let valid = false;
@@ -900,6 +907,7 @@ const CR_A1100W: React.FC = () => {
               themeColor={"primary"}
               icon="save"
               title="저장"
+              disabled={permissions.save ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>

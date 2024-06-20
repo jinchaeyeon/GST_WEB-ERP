@@ -21,10 +21,11 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPermissions } from "../../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
@@ -56,6 +57,13 @@ const KendoWindow = ({
   custcd,
   modal = false,
 }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -209,17 +217,17 @@ const KendoWindow = ({
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && bizComponentData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData]);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //요약정보 조회
   const fetchMainGrid = async (subfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);

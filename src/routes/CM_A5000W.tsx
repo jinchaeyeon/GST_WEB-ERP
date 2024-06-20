@@ -91,7 +91,7 @@ import {
   isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A5000W_C";
 import {
@@ -253,7 +253,12 @@ const CM_A5000W: React.FC = () => {
   const docEditorRef = useRef<TEditorHandle>(null);
   const docEditorRef1 = useRef<TEditorHandle>(null);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   //메시지 조회
@@ -832,7 +837,7 @@ const CM_A5000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1032,7 +1037,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1106,7 +1111,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const fetchHtmlDocument = async (key: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data1: any;
     setLoading(true);
@@ -1227,23 +1232,39 @@ const CM_A5000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailfilters.isSearch) {
+    if (
+      detailfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters, tabSelected]);
+  }, [
+    detailfilters,
+    tabSelected,
+    permissions,
+    bizComponentData,
+    customOptionData,
+  ]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1465,6 +1486,7 @@ const CM_A5000W: React.FC = () => {
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     if (information.ref_document_id != "") {
       alert("답변이 존재하는 요청 건은 수정할 수 없습니다.");
       return false;
@@ -1545,6 +1567,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     if (workType == "N") {
       alert("문의를 등록해주세요.");
     } else {
@@ -1583,12 +1606,34 @@ const CM_A5000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved.workType != "") {
+    if (
+      paraDataSaved.workType != "" &&
+      permissions.save &&
+      paraDataSaved.workType != "D" &&
+      paraDataSaved.workType != "D1"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [paraDataSaved]);
+    if (
+      permissions.delete &&
+      (paraDataSaved.workType == "D" || paraDataSaved.workType == "D1")
+    ) {
+      fetchTodoGridSaved();
+    }
+  }, [paraDataSaved, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (
+      !permissions.save &&
+      paraDataSaved.workType != "D" &&
+      paraDataSaved.workType != "D1"
+    )
+      return;
+    if (
+      !permissions.delete &&
+      (paraDataSaved.workType == "D" || paraDataSaved.workType == "D1")
+    )
+      return;
     let data: any;
     setLoading(true);
 
@@ -1764,6 +1809,7 @@ const CM_A5000W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1787,6 +1833,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const onDeleteClick2 = () => {
+    if (!permissions.delete) return;
     if (workType == "N") {
       alert("문의를 등록해주세요.");
     } else {
@@ -1834,7 +1881,10 @@ const CM_A5000W: React.FC = () => {
         style={{ width: "100%" }}
         scrollable={isMobile}
       >
-        <TabStripTab title="요약정보">
+        <TabStripTab
+          title="요약정보"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             {!isMobile && (
               <GridTitleContainer className="ButtonContainer">
@@ -1995,6 +2045,7 @@ const CM_A5000W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -2003,6 +2054,7 @@ const CM_A5000W: React.FC = () => {
                   themeColor={"primary"}
                   fillMode={"outline"}
                   icon="copy"
+                  disabled={permissions.save ? false : true}
                 >
                   이전요청 복사
                 </Button>
@@ -2109,7 +2161,11 @@ const CM_A5000W: React.FC = () => {
         <TabStripTab
           title="상세정보"
           disabled={
-            mainDataResult.data.length == 0 && workType == "" ? true : false
+            permissions.view
+              ? mainDataResult.data.length == 0 && workType == ""
+                ? true
+                : false
+              : true
           }
         >
           {isMobile ? (
@@ -2147,6 +2203,7 @@ const CM_A5000W: React.FC = () => {
                         themeColor={"primary"}
                         fillMode={"outline"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         문의 삭제
                       </Button>
@@ -2155,6 +2212,7 @@ const CM_A5000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         문의 저장
                       </Button>
@@ -2775,6 +2833,7 @@ const CM_A5000W: React.FC = () => {
                         themeColor={"primary"}
                         fillMode={"outline"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         답변 삭제
                       </Button>
@@ -2783,6 +2842,7 @@ const CM_A5000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         답변 저장
                       </Button>
@@ -2905,6 +2965,7 @@ const CM_A5000W: React.FC = () => {
                           themeColor={"primary"}
                           fillMode={"outline"}
                           icon="delete"
+                          disabled={permissions.delete ? false : true}
                         >
                           문의 삭제
                         </Button>
@@ -2913,6 +2974,7 @@ const CM_A5000W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
+                          disabled={permissions.save ? false : true}
                         >
                           문의 저장
                         </Button>
@@ -3471,6 +3533,7 @@ const CM_A5000W: React.FC = () => {
                         themeColor={"primary"}
                         fillMode={"outline"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         답변 삭제
                       </Button>
@@ -3479,6 +3542,7 @@ const CM_A5000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         답변 저장
                       </Button>
@@ -3617,8 +3681,12 @@ const CM_A5000W: React.FC = () => {
           para={information.attdatnum}
           permission={
             information.ref_document_id != ""
-              ? { upload: false, download: true, delete: false }
-              : { upload: true, download: true, delete: true }
+              ? { upload: false, download: permissions.view, delete: false }
+              : {
+                  upload: permissions.save,
+                  download: permissions.view,
+                  delete: permissions.save,
+                }
           }
           modal={true}
         />
@@ -3631,8 +3699,12 @@ const CM_A5000W: React.FC = () => {
           modal={true}
           permission={
             workType == "N"
-              ? { upload: false, download: true, delete: false }
-              : { upload: true, download: true, delete: true }
+              ? { upload: false, download: permissions.view, delete: false }
+              : {
+                  upload: permissions.save,
+                  download: permissions.view,
+                  delete: permissions.save,
+                }
           }
         />
       )}

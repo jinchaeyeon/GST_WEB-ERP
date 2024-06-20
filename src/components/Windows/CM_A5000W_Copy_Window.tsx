@@ -126,7 +126,12 @@ const KendoWindow = ({
   const processApi = useApi();
   const pc = UseGetValueFromSessionItem("pc");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
@@ -390,7 +395,7 @@ const KendoWindow = ({
   }
 
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -463,13 +468,18 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -579,7 +589,12 @@ const KendoWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>

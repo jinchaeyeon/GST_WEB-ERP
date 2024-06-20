@@ -213,7 +213,12 @@ const CM_B1101W: React.FC = () => {
   };
 
   const userId = UseGetValueFromSessionItem("user_id");
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -290,7 +295,7 @@ const CM_B1101W: React.FC = () => {
     custnm: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -298,12 +303,12 @@ const CM_B1101W: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -364,7 +369,7 @@ const CM_B1101W: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -424,7 +429,7 @@ const CM_B1101W: React.FC = () => {
   };
 
   const fetchDetailGrid = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -482,7 +487,7 @@ const CM_B1101W: React.FC = () => {
   };
 
   const fetchDetailGrid2 = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -541,7 +546,7 @@ const CM_B1101W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -551,10 +556,14 @@ const CM_B1101W: React.FC = () => {
         fetchMainGrid2(deepCopiedFilters);
       }
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -568,7 +577,7 @@ const CM_B1101W: React.FC = () => {
         fetchDetailGrid2(deepCopiedFilters);
       }
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -929,7 +938,10 @@ const CM_B1101W: React.FC = () => {
               style={{ width: "100%" }}
               scrollable={isMobile}
             >
-              <TabStripTab title="일자별">
+              <TabStripTab
+                title="일자별"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>
@@ -1005,7 +1017,10 @@ const CM_B1101W: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab title="월별">
+              <TabStripTab
+                title="월별"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer style={{ width: "100%" }}>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>요약정보</GridTitle>
@@ -1182,7 +1197,10 @@ const CM_B1101W: React.FC = () => {
             style={{ width: "100%" }}
             scrollable={isMobile}
           >
-            <TabStripTab title="일자별">
+            <TabStripTab
+              title="일자별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>요약정보</GridTitle>
@@ -1258,7 +1276,10 @@ const CM_B1101W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </TabStripTab>
-            <TabStripTab title="월별">
+            <TabStripTab
+              title="월별"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>요약정보</GridTitle>

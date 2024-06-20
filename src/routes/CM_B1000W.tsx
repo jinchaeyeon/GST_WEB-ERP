@@ -123,8 +123,13 @@ const CM_B1000W: React.FC = () => {
       };
     }
   }, [customOptionData, webheight, webheight2]);
-  console.log(webheight2, height5);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_B1000W", setMessagesData);
@@ -155,6 +160,7 @@ const CM_B1000W: React.FC = () => {
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -267,14 +273,14 @@ const CM_B1000W: React.FC = () => {
     rtrchk: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setSubFilters] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [infomation, setInfomation] = useState({
@@ -304,7 +310,7 @@ const CM_B1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     setSubFilters((prev) => ({ ...prev, find_row_value: "", isSearch: true }));
@@ -415,7 +421,7 @@ const CM_B1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchGrid2 = async (subfilters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -475,10 +481,10 @@ const CM_B1000W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -491,10 +497,10 @@ const CM_B1000W: React.FC = () => {
 
   useEffect(() => {
     if (
-      customOptionData != null &&
       subfilters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
@@ -1692,7 +1698,11 @@ const CM_B1000W: React.FC = () => {
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           para={infomation.attdatnum}
-          permission={{ upload: false, download: true, delete: false }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
           modal={true}
         />
       )}

@@ -186,7 +186,12 @@ const CM_A8250W: React.FC = () => {
   };
   const userId = UseGetValueFromSessionItem("user_id");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
 
   UsePermissions(setPermissions);
 
@@ -206,6 +211,7 @@ const CM_A8250W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -261,7 +267,7 @@ const CM_A8250W: React.FC = () => {
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -271,12 +277,12 @@ const CM_A8250W: React.FC = () => {
     recdt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -375,7 +381,7 @@ const CM_A8250W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (mainfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -462,17 +468,27 @@ const CM_A8250W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (mainfilters.isSearch && permissions !== null) {
+    if (
+      mainfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(mainfilters);
       setMainFilters((prev) => ({
@@ -482,7 +498,7 @@ const CM_A8250W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [mainfilters, permissions]);
+  }, [mainfilters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -737,6 +753,7 @@ const CM_A8250W: React.FC = () => {
   };
 
   const onAddClick = async () => {
+    if (!permissions.view) return;
     setMainDataResult(process([], mainDataState));
     const para: Iparameters = {
       procedureName: "P_CM_A8250W_Q",
@@ -785,7 +802,7 @@ const CM_A8250W: React.FC = () => {
   };
 
   const [paraData, setParaData] = useState({
-    workType: "N",
+    workType: "",
     recdt: "",
     rowstatus_s: "",
     recdt_s: "",
@@ -826,6 +843,7 @@ const CM_A8250W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -873,6 +891,8 @@ const CM_A8250W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraData.workType != "D") return;
+    if (!permissions.delete && paraData.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -919,7 +939,7 @@ const CM_A8250W: React.FC = () => {
           }));
         }
         setParaData({
-          workType: "N",
+          workType: "",
           recdt: "",
           rowstatus_s: "",
           recdt_s: "",
@@ -936,7 +956,7 @@ const CM_A8250W: React.FC = () => {
           isSearch: true,
         }));
         setParaData({
-          workType: "N",
+          workType: "",
           recdt: "",
           rowstatus_s: "",
           recdt_s: "",
@@ -955,7 +975,14 @@ const CM_A8250W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.rowstatus_s != "" || paraData.workType == "D") {
+    if (
+      paraData.rowstatus_s != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraData.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
   }, [paraData]);
@@ -963,6 +990,7 @@ const CM_A8250W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1121,6 +1149,7 @@ const CM_A8250W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       생성
                     </Button>
@@ -1129,6 +1158,7 @@ const CM_A8250W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1137,6 +1167,7 @@ const CM_A8250W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -1327,6 +1358,7 @@ const CM_A8250W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   생성
                 </Button>
@@ -1335,6 +1367,7 @@ const CM_A8250W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -1343,6 +1376,7 @@ const CM_A8250W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>

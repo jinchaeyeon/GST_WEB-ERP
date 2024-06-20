@@ -12,12 +12,13 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getHeight,
@@ -47,6 +48,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
@@ -151,10 +159,10 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType == "U") {
+    if (workType == "U" && permissions.view && customOptionData !== null) {
       fetchMain();
     }
-  }, []);
+  }, [permissions, customOptionData]);
 
   const [initialVal, setInitialVal] = useState<{ [id: string]: any }>({
     custcd: "",
@@ -190,6 +198,7 @@ const KendoWindow = ({
 
   //요약정보 조회
   const fetchMain = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -284,6 +293,7 @@ const KendoWindow = ({
   };
 
   const fetchMainSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -320,6 +330,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     //검증
@@ -363,8 +374,8 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchMainSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchMainSaved();
+  }, [paraData, permissions]);
 
   return (
     <Window
@@ -533,9 +544,11 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            확인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={handleSubmit}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

@@ -59,7 +59,12 @@ var height2 = 0;
 const Page: React.FC = () => {
   const DATA_ITEM_KEY = "custcd";
   const idGetter = getter(DATA_ITEM_KEY);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   let deviceWidth = document.documentElement.clientWidth;
@@ -91,6 +96,21 @@ const Page: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CR_A1001W", setMessagesData);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA310",
+    //품목계정, 수량단위
+    setBizComponentData
+  );
+
+  //공통코드 리스트 조회 ()
+  const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setClassListData(getBizCom(bizComponentData, "L_BA310"));
+    }
+  }, [bizComponentData]);
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -123,7 +143,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -180,13 +200,18 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //엑셀 내보내기
   let _export: any;
@@ -321,14 +346,6 @@ const Page: React.FC = () => {
   const handleMergedHover = (dataItem: any, rowSpanNumber: any, hover: any) => {
     const index = getItemIndex(dataItem);
     updateNextItems(index, rowSpanNumber, hover);
-  };
-
-  const handleCellHover = (dataItem: any, hover: any) => {
-    if (dataItem.classCellRowSpan) {
-      return;
-    }
-    let index = getItemIndex(dataItem);
-    hoverMergedCellByIndex(index, hover);
   };
 
   const update = (dataItem: any) => {
@@ -476,21 +493,6 @@ const Page: React.FC = () => {
       });
     }
   };
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA310",
-    //품목계정, 수량단위
-    setBizComponentData
-  );
-
-  //공통코드 리스트 조회 ()
-  const [classListData, setClassListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setClassListData(getBizCom(bizComponentData, "L_BA310"));
-    }
-  }, [bizComponentData]);
 
   const onSaveClick = async () => {};
   return (
@@ -584,6 +586,7 @@ const Page: React.FC = () => {
               themeColor={"primary"}
               icon="save"
               title="저장"
+              disabled={permissions.save ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>

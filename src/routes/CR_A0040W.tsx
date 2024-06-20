@@ -240,7 +240,13 @@ const CR_A0040W: React.FC = () => {
       };
     }
   }, [customOptionData, webheight]);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
@@ -278,6 +284,7 @@ const CR_A0040W: React.FC = () => {
           ...prev,
           finyn: defaultOption.find((item: any) => item.id == "finyn")
             ?.valueCode,
+          isSearch: true,
         }));
       }
     }
@@ -306,28 +313,8 @@ const CR_A0040W: React.FC = () => {
   const [DetailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-  const filterInputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -358,14 +345,14 @@ const CR_A0040W: React.FC = () => {
     finyn: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
 
     let data: any;
     setLoading(true);
@@ -517,7 +504,12 @@ const CR_A0040W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -525,7 +517,7 @@ const CR_A0040W: React.FC = () => {
       setMainDataResult(process([], mainDataState));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const enterEdit = (dataItem: any, field: string) => {};
 
@@ -562,6 +554,7 @@ const CR_A0040W: React.FC = () => {
   };
 
   const onClickDelete = async () => {
+    if (!permissions.delete) return;
     if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
       return;
     }
@@ -669,6 +662,7 @@ const CR_A0040W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
@@ -874,47 +868,49 @@ const CR_A0040W: React.FC = () => {
       >
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>회원권 리스트</GridTitle>
-          {permissions && (
-            <ButtonContainer>
-              <ExcelUploadButton
-                saveExcel={saveExcel}
-                permissions={permissions}
-                style={{ marginLeft: "15px" }}
-              />
-              <Button
-                title="Export Excel"
-                onClick={onAttachmentsWndClick}
-                icon="file"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                엑셀양식
-              </Button>
-              <Button
-                onClick={onClickNew}
-                icon="file-add"
-                themeColor={"primary"}
-              >
-                신규
-              </Button>
-              <Button
-                onClick={onClickDelete}
-                icon="delete"
-                themeColor={"primary"}
-                fillMode={"outline"}
-              >
-                삭제
-              </Button>
-              <Button
-                onClick={onClickCopy}
-                icon="copy"
-                themeColor={"primary"}
-                fillMode={"outline"}
-              >
-                복사
-              </Button>
-            </ButtonContainer>
-          )}
+          <ButtonContainer>
+            <ExcelUploadButton
+              saveExcel={saveExcel}
+              permissions={permissions}
+              style={{ marginLeft: "15px" }}
+            />
+            <Button
+              title="Export Excel"
+              onClick={onAttachmentsWndClick}
+              icon="file"
+              fillMode="outline"
+              themeColor={"primary"}
+              disabled={permissions.view ? false : true}
+            >
+              엑셀양식
+            </Button>
+            <Button
+              onClick={onClickNew}
+              icon="file-add"
+              themeColor={"primary"}
+              disabled={permissions.save ? false : true}
+            >
+              신규
+            </Button>
+            <Button
+              onClick={onClickDelete}
+              icon="delete"
+              themeColor={"primary"}
+              fillMode={"outline"}
+              disabled={permissions.save ? false : true}
+            >
+              삭제
+            </Button>
+            <Button
+              onClick={onClickCopy}
+              icon="copy"
+              themeColor={"primary"}
+              fillMode={"outline"}
+              disabled={permissions.save ? false : true}
+            >
+              복사
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -1059,6 +1055,11 @@ const CR_A0040W: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           para={"CR_A0040W"}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

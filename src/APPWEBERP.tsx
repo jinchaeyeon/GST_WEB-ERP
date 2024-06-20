@@ -1474,11 +1474,13 @@ const ErrorFallback = ({ error }: ErrorFallbackProps) => {
   useEffect(() => {
     const chunkFailedMessage = "ChunkLoadError";
     const reloadMessage = "InvalidValueError";
+    const tokenMessage = "Unexpected token '<'";
     // props로 받은 error 확인하여 chunk error 발생 시 새로고침
     if (
       error?.message &&
       (chunkFailedMessage.includes(error.message) ||
-        reloadMessage.includes(error.message))
+        reloadMessage.includes(error.message) ||
+        tokenMessage.includes(error.message))
     ) {
       window.location.reload();
     }

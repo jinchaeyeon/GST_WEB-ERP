@@ -147,9 +147,13 @@ const CR_A0020W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
-  //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -172,18 +176,6 @@ const CR_A0020W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
-  //customOptionData 조회 후 디폴트 값 세팅
-  // useEffect(() => {
-  //   if (customOptionData !== null) {
-  //     const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
-  //     if (!!defaultOption) {
-  //       setFilters((prev) => ({
-  //         ...prev,
-  //       }));
-  //     }
-  //   }
-  // }, [customOptionData]); 2134
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA310", setBizComponentData);
@@ -243,7 +235,7 @@ const CR_A0020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -390,13 +382,18 @@ const CR_A0020W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const enterEdit = (dataItem: any, field: string) => {};
 
@@ -420,6 +417,7 @@ const CR_A0020W: React.FC = () => {
   };
 
   const onClickDelete = async () => {
+    if (!permissions.delete) return;
     if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
       return;
     }
@@ -533,6 +531,7 @@ const CR_A0020W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
@@ -874,6 +873,11 @@ const CR_A0020W: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           para={"CR_A0020W"}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

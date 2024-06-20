@@ -69,10 +69,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -280,6 +277,13 @@ const EncryptedCell2 = (props: GridCellProps) => {
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const pc = UseGetValueFromSessionItem("pc");
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
 
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
@@ -294,6 +298,8 @@ const EncryptedCell2 = (props: GridCellProps) => {
   };
 
   const onDelete = async () => {
+    if (!permissions.save) return;
+
     if (!window.confirm("비밀번호를 초기화 하시겠습니까??")) {
       return false;
     }
@@ -468,7 +474,12 @@ const CR_A0010W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
@@ -637,7 +648,7 @@ const CR_A0010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -813,13 +824,18 @@ const CR_A0010W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && bizComponentData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
@@ -1010,6 +1026,7 @@ const CR_A0010W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1194,7 +1211,9 @@ const CR_A0010W: React.FC = () => {
             "@p_apply_start_date":
               apply_start_date == "99991231" ? "" : apply_start_date,
             "@p_apply_end_date":
-              apply_end_date == "99991231" ? "" : apply_end_date,
+              apply_end_date == "99991231" || apply_end_date == ""
+                ? "99991231"
+                : apply_end_date,
             "@p_hold_check_yn":
               hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
@@ -1253,6 +1272,7 @@ const CR_A0010W: React.FC = () => {
 
   // 바로 저장하는 방식
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
     } else {
@@ -1491,6 +1511,7 @@ const CR_A0010W: React.FC = () => {
                     icon="file"
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.view ? false : true}
                   >
                     엑셀양식
                   </Button>
@@ -1664,6 +1685,11 @@ const CR_A0010W: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           para={"CR_A0010W"}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

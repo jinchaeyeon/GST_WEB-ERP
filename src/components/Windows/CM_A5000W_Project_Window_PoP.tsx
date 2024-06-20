@@ -72,12 +72,17 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const location = UseGetValueFromSessionItem("location");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -180,6 +185,7 @@ const KendoWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -274,11 +280,11 @@ const KendoWindow = ({
     quonum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -371,13 +377,18 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -469,7 +480,12 @@ const KendoWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>

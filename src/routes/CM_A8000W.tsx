@@ -58,10 +58,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -165,7 +162,12 @@ const CM_A8000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
 
   UsePermissions(setPermissions);
   var index = 0;
@@ -298,6 +300,7 @@ const CM_A8000W: React.FC = () => {
           ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           ?.valueCode,
+        isSearch: true,
       }));
       setFilters1((prev) => ({
         ...prev,
@@ -398,7 +401,7 @@ const CM_A8000W: React.FC = () => {
     DevPerson: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -407,7 +410,7 @@ const CM_A8000W: React.FC = () => {
     workType: "LVL1",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -416,7 +419,7 @@ const CM_A8000W: React.FC = () => {
     workType: "LVL2",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -425,12 +428,12 @@ const CM_A8000W: React.FC = () => {
     workType: "LVL3",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -521,7 +524,7 @@ const CM_A8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters1: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -583,7 +586,7 @@ const CM_A8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -648,7 +651,7 @@ const CM_A8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -711,7 +714,7 @@ const CM_A8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -721,11 +724,11 @@ const CM_A8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters1.isSearch && permissions !== null) {
+    if (filters1.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters1);
       setFilters1((prev) => ({
@@ -735,11 +738,11 @@ const CM_A8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters1]);
+  }, [filters1, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -749,11 +752,11 @@ const CM_A8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -763,7 +766,7 @@ const CM_A8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1268,6 +1271,7 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       mainDataResult.data.map((item: any) => {
@@ -1404,6 +1408,7 @@ const CM_A8000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1470,10 +1475,10 @@ const CM_A8000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.rowstatus_s != "") {
+    if (paraData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1591,6 +1596,7 @@ const CM_A8000W: React.FC = () => {
   };
 
   const onPlusClick = async () => {
+    if (!permissions.view) return;
     if (companyCode == "2207A046") {
       //조회조건 파라미터
       const parameters: Iparameters = {
@@ -2005,6 +2011,7 @@ const CM_A8000W: React.FC = () => {
                       style={{ marginLeft: "10px" }}
                       onClick={onPlusClick}
                       themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
                     >
                       [추가]
                     </Button>
@@ -2013,6 +2020,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -2020,6 +2028,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onCopyClick}
@@ -2027,6 +2036,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="copy"
                       title="행 복사"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -2034,6 +2044,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </ButtonContainer>
@@ -2337,6 +2348,7 @@ const CM_A8000W: React.FC = () => {
                       style={{ marginLeft: "10px" }}
                       onClick={onPlusClick}
                       themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
                     >
                       [추가]
                     </Button>
@@ -2347,6 +2359,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -2354,6 +2367,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onCopyClick}
@@ -2361,6 +2375,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="copy"
                       title="행 복사"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -2368,6 +2383,7 @@ const CM_A8000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitle>

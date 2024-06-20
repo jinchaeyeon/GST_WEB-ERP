@@ -83,7 +83,7 @@ import {
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A7000W_C";
 import {
@@ -184,7 +184,12 @@ const CM_A7000W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const refEditorRef = useRef<TEditorHandle>(null);
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -625,7 +630,7 @@ const CM_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -786,7 +791,7 @@ const CM_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -857,7 +862,7 @@ const CM_A7000W: React.FC = () => {
   };
 
   const fetchDetail = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -895,23 +900,33 @@ const CM_A7000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1091,6 +1106,7 @@ const CM_A7000W: React.FC = () => {
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       if (
@@ -1182,18 +1198,33 @@ const CM_A7000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved.workType != "") {
+    if (
+      paraDataSaved.workType != "" &&
+      permissions.save &&
+      paraDataSaved.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraDataSaved.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
   }, [paraDataSaved]);
 
   useEffect(() => {
-    if (workType != "" && workType == "U") {
+    if (
+      workType != "" &&
+      workType == "U" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchDetail();
     }
-  }, [workType]);
+  }, [workType, permissions, bizComponentData, customOptionData]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraDataSaved.workType != "D") return;
+    if (!permissions.delete && paraDataSaved.workType == "D") return;
     let data: any;
     setLoading(true);
 
@@ -1350,6 +1381,7 @@ const CM_A7000W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1650,6 +1682,7 @@ const CM_A7000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="save"
+              disabled={permissions.save ? false : true}
             >
               저장
             </Button>
@@ -1673,7 +1706,10 @@ const CM_A7000W: React.FC = () => {
         style={{ width: "100%" }}
         scrollable={isMobile}
       >
-        <TabStripTab title="요약정보">
+        <TabStripTab
+          title="요약정보"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             {!isMobile && (
               <GridTitleContainer>
@@ -1820,6 +1856,7 @@ const CM_A7000W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -1828,6 +1865,7 @@ const CM_A7000W: React.FC = () => {
                   themeColor={"primary"}
                   fillMode={"outline"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -1932,7 +1970,11 @@ const CM_A7000W: React.FC = () => {
         <TabStripTab
           title="상세정보"
           disabled={
-            mainDataResult.data.length == 0 && workType == "" ? true : false
+            permissions.view
+              ? mainDataResult.data.length == 0 && workType == ""
+                ? true
+                : false
+              : true
           }
         >
           {isMobile ? (
@@ -2347,12 +2389,14 @@ const CM_A7000W: React.FC = () => {
                       <Button
                         themeColor={"primary"}
                         onClick={() => onPrsnnumWndClick()}
+                        disabled={permissions.save ? false : true}
                       >
                         참석자등록
                       </Button>
                       <Button
                         themeColor={"primary"}
                         onClick={() => onPrsnnumWndClick2()}
+                        disabled={permissions.save ? false : true}
                       >
                         업체참석자등록
                       </Button>
@@ -2362,6 +2406,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick2}
@@ -2369,6 +2414,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -2814,6 +2860,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         style={{ width: "100%" }}
                         onClick={() => onPrsnnumWndClick()}
+                        disabled={permissions.save ? false : true}
                       >
                         참석자등록
                       </Button>
@@ -2821,6 +2868,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         style={{ width: "100%" }}
                         onClick={() => onPrsnnumWndClick2()}
+                        disabled={permissions.save ? false : true}
                       >
                         업체참석자등록
                       </Button>
@@ -2830,6 +2878,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick2}
@@ -2837,6 +2886,7 @@ const CM_A7000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -2909,6 +2959,11 @@ const CM_A7000W: React.FC = () => {
           setData={getAttachmentsDataPb}
           para={information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {custWindowVisible && (

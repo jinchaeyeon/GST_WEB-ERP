@@ -23,11 +23,12 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import { TPermissions } from "../../../store/types";
 import {
-  UseBizComponent,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
@@ -52,6 +53,16 @@ const KendoWindow = ({
   bizComponentID,
   modal = false,
 }: IKendoWindow) => {
+  const [filterData, setFilterData] = useState<{
+    [id: string]: string;
+  }>();
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -70,13 +81,14 @@ const KendoWindow = ({
     height = getHeight(".k-window-titlebar"); //공통 해더
     height2 = getHeight(".WindowTitleContainer"); //조회버튼있는 title부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
+
     setMobileHeight(
       getWindowDeviceHeight(true, deviceHeight) - height - height2 - height3
     );
     setWebHeight(
       getWindowDeviceHeight(true, position.height) - height - height2 - height3
     );
-  }, []);
+  }, [filterData]);
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
@@ -84,13 +96,6 @@ const KendoWindow = ({
     );
   };
   const setLoading = useSetRecoilState(isLoading);
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA026,R_USEYN",
-    //업체구분, 사용여부,
-    setBizComponentData
-  );
 
   const [title, setTitle] = useState<string>("");
 
@@ -124,9 +129,6 @@ const KendoWindow = ({
     process([], mainDataState)
   );
 
-  const [filterData, setFilterData] = useState<{
-    [id: string]: string;
-  }>();
 
   const [columnData, setColumnData] = useState<
     [
@@ -137,11 +139,14 @@ const KendoWindow = ({
   >();
 
   useEffect(() => {
-    fetchPopupData();
-  }, []);
+    if (permissions.view) {
+      fetchPopupData();
+    }
+  }, [permissions]);
 
   //요약정보 조회
   const fetchPopupData = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -199,7 +204,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (filterData) {
+    if (filterData && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filterData);
 
@@ -217,7 +222,7 @@ const KendoWindow = ({
         pgSize: PAGE_SIZE,
       }));
     }
-  }, [filterData]);
+  }, [filterData, permissions]);
 
   //조회조건 초기값
   const [filters, setFilters] = useState<{
@@ -259,6 +264,7 @@ const KendoWindow = ({
 
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -433,15 +439,18 @@ const KendoWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>
       </TitleContainer>
       <WindowFilterContainer>
-        <FilterBox
-          style={{ border: "0px" }}
-          onKeyPress={(e) => handleKeyPressSearch(e, search)}
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}
         >
           <tbody>
             <>
@@ -452,11 +461,7 @@ const KendoWindow = ({
           </tbody>
         </FilterBox>
       </WindowFilterContainer>
-      <GridContainer
-        style={{
-          overflow: "auto",
-        }}
-      >
+      <GridContainer>
         <Grid
           style={{
             height: isMobile ? mobileheight : webheight,

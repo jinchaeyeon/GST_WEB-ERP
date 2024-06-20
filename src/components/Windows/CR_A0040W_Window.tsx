@@ -13,13 +13,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -71,6 +72,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
@@ -160,16 +168,6 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-  // //customOptionData 조회 후 디폴트 값 세팅
-  // useEffect(() => {
-  //   if (customOptionData !== null && workType == "N") {
-  //     const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
-  //     setInitialVal((prev) => ({
-  //       ...prev,
-  //     }));
-  //   }
-  // }, [customOptionData]);
-
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA330", setBizComponentData);
@@ -238,10 +236,15 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType == "U" || isCopy) {
+    if (
+      (workType == "U" || isCopy) &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchMain();
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   const [initialVal, setInitialVal] = useState<{ [id: string]: any }>({
     membership_id: "",
@@ -276,6 +279,7 @@ const KendoWindow = ({
 
   //요약정보 조회
   const fetchMain = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -338,6 +342,7 @@ const KendoWindow = ({
   });
 
   const fetchMainSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
 
@@ -399,6 +404,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     const {
       membership_id,
       custcd,
@@ -458,8 +464,8 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchMainSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchMainSaved();
+  }, [paraData, permissions]);
 
   return (
     <Window
@@ -673,9 +679,11 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={handleSubmit}>
-            확인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={handleSubmit}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

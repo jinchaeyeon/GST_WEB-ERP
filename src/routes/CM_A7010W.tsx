@@ -19,12 +19,11 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -58,14 +57,14 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
-  getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -130,7 +129,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -181,7 +186,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           para={dataItem.attdatnum}
-          permission={{ upload: false, download: true, delete: false }}
+          permission={{
+            upload: false,
+            download: permissions.view,
+            delete: false,
+          }}
           modal={true}
         />
       )}
@@ -261,7 +270,12 @@ const CM_A7010W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const refEditorRef = useRef<TEditorHandle>(null);
 
-  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
   UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -374,45 +388,11 @@ const CM_A7010W: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
-      const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
-      );
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      fetchQueryData(usegbQueryStr, setUsegbListData);
-      fetchQueryData(personQueryStr, setPersonListData);
+    if (bizComponentData !== null) {
+      setUsegbListData(getBizCom(bizComponentData, "L_CM700"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
@@ -600,7 +580,7 @@ const CM_A7010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -701,7 +681,7 @@ const CM_A7010W: React.FC = () => {
   };
 
   const fetchDetail = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -743,13 +723,18 @@ const CM_A7010W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -892,6 +877,7 @@ const CM_A7010W: React.FC = () => {
   });
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       if (
@@ -902,7 +888,7 @@ const CM_A7010W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "CM_A7010W_001");
       } else if (information.title == "") {
-        throw findMessage(messagesData, "CM_A7010W_003");
+        throw findMessage(messagesData, "CM_A7010W_002");
       }
     } catch (e) {
       alert(e);
@@ -935,18 +921,34 @@ const CM_A7010W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataSaved.workType != "") {
+    if (
+      paraDataSaved.workType != "" &&
+      permissions.save &&
+      paraDataSaved.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraDataSaved.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
   }, [paraDataSaved]);
 
   useEffect(() => {
-    if (workType != "" && workType == "U") {
+    if (
+      workType != "" &&
+      workType == "U" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       fetchDetail();
     }
-  }, [workType]);
+  }, [workType, permissions, bizComponentData, customOptionData]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraDataSaved.workType != "D") return;
+    if (!permissions.delete && paraDataSaved.workType == "D") return;
+
     let data: any;
     setLoading(true);
 
@@ -1089,6 +1091,7 @@ const CM_A7010W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1170,7 +1173,10 @@ const CM_A7010W: React.FC = () => {
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
           >
-            <TabStripTab title="요약정보">
+            <TabStripTab
+              title="요약정보"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 {!isMobile && (
                   <GridTitleContainer>
@@ -1231,6 +1237,7 @@ const CM_A7010W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -1239,6 +1246,7 @@ const CM_A7010W: React.FC = () => {
                       themeColor={"primary"}
                       fillMode={"outline"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1331,7 +1339,11 @@ const CM_A7010W: React.FC = () => {
             <TabStripTab
               title="상세정보"
               disabled={
-                mainDataResult.data.length == 0 && workType == "" ? true : false
+                permissions.view
+                  ? mainDataResult.data.length == 0 && workType == ""
+                    ? true
+                    : false
+                  : true
               }
             >
               <ButtonContainer className="ButtonContainer2">
@@ -1340,6 +1352,7 @@ const CM_A7010W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>
@@ -1671,7 +1684,10 @@ const CM_A7010W: React.FC = () => {
             onSelect={handleSelectTab}
             style={{ width: "100%" }}
           >
-            <TabStripTab title="요약정보">
+            <TabStripTab
+              title="요약정보"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="22%">
                   <FilterContainer>
@@ -1748,6 +1764,7 @@ const CM_A7010W: React.FC = () => {
                           onClick={onAddClick}
                           themeColor={"primary"}
                           icon="file-add"
+                          disabled={permissions.save ? false : true}
                         >
                           신규
                         </Button>
@@ -1756,6 +1773,7 @@ const CM_A7010W: React.FC = () => {
                           themeColor={"primary"}
                           fillMode={"outline"}
                           icon="delete"
+                          disabled={permissions.delete ? false : true}
                         >
                           삭제
                         </Button>
@@ -1853,7 +1871,11 @@ const CM_A7010W: React.FC = () => {
             <TabStripTab
               title="상세정보"
               disabled={
-                mainDataResult.data.length == 0 && workType == "" ? true : false
+                permissions.view
+                  ? mainDataResult.data.length == 0 && workType == ""
+                    ? true
+                    : false
+                  : true
               }
             >
               <GridTitleContainer className="ButtonContainer2">
@@ -1864,6 +1886,7 @@ const CM_A7010W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2153,6 +2176,11 @@ const CM_A7010W: React.FC = () => {
           setData={getAttachmentsDataPb}
           para={information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {custWindowVisible && (

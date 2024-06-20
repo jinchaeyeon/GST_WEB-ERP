@@ -25,11 +25,12 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPermissions } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
@@ -54,6 +55,13 @@ var height3 = 0;
 var height4 = 0;
 var height5 = 0;
 const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -152,6 +160,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const gridRef = useRef<any>(null);
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -245,13 +254,13 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -523,6 +532,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   };
 
   const onSave = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
@@ -764,6 +774,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -771,6 +782,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -889,6 +901,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -896,6 +909,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1005,9 +1019,11 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onSave}>
-            확인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={onSave}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

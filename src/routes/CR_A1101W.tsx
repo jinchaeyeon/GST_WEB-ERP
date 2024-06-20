@@ -27,6 +27,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   findMessage,
   getDeviceHeight,
   handleKeyPressSearch,
@@ -34,9 +35,16 @@ import {
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 const CR_A1101W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -126,7 +134,7 @@ const CR_A1101W: React.FC = () => {
 
   // 데이터 조회
   const fetchMainGrid = async (filter: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -178,7 +186,7 @@ const CR_A1101W: React.FC = () => {
   };
 
   const fetchSubGrid = async (filter: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -226,22 +234,22 @@ const CR_A1101W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (subfilters.isSearch) {
+    if (subfilters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setSubFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, customOptionData]);
 
   const search = () => {
     try {
@@ -304,6 +312,7 @@ const CR_A1101W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     setLoading(true);
@@ -329,6 +338,7 @@ const CR_A1101W: React.FC = () => {
   };
 
   const onSaveClick = async (custcd: string, custnm: string) => {
+    if (!permissions.save) return;
     if (!window.confirm(custnm + " 등원 하시겠습니까?")) {
       return false;
     }
@@ -352,10 +362,10 @@ const CR_A1101W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData != undefined && paraData.custcd != "") {
+    if (paraData != undefined && paraData.custcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -469,6 +479,7 @@ const CR_A1101W: React.FC = () => {
                       height: "85px",
                       fontSize: "30px",
                     }}
+                    disabled={permissions.view ? false : true}
                   >
                     조회
                   </Button>

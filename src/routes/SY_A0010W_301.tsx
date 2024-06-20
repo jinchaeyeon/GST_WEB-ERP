@@ -35,6 +35,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
@@ -74,6 +75,7 @@ const Page: React.FC = () => {
     delete: true,
     print: true,
   });
+  UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
   const listIdGetter = getter(DATA_ITEM_KEY);

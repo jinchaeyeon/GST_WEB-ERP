@@ -22,9 +22,9 @@ import {
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { ICustData, IWindowPosition } from "../../hooks/interfaces";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -33,6 +33,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
@@ -48,7 +49,6 @@ import {
 } from "../CommonString";
 import WindowFilterContainer from "../Containers/WindowFilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
 import Window from "./WindowComponent/Window";
 
 type IWindow = {
@@ -68,6 +68,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const location = UseGetValueFromSessionItem("location");
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
@@ -202,8 +209,6 @@ const CopyWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -228,17 +233,6 @@ const CopyWindow = ({
     setVisible(false);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -258,12 +252,13 @@ const CopyWindow = ({
     materialnm: "",
     quosts: "",
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -332,7 +327,12 @@ const CopyWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -342,7 +342,7 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -450,6 +450,7 @@ const CopyWindow = ({
               onClick={() => search()}
               icon="search"
               themeColor={"primary"}
+              disabled={permissions.view ? false : true}
             >
               조회
             </Button>
@@ -665,13 +666,6 @@ const CopyWindow = ({
           </ButtonContainer>
         </BottomContainer>
       </Window>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={"ROW_ADD"}
-          setData={setCustData}
-        />
-      )}
     </>
   );
 };

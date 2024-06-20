@@ -31,6 +31,7 @@ import {
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat4,
   getDayOfWeeks,
@@ -43,7 +44,7 @@ import CardBox from "../components/DDGDcomponents/CardBox";
 import SelectDateWindow from "../components/Windows/DDGD/SelectDateWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 interface Tsize {
   width: number;
   height: number;
@@ -56,6 +57,14 @@ var height3 = 0;
 var height4 = 0;
 
 const CR_A0000W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -217,6 +226,7 @@ const CR_A0000W: React.FC = () => {
   };
 
   const fetchMain = async (key: any) => {
+    if (!permissions.view) return;
     let data: any;
     const Parameters: Iparameters = {
       procedureName: "sys_sel_default_home_web",
@@ -262,8 +272,10 @@ const CR_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMain("");
-  }, []);
+    if (permissions.view && customOptionData !== null) {
+      fetchMain("");
+    }
+  }, [permissions, customOptionData]);
 
   const changeColor = (code: string) => {
     const newData = cardOptionData.data.map((item) =>
@@ -286,6 +298,7 @@ const CR_A0000W: React.FC = () => {
   };
 
   const fetchDetail = async () => {
+    if (!permissions.view) return;
     let datas: any = "";
     const Parameters = {
       procedureName: "P_CR_A1000W_Q",
@@ -354,12 +367,13 @@ const CR_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -404,6 +418,7 @@ const CR_A0000W: React.FC = () => {
     show: boolean,
     show2: boolean
   ) => {
+    if (!permissions.save) return;
     if (show != true && show2 != true) {
       if (currentday != null) {
         const data = cardOptionData.data.filter(
@@ -475,8 +490,10 @@ const CR_A0000W: React.FC = () => {
     }
   }, [slice]);
   useEffect(() => {
-    fetchDetail();
-  }, [selectedState]);
+    if (permissions.view && customOptionData !== null) {
+      fetchDetail();
+    }
+  }, [selectedState, permissions, customOptionData]);
   return (
     <>
       <div style={{ fontFamily: "TheJamsil5Bold", height: "100%" }}>
