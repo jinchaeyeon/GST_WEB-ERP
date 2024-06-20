@@ -9,7 +9,10 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { getHeight, getWindowDeviceHeight } from "../CommonFunction";
+import {
+  getHeight,
+  getWindowDeviceHeight
+} from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
 type IWindow = {

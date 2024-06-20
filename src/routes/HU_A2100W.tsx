@@ -48,10 +48,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -193,6 +190,7 @@ const HU_A2100W: React.FC = () => {
           ?.valueCode,
         workgb: defaultOption.find((item: any) => item.id == "workgb")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -238,12 +236,12 @@ const HU_A2100W: React.FC = () => {
     workdiv: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -348,7 +346,7 @@ const HU_A2100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -358,7 +356,7 @@ const HU_A2100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -553,6 +551,7 @@ const HU_A2100W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     let valid2 = true;
     try {
@@ -771,6 +770,7 @@ const HU_A2100W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -818,10 +818,10 @@ const HU_A2100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "") {
+    if (ParaData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -973,6 +973,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -980,6 +981,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -987,6 +989,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="save"
                 title="저장"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1081,6 +1084,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -1088,6 +1092,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -1095,6 +1100,7 @@ const HU_A2100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="save"
                 title="저장"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

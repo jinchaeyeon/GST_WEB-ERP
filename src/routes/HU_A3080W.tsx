@@ -72,10 +72,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import HU_A3080W_Window from "../components/Windows/HU_A3080W_Window";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -1401,7 +1398,7 @@ const HU_A3080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1492,7 +1489,7 @@ const HU_A3080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1583,7 +1580,7 @@ const HU_A3080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1674,7 +1671,7 @@ const HU_A3080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1765,7 +1762,7 @@ const HU_A3080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters5: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1856,7 +1853,7 @@ const HU_A3080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -1866,11 +1863,7 @@ const HU_A3080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters2.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
-    ) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -1880,11 +1873,7 @@ const HU_A3080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters3.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
-    ) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -1894,11 +1883,7 @@ const HU_A3080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters4.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
-    ) {
+    if (filters4.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -1908,11 +1893,7 @@ const HU_A3080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters5.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
-    ) {
+    if (filters5.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -3349,6 +3330,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult.data.filter((item: any) => {
@@ -3433,6 +3415,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult2.data.filter((item: any) => {
@@ -3531,6 +3514,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult3.data.filter((item: any) => {
@@ -3629,6 +3613,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onSaveClick4 = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult4.data.filter((item: any) => {
@@ -3721,6 +3706,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onSaveClick5 = () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult5.data.filter((item: any) => {
@@ -3863,12 +3849,13 @@ const HU_A3080W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4318,6 +4305,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onCopyClick2 = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4394,6 +4382,7 @@ const HU_A3080W: React.FC = () => {
   };
 
   const onCopyClick3 = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4610,7 +4599,10 @@ const HU_A3080W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="고정지급공제">
+        <TabStripTab
+          title="고정지급공제"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext.Provider
             value={{
               prsnnum,
@@ -4635,6 +4627,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onUserMultiWndClick}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄등록
                   </Button>
@@ -4643,6 +4636,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -4650,6 +4644,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -4657,6 +4652,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -4760,7 +4756,10 @@ const HU_A3080W: React.FC = () => {
             </GridContainer>
           </FormContext.Provider>
         </TabStripTab>
-        <TabStripTab title="일시지급공제">
+        <TabStripTab
+          title="일시지급공제"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext2.Provider
             value={{
               prsnnum2,
@@ -4785,6 +4784,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onUserMultiWndClick2}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄등록
                   </Button>
@@ -4792,6 +4792,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onCopyClick2}
                     icon="copy"
+                    disabled={permissions.save ? false : true}
                   >
                     전월복사
                   </Button>
@@ -4800,6 +4801,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -4807,6 +4809,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
@@ -4814,6 +4817,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -4922,7 +4926,10 @@ const HU_A3080W: React.FC = () => {
             </GridContainer>
           </FormContext2.Provider>
         </TabStripTab>
-        <TabStripTab title="예외지급공제">
+        <TabStripTab
+          title="예외지급공제"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext3.Provider
             value={{
               prsnnum3,
@@ -4947,6 +4954,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onUserMultiWndClick3}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄등록
                   </Button>
@@ -4954,6 +4962,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onCopyClick3}
                     icon="copy"
+                    disabled={permissions.save ? false : true}
                   >
                     전월복사
                   </Button>
@@ -4962,6 +4971,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick3}
@@ -4969,6 +4979,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick3}
@@ -4976,6 +4987,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -5084,7 +5096,10 @@ const HU_A3080W: React.FC = () => {
             </GridContainer>
           </FormContext3.Provider>
         </TabStripTab>
-        <TabStripTab title="추가지급공제">
+        <TabStripTab
+          title="추가지급공제"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext4.Provider
             value={{
               prsnnum4,
@@ -5109,6 +5124,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onUserMultiWndClick4}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄등록
                   </Button>
@@ -5117,6 +5133,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick4}
@@ -5124,6 +5141,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick4}
@@ -5131,6 +5149,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -5239,7 +5258,10 @@ const HU_A3080W: React.FC = () => {
             </GridContainer>
           </FormContext4.Provider>
         </TabStripTab>
-        <TabStripTab title="상여예외지급공제">
+        <TabStripTab
+          title="상여예외지급공제"
+          disabled={permissions.view ? false : true}
+        >
           <FormContext5.Provider
             value={{
               prsnnum5,
@@ -5264,6 +5286,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     onClick={onUserMultiWndClick5}
                     icon="folder-open"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄등록
                   </Button>
@@ -5272,6 +5295,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick5}
@@ -5279,6 +5303,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick5}
@@ -5286,6 +5311,7 @@ const HU_A3080W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

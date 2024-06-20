@@ -64,10 +64,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A3060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -277,12 +274,14 @@ const HU_A3060W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         stdyr: setDefaultDate(customOptionData, "stdyr"),
+        isSearch: true,
       }));
       setFilters4((prev) => ({
         ...prev,
         paycd: defaultOption.find((item: any) => item.id == "paycd")?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -385,7 +384,7 @@ const HU_A3060W: React.FC = () => {
     stdyr: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -394,7 +393,7 @@ const HU_A3060W: React.FC = () => {
     orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2_1, setFilters2_1] = useState({
@@ -413,7 +412,7 @@ const HU_A3060W: React.FC = () => {
     orgdiv: sessionOrgdiv,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3_1, setFilters3_1] = useState({
@@ -423,7 +422,7 @@ const HU_A3060W: React.FC = () => {
     payyrmm: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters4, setFilters4] = useState({
@@ -434,7 +433,7 @@ const HU_A3060W: React.FC = () => {
     payitemcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -646,7 +645,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -729,7 +728,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -849,7 +848,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2_1 = async (filters2_1: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -944,7 +943,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1042,7 +1041,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3_1 = async (filters3_1: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1095,7 +1094,7 @@ const HU_A3060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1179,25 +1178,25 @@ const HU_A3060W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2_1.isSearch && permissions !== null) {
+    if (filters2_1.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2_1);
       setFilters2_1((prev) => ({
@@ -1207,19 +1206,19 @@ const HU_A3060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2_1(deepCopiedFilters);
     }
-  }, [filters2_1, permissions]);
+  }, [filters2_1, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, permissions]);
+  }, [filters3, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3_1.isSearch && permissions !== null) {
+    if (filters3_1.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3_1);
       setFilters3_1((prev) => ({
@@ -1229,16 +1228,16 @@ const HU_A3060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3_1(deepCopiedFilters);
     }
-  }, [filters3_1, permissions]);
+  }, [filters3_1, permissions, customOptionData]);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (filters4.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4, permissions]);
+  }, [filters4, permissions, customOptionData]);
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
@@ -1812,6 +1811,7 @@ const HU_A3060W: React.FC = () => {
     }
   };
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
@@ -2203,6 +2203,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onDeleteClick3 = () => {
+    if (!permissions.delete) return;
     if (mainDataResult3.total == 0) {
       alert("데이터가 없습니다.");
     } else {
@@ -2257,6 +2258,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2322,6 +2324,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     setParaData2({
       workType: "N",
       orgdiv: sessionOrgdiv,
@@ -2351,6 +2354,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult3_1.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2441,6 +2445,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onSaveClick4 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2723,30 +2728,38 @@ const HU_A3060W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   useEffect(() => {
-    if (paraData2.workType != "") {
+    if (paraData2.workType != "" && permissions.save) {
       fetchTodoGridSaved2();
     }
-  }, [paraData2]);
+  }, [paraData2, permissions]);
 
   useEffect(() => {
-    if (paraData3.workType != "") {
+    if (
+      paraData3.workType != "" &&
+      permissions.save &&
+      paraData3.workType != "D"
+    ) {
       fetchTodoGridSaved3();
     }
-  }, [paraData3]);
+    if (paraData3.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved3();
+    }
+  }, [paraData3, permissions]);
 
   useEffect(() => {
-    if (paraData4.workType != "") {
+    if (paraData4.workType != "" && permissions.save) {
       fetchTodoGridSaved4();
     }
-  }, [paraData4]);
+  }, [paraData4, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2865,6 +2878,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2983,6 +2997,8 @@ const HU_A3060W: React.FC = () => {
   };
 
   const fetchTodoGridSaved3 = async () => {
+    if (!permissions.save && paraData3.workType != "D") return;
+    if (!permissions.delete && paraData3.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -3101,6 +3117,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const fetchTodoGridSaved4 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -3219,6 +3236,7 @@ const HU_A3060W: React.FC = () => {
   };
 
   const onCopyClick = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -3306,7 +3324,10 @@ const HU_A3060W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="소득세율">
+            <TabStripTab
+              title="소득세율"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -3335,6 +3356,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       onClick={onCopyClick}
                       icon="copy"
+                      disabled={permissions.save ? false : true}
                     >
                       전년도 소득세율 복사
                     </Button>
@@ -3343,6 +3365,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -3350,6 +3373,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -3357,6 +3381,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -3437,7 +3462,10 @@ const HU_A3060W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </TabStripTab>
-            <TabStripTab title="급여기준정보">
+            <TabStripTab
+              title="급여기준정보"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -3511,6 +3539,7 @@ const HU_A3060W: React.FC = () => {
                           onClick={onAddClick2}
                           themeColor={"primary"}
                           icon="file-add"
+                          disabled={permissions.save ? false : true}
                         >
                           신규
                         </Button>
@@ -3519,6 +3548,7 @@ const HU_A3060W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
+                          disabled={permissions.save ? false : true}
                         >
                           저장
                         </Button>
@@ -3787,7 +3817,10 @@ const HU_A3060W: React.FC = () => {
                 </SwiperSlide>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="소득세조건표">
+            <TabStripTab
+              title="소득세조건표"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -3806,6 +3839,7 @@ const HU_A3060W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="delete"
+                          disabled={permissions.delete ? false : true}
                         >
                           삭제
                         </Button>
@@ -3873,12 +3907,8 @@ const HU_A3060W: React.FC = () => {
                       <ButtonContainer>
                         <ExcelUploadButton
                           saveExcel={saveExcel}
-                          permissions={{
-                            view: true,
-                            save: true,
-                            delete: true,
-                            print: true,
-                          }}
+                          permissions={permissions}
+                          disabled={permissions.save ? false : true}
                           style={{ marginLeft: "15px" }}
                         />
                         <Button
@@ -3887,6 +3917,7 @@ const HU_A3060W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3949,7 +3980,10 @@ const HU_A3060W: React.FC = () => {
                 </SwiperSlide>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="계산공식">
+            <TabStripTab
+              title="계산공식"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -3989,6 +4023,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick4}
@@ -3996,6 +4031,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick4}
@@ -4003,6 +4039,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -4097,7 +4134,10 @@ const HU_A3060W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="소득세율">
+            <TabStripTab
+              title="소득세율"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -4128,6 +4168,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       onClick={onCopyClick}
                       icon="copy"
+                      disabled={permissions.save ? false : true}
                     >
                       전년도 소득세율 복사
                     </Button>
@@ -4136,6 +4177,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -4143,6 +4185,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -4150,6 +4193,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -4230,7 +4274,10 @@ const HU_A3060W: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </TabStripTab>
-            <TabStripTab title="급여기준정보">
+            <TabStripTab
+              title="급여기준정보"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="15%">
                   <GridTitleContainer className="ButtonContainer">
@@ -4298,6 +4345,7 @@ const HU_A3060W: React.FC = () => {
                         onClick={onAddClick2}
                         themeColor={"primary"}
                         icon="file-add"
+                        disabled={permissions.save ? false : true}
                       >
                         신규
                       </Button>
@@ -4306,6 +4354,7 @@ const HU_A3060W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -4542,7 +4591,10 @@ const HU_A3060W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="소득세조건표">
+            <TabStripTab
+              title="소득세조건표"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="15%">
                   <GridTitleContainer className="ButtonContainer">
@@ -4553,6 +4605,7 @@ const HU_A3060W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>
@@ -4618,12 +4671,7 @@ const HU_A3060W: React.FC = () => {
                     <ButtonContainer>
                       <ExcelUploadButton
                         saveExcel={saveExcel}
-                        permissions={{
-                          view: true,
-                          save: true,
-                          delete: true,
-                          print: true,
-                        }}
+                        permissions={permissions}
                         style={{ marginLeft: "15px" }}
                       />
                       <Button
@@ -4632,6 +4680,7 @@ const HU_A3060W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -4692,7 +4741,10 @@ const HU_A3060W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="계산공식">
+            <TabStripTab
+              title="계산공식"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -4732,6 +4784,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick4}
@@ -4739,6 +4792,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick4}
@@ -4746,6 +4800,7 @@ const HU_A3060W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>

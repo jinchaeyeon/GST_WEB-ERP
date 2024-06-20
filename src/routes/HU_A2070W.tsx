@@ -62,10 +62,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -259,6 +256,7 @@ const HU_A2070W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -341,7 +339,7 @@ const HU_A2070W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -349,12 +347,12 @@ const HU_A2070W: React.FC = () => {
     work_type: "DETAIL",
     prsnnum: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -457,7 +455,7 @@ const HU_A2070W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -515,7 +513,12 @@ const HU_A2070W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -525,11 +528,16 @@ const HU_A2070W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -539,7 +547,7 @@ const HU_A2070W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -815,6 +823,7 @@ const HU_A2070W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     let valid2 = true;
     try {
@@ -1007,6 +1016,7 @@ const HU_A2070W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1045,10 +1055,10 @@ const HU_A2070W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus != "") {
+    if (ParaData.rowstatus != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick2 = (e: any) => {
     let newData: any[] = [];
@@ -1418,7 +1428,13 @@ const HU_A2070W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
-                        disabled={mainDataResult.total > 0 ? false : true}
+                        disabled={
+                          permissions.save
+                            ? mainDataResult.total > 0
+                              ? false
+                              : true
+                            : true
+                        }
                       ></Button>
                       <Button
                         onClick={onDeleteClick2}
@@ -1426,7 +1442,13 @@ const HU_A2070W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
-                        disabled={mainDataResult.total > 0 ? false : true}
+                        disabled={
+                          permissions.save
+                            ? mainDataResult.total > 0
+                              ? false
+                              : true
+                            : true
+                        }
                       ></Button>
                       <Button
                         onClick={onSaveClick}
@@ -1434,7 +1456,13 @@ const HU_A2070W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
-                        disabled={mainDataResult.total > 0 ? false : true}
+                        disabled={
+                          permissions.save
+                            ? mainDataResult.total > 0
+                              ? false
+                              : true
+                            : true
+                        }
                       ></Button>
                     </div>
                   </ButtonContainer>
@@ -1611,7 +1639,13 @@ const HU_A2070W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
-                    disabled={mainDataResult.total > 0 ? false : true}
+                    disabled={
+                      permissions.save
+                        ? mainDataResult.total > 0
+                          ? false
+                          : true
+                        : true
+                    }
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -1619,7 +1653,13 @@ const HU_A2070W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
-                    disabled={mainDataResult.total > 0 ? false : true}
+                    disabled={
+                      permissions.save
+                        ? mainDataResult.total > 0
+                          ? false
+                          : true
+                        : true
+                    }
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -1627,7 +1667,13 @@ const HU_A2070W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
-                    disabled={mainDataResult.total > 0 ? false : true}
+                    disabled={
+                      permissions.save
+                        ? mainDataResult.total > 0
+                          ? false
+                          : true
+                        : true
+                    }
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

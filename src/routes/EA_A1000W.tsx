@@ -262,21 +262,25 @@ const EA_A1000: React.FC = () => {
         ...prev,
         pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
         resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
         pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
         resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
+        isSearch: true,
       }));
       setFilters3((prev) => ({
         ...prev,
         pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
         resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
+        isSearch: true,
       }));
       setFilters4((prev) => ({
         ...prev,
         pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
         resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -390,7 +394,7 @@ const EA_A1000: React.FC = () => {
     resno: "admin",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -402,7 +406,7 @@ const EA_A1000: React.FC = () => {
     resno: "admin",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -414,7 +418,7 @@ const EA_A1000: React.FC = () => {
     resno: "admin",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -426,12 +430,12 @@ const EA_A1000: React.FC = () => {
     resno: "admin",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -482,7 +486,7 @@ const EA_A1000: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -563,7 +567,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -644,7 +648,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -725,7 +729,12 @@ const EA_A1000: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -735,11 +744,16 @@ const EA_A1000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && customOptionData !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -749,11 +763,16 @@ const EA_A1000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && customOptionData !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -763,11 +782,16 @@ const EA_A1000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && customOptionData !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -777,7 +801,7 @@ const EA_A1000: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1583,6 +1607,7 @@ const EA_A1000: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let isValid = true;
 
     if (mainDataResult2.total != 0) {
@@ -1794,6 +1819,7 @@ const EA_A1000: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1835,10 +1861,10 @@ const EA_A1000: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s.length != 0) {
+    if (ParaData.rowstatus_s.length != 0 && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -2131,16 +2157,32 @@ const EA_A1000: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
                 <ButtonContainer>
-                  <Button onClick={onAddClick} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     결재
                   </Button>
-                  <Button onClick={onAddClick2} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     참조
                   </Button>
-                  <Button onClick={onAddClick3} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick3}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     합의
                   </Button>
-                  <Button onClick={onAddClick4} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick4}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     시행
                   </Button>
                 </ButtonContainer>
@@ -2272,6 +2314,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={() =>
@@ -2284,6 +2327,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="chevron-up"
                     title="행 위로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={() =>
@@ -2296,6 +2340,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="chevron-down"
                     title="행 아래로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -2303,6 +2348,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2458,6 +2504,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2574,6 +2621,7 @@ const EA_A1000: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2675,16 +2723,32 @@ const EA_A1000: React.FC = () => {
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>참조</GridTitle>
                 <ButtonContainer>
-                  <Button onClick={onAddClick} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     결재
                   </Button>
-                  <Button onClick={onAddClick2} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     참조
                   </Button>
-                  <Button onClick={onAddClick3} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick3}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     합의
                   </Button>
-                  <Button onClick={onAddClick4} themeColor={"primary"}>
+                  <Button
+                    onClick={onAddClick4}
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
                     시행
                   </Button>
                 </ButtonContainer>
@@ -2791,6 +2855,7 @@ const EA_A1000: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={() =>
@@ -2803,6 +2868,7 @@ const EA_A1000: React.FC = () => {
                       themeColor={"primary"}
                       icon="chevron-up"
                       title="행 위로 이동"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={() =>
@@ -2815,6 +2881,7 @@ const EA_A1000: React.FC = () => {
                       themeColor={"primary"}
                       icon="chevron-down"
                       title="행 아래로 이동"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -2822,6 +2889,7 @@ const EA_A1000: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -2952,6 +3020,7 @@ const EA_A1000: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3054,6 +3123,7 @@ const EA_A1000: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>

@@ -23,7 +23,9 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import { TPermissions } from "../../../store/types";
 import {
+  UsePermissions,
   chkScrollHandler,
   getHeight,
   getWindowDeviceHeight,
@@ -44,6 +46,13 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [mobileheight, setMobileHeight] = useState(0);
@@ -128,11 +137,14 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
   };
 
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (permissions.view) {
+      fetchMainGrid();
+    }
+  }, [mainPgNum, permissions]);
 
   //요약정보 조회
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -239,6 +251,7 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
             }}
             icon="search"
             themeColor={"primary"}
+            disabled={permissions.view ? false : true}
           >
             조회
           </Button>

@@ -80,7 +80,7 @@ import {
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -136,7 +136,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -193,7 +199,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
           modal={true}
         />
       )}
@@ -321,6 +331,7 @@ const HU_A2140W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -418,12 +429,12 @@ const HU_A2140W: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -520,7 +531,12 @@ const HU_A2140W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -528,7 +544,7 @@ const HU_A2140W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1009,6 +1025,7 @@ const HU_A2140W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1093,12 +1110,13 @@ const HU_A2140W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "") {
+    if (ParaData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
     let valid2 = true;
     let valid3 = true;
@@ -1452,6 +1470,7 @@ const HU_A2140W: React.FC = () => {
                 onClick={onCheckClick}
                 themeColor={"primary"}
                 icon="track-changes-accept"
+                disabled={permissions.save ? false : true}
               >
                 결재
               </Button>
@@ -1460,6 +1479,7 @@ const HU_A2140W: React.FC = () => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -1467,6 +1487,7 @@ const HU_A2140W: React.FC = () => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 themeColor={"primary"}
@@ -1474,6 +1495,7 @@ const HU_A2140W: React.FC = () => {
                 onClick={onCopyClick}
                 icon="copy"
                 title="행 복사"
+                disabled={permissions.save ? false : true}
               />
               <Button
                 onClick={onSaveClick}
@@ -1481,6 +1503,7 @@ const HU_A2140W: React.FC = () => {
                 themeColor={"primary"}
                 icon="save"
                 title="저장"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

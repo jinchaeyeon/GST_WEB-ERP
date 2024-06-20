@@ -359,7 +359,7 @@ const HU_A2000W: React.FC = () => {
     workcls: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -383,7 +383,7 @@ const HU_A2000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -441,13 +441,18 @@ const HU_A2000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -617,6 +622,7 @@ const HU_A2000W: React.FC = () => {
   };
 
   const onAddClick = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -764,6 +770,7 @@ const HU_A2000W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -869,6 +876,8 @@ const HU_A2000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && ParaData.workType != "D") return;
+    if (!permissions.delete && ParaData.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -912,12 +921,20 @@ const HU_A2000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (
+      ParaData.workType != "" &&
+      permissions.save &&
+      ParaData.workType != "D"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+    if (ParaData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
 
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (
       !window.confirm(
         `[${convertDateToStr(filters.stddt).substring(
@@ -1023,7 +1040,12 @@ const HU_A2000W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               생성
             </Button>
             <Button
@@ -1031,6 +1053,7 @@ const HU_A2000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="delete"
+              disabled={permissions.delete ? false : true}
             >
               삭제
             </Button>
@@ -1039,6 +1062,7 @@ const HU_A2000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="save"
+              disabled={permissions.save ? false : true}
             >
               저장
             </Button>

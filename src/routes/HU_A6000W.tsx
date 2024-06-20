@@ -48,10 +48,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import DetailWindow from "../components/Windows/HU_A6000W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -141,6 +138,7 @@ const HU_A6000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         rtryn: defaultOption.find((item: any) => item.id == "rtryn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -222,7 +220,7 @@ const HU_A6000W: React.FC = () => {
     rtryn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const filterInputChange = (e: any) => {
@@ -269,7 +267,7 @@ const HU_A6000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -354,7 +352,12 @@ const HU_A6000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -364,7 +367,7 @@ const HU_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -416,6 +419,7 @@ const HU_A6000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -499,6 +503,7 @@ const HU_A6000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -567,8 +572,8 @@ const HU_A6000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type != "") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type != "" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   return (
     <>
@@ -633,7 +638,12 @@ const HU_A6000W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>기본정보</GridTitle>
           <ButtonContainer>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               일용직 인사생성
             </Button>
             <Button
@@ -641,6 +651,7 @@ const HU_A6000W: React.FC = () => {
               icon="delete"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.delete ? false : true}
             >
               일용직 인사삭제
             </Button>

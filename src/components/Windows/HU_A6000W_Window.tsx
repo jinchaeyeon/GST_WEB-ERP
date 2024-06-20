@@ -25,18 +25,19 @@ import {
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
@@ -66,6 +67,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -238,6 +246,7 @@ const CopyWindow = ({
     sexcd: "M",
     telephon: "",
     workerdiv: "",
+    isSearch: false,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -335,7 +344,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -490,7 +499,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && workType != "N") {
+    if (
+      filters.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -500,10 +515,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         orgdiv: sessionOrgdiv,
@@ -514,7 +535,7 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   function isResidentRegNoValid(residentRegNo: any) {
     var re = /^[0-9]{6}[0-9]{7}$/;
@@ -532,6 +553,7 @@ const CopyWindow = ({
   }
 
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     if (
       information.prsnnum == "" ||
       information.dptcd == "" ||
@@ -725,6 +747,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -800,10 +823,10 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.work_type != "") {
+    if (ParaData.work_type != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   return (
     <>
@@ -1351,9 +1374,11 @@ const CopyWindow = ({
         </FormBoxWrap>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
@@ -1382,6 +1407,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={information.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

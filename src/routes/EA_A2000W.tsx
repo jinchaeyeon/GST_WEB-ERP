@@ -241,6 +241,7 @@ const EA_A2000W: React.FC = () => {
             ?.valueCode,
           appgb: defaultOption.find((item: any) => item.id == "appgb")
             ?.valueCode,
+          isSearch: true,
         }));
       }
     }
@@ -440,7 +441,7 @@ const EA_A2000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -531,7 +532,7 @@ const EA_A2000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -595,7 +596,7 @@ const EA_A2000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -659,33 +660,48 @@ const EA_A2000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, customOptionData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && customOptionData != null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, customOptionData]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && customOptionData != null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, customOptionData]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -972,6 +988,7 @@ const EA_A2000W: React.FC = () => {
   };
 
   const processApproval = (workType: string) => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item) => item.chk == true);
 
     type TData = {
@@ -1014,6 +1031,8 @@ const EA_A2000W: React.FC = () => {
   };
 
   const fetchDetailGridSaved = async () => {
+    if (!permissions.save && detailParaDataSaved.work_type != "D") return;
+    if (!permissions.delete && detailParaDataSaved.work_type == "D") return;
     let data: any;
 
     try {
@@ -1054,10 +1073,20 @@ const EA_A2000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (detailParaDataSaved.work_type !== "") fetchDetailGridSaved();
+    if (detailParaDataSaved.work_type == "D" && permissions.delete) {
+      fetchDetailGridSaved();
+    }
+    if (
+      detailParaDataSaved.work_type != "" &&
+      permissions.save &&
+      detailParaDataSaved.work_type != "D"
+    ) {
+      fetchDetailGridSaved();
+    }
   }, [detailParaDataSaved]);
 
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (mainDataResult.total > 0) {
       const datas = mainDataResult.data.filter(
         (item) =>
@@ -1309,6 +1338,7 @@ const EA_A2000W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1833,6 +1863,7 @@ const EA_A2000W: React.FC = () => {
                         icon="delete"
                         fillMode="outline"
                         themeColor={"primary"}
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>

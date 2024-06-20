@@ -41,7 +41,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -53,6 +53,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getBizCom,
@@ -164,6 +165,13 @@ const KendoWindow = ({
   pathname,
   modal = false,
 }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -270,7 +278,7 @@ const KendoWindow = ({
     prsnnm: userName,
     dptcd: dptcd,
     dptnm: dptnm,
-    isSearch: true,
+    isSearch: false,
     find_row_value: "",
     pgNum: 1,
   });
@@ -713,16 +721,28 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (worktype != "N" && filters.isSearch) {
+    if (
+      worktype != "N" &&
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if ((worktype == "U" || worktype == "C") && para != undefined) {
+    if (
+      (worktype == "U" || worktype == "C") &&
+      para != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         expenseseq1: para.expenseseq1,
@@ -798,11 +818,11 @@ const KendoWindow = ({
         };
       });
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1013,6 +1033,7 @@ const KendoWindow = ({
   };
 
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     if (mainDataResult.total == 0) {
       alert("저장할 데이터가 존재하지 않습니다.");
     } else {
@@ -1425,12 +1446,13 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1662,6 +1684,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -1669,6 +1692,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={() => {
@@ -2211,9 +2235,11 @@ const KendoWindow = ({
               </FormBoxWrap>
               <BottomContainer className="BottomContainer">
                 <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={selectData}>
-                    확인
-                  </Button>
+                  {permissions.save && (
+                    <Button themeColor={"primary"} onClick={selectData}>
+                      확인
+                    </Button>
+                  )}
                   <Button
                     themeColor={"primary"}
                     fillMode={"outline"}
@@ -2326,6 +2352,7 @@ const KendoWindow = ({
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -2333,6 +2360,7 @@ const KendoWindow = ({
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -2818,9 +2846,11 @@ const KendoWindow = ({
           </FormBoxWrap>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={selectData}>
-                확인
-              </Button>
+              {permissions.save && (
+                <Button themeColor={"primary"} onClick={selectData}>
+                  확인
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}
@@ -2857,6 +2887,11 @@ const KendoWindow = ({
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
                 )[0].attdatnum
           }
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {custWindowVisible && (

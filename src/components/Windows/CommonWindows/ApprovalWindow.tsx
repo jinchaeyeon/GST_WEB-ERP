@@ -38,7 +38,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPermissions } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import ComboBoxCell from "../../Cells/ComboBoxCell";
 import NumberCell from "../../Cells/NumberCell";
@@ -49,6 +49,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
   getBizCom,
@@ -142,6 +143,13 @@ const KendoWindow = ({
   pathname,
   modal = false,
 }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [isFilterHideStates2, setisFilterHideStates2] =
@@ -296,6 +304,7 @@ const KendoWindow = ({
       setFilters((prev) => ({
         ...prev,
         pgmgb: pgmgb,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -355,7 +364,7 @@ const KendoWindow = ({
     person: para.prsnnum,
     ref_key: para.expenseno,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -393,17 +402,24 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //팝업 조회 파라미터
@@ -497,6 +513,7 @@ const KendoWindow = ({
   };
 
   const onConfirmClick = (props: any) => {
+    if (!permissions.save) return;
     let valid = true;
 
     mainDataResult.data.map((item) => {
@@ -646,6 +663,7 @@ const KendoWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -671,10 +689,10 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.work_type != "") {
+    if (ParaData.work_type != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   //메인 그리드 선택 이벤트
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1314,10 +1332,17 @@ const KendoWindow = ({
   const [attachmentNumber, setAttachmentNumber] = useState<string>("");
 
   useEffect(() => {
-    fetchAttdatnumGrid();
-  }, [attachmentNumber]);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchAttdatnumGrid();
+    }
+  }, [attachmentNumber, permissions]);
 
   const deleteFiles = () => {
+    if (!permissions.save) return;
     const datas = mainDataResult3.data.filter((item) => item.chk == true);
 
     if (datas.length == 0) {
@@ -1345,6 +1370,7 @@ const KendoWindow = ({
   const excelsInput: any = React.useRef();
 
   const downloadFiles = async () => {
+    if (!permissions.view) return;
     // value 가 false인 속성 삭제
     const datas = mainDataResult3.data.filter((item) => item.chk == true);
     if (datas.length == 0) {
@@ -1413,6 +1439,7 @@ const KendoWindow = ({
   };
 
   const handleFileUpload = async (files: FileList | null) => {
+    if (!permissions.save) return;
     if (files == null) return false;
     setLoading(true);
 
@@ -1451,6 +1478,7 @@ const KendoWindow = ({
   };
 
   const uploadFile = async (files: File, newAttachmentNumber?: string) => {
+    if (!permissions.save) return;
     let data: any;
 
     const filePara = {
@@ -1485,6 +1513,7 @@ const KendoWindow = ({
 
   //그리드 조회
   const fetchAttdatnumGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     if (attachmentNumber == "") return false;
     const parameters = {
@@ -1551,7 +1580,12 @@ const KendoWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title />
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>
@@ -1639,6 +1673,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -1646,6 +1681,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={() =>
@@ -1658,6 +1694,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="chevron-up"
                       title="행 위로 이동"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={() =>
@@ -1670,6 +1707,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="chevron-down"
                       title="행 아래로 이동"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1786,6 +1824,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick2}
@@ -1793,6 +1832,7 @@ const KendoWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1866,6 +1906,7 @@ const KendoWindow = ({
                         onClick={upload}
                         themeColor={"primary"}
                         icon={"upload"}
+                        disabled={permissions.save ? false : true}
                       >
                         업로드
                         <input
@@ -1886,6 +1927,7 @@ const KendoWindow = ({
                         themeColor={"primary"}
                         fillMode={"outline"}
                         icon={"download"}
+                        disabled={permissions.view ? false : true}
                       >
                         다운로드
                       </Button>
@@ -1894,6 +1936,7 @@ const KendoWindow = ({
                         themeColor={"primary"}
                         fillMode={"outline"}
                         icon={"delete"}
+                        disabled={permissions.save ? false : true}
                       >
                         삭제
                       </Button>
@@ -1968,9 +2011,11 @@ const KendoWindow = ({
           </Swiper>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={onConfirmClick}>
-                확인
-              </Button>
+              {permissions.save && (
+                <Button themeColor={"primary"} onClick={onConfirmClick}>
+                  확인
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}
@@ -1993,6 +2038,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -2000,6 +2046,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={() =>
@@ -2012,6 +2059,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="chevron-up"
                     title="행 위로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={() =>
@@ -2024,6 +2072,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="chevron-down"
                     title="행 아래로 이동"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2110,6 +2159,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -2117,6 +2167,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2179,6 +2230,7 @@ const KendoWindow = ({
                     onClick={upload}
                     themeColor={"primary"}
                     icon={"upload"}
+                    disabled={permissions.save ? false : true}
                   >
                     업로드
                     <input
@@ -2199,6 +2251,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     fillMode={"outline"}
                     icon={"download"}
+                    disabled={permissions.view ? false : true}
                   >
                     다운로드
                   </Button>
@@ -2207,6 +2260,7 @@ const KendoWindow = ({
                     themeColor={"primary"}
                     fillMode={"outline"}
                     icon={"delete"}
+                    disabled={permissions.save ? false : true}
                   >
                     삭제
                   </Button>
@@ -2270,9 +2324,11 @@ const KendoWindow = ({
             </GridContainer>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={onConfirmClick}>
-                  확인
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={onConfirmClick}>
+                    확인
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}

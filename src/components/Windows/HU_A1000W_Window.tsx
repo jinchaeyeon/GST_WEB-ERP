@@ -57,7 +57,7 @@ import {
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -69,6 +69,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getBizCom,
@@ -385,7 +386,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -442,7 +449,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -462,7 +473,13 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   const { setAttdatnum2, setFiles2 } = useContext(FormContext2);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -519,7 +536,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -539,7 +560,13 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
   const { setAttdatnum3, setFiles3 } = useContext(FormContext3);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -596,7 +623,11 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -616,7 +647,13 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   const { setAttdatnum4, setFiles4 } = useContext(FormContext4);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -673,7 +710,11 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -693,7 +734,13 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
   const { setAttdatnum5, setFiles5 } = useContext(FormContext5);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -750,7 +797,11 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -770,7 +821,13 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
   const { setAttdatnum6, setFiles6 } = useContext(FormContext6);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -827,7 +884,11 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -847,7 +908,13 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
   const { setAttdatnum7, setFiles7 } = useContext(FormContext7);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -904,7 +971,11 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -924,7 +995,13 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
   const { setAttdatnum8, setFiles8 } = useContext(FormContext8);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -981,7 +1058,11 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -1018,6 +1099,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -4293,7 +4381,13 @@ const CopyWindow = ({
   });
 
   useEffect(() => {
-    if (filters.isSearch && workType != "N") {
+    if (
+      filters.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -4303,10 +4397,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch && workType != "N") {
+    if (
+      filters2.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -4316,10 +4416,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch && workType != "N") {
+    if (
+      filters3.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -4329,10 +4435,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters4.isSearch && workType != "N") {
+    if (
+      filters4.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -4342,10 +4454,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters5.isSearch && workType != "N") {
+    if (
+      filters5.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({
@@ -4355,10 +4473,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters5]);
+  }, [filters5, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters6.isSearch && workType != "N") {
+    if (
+      filters6.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters6);
       setFilters6((prev) => ({
@@ -4368,10 +4492,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters6]);
+  }, [filters6, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters7.isSearch && workType != "N") {
+    if (
+      filters7.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters7);
       setFilters7((prev) => ({
@@ -4381,10 +4511,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid7(deepCopiedFilters);
     }
-  }, [filters7]);
+  }, [filters7, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters8.isSearch && workType != "N") {
+    if (
+      filters8.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters8);
       setFilters8((prev) => ({
@@ -4394,10 +4530,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid8(deepCopiedFilters);
     }
-  }, [filters8]);
+  }, [filters8, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters9.isSearch && workType != "N") {
+    if (
+      filters9.isSearch &&
+      workType != "N" &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters9);
       setFilters9((prev) => ({
@@ -4407,7 +4549,7 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid9(deepCopiedFilters);
     }
-  }, [filters9]);
+  }, [filters9, permissions, bizComponentData, customOptionData]);
 
   function isResidentRegNoValid(residentRegNo: any) {
     var re = /^[0-9]{6}[0-9]{7}$/;
@@ -4441,7 +4583,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4779,7 +4921,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4853,7 +4995,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4924,7 +5066,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -4995,7 +5137,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters5: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -5066,7 +5208,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters6: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -5137,7 +5279,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async (filters7: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -5208,7 +5350,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid8 = async (filters8: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -5279,7 +5421,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid9 = async (filters9: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -5349,7 +5491,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         orgdiv: sessionOrgdiv,
@@ -5450,9 +5598,10 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     if (tabSelected == 0) {
       if (
         information.prsnnum == "" ||
@@ -7274,6 +7423,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -7508,6 +7658,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -7646,6 +7797,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved3 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -7774,6 +7926,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved4 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -7903,6 +8056,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved5 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -8032,6 +8186,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved6 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -8161,6 +8316,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved7 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -8288,6 +8444,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved8 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -8418,6 +8575,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved9 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -8548,58 +8706,58 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.work_type != "") {
+    if (ParaData.work_type != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   useEffect(() => {
-    if (ParaData2.work_type != "") {
+    if (ParaData2.work_type != "" && permissions.save) {
       fetchTodoGridSaved2();
     }
-  }, [ParaData2]);
+  }, [ParaData2, permissions]);
 
   useEffect(() => {
-    if (ParaData3.work_type != "") {
+    if (ParaData3.work_type != "" && permissions.save) {
       fetchTodoGridSaved3();
     }
-  }, [ParaData3]);
+  }, [ParaData3, permissions]);
 
   useEffect(() => {
-    if (ParaData4.work_type != "") {
+    if (ParaData4.work_type != "" && permissions.save) {
       fetchTodoGridSaved4();
     }
-  }, [ParaData4]);
+  }, [ParaData4, permissions]);
 
   useEffect(() => {
-    if (ParaData5.work_type != "") {
+    if (ParaData5.work_type != "" && permissions.save) {
       fetchTodoGridSaved5();
     }
-  }, [ParaData5]);
+  }, [ParaData5, permissions]);
 
   useEffect(() => {
-    if (ParaData6.work_type != "") {
+    if (ParaData6.work_type != "" && permissions.save) {
       fetchTodoGridSaved6();
     }
-  }, [ParaData6]);
+  }, [ParaData6, permissions]);
 
   useEffect(() => {
-    if (ParaData7.work_type != "") {
+    if (ParaData7.work_type != "" && permissions.save) {
       fetchTodoGridSaved7();
     }
-  }, [ParaData7]);
+  }, [ParaData7, permissions]);
 
   useEffect(() => {
-    if (ParaData8.work_type != "") {
+    if (ParaData8.work_type != "" && permissions.save) {
       fetchTodoGridSaved8();
     }
-  }, [ParaData8]);
+  }, [ParaData8, permissions]);
 
   useEffect(() => {
-    if (ParaData9.work_type != "") {
+    if (ParaData9.work_type != "" && permissions.save) {
       fetchTodoGridSaved9();
     }
-  }, [ParaData9]);
+  }, [ParaData9, permissions]);
 
   return (
     <>
@@ -8616,7 +8774,10 @@ const CopyWindow = ({
           onSelect={handleSelectTab}
           scrollable={isMobile}
         >
-          <TabStripTab title="인사기본">
+          <TabStripTab
+            title="인사기본"
+            disabled={permissions.view ? false : true}
+          >
             <GridContainer
               style={{
                 height: isMobile ? mobileheight : webheight,
@@ -9127,7 +9288,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="인사상세"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <GridContainer
               style={{
@@ -9670,7 +9833,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="개인정보"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             {isMobile ? (
               <Swiper
@@ -10130,7 +10295,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="병역사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <GridContainer
               style={{
@@ -10247,7 +10414,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="가족관계"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext.Provider
               value={{
@@ -10268,6 +10437,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -10275,6 +10445,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10405,7 +10576,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="학적사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext2.Provider
               value={{
@@ -10426,6 +10599,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick2}
@@ -10433,6 +10607,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10515,7 +10690,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="면허/자격사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext3.Provider
               value={{
@@ -10536,6 +10713,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick3}
@@ -10543,6 +10721,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10633,7 +10812,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="경력사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext4.Provider
               value={{
@@ -10654,6 +10835,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick4}
@@ -10661,6 +10843,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10752,7 +10935,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="인사발령사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext5.Provider
               value={{
@@ -10773,6 +10958,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick5}
@@ -10780,6 +10966,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10881,7 +11068,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="상벌사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext6.Provider
               value={{
@@ -10902,6 +11091,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick6}
@@ -10909,6 +11099,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -10982,7 +11173,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="교육사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext7.Provider
               value={{
@@ -11003,6 +11196,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick7}
@@ -11010,6 +11204,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -11103,7 +11298,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="어학사항"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <FormContext8.Provider
               value={{
@@ -11124,6 +11321,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick8}
@@ -11131,6 +11329,7 @@ const CopyWindow = ({
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -11230,9 +11429,11 @@ const CopyWindow = ({
         </TabStrip>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}
@@ -11266,6 +11467,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={information.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }} 
         />
       )}
       {attachmentsWindowVisible2 && (
@@ -11273,6 +11479,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible2}
           setData={getAttachmentsData2}
           para={information.bankdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }} 
         />
       )}
       {overtimeWindowVisible && (

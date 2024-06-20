@@ -29,12 +29,13 @@ import {
   isLoading,
   loginResultState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import YearCalendar from "../Calendars/YearCalendar";
 import MonthDateCell from "../Cells/MonthDateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
@@ -92,6 +93,13 @@ const KendoWindow = ({
   pathname,
   modal = false,
 }: IKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -178,7 +186,7 @@ const KendoWindow = ({
   const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -234,7 +242,7 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && prsnnm != "") {
+    if (filters.isSearch && prsnnm != "" && permissions.view) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -244,7 +252,7 @@ const KendoWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -477,6 +485,7 @@ const KendoWindow = ({
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -594,12 +603,13 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -690,6 +700,7 @@ const KendoWindow = ({
               themeColor={"primary"}
               icon="plus"
               title="행 추가"
+              disabled={permissions.save ? false : true}
             ></Button>
             <Button
               onClick={onDeleteClick}
@@ -697,6 +708,7 @@ const KendoWindow = ({
               themeColor={"primary"}
               icon="minus"
               title="행 삭제"
+              disabled={permissions.save ? false : true}
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
@@ -767,9 +779,11 @@ const KendoWindow = ({
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          <Button themeColor={"primary"} onClick={onSaveClick}>
-            확인
-          </Button>
+          {permissions.save && (
+            <Button themeColor={"primary"} onClick={onSaveClick}>
+              확인
+            </Button>
+          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

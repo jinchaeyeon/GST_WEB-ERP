@@ -92,7 +92,7 @@ import {
   isFilterHideState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -181,7 +181,13 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
   } = useContext(FormContext6);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -238,7 +244,11 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
           modal={true}
-          permission={{ upload: false, download: true, delete: false }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -265,7 +275,13 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
   } = useContext(FormContext7);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -322,6 +338,11 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>
@@ -1209,7 +1230,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1320,7 +1341,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1383,7 +1404,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1648,7 +1669,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1737,7 +1758,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters5: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1801,7 +1822,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters6: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1865,7 +1886,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async (filters7: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1929,7 +1950,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid8 = async (filters8: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1992,7 +2013,7 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid9 = async (filters9: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -2163,122 +2184,135 @@ const HU_A4000W: React.FC = () => {
   }>({});
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, customOptionData, permissions]);
+  }, [filters, customOptionData, permissions, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       filters2.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, customOptionData, permissions]);
+  }, [filters2, customOptionData, permissions, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       filters3.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, customOptionData, permissions]);
+  }, [filters3, customOptionData, permissions, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       filters4.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4, customOptionData, permissions]);
+  }, [filters4, customOptionData, permissions, bizComponentData]);
 
   useEffect(() => {
     if (
       filters5.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters5, customOptionData, permissions]);
+  }, [filters5, customOptionData, permissions, bizComponentData]);
 
   useEffect(() => {
     if (
       filters6.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters6);
       setFilters6((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters6, customOptionData, permissions]);
+  }, [filters6, customOptionData, permissions, bizComponentData]);
 
   useEffect(() => {
     if (
       filters7.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters7);
       setFilters7((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid7(deepCopiedFilters);
     }
-  }, [filters7, customOptionData, permissions]);
+  }, [filters7, customOptionData, permissions, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       filters8.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters8);
       setFilters8((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid8(deepCopiedFilters);
     }
-  }, [filters8, customOptionData, permissions]);
+  }, [filters8, customOptionData, permissions, bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       filters9.isSearch &&
-      customOptionData !== null &&
-      permissions !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters9);
       setFilters9((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid9(deepCopiedFilters);
     }
-  }, [filters9, customOptionData, permissions]);
+  }, [filters9, customOptionData, permissions, bizComponentData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -3526,6 +3560,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onreviewlvl1AddClick = async () => {
+    if (!permissions.view) return;
     if (information.dptcd == "") {
       alert("면접자 부서를 입력해주세요.");
     } else {
@@ -3615,6 +3650,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onreviewlvl1AddClick2 = async () => {
+    if (!permissions.view) return;
     if (information.dptcd == "") {
       alert("면접자 부서를 입력해주세요.");
     } else {
@@ -3926,6 +3962,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -4009,6 +4046,7 @@ const HU_A4000W: React.FC = () => {
     }));
   };
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -4089,6 +4127,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     if (information.interviewee == "") {
       alert("필수값을 채워주세요");
     } else {
@@ -4246,6 +4285,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onSaveClick5 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult5.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -4333,6 +4373,7 @@ const HU_A4000W: React.FC = () => {
   };
 
   const onSaveClick7 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult7.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -4521,12 +4562,21 @@ const HU_A4000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+    if (paraData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [paraData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.delete && paraData.workType == "D") return;
+    if (!permissions.save && paraData.workType != "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -4769,6 +4819,7 @@ const HU_A4000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteALLClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -4830,7 +4881,10 @@ const HU_A4000W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="인사고과기준">
+            <TabStripTab
+              title="인사고과기준"
+              disabled={permissions.view ? false : true}
+            >
               <Swiper
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
@@ -4849,6 +4903,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -4856,6 +4911,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick}
@@ -4863,6 +4919,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -4958,22 +5015,28 @@ const HU_A4000W: React.FC = () => {
                           icon="plus"
                           title="행 추가"
                           disabled={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] != undefined
+                            permissions.save
                               ? mainDataResult.data.filter(
                                   (item) =>
                                     item[DATA_ITEM_KEY] ==
                                     Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].commyn == false &&
-                                mainDataResult.data.filter(
-                                  (item) =>
-                                    item[DATA_ITEM_KEY] ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].rowstatus != "N"
-                                ? false
+                                )[0] != undefined
+                                ? mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].commyn == false &&
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].rowstatus != "N"
+                                  ? false
+                                  : true
                                 : true
                               : true
                           }
@@ -4985,22 +5048,28 @@ const HU_A4000W: React.FC = () => {
                           icon="minus"
                           title="행 삭제"
                           disabled={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] != undefined
+                            permissions.save
                               ? mainDataResult.data.filter(
                                   (item) =>
                                     item[DATA_ITEM_KEY] ==
                                     Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].commyn == false &&
-                                mainDataResult.data.filter(
-                                  (item) =>
-                                    item[DATA_ITEM_KEY] ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].rowstatus != "N"
-                                ? false
+                                )[0] != undefined
+                                ? mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].commyn == false &&
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].rowstatus != "N"
+                                  ? false
+                                  : true
                                 : true
                               : true
                           }
@@ -5012,22 +5081,28 @@ const HU_A4000W: React.FC = () => {
                           icon="save"
                           title="저장"
                           disabled={
-                            mainDataResult.data.filter(
-                              (item) =>
-                                item[DATA_ITEM_KEY] ==
-                                Object.getOwnPropertyNames(selectedState)[0]
-                            )[0] != undefined
+                            permissions.save
                               ? mainDataResult.data.filter(
                                   (item) =>
                                     item[DATA_ITEM_KEY] ==
                                     Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].commyn == false &&
-                                mainDataResult.data.filter(
-                                  (item) =>
-                                    item[DATA_ITEM_KEY] ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].rowstatus != "N"
-                                ? false
+                                )[0] != undefined
+                                ? mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].commyn == false &&
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].rowstatus != "N"
+                                  ? false
+                                  : true
                                 : true
                               : true
                           }
@@ -5114,7 +5189,10 @@ const HU_A4000W: React.FC = () => {
                 </SwiperSlide>
               </Swiper>
             </TabStripTab>
-            <TabStripTab title="월별인사평가">
+            <TabStripTab
+              title="월별인사평가"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox>
                   <tbody>
@@ -5214,6 +5292,7 @@ const HU_A4000W: React.FC = () => {
                           onClick={onAddALLClick}
                           themeColor={"primary"}
                           icon="file-add"
+                          disabled={permissions.save ? false : true}
                         >
                           신규
                         </Button>
@@ -5222,6 +5301,7 @@ const HU_A4000W: React.FC = () => {
                           icon="delete"
                           fillMode="outline"
                           themeColor={"primary"}
+                          disabled={permissions.delete ? false : true}
                         >
                           삭제
                         </Button>
@@ -5230,6 +5310,7 @@ const HU_A4000W: React.FC = () => {
                           icon="save"
                           fillMode="outline"
                           themeColor={"primary"}
+                          disabled={permissions.save ? false : true}
                         >
                           저장
                         </Button>
@@ -5549,6 +5630,7 @@ const HU_A4000W: React.FC = () => {
                             icon="search"
                             themeColor={"primary"}
                             title="조회"
+                            disabled={permissions.view ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -5683,7 +5765,10 @@ const HU_A4000W: React.FC = () => {
                     onSelect={handleSelectTab2}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="불량">
+                    <TabStripTab
+                      title="불량"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer2">
                           <GridTitle>불량내역</GridTitle>
@@ -5693,7 +5778,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="plus"
                               title="행 추가"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                             <Button
                               onClick={onDeleteClick5}
@@ -5701,7 +5792,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="minus"
                               title="행 삭제"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                             <Button
                               onClick={onSaveClick5}
@@ -5709,7 +5806,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="save"
                               title="저장"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                           </ButtonContainer>
                         </GridTitleContainer>
@@ -5803,7 +5906,10 @@ const HU_A4000W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="교육내역">
+                    <TabStripTab
+                      title="교육내역"
+                      disabled={permissions.view ? false : true}
+                    >
                       <FormContext6.Provider
                         value={{
                           attdatnum6,
@@ -5824,7 +5930,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onDeleteClick6}
@@ -5832,7 +5944,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 //onClick={onSaveClick6}
@@ -5840,7 +5958,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="save"
                                 title="저장"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>
@@ -5942,7 +6066,10 @@ const HU_A4000W: React.FC = () => {
                         </GridContainer>
                       </FormContext6.Provider>
                     </TabStripTab>
-                    <TabStripTab title="상벌사항">
+                    <TabStripTab
+                      title="상벌사항"
+                      disabled={permissions.view ? false : true}
+                    >
                       <FormContext7.Provider
                         value={{
                           attdatnum7,
@@ -5963,7 +6090,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onDeleteClick7}
@@ -5971,7 +6104,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onSaveClick7}
@@ -5979,7 +6118,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="save"
                                 title="저장"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>
@@ -6090,7 +6235,10 @@ const HU_A4000W: React.FC = () => {
                     onSelect={handleSelectTab3}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="분류1">
+                    <TabStripTab
+                      title="분류1"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer3">
                           <GridTitle>월별인사평가상세</GridTitle>
@@ -6100,10 +6248,12 @@ const HU_A4000W: React.FC = () => {
                               onClick={onreviewlvl1AddClick}
                               icon="folder-open"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             >
@@ -6115,10 +6265,12 @@ const HU_A4000W: React.FC = () => {
                               icon="plus"
                               title="행 추가"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             ></Button>
@@ -6129,10 +6281,12 @@ const HU_A4000W: React.FC = () => {
                               icon="minus"
                               title="행 삭제"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             ></Button>
@@ -6228,7 +6382,10 @@ const HU_A4000W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="분류2">
+                    <TabStripTab
+                      title="분류2"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer3">
                           <GridTitle>월별인사평가상세</GridTitle>
@@ -6238,10 +6395,12 @@ const HU_A4000W: React.FC = () => {
                               onClick={onreviewlvl1AddClick2}
                               icon="folder-open"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             >
@@ -6348,7 +6507,10 @@ const HU_A4000W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="인사고과기준">
+            <TabStripTab
+              title="인사고과기준"
+              disabled={permissions.view ? false : true}
+            >
               <GridContainerWrap>
                 <GridContainer width="60%">
                   <GridTitleContainer className="ButtonContainer">
@@ -6359,6 +6521,7 @@ const HU_A4000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick}
@@ -6366,6 +6529,7 @@ const HU_A4000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick}
@@ -6373,6 +6537,7 @@ const HU_A4000W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -6464,22 +6629,24 @@ const HU_A4000W: React.FC = () => {
                         icon="plus"
                         title="행 추가"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] != undefined
+                          permissions.save
                             ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].commyn == false &&
-                              mainDataResult.data.filter(
-                                (item) =>
-                                  item[DATA_ITEM_KEY] ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus != "N"
-                              ? false
+                              )[0] != undefined
+                              ? mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].commyn == false &&
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus != "N"
+                                ? false
+                                : true
                               : true
                             : true
                         }
@@ -6491,22 +6658,24 @@ const HU_A4000W: React.FC = () => {
                         icon="minus"
                         title="행 삭제"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] != undefined
+                          permissions.save
                             ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].commyn == false &&
-                              mainDataResult.data.filter(
-                                (item) =>
-                                  item[DATA_ITEM_KEY] ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus != "N"
-                              ? false
+                              )[0] != undefined
+                              ? mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].commyn == false &&
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus != "N"
+                                ? false
+                                : true
                               : true
                             : true
                         }
@@ -6518,22 +6687,24 @@ const HU_A4000W: React.FC = () => {
                         icon="save"
                         title="저장"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] != undefined
+                          permissions.save
                             ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].commyn == false &&
-                              mainDataResult.data.filter(
-                                (item) =>
-                                  item[DATA_ITEM_KEY] ==
-                                  Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus != "N"
-                              ? false
+                              )[0] != undefined
+                              ? mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].commyn == false &&
+                                mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus != "N"
+                                ? false
+                                : true
                               : true
                             : true
                         }
@@ -6617,7 +6788,10 @@ const HU_A4000W: React.FC = () => {
                 </GridContainer>
               </GridContainerWrap>
             </TabStripTab>
-            <TabStripTab title="월별인사평가">
+            <TabStripTab
+              title="월별인사평가"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox>
                   <tbody>
@@ -6712,6 +6886,7 @@ const HU_A4000W: React.FC = () => {
                         onClick={onAddALLClick}
                         themeColor={"primary"}
                         icon="file-add"
+                        disabled={permissions.save ? false : true}
                       >
                         신규
                       </Button>
@@ -6720,6 +6895,7 @@ const HU_A4000W: React.FC = () => {
                         icon="delete"
                         fillMode="outline"
                         themeColor={"primary"}
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>
@@ -6728,6 +6904,7 @@ const HU_A4000W: React.FC = () => {
                         icon="save"
                         fillMode="outline"
                         themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -7029,6 +7206,7 @@ const HU_A4000W: React.FC = () => {
                           icon="search"
                           themeColor={"primary"}
                           title="조회"
+                          disabled={permissions.view ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -7160,7 +7338,10 @@ const HU_A4000W: React.FC = () => {
                     onSelect={handleSelectTab2}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="불량">
+                    <TabStripTab
+                      title="불량"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer2">
                           <GridTitle>불량내역</GridTitle>
@@ -7170,7 +7351,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="plus"
                               title="행 추가"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                             <Button
                               onClick={onDeleteClick5}
@@ -7178,7 +7365,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="minus"
                               title="행 삭제"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                             <Button
                               onClick={onSaveClick5}
@@ -7186,7 +7379,13 @@ const HU_A4000W: React.FC = () => {
                               themeColor={"primary"}
                               icon="save"
                               title="저장"
-                              disabled={workType == "N" ? true : false}
+                              disabled={
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : false
+                                  : true
+                              }
                             ></Button>
                           </ButtonContainer>
                         </GridTitleContainer>
@@ -7278,7 +7477,10 @@ const HU_A4000W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="교육내역">
+                    <TabStripTab
+                      title="교육내역"
+                      disabled={permissions.view ? false : true}
+                    >
                       <FormContext6.Provider
                         value={{
                           attdatnum6,
@@ -7299,7 +7501,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onDeleteClick6}
@@ -7307,7 +7515,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 //onClick={onSaveClick6}
@@ -7315,7 +7529,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="save"
                                 title="저장"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>
@@ -7415,7 +7635,10 @@ const HU_A4000W: React.FC = () => {
                         </GridContainer>
                       </FormContext6.Provider>
                     </TabStripTab>
-                    <TabStripTab title="상벌사항">
+                    <TabStripTab
+                      title="상벌사항"
+                      disabled={permissions.view ? false : true}
+                    >
                       <FormContext7.Provider
                         value={{
                           attdatnum7,
@@ -7436,7 +7659,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onDeleteClick7}
@@ -7444,7 +7673,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                               <Button
                                 onClick={onSaveClick7}
@@ -7452,7 +7687,13 @@ const HU_A4000W: React.FC = () => {
                                 themeColor={"primary"}
                                 icon="save"
                                 title="저장"
-                                disabled={workType == "N" ? true : false}
+                                disabled={
+                                  permissions.save
+                                    ? workType == "N"
+                                      ? true
+                                      : false
+                                    : true
+                                }
                               ></Button>
                             </ButtonContainer>
                           </GridTitleContainer>
@@ -7561,7 +7802,10 @@ const HU_A4000W: React.FC = () => {
                     onSelect={handleSelectTab3}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="분류1">
+                    <TabStripTab
+                      title="분류1"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer3">
                           <GridTitle>월별인사평가상세</GridTitle>
@@ -7571,10 +7815,12 @@ const HU_A4000W: React.FC = () => {
                               onClick={onreviewlvl1AddClick}
                               icon="folder-open"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             >
@@ -7586,10 +7832,12 @@ const HU_A4000W: React.FC = () => {
                               icon="plus"
                               title="행 추가"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             ></Button>
@@ -7600,10 +7848,12 @@ const HU_A4000W: React.FC = () => {
                               icon="minus"
                               title="행 삭제"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             ></Button>
@@ -7697,7 +7947,10 @@ const HU_A4000W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="분류2">
+                    <TabStripTab
+                      title="분류2"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer>
                         <GridTitleContainer className="ButtonContainer3">
                           <GridTitle>월별인사평가상세</GridTitle>
@@ -7707,10 +7960,12 @@ const HU_A4000W: React.FC = () => {
                               onClick={onreviewlvl1AddClick2}
                               icon="folder-open"
                               disabled={
-                                workType == "N"
-                                  ? true
-                                  : mainDataResult3.total > 0
-                                  ? false
+                                permissions.save
+                                  ? workType == "N"
+                                    ? true
+                                    : mainDataResult3.total > 0
+                                    ? false
+                                    : true
                                   : true
                               }
                             >

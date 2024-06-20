@@ -303,6 +303,7 @@ const HU_A4100W: React.FC = () => {
         Semiannualgb: defaultOption.find(
           (item: any) => item.id == "Semiannualgb"
         )?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -383,12 +384,12 @@ const HU_A4100W: React.FC = () => {
     remark: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -433,7 +434,7 @@ const HU_A4100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -526,14 +527,19 @@ const HU_A4100W: React.FC = () => {
   let gridRef: any = useRef(null);
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
       fetchGrid();
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -750,6 +756,7 @@ const HU_A4100W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       const dataItem = mainDataResult.data.filter((item: any) => {
@@ -870,6 +877,7 @@ const HU_A4100W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -915,10 +923,13 @@ const HU_A4100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "" || ParaData.workType == "COPY") {
+    if (
+      (ParaData.rowstatus_s != "" || ParaData.workType == "COPY") &&
+      permissions.save
+    ) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1140,6 +1151,7 @@ const HU_A4100W: React.FC = () => {
                 themeColor={"primary"}
                 onClick={onAmtWndClick}
                 icon="folder-open"
+                disabled={permissions.save ? false : true}
               >
                 일괄등록
               </Button>
@@ -1148,6 +1160,7 @@ const HU_A4100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onDeleteClick}
@@ -1155,6 +1168,7 @@ const HU_A4100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="minus"
                 title="행 삭제"
+                disabled={permissions.save ? false : true}
               ></Button>
               <Button
                 onClick={onSaveClick}
@@ -1162,6 +1176,7 @@ const HU_A4100W: React.FC = () => {
                 themeColor={"primary"}
                 icon="save"
                 title="저장"
+                disabled={permissions.save ? false : true}
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>

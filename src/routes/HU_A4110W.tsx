@@ -70,7 +70,7 @@ import {
   deletedAttadatnumsState,
   isFilterHideState,
   isLoading,
-  loginResultState
+  loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4110W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -133,7 +133,7 @@ const HU_A4110W: React.FC = () => {
       };
     }
   }, [customOptionData, webheight, webheight2, webheight3]);
-  console.log(height3);
+
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -175,6 +175,7 @@ const HU_A4110W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
           ?.valueCode,
+        isSearch: true,
       }));
       setSubFilters((prev) => ({
         ...prev,
@@ -182,6 +183,7 @@ const HU_A4110W: React.FC = () => {
         semiannualgb: defaultOption.find(
           (item: any) => item.id == "semiannualgb"
         )?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -297,7 +299,7 @@ const HU_A4110W: React.FC = () => {
     semiannualgb: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
@@ -317,7 +319,7 @@ const HU_A4110W: React.FC = () => {
     acntdiv: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -457,7 +459,7 @@ const HU_A4110W: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -532,7 +534,7 @@ const HU_A4110W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -634,7 +636,12 @@ const HU_A4110W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subfilters.isSearch && permissions !== null) {
+    if (
+      subfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
@@ -644,11 +651,16 @@ const HU_A4110W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters, permissions]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -658,7 +670,7 @@ const HU_A4110W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -764,6 +776,7 @@ const HU_A4110W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -856,6 +869,7 @@ const HU_A4110W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -932,8 +946,8 @@ const HU_A4110W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   return (
     <>
@@ -989,6 +1003,7 @@ const HU_A4110W: React.FC = () => {
                     onClick={() => search2()}
                     icon="search"
                     style={{ width: "100%" }}
+                    disabled={permissions.view ? false : true}
                   >
                     포인트 조회하기
                   </Button>
@@ -1318,6 +1333,7 @@ const HU_A4110W: React.FC = () => {
                       onClick={onCheckClick}
                       themeColor={"primary"}
                       icon="track-changes-accept"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서결재
                     </Button>
@@ -1325,6 +1341,7 @@ const HU_A4110W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서생성
                     </Button>
@@ -1335,6 +1352,7 @@ const HU_A4110W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="copy"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서복사
                     </Button>
@@ -1343,6 +1361,7 @@ const HU_A4110W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       지출결의서삭제
                     </Button>
@@ -1476,6 +1495,7 @@ const HU_A4110W: React.FC = () => {
                             onClick={() => search2()}
                             icon="search"
                             style={{ width: "100%" }}
+                            disabled={permissions.view ? false : true}
                           >
                             포인트 조회하기
                           </Button>
@@ -1633,6 +1653,7 @@ const HU_A4110W: React.FC = () => {
                       onClick={onCheckClick}
                       themeColor={"primary"}
                       icon="track-changes-accept"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서결재
                     </Button>
@@ -1640,6 +1661,7 @@ const HU_A4110W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서생성
                     </Button>
@@ -1648,6 +1670,7 @@ const HU_A4110W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="copy"
+                      disabled={permissions.save ? false : true}
                     >
                       지출결의서복사
                     </Button>
@@ -1656,6 +1679,7 @@ const HU_A4110W: React.FC = () => {
                       icon="delete"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
                     >
                       지출결의서삭제
                     </Button>

@@ -56,7 +56,7 @@ import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   isLoading,
-  loginResultState
+  loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -196,6 +196,7 @@ const HU_A1000W: React.FC = () => {
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           ?.valueCode,
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -349,7 +350,7 @@ const HU_A1000W: React.FC = () => {
     rtrchk: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -366,7 +367,7 @@ const HU_A1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -453,7 +454,12 @@ const HU_A1000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -463,7 +469,7 @@ const HU_A1000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -526,6 +532,7 @@ const HU_A1000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -692,6 +699,7 @@ const HU_A1000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -765,8 +773,8 @@ const HU_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type != "") fetchToDelete();
-  });
+    if (paraDataDeleted.work_type != "" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   // 조직도
   const [tree, setTree] = useState<Department[]>([]);
@@ -782,7 +790,7 @@ const HU_A1000W: React.FC = () => {
     user_name: "",
     serviceid: companyCode,
     find_row_value: "",
-    isSearch: true,
+    pgNum: 1,
   });
 
   // 프로필 사진조회
@@ -800,11 +808,11 @@ const HU_A1000W: React.FC = () => {
     radUsediv: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
   });
 
   // 부서 조회 후 트리형식으로 변환
   const fetchData2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     const subparameters: Iparameters = {
       procedureName: "P_SY_A0125W_Q",
@@ -860,6 +868,7 @@ const HU_A1000W: React.FC = () => {
 
   // id, 프로필 이미지
   const fetchData3 = async (picFilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -1008,9 +1017,15 @@ const HU_A1000W: React.FC = () => {
   }
 
   useEffect(() => {
-    fetchData2(filters2);
-    fetchData3(picFilters);
-  }, []);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchData2(filters2);
+      fetchData3(picFilters);
+    }
+  }, [permissions, bizComponentData, customOptionData]);
 
   const [selection, setSelection] = useState([]);
 
@@ -1135,6 +1150,7 @@ const HU_A1000W: React.FC = () => {
               <Button
                 onClick={() => setShowOrg(!showOrg)}
                 themeColor={"primary"}
+                disabled={permissions.view ? false : true}
               >
                 {showOrg ? "리스트 보기" : "조직도 보기"}
               </Button>
@@ -1144,6 +1160,7 @@ const HU_A1000W: React.FC = () => {
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
+                disabled={permissions.save ? false : true}
               >
                 사용자생성
               </Button>
@@ -1152,6 +1169,7 @@ const HU_A1000W: React.FC = () => {
                 icon="delete"
                 fillMode="outline"
                 themeColor={"primary"}
+                disabled={permissions.delete ? false : true}
               >
                 사용자삭제
               </Button>
@@ -1269,6 +1287,7 @@ const HU_A1000W: React.FC = () => {
                 <Button
                   onClick={() => setShowOrg(!showOrg)}
                   themeColor={"primary"}
+                  disabled={permissions.view ? false : true}
                 >
                   {showOrg ? "리스트 보기" : "조직도 보기"}
                 </Button>
@@ -1276,6 +1295,7 @@ const HU_A1000W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   사용자생성
                 </Button>
@@ -1284,6 +1304,7 @@ const HU_A1000W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   사용자삭제
                 </Button>
@@ -1440,7 +1461,5 @@ const HU_A1000W: React.FC = () => {
     </>
   );
 };
-
-type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse";
 
 export default HU_A1000W;

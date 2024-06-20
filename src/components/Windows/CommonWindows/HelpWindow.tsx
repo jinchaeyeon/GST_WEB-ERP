@@ -170,6 +170,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
+
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -184,6 +185,17 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const [loginResult] = useRecoilState(loginResultState);
   const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const defaultCulture = loginResult ? loginResult.defaultCulture : "";
+  const menu = loginResult
+    ? loginResult.homeMenuWeb == "Home" && loginResult.companyCode == "2302BA03"
+      ? "MainBIO"
+      : loginResult.homeMenuWeb == "Home" &&
+        (loginResult.companyCode == "2301A110" ||
+          loginResult.companyCode == "2207A046")
+      ? "Main"
+      : loginResult.homeMenuWeb == "Home"
+      ? "MainNotApproval"
+      : loginResult.homeMenuWeb
+    : "";
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 830) / 2,
@@ -327,8 +339,6 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     );
   };
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
-  const pathname: string = window.location.pathname.replace("/", "");
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -341,7 +351,13 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const menu_id = menulist.filter((item) => item.formId == pathname)[0];
+  const menu_id = menulist.filter(
+    (item) =>
+      item.formId ==
+      (menu == "MainBIO" || menu == "Main" || menu == "MainNotApproval"
+        ? "Home"
+        : menu)
+  )[0];
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -404,7 +420,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
     const parameters = {
       para:
-        pathname +
+        menu +
         "_" +
         (menu_id != undefined ? menu_id.menuId : "") +
         "_" +
@@ -834,7 +850,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
     const parameters = {
       para:
-        pathname +
+        menu +
         "_" +
         (menu_id != undefined ? menu_id.menuId : "") +
         "_" +
@@ -863,7 +879,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
     const parameters = {
       para:
-        pathname +
+        menu +
         "_" +
         (menu_id != undefined ? menu_id.menuId : "") +
         "_" +

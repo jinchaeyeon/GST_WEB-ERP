@@ -160,7 +160,7 @@ const CT_A0111W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -200,8 +200,10 @@ const CT_A0111W: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (permissions.view && customOptionData !== null) {
+      fetchMainGrid();
+    }
+  }, [mainPgNum, permissions, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -247,11 +249,15 @@ const CT_A0111W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (
+      isInitSearch == false &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   const search = () => {
     resetAllGrid();

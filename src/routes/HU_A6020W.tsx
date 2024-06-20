@@ -78,10 +78,7 @@ import FileViewers from "../components/Viewer/FileViewers";
 import LaborerMultiWindow from "../components/Windows/CommonWindows/LaborerMultiWindow";
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 var index = 0;
@@ -477,18 +474,21 @@ const HU_A6020W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
         gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
         paydt: setDefaultDate(customOptionData, "paydt"),
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
+        isSearch: true,
       }));
       setFilters3((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -724,7 +724,7 @@ const HU_A6020W: React.FC = () => {
     reyrmm: new Date(new Date().setMonth(new Date().getMonth() + 2)),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -824,7 +824,7 @@ const HU_A6020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -911,7 +911,7 @@ const HU_A6020W: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data2: any;
 
@@ -985,7 +985,7 @@ const HU_A6020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1048,7 +1048,7 @@ const HU_A6020W: React.FC = () => {
   };
 
   const fetchMainGrid3_1 = async (filters3_1: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data2: any;
 
@@ -1111,7 +1111,12 @@ const HU_A6020W: React.FC = () => {
     setLoading(false);
   };
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1120,11 +1125,16 @@ const HU_A6020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -1133,11 +1143,16 @@ const HU_A6020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -1146,10 +1161,15 @@ const HU_A6020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3_1.isSearch) {
+    if (
+      filters3_1.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3_1);
       setFilters3_1((prev) => ({
@@ -1158,7 +1178,8 @@ const HU_A6020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3_1(deepCopiedFilters);
     }
-  }, [filters3_1]);
+  }, [filters3_1, permissions, bizComponentData, customOptionData]);
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -2250,6 +2271,7 @@ FROM HU072T WHERE paycd = '4'`;
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     let valid2 = true;
     try {
@@ -2664,6 +2686,7 @@ FROM HU072T WHERE paycd = '4'`;
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2732,10 +2755,10 @@ FROM HU072T WHERE paycd = '4'`;
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   return (
     <>
@@ -2760,7 +2783,10 @@ FROM HU072T WHERE paycd = '4'`;
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="일용직일근태">
+        <TabStripTab
+          title="일용직일근태"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2851,6 +2877,7 @@ FROM HU072T WHERE paycd = '4'`;
                   themeColor={"primary"}
                   onClick={onlaborerWndMultiClick}
                   icon="folder-open"
+                  disabled={permissions.save ? false : true}
                 >
                   일괄등록
                 </Button>
@@ -2859,6 +2886,7 @@ FROM HU072T WHERE paycd = '4'`;
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -2866,6 +2894,7 @@ FROM HU072T WHERE paycd = '4'`;
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -2873,6 +2902,7 @@ FROM HU072T WHERE paycd = '4'`;
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -2985,7 +3015,10 @@ FROM HU072T WHERE paycd = '4'`;
             </FormContext.Provider>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="일용직집계표">
+        <TabStripTab
+          title="일용직집계표"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -3037,7 +3070,10 @@ FROM HU072T WHERE paycd = '4'`;
             {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
-        <TabStripTab title="일용직 개인명세서">
+        <TabStripTab
+          title="일용직 개인명세서"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
